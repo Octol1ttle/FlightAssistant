@@ -35,15 +35,15 @@ public class AltitudeIndicator extends HudComponent {
 
     if (CONFIG.altitude_showReadout) {
       drawFont(mc, m, String.format("%.0f", computer.altitude), xAltText, dim.yMid - 3);
-      drawBox(m, xAltText - 2, dim.yMid - 4.5f, 28, 10);
+        drawBox(m, xAltText - 2, dim.yMid - 4.5f, 28);
     }
 
     if (CONFIG.altitude_showHeight) {
       drawFont(mc, m, "G", xAltText - 10, bottom + 3);
       String heightText = computer.distanceFromGround == null ? "??"
           : String.format("%d", i(computer.distanceFromGround));
-      drawFont(mc, m, heightText, xAltText, bottom + 3);
-      drawBox(m, xAltText - 2, bottom + 1.5f, 28, 10);
+        drawFont(mc, m, heightText, xAltText, bottom + 3);
+        drawBox(m, xAltText - 2, bottom + 1.5f, 28);
     }
 
     if (CONFIG.altitude_showScale) {

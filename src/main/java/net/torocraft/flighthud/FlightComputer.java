@@ -7,6 +7,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -19,7 +20,6 @@ public class FlightComputer {
   public float speed;
   public float pitch;
   public float heading;
-  public Vec3d flightPath;
   public float flightPitch;
   public float flightHeading;
   public float roll;
@@ -31,13 +31,13 @@ public class FlightComputer {
   public void update(MinecraftClient client, float partial) {
     velocity = client.player.getVelocity();
     pitch = computePitch(client, partial);
-    speed = computeSpeed(client);
-    roll = computeRoll(client, partial);
-    heading = computeHeading(client);
+      speed = computeSpeed(client);
+      roll = computeRoll(client);
+      heading = computeHeading(client);
     altitude = computeAltitude(client);
-    groundLevel = computeGroundLevel(client);
-    distanceFromGround = computeDistanceFromGround(client, altitude, groundLevel);
-    flightPitch = computeFlightPitch(velocity, pitch);
+      groundLevel = computeGroundLevel(client);
+      distanceFromGround = computeDistanceFromGround(altitude, groundLevel);
+      flightPitch = computeFlightPitch(velocity, pitch);
     flightHeading = computeFlightHeading(velocity, heading);
     elytraHealth = computeElytraHealth(client);
   }
@@ -66,22 +66,22 @@ public class FlightComputer {
     return toHeading((float) Math.toDegrees(-Math.atan2(velocity.x, velocity.z)));
   }
 
-  /**
-   * Roll logic is from:
-   * https://github.com/Jorbon/cool_elytra/blob/main/src/main/java/edu/jorbonism/cool_elytra/mixin/GameRendererMixin.java
-   * to enable both mods will sync up when used together.
-   */
-  private float computeRoll(MinecraftClient client, float partial) {
-    if (!FlightHud.CONFIG_SETTINGS.calculateRoll) {
-      return 0;
-    }
+    /**
+     * Roll logic is from:
+     * <a href="https://github.com/Jorbon/cool_elytra/blob/main/src/main/java/edu/jorbonism/cool_elytra/mixin/GameRendererMixin.java">...</a>
+     * to enable both mods will sync up when used together.
+     */
+    private float computeRoll(MinecraftClient client) {
+        if (!FlightHud.CONFIG_SETTINGS.calculateRoll) {
+            return 0;
+        }
 
-    float wingPower = FlightHud.CONFIG_SETTINGS.rollTurningForce;
-    float rollSmoothing = FlightHud.CONFIG_SETTINGS.rollSmoothing;
-    Vec3d facing = client.player.getRotationVecClient();
-    Vec3d velocity = client.player.getVelocity();
-    double horizontalFacing2 = facing.horizontalLengthSquared();
-    double horizontalSpeed2 = velocity.horizontalLengthSquared();
+        float wingPower = FlightHud.CONFIG_SETTINGS.rollTurningForce;
+        float rollSmoothing = FlightHud.CONFIG_SETTINGS.rollSmoothing;
+        Vec3d facing = client.player.getRotationVecClient();
+        Vec3d velocity = client.player.getVelocity();
+        double horizontalFacing2 = facing.horizontalLengthSquared();
+        double horizontalSpeed2 = velocity.horizontalLengthSquared();
 
     float rollAngle = 0.0f;
 
@@ -116,24 +116,24 @@ public class FlightComputer {
         return pos;
       }
     }
-    return null;
-  }
-
-  private Integer computeGroundLevel(MinecraftClient client) {
-    BlockPos ground = findGround(client);
-    return ground == null ? null : ground.getY();
-  }
-
-  private Float computeDistanceFromGround(MinecraftClient client, float altitude,
-      Integer groundLevel) {
-    if (groundLevel == null) {
       return null;
-    }
-    return Math.max(0f, altitude - groundLevel);
   }
 
-  private float computeAltitude(MinecraftClient client) {
-    return (float) client.player.getPos().y - 1;
+    private Integer computeGroundLevel(MinecraftClient client) {
+        BlockPos ground = findGround(client);
+        return ground == null ? null : ground.getY();
+    }
+
+    private Float computeDistanceFromGround(float altitude,
+                                            Integer groundLevel) {
+        if (groundLevel == null) {
+            return null;
+        }
+        return Math.max(0f, altitude - groundLevel);
+    }
+
+    private float computeAltitude(MinecraftClient client) {
+        return (float) client.player.getPos().y - 1;
   }
 
   private float computeHeading(MinecraftClient client) {
@@ -141,18 +141,22 @@ public class FlightComputer {
   }
 
   private float computeSpeed(MinecraftClient client) {
-    float speed = 0;
-    var player = client.player;
+      float speed;
+      var player = client.player;
     if (player.hasVehicle()) {
       Entity entity = player.getVehicle();
-      speed = (float) entity.getVelocity().length() * TICKS_PER_SECOND;
+        speed = (float) entity.getVelocity().length() * TICKS_PER_SECOND;
     } else {
-      speed = (float) client.player.getVelocity().length() * TICKS_PER_SECOND;
+        speed = (float) client.player.getVelocity().length() * TICKS_PER_SECOND;
     }
-    return speed;
+      return speed;
   }
 
-  private float toHeading(float yawDegrees) {
-    return (yawDegrees + 180) % 360;
-  }
+    private float toHeading(float yawDegrees) {
+        return (yawDegrees + 180) % 360;
+    }
+
+    public boolean terrainAhead(MinecraftClient mc) {
+        return !mc.world.isSpaceEmpty(new Box(mc.player.getPos(), mc.player.getPos().add(mc.player.getVelocity().multiply(TICKS_PER_SECOND * 3))));
+    }
 }

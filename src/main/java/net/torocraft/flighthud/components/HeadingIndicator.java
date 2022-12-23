@@ -28,7 +28,7 @@ public class HeadingIndicator extends HudComponent {
 
     if (CONFIG.heading_showReadout) {
       drawFont(mc, m, String.format("%03d", i(wrapHeading(computer.heading))), dim.xMid - 8, yText);
-      drawBox(m, dim.xMid - 15, yText - 1.5f, 30, 10);
+        drawBox(m, dim.xMid - 15, yText - 1.5f, 30);
     }
 
     if (CONFIG.heading_showScale) {
@@ -57,37 +57,25 @@ public class HeadingIndicator extends HudComponent {
   }
 
   private String headingToDirection(int degrees) {
-    degrees = i(wrapHeading(degrees));
-    switch (degrees) {
-      case 0:
-      case 360:
-        return "N";
-      case 90:
-        return "E";
-      case 180:
-        return "S";
-      case 270:
-        return "W";
-      default:
-        return "";
-    }
+      degrees = i(wrapHeading(degrees));
+      return switch (degrees) {
+          case 0, 360 -> "N";
+          case 90 -> "E";
+          case 180 -> "S";
+          case 270 -> "W";
+          default -> "";
+      };
   }
 
   private String headingToAxis(int degrees) {
-    degrees = i(wrapHeading(degrees));
-    switch (degrees) {
-      case 0:
-      case 360:
-        return "-Z";
-      case 90:
-        return "+X";
-      case 180:
-        return "+Z";
-      case 270:
-        return "-X";
-      default:
-        return "";
-    }
+      degrees = i(wrapHeading(degrees));
+      return switch (degrees) {
+          case 0, 360 -> "-Z";
+          case 90 -> "+X";
+          case 180 -> "+Z";
+          case 270 -> "-X";
+          default -> "";
+      };
   }
 
 }

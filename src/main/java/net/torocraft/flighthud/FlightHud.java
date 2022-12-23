@@ -2,9 +2,9 @@ package net.torocraft.flighthud;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.torocraft.flighthud.config.HudConfig;
@@ -61,9 +61,7 @@ public class FlightHud implements ClientModInitializer {
   }
 
   private static void setupCommand() {
-    ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-      dispatcher.register(ClientCommandManager.literal("flighthud")
-          .then(ClientCommandManager.literal("toggle").executes(new SwitchDisplayModeCommand())));
-    });
+    ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(ClientCommandManager.literal("flighthud")
+            .then(ClientCommandManager.literal("toggle").executes(new SwitchDisplayModeCommand()))));
   }
 }

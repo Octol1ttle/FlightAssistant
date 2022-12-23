@@ -53,7 +53,7 @@ public class HudRenderer extends HudComponent {
       m.push();
 
       if (HudComponent.CONFIG.scale != 1d) {
-        float scale = 1 / (float) HudComponent.CONFIG.scale;
+        float scale = 1 / HudComponent.CONFIG.scale;
         m.scale(scale, scale, scale);
       }
 

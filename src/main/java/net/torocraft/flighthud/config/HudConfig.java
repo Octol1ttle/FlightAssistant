@@ -1,10 +1,11 @@
 package net.torocraft.flighthud.config;
 
-import java.awt.Color;
+import java.awt.*;
 import net.torocraft.flighthud.config.loader.IConfig;
 
 public class HudConfig implements IConfig {
   public transient int color = Color.GREEN.getRGB();
+  public transient int alertColor = Color.RED.getRGB();
   public transient float halfThickness = 0.5f;
 
   public boolean watchForConfigChanges = true;
@@ -48,7 +49,6 @@ public class HudConfig implements IConfig {
 
   public boolean heading_showScale = true;
   public boolean heading_showReadout = true;
-  public boolean heading_showOrdinals = true;
 
   @Override
   public void update() {

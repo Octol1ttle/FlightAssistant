@@ -31,7 +31,7 @@ public class SpeedIndicator extends HudComponent {
 
     if (CONFIG.speed_showReadout) {
       drawRightAlignedFont(mc, m, String.format("%.2f", computer.speed), xSpeedText, dim.yMid - 3);
-      drawBox(m, xSpeedText - 29.5f, dim.yMid - 4.5f, 30, 10);
+        drawBox(m, xSpeedText - 29.5f, dim.yMid - 4.5f, 30);
     }
 
 
