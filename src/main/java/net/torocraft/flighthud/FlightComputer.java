@@ -110,7 +110,7 @@ public class FlightComputer {
 
   public BlockPos findGround(MinecraftClient client) {
     BlockPos pos = client.player.getBlockPos();
-    while (pos.getY() >= 0) {
+    while (pos.getY() >= -64) {
       pos = pos.down();
       if (isGround(pos, client)) {
         return pos;
@@ -129,7 +129,7 @@ public class FlightComputer {
         if (groundLevel == null) {
             return null;
         }
-        return Math.max(0f, altitude - groundLevel);
+      return Math.max(-64f, altitude - groundLevel);
     }
 
     private float computeAltitude(MinecraftClient client) {
@@ -147,16 +147,20 @@ public class FlightComputer {
       Entity entity = player.getVehicle();
         speed = (float) entity.getVelocity().length() * TICKS_PER_SECOND;
     } else {
-        speed = (float) client.player.getVelocity().length() * TICKS_PER_SECOND;
+      speed = (float) client.player.getVelocity().length() * TICKS_PER_SECOND;
     }
-      return speed;
+    return speed;
   }
 
-    private float toHeading(float yawDegrees) {
-        return (yawDegrees + 180) % 360;
-    }
+  private float toHeading(float yawDegrees) {
+    return (yawDegrees + 180) % 360;
+  }
 
-    public boolean terrainAhead(MinecraftClient mc) {
-        return !mc.world.isSpaceEmpty(new Box(mc.player.getPos(), mc.player.getPos().add(mc.player.getVelocity().multiply(TICKS_PER_SECOND * 3))));
-    }
+  public boolean terrainAhead(MinecraftClient mc) {
+    return !mc.world.isSpaceEmpty(new Box(mc.player.getPos(), mc.player.getPos().add(mc.player.getVelocity().multiply(TICKS_PER_SECOND * 15, 0.0, TICKS_PER_SECOND * 15))));
+  }
+
+  public boolean terrainBelow(MinecraftClient mc) {
+    return !mc.world.isSpaceEmpty(new Box(mc.player.getPos(), mc.player.getPos().add(mc.player.getVelocity().multiply(TICKS_PER_SECOND * 10))));
+  }
 }

@@ -3,5 +3,15 @@
     "sounds": [
       "flighthud:stick_shaker"
     ]
+  },
+  "pull_up": {
+    "sounds": [
+      "flighthud:pull_up"
+    ]
+  },
+  "caution_terrain": {
+    "sounds": [
+      "flighthud:caution_terrain"
+    ]
   }
 }

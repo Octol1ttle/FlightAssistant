@@ -19,10 +19,12 @@ public class ElytraHealthIndicator extends HudComponent {
 
   private final Dimensions dim;
   private final FlightComputer computer;
-  private static final Identifier STICK_SHAKER_ID = new Identifier("flighthud:stick_shaker");
-  private static final SoundEvent STICK_SHAKER = SoundEvent.of(STICK_SHAKER_ID);
-  private boolean stickShakerActive = false;
+  private static final SoundEvent STICK_SHAKER = SoundEvent.of(new Identifier("flighthud:stick_shaker"));
+  private static final SoundEvent PULL_UP = SoundEvent.of(new Identifier("flighthud:pull_up"));
+  private static final SoundEvent CAUTION_TERRAIN = SoundEvent.of(new Identifier("flighthud:caution_terrain"));
+  private boolean auralWarningActive = false;
   private boolean canToga = true;
+  private boolean terrainAhead = false;
 
   public ElytraHealthIndicator(FlightComputer computer, Dimensions dim) {
     this.dim = dim;
@@ -37,27 +39,33 @@ public class ElytraHealthIndicator extends HudComponent {
       if (computer.pitch >= CONFIG.pitchLadder_optimumClimbAngle + 10) {
         ItemStack main = mc.player.getMainHandStack();
         boolean toga;
+
         if (!main.getItem().equals(Items.FIREWORK_ROCKET) || (main.getSubNbt("Fireworks") != null && !main.getSubNbt("Fireworks").contains("Explosions", 10))) {
           ItemStack off = mc.player.getOffHandStack();
-          if (!off.getItem().equals(Items.FIREWORK_ROCKET))
-            toga = togaIfAble(mc, Hand.MAIN_HAND);
-          else
-            toga = togaIfAble(mc, Hand.OFF_HAND);
-        } else toga = togaIfAble(mc, Hand.MAIN_HAND);
+          toga = togaIfAble(mc, off.getItem().equals(Items.FIREWORK_ROCKET) ? Hand.OFF_HAND : Hand.MAIN_HAND);
+        } else
+          toga = togaIfAble(mc, Hand.MAIN_HAND);
+
         drawCenteredFont(mc, m, toga ? "AUTO-FIREWORK" : "NO FIREWORKS IN HAND", dim.wScreen, y - 25, CONFIG.alertColor);
-      } else if (computer.pitch >= CONFIG.pitchLadder_optimumClimbAngle - 10)
+      } else if (Math.abs(computer.pitch) >= CONFIG.pitchLadder_optimumClimbAngle - 10)
         drawCenteredFont(mc, m, "MONITOR PITCH", dim.wScreen, y - 25, CONFIG.alertColor);
-      if (computer.pitch >= CONFIG.pitchLadder_optimumClimbAngle) {
-        drawCenteredFont(mc, m, "PUSH DOWN", dim.wScreen, y - 15, CONFIG.alertColor);
-        if (!stickShakerActive) {
-          mc.getSoundManager().play(new EntityTrackingSoundInstance(STICK_SHAKER, SoundCategory.MASTER, 1, 1, mc.player, 0));
-          stickShakerActive = true;
+
+      if (Math.abs(computer.pitch) >= CONFIG.pitchLadder_optimumClimbAngle || computer.pitch < 30 && computer.terrainBelow(mc)) {
+        drawCenteredFont(mc, m, computer.pitch > 0 ? "PUSH DOWN" : "PULL UP", dim.wScreen, y - 15, CONFIG.alertColor);
+        if (!auralWarningActive) {
+          play(mc, computer.pitch > 0 ? STICK_SHAKER : PULL_UP);
+          auralWarningActive = true;
         }
+      } else resetWarnings(mc);
+    } else resetWarnings(mc);
+
+    if (!computer.terrainAhead(mc)) terrainAhead = false;
+    else {
+      drawCenteredFont(mc, m, "CAUTION: TERRAIN", dim.wScreen, y - 35, CONFIG.alertColor);
+      if (!auralWarningActive && !terrainAhead) {
+        play(mc, CAUTION_TERRAIN);
+        terrainAhead = true;
       }
-    } else {
-      canToga = true;
-      mc.getSoundManager().stopSounds(STICK_SHAKER_ID, SoundCategory.MASTER);
-      stickShakerActive = false;
     }
 
     if (!CONFIG.elytra_showHealth || computer.elytraHealth == null) {
@@ -69,10 +77,21 @@ public class ElytraHealthIndicator extends HudComponent {
     drawFont(mc, m, String.format("%d", i(computer.elytraHealth)) + "%", x, y, computer.elytraHealth <= 10 ? CONFIG.alertColor : CONFIG.color);
   }
 
-  public boolean togaIfAble(MinecraftClient mc, Hand hand) {
-    if (computer.terrainAhead(mc) || !canToga) return false;
+  private boolean togaIfAble(MinecraftClient mc, Hand hand) {
+    if (!canToga) return false;
     mc.interactionManager.interactItem(mc.player, hand);
     canToga = false;
     return true;
+  }
+
+  private void resetWarnings(MinecraftClient mc) {
+    canToga = true;
+    mc.getSoundManager().stopSounds(STICK_SHAKER.getId(), SoundCategory.MASTER);
+    mc.getSoundManager().stopSounds(PULL_UP.getId(), SoundCategory.MASTER);
+    auralWarningActive = false;
+  }
+
+  private void play(MinecraftClient mc, SoundEvent event) {
+    mc.getSoundManager().play(new EntityTrackingSoundInstance(event, SoundCategory.MASTER, 1, 1, mc.player, 0));
   }
 }
