@@ -157,10 +157,12 @@ public class FlightComputer {
   }
 
   public boolean terrainAhead(MinecraftClient mc) {
-    return !mc.world.isSpaceEmpty(new Box(mc.player.getPos(), mc.player.getPos().add(mc.player.getVelocity().multiply(TICKS_PER_SECOND * 15, 0.0, TICKS_PER_SECOND * 15))));
+    return !mc.world.isSpaceEmpty(new Box(mc.player.getPos(), mc.player.getPos().add(mc.player.getVelocity().multiply(TICKS_PER_SECOND * 10, 0.0, TICKS_PER_SECOND * 10))))
+            && distanceFromGround > 10;
   }
 
   public boolean terrainBelow(MinecraftClient mc) {
-    return !mc.world.isSpaceEmpty(new Box(mc.player.getPos(), mc.player.getPos().add(mc.player.getVelocity().multiply(TICKS_PER_SECOND * 10))));
+    return !mc.world.isSpaceEmpty(new Box(mc.player.getPos(), mc.player.getPos().add(mc.player.getVelocity().multiply(TICKS_PER_SECOND * 7))))
+            && distanceFromGround > 10;
   }
 }
