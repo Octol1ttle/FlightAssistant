@@ -25,6 +25,7 @@ public class ElytraHealthIndicator extends HudComponent {
   private boolean auralWarningActive = false;
   private boolean canToga = true;
   private boolean terrainAhead = false;
+  public float terrainCooldown = 0;
 
   public ElytraHealthIndicator(FlightComputer computer, Dimensions dim) {
     this.dim = dim;
@@ -36,7 +37,7 @@ public class ElytraHealthIndicator extends HudComponent {
     float x = dim.wScreen * CONFIG.elytra_x;
     float y = dim.hScreen * CONFIG.elytra_y;
     if (computer.velocity.y * TICKS_PER_SECOND <= -5) {
-      if (computer.pitch >= CONFIG.pitchLadder_optimumClimbAngle + 10) {
+      if (computer.pitch >= 65) {
         ItemStack main = mc.player.getMainHandStack();
         boolean toga;
 
@@ -47,10 +48,10 @@ public class ElytraHealthIndicator extends HudComponent {
           toga = togaIfAble(mc, Hand.MAIN_HAND);
 
         drawCenteredFont(mc, m, toga ? "AUTO-FIREWORK" : "NO FIREWORKS IN HAND", dim.wScreen, y - 25, CONFIG.alertColor);
-      } else if (Math.abs(computer.pitch) >= CONFIG.pitchLadder_optimumClimbAngle - 10)
+      } else if (Math.abs(computer.pitch) >= 45)
         drawCenteredFont(mc, m, "MONITOR PITCH", dim.wScreen, y - 25, CONFIG.alertColor);
 
-      if (Math.abs(computer.pitch) >= CONFIG.pitchLadder_optimumClimbAngle || computer.pitch < 30 && computer.terrainBelow(mc)) {
+      if (Math.abs(computer.pitch) >= 55 || (computer.pitch <= -40 && computer.terrainBelow(mc))) {
         drawCenteredFont(mc, m, computer.pitch > 0 ? "PUSH DOWN" : "PULL UP", dim.wScreen, y - 15, CONFIG.alertColor);
         if (!auralWarningActive) {
           play(mc, computer.pitch > 0 ? STICK_SHAKER : PULL_UP);
@@ -59,14 +60,16 @@ public class ElytraHealthIndicator extends HudComponent {
       } else resetWarnings(mc);
     } else resetWarnings(mc);
 
-    if (!computer.terrainAhead(mc)) terrainAhead = false;
-    else {
+    if (terrainCooldown > 0) terrainCooldown -= partial;
+    if (computer.terrainAhead(mc, 15))
       drawCenteredFont(mc, m, "CAUTION: TERRAIN", dim.wScreen, y - 35, CONFIG.alertColor);
-      if (!auralWarningActive && !terrainAhead) {
+    if (computer.terrainAhead(mc, 10)) {
+      if (!auralWarningActive && !terrainAhead && terrainCooldown <= 0) {
         play(mc, CAUTION_TERRAIN);
         terrainAhead = true;
+        terrainCooldown = 30;
       }
-    }
+    } else terrainAhead = false;
 
     if (!CONFIG.elytra_showHealth || computer.elytraHealth == null) {
       return;

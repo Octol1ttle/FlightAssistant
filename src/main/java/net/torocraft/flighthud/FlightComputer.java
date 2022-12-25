@@ -156,8 +156,8 @@ public class FlightComputer {
     return (yawDegrees + 180) % 360;
   }
 
-  public boolean terrainAhead(MinecraftClient mc) {
-    return !mc.world.isSpaceEmpty(new Box(mc.player.getPos(), mc.player.getPos().add(mc.player.getVelocity().multiply(TICKS_PER_SECOND * 10, 0.0, TICKS_PER_SECOND * 10))))
+  public boolean terrainAhead(MinecraftClient mc, int seconds) {
+    return !mc.world.isSpaceEmpty(new Box(mc.player.getPos(), mc.player.getPos().add(mc.player.getVelocity().multiply(TICKS_PER_SECOND * seconds, 0.0, TICKS_PER_SECOND * seconds))))
             && distanceFromGround > 10;
   }
 
