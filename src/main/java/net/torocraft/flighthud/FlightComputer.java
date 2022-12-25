@@ -163,6 +163,6 @@ public class FlightComputer {
 
   public boolean terrainBelow(MinecraftClient mc) {
     return !mc.world.isSpaceEmpty(new Box(mc.player.getPos(), mc.player.getPos().add(mc.player.getVelocity().multiply(TICKS_PER_SECOND * 7))))
-            && distanceFromGround > 10;
+            && distanceFromGround > 2;
   }
 }
