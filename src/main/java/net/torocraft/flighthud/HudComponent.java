@@ -1,17 +1,9 @@
 package net.torocraft.flighthud;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.math.MatrixStack;
 import net.torocraft.flighthud.config.HudConfig;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -23,8 +15,8 @@ public abstract class HudComponent extends DrawableHelper {
 
   public static Vector3f POSITIVE_Z = new Vector3f(0.0f, 0.0f, 1.0f);
 
-  protected int i(double d) {
-    return (int) Math.round(d);
+  protected static int i(float f) {
+    return Math.round(f);
   }
 
   public static Quaternionf getDegreesQuaternion(float rotationAngle) {
@@ -43,40 +35,6 @@ public abstract class HudComponent extends DrawableHelper {
       degrees += 360;
     }
     return degrees;
-  }
-
-  private static void fill(Matrix4f matrix, float x1, float y1, float x2, float y2) {
-    float j;
-
-    if (x1 < x2) {
-      j = x1;
-      x1 = x2;
-      x2 = j;
-    }
-
-    if (y1 < y2) {
-      j = y1;
-      y1 = y2;
-      y2 = j;
-    }
-    int color = CONFIG.color;
-    float alpha = (float) (color >> 24 & 255) / 255.0F;
-    float r = (float) (color >> 16 & 255) / 255.0F;
-    float g = (float) (color >> 8 & 255) / 255.0F;
-    float b = (float) (color & 255) / 255.0F;
-    BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-    RenderSystem.enableBlend();
-    RenderSystem.disableTexture();
-    RenderSystem.defaultBlendFunc();
-    RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-    bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-    bufferBuilder.vertex(matrix, x1, y2, 0.0F).color(r, g, b, alpha).next();
-    bufferBuilder.vertex(matrix, x2, y2, 0.0F).color(r, g, b, alpha).next();
-    bufferBuilder.vertex(matrix, x2, y1, 0.0F).color(r, g, b, alpha).next();
-    bufferBuilder.vertex(matrix, x1, y1, 0.0F).color(r, g, b, alpha).next();
-    BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
-    RenderSystem.enableTexture();
-    RenderSystem.disableBlend();
   }
 
   protected void drawFont(MinecraftClient mc, MatrixStack m, String s, float x, float y) {
@@ -150,7 +108,7 @@ public abstract class HudComponent extends DrawableHelper {
   }
 
   public static void fill(MatrixStack matrices, float x1, float y1, float x2, float y2) {
-    fill(matrices.peek().getPositionMatrix(), x1, y1, x2, y2);
+    DrawableHelper.fill(matrices, i(x1), i(y1), i(x2), i(y2), CONFIG.color);
   }
 
   protected void drawBox(MatrixStack m, float x, float y, float w) {

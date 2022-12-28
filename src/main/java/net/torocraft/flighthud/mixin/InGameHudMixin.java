@@ -1,5 +1,6 @@
 package net.torocraft.flighthud.mixin;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
@@ -24,6 +25,10 @@ public class InGameHudMixin {
 
   @Inject(method = "render", at = @At("RETURN"))
   private void render(MatrixStack ms, float partial, CallbackInfo info) {
+    if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
+      net.raphimc.immediatelyfast.feature.batching.BatchingBuffers.beginHudBatching();
     hud.render(ms, partial, client);
+    if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
+      net.raphimc.immediatelyfast.feature.batching.BatchingBuffers.endHudBatching();
   }
 }
