@@ -21,11 +21,12 @@ public class ElytraHealthIndicator extends HudComponent {
   private final FlightComputer computer;
   private static final SoundEvent STICK_SHAKER = SoundEvent.of(new Identifier("flighthud:stick_shaker"));
   private static final SoundEvent PULL_UP = SoundEvent.of(new Identifier("flighthud:pull_up"));
-  private static final SoundEvent CAUTION_TERRAIN = SoundEvent.of(new Identifier("flighthud:caution_terrain"));
+  private static final SoundEvent PULL_UP_TERRAIN = SoundEvent.of(new Identifier("flighthud:pull_up_terrain"));
+  private static final SoundEvent ELYTRA_LOW = SoundEvent.of(new Identifier("flighthud:elytra_low"));
   private boolean auralWarningActive = false;
+  private boolean elytraAlarmActive = false;
   private boolean canToga = true;
   private boolean terrainAhead = false;
-  public float terrainCooldown = 0;
 
   public ElytraHealthIndicator(FlightComputer computer, Dimensions dim) {
     this.dim = dim;
@@ -47,7 +48,7 @@ public class ElytraHealthIndicator extends HudComponent {
         } else
           toga = togaIfAble(mc, Hand.MAIN_HAND);
 
-        drawCenteredFont(mc, m, toga ? "AUTO-FIREWORK" : "NO FIREWORKS IN HAND", dim.wScreen, y - 25, CONFIG.alertColor);
+        drawCenteredFont(mc, m, toga ? "AUTO-FIREWORK" : "STALL", dim.wScreen, y - 25, CONFIG.alertColor);
       } else if (Math.abs(computer.pitch) >= 45)
         drawCenteredFont(mc, m, "MONITOR PITCH", dim.wScreen, y - 25, CONFIG.alertColor);
 
@@ -57,27 +58,44 @@ public class ElytraHealthIndicator extends HudComponent {
           play(mc, computer.pitch > 0 ? STICK_SHAKER : PULL_UP);
           auralWarningActive = true;
         }
+
+        mc.player.changeLookDirection(0, computer.pitch * partial);
       } else resetWarnings(mc);
     } else resetWarnings(mc);
 
-    if (terrainCooldown > 0) terrainCooldown -= partial;
     if (computer.terrainAhead(mc, 15))
-      drawCenteredFont(mc, m, "CAUTION: TERRAIN", dim.wScreen, y - 35, CONFIG.alertColor);
+      drawCenteredFont(mc, m, "OBSTACLE AHEAD", dim.wScreen, y - 35, CONFIG.alertColor);
     if (computer.terrainAhead(mc, 10)) {
-      if (!auralWarningActive && !terrainAhead && terrainCooldown <= 0) {
-        play(mc, CAUTION_TERRAIN);
+      if (!terrainAhead) {
+        play(mc, PULL_UP_TERRAIN);
         terrainAhead = true;
-        terrainCooldown = 30;
       }
-    } else terrainAhead = false;
+    } else {
+        mc.getSoundManager().stopSounds(PULL_UP_TERRAIN.getId(), SoundCategory.MASTER);
+        terrainAhead = false;
+    }
 
-    if (!CONFIG.elytra_showHealth || computer.elytraHealth == null) {
+    if (computer.elytraHealth == null) {
+      mc.getSoundManager().stopSounds(ELYTRA_LOW.getId(), SoundCategory.MASTER);
+      elytraAlarmActive = false;
       return;
     }
 
-    drawBox(m, x - 3.5f, y - 1.5f, 30);
-    drawFont(mc, m, "E", x - 10, y);
-    drawFont(mc, m, String.format("%d", i(computer.elytraHealth)) + "%", x, y, computer.elytraHealth <= 10 ? CONFIG.alertColor : CONFIG.color);
+    if (CONFIG.elytra_showHealth) {
+      drawBox(m, x - 3.5f, y - 1.5f, 30);
+      drawFont(mc, m, "E", x - 10, y);
+      drawFont(mc, m, String.format("%d", i(computer.elytraHealth)) + "%", x, y, computer.elytraHealth <= 10 ? CONFIG.alertColor : CONFIG.color);
+    }
+
+    if (computer.elytraHealth <= 5) {
+      if (!elytraAlarmActive) {
+        play(mc, ELYTRA_LOW);
+        elytraAlarmActive = true;
+      }
+    } else {
+      mc.getSoundManager().stopSounds(ELYTRA_LOW.getId(), SoundCategory.MASTER);
+      elytraAlarmActive = false;
+    }
   }
 
   private boolean togaIfAble(MinecraftClient mc, Hand hand) {
