@@ -14,11 +14,6 @@
       "flighthud:pull_up_terrain"
     ]
   },
-  "caution_terrain": {
-    "sounds": [
-      "flighthud:caution_terrain"
-    ]
-  },
   "elytra_low": {
     "sounds": [
       "flighthud:elytra_low"

@@ -27,6 +27,8 @@ public class ElytraHealthIndicator extends HudComponent {
   private boolean elytraAlarmActive = false;
   private boolean canToga = true;
   private boolean terrainAhead = false;
+  private boolean gcas = false;
+  private float gcasPitch = 0.0f;
 
   public ElytraHealthIndicator(FlightComputer computer, Dimensions dim) {
     this.dim = dim;
@@ -38,35 +40,38 @@ public class ElytraHealthIndicator extends HudComponent {
     float x = dim.wScreen * CONFIG.elytra_x;
     float y = dim.hScreen * CONFIG.elytra_y;
     if (computer.velocity.y * TICKS_PER_SECOND <= -5) {
-      if (computer.pitch >= 65) {
-        ItemStack main = mc.player.getMainHandStack();
-        boolean toga;
-
-        if (!main.getItem().equals(Items.FIREWORK_ROCKET) || (main.getSubNbt("Fireworks") != null && !main.getSubNbt("Fireworks").contains("Explosions", 10))) {
-          ItemStack off = mc.player.getOffHandStack();
-          toga = togaIfAble(mc, off.getItem().equals(Items.FIREWORK_ROCKET) ? Hand.OFF_HAND : Hand.MAIN_HAND);
-        } else
-          toga = togaIfAble(mc, Hand.MAIN_HAND);
-
-        drawCenteredFont(mc, m, toga ? "AUTO-FIREWORK" : "STALL", dim.wScreen, y - 25, CONFIG.alertColor);
-      } else if (Math.abs(computer.pitch) >= 45)
+      if (Math.abs(computer.pitch) >= 45)
         drawCenteredFont(mc, m, "MONITOR PITCH", dim.wScreen, y - 25, CONFIG.alertColor);
 
-      if (Math.abs(computer.pitch) >= 55 || (computer.pitch <= -40 && computer.terrainBelow(mc))) {
-        drawCenteredFont(mc, m, computer.pitch > 0 ? "PUSH DOWN" : "PULL UP", dim.wScreen, y - 15, CONFIG.alertColor);
-        if (!auralWarningActive) {
-          play(mc, computer.pitch > 0 ? STICK_SHAKER : PULL_UP);
-          auralWarningActive = true;
+      boolean terrainBelow = computer.terrainBelow(mc, 7);
+      if (Math.abs(computer.pitch) >= 55 || (computer.pitch <= -40 && terrainBelow)) {
+        if (!gcas && ((Math.abs(computer.pitch) >= 65 || (computer.pitch <= -50 && terrainBelow)) || computer.terrainBelow(mc, 2))) {
+          gcas = true;
+          gcasPitch = computer.pitch;
+        } else {
+          if (!auralWarningActive) {
+            play(mc, computer.pitch > 0 ? STICK_SHAKER : PULL_UP);
+            auralWarningActive = true;
+          }
+          drawCenteredFont(mc, m, computer.pitch > 0 ? "PUSH DOWN" : "PULL UP", dim.wScreen, y - 15, CONFIG.alertColor);
         }
 
-        mc.player.changeLookDirection(0, computer.pitch * partial);
       } else resetWarnings(mc);
     } else resetWarnings(mc);
 
-    if (computer.terrainAhead(mc, 15))
+    if (gcas) {
+      if (gcasPitch > 0 ? computer.pitch <= 0 : computer.pitch >= 0)
+        gcas = false;
+      else {
+        drawCenteredFont(mc, m, "GCAS", dim.wScreen, y - 15, CONFIG.alertColor);
+        mc.player.changeLookDirection(0, Math.max(1, Math.abs(computer.pitch)) * Math.signum(computer.pitch) * partial);
+      }
+    }
+
+    if (computer.terrainAhead(mc, 12))
       drawCenteredFont(mc, m, "OBSTACLE AHEAD", dim.wScreen, y - 35, CONFIG.alertColor);
-    if (computer.terrainAhead(mc, 10)) {
-      if (!terrainAhead) {
+    if (computer.terrainAhead(mc, 7)) {
+      if (!terrainAhead && (!auralWarningActive || computer.pitch > 0)) {
         play(mc, PULL_UP_TERRAIN);
         terrainAhead = true;
       }
