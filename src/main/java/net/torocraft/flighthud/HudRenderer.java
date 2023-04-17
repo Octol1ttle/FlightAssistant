@@ -14,7 +14,7 @@ import net.torocraft.flighthud.config.SettingsConfig.DisplayMode;
 public class HudRenderer extends HudComponent {
 
   private final Dimensions dim = new Dimensions();
-  private final FlightComputer computer = new FlightComputer();
+  public final FlightComputer computer = new FlightComputer();
   private static final String FULL = DisplayMode.FULL.toString();
   private static final String MIN = DisplayMode.MIN.toString();
 

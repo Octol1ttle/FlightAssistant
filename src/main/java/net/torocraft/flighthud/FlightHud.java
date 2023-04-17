@@ -37,6 +37,7 @@ public class FlightHud implements ClientModInitializer {
     config -> FlightHud.CONFIG_MIN = config);
 
   private static KeyBinding keyBinding;
+  public static KeyBinding killSwitch;
 
   @Override
   public void onInitializeClient() {
@@ -58,6 +59,11 @@ public class FlightHud implements ClientModInitializer {
         CONFIG_SETTINGS.toggleDisplayMode();
       }
     });
+
+    killSwitch = new KeyBinding("key.flighthud.killSwitch", InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_CAPS_LOCK, "category.flighthud.killSwitch");
+
+    KeyBindingHelper.registerKeyBinding(killSwitch);
   }
 
   private static void setupCommand() {

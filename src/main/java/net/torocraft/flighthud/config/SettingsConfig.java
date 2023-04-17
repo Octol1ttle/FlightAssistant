@@ -17,6 +17,13 @@ public class SettingsConfig implements IConfig {
   public float rollTurningForce = 1.25f;
   public float rollSmoothing = 0.85f;
 
+  public boolean gpwsTextAlerts = true;
+  public boolean gpwsVoiceAlerts = true;
+  public boolean autoGcas = true;
+  public boolean stickShaker = true;
+  public boolean stickPusher = true;
+  public boolean lowElytraHealthAlarm = true;
+
   @Override
   public void update() {
   }
