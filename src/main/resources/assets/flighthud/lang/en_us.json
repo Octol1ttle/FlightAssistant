@@ -1,4 +1,5 @@
 {
   "key.flighthud.toggleDisplayMode": "Switch Display Mode",
+  "key.flighthud.killSwitch": "Disable Warnings and Automation",
   "category.flighthud.toggleDisplayMode": "Flight HUD"
 }

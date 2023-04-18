@@ -18,11 +18,13 @@ public class HudRenderer extends HudComponent {
   private static final String FULL = DisplayMode.FULL.toString();
   private static final String MIN = DisplayMode.MIN.toString();
 
+  private final ElytraHealthIndicator automationComponent = new ElytraHealthIndicator(computer, dim);
+
   private final HudComponent[] components =
-      new HudComponent[] {new FlightPathIndicator(computer, dim), new LocationIndicator(dim),
-          new HeadingIndicator(computer, dim), new SpeedIndicator(computer, dim),
-          new AltitudeIndicator(computer, dim), new PitchIndicator(computer, dim),
-          new ElytraHealthIndicator(computer, dim)};
+          new HudComponent[]{new FlightPathIndicator(computer, dim), new LocationIndicator(dim),
+                  new HeadingIndicator(computer, dim), new SpeedIndicator(computer, dim),
+                  new AltitudeIndicator(computer, dim), new PitchIndicator(computer, dim),
+                  automationComponent};
 
   private void setupConfig(MinecraftClient client) {
     HudComponent.CONFIG = null;
@@ -46,7 +48,12 @@ public class HudRenderer extends HudComponent {
     setupConfig(client);
 
     if (HudComponent.CONFIG == null) {
+      automationComponent.stopEverything(client);
       return;
+    }
+
+    if (client.player == null || !client.player.isFallFlying() || client.player.isOnGround()) {
+      automationComponent.stopEverything(client);
     }
 
     try {
@@ -65,6 +72,8 @@ public class HudRenderer extends HudComponent {
       }
       m.pop();
     } catch (Exception e) {
+      automationComponent.stopEverything(client);
+
       e.printStackTrace();
     }
   }

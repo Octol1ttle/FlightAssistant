@@ -33,7 +33,7 @@ public class ElytraHealthIndicator extends HudComponent {
   private boolean tooLowTerrain = false;
   private boolean lowElytraHealthAlarm = false;
   private boolean killSwitchActive = false;
-  private boolean holdingKillSwitch = false;
+  private final boolean holdingKillSwitch = false;
 
   public ElytraHealthIndicator(FlightComputer computer, Dimensions dim) {
     this.dim = dim;
@@ -45,11 +45,9 @@ public class ElytraHealthIndicator extends HudComponent {
     float x = dim.wScreen * CONFIG.elytra_x;
     float y = dim.hScreen * CONFIG.elytra_y;
 
-    if (mc.player == null || mc.player.isOnGround() || computer.elytraHealth == null) {
-      stopPullUp(mc);
-      stopStickShaker(mc);
-      stopTerrain(mc);
-      stopHealthAlarm(mc);
+    if (mc.player == null || mc.player.isOnGround() || !mc.player.isFallFlying() || computer.elytraHealth == null) {
+      stopEverything(mc);
+
       return;
     }
 
@@ -62,10 +60,7 @@ public class ElytraHealthIndicator extends HudComponent {
       updateGPWS(mc, m, partial, y);
       updateLowElytraHealthAlarm(mc);
     } else {
-      stopPullUp(mc);
-      stopStickShaker(mc);
-      stopTerrain(mc);
-      stopHealthAlarm(mc);
+      stopEverything(mc);
 
       drawCenteredFont(mc, m, "STALL & HEALTH ALARMS SILENCED", dim.wScreen, y - 35, CONFIG.alertColor);
       drawCenteredFont(mc, m, "GPWS WARNINGS SILENCED", dim.wScreen, y - 25, CONFIG.alertColor);
@@ -79,9 +74,16 @@ public class ElytraHealthIndicator extends HudComponent {
     }
   }
 
+  public void stopEverything(MinecraftClient mc) {
+    stopPullUp(mc);
+    stopStickShaker(mc);
+    stopTerrain(mc);
+    stopHealthAlarm(mc);
+  }
+
   private void updateLowElytraHealthAlarm(MinecraftClient mc) {
     if (computer.elytraHealth <= 10) {
-      if (!lowElytraHealthAlarm) {
+      if (!lowElytraHealthAlarm && CONFIG_SETTINGS.lowElytraHealthAlarm) {
         play(mc, ELYTRA_LOW, 0.75f);
         lowElytraHealthAlarm = true;
       }
@@ -111,6 +113,8 @@ public class ElytraHealthIndicator extends HudComponent {
     }
 
     if (Math.max(descentSpeed, 15) > computer.distanceFromGround) {
+      stopPullUp(mc);
+
       if (CONFIG_SETTINGS.gpwsTextAlerts)
         drawCenteredFont(mc, m, "TOO LOW - TERRAIN", dim.wScreen, y - 25, CONFIG.alertColor);
       if (CONFIG_SETTINGS.gpwsVoiceAlerts && !tooLowTerrain) {
@@ -132,7 +136,9 @@ public class ElytraHealthIndicator extends HudComponent {
 
     if (CONFIG_SETTINGS.gpwsTextAlerts)
       drawCenteredFont(mc, m, "OBSTACLE AHEAD", dim.wScreen, y - 25, CONFIG.alertColor);
-    if (CONFIG_SETTINGS.autoGcas && !stickShakerActive && (computer.velocity.y * TICKS_PER_SECOND > -10 || computer.pitch < 0) && mc.player.getBlockPos().isWithinDistance(straightAhead.getBlockPos(), computer.speed * Math.min(2, computer.distanceFromGround))) { // Auto-GCAS
+    if (CONFIG_SETTINGS.autoGcas && computer.pitch < 55 && (computer.velocity.y * TICKS_PER_SECOND > -10 || computer.pitch < 0) && mc.player.getBlockPos().isWithinDistance(straightAhead.getBlockPos(), computer.speed * Math.min(2, computer.distanceFromGround))) { // Auto-GCAS
+      stopPullUp(mc);
+
       drawCenteredFont(mc, m, "AUTO-GCAS", dim.wScreen, y - 15, CONFIG.alertColor);
       mc.player.changeLookDirection(0, (55 - computer.pitch) * -tickDelta);
     } else if (mc.player.getBlockPos().isWithinDistance(straightAhead.getBlockPos(), computer.speed * Math.min(5, computer.distanceFromGround))) { // *whoop whoop* "Pull up!"

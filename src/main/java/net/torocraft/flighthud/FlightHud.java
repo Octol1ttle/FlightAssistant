@@ -18,23 +18,23 @@ public class FlightHud implements ClientModInitializer {
   public static SettingsConfig CONFIG_SETTINGS = new SettingsConfig();
   public static HudConfig CONFIG_MIN = new HudConfig();
   public static HudConfig CONFIG_FULL = new HudConfig();
-  
+
   public static ConfigLoader<SettingsConfig> CONFIG_LOADER_SETTINGS = new ConfigLoader<>(
-    new SettingsConfig(), 
-    FlightHud.MODID + ".settings.json", 
-    config -> FlightHud.CONFIG_SETTINGS = config);
-    
+          new SettingsConfig(),
+          FlightHud.MODID + ".settings.json",
+          config -> FlightHud.CONFIG_SETTINGS = config);
+
 
   public static ConfigLoader<HudConfig> CONFIG_LOADER_FULL = new ConfigLoader<>(
-    new HudConfig(), 
-    FlightHud.MODID + ".full.json", 
-    config -> FlightHud.CONFIG_FULL = config);
-  
+          new HudConfig(),
+          FlightHud.MODID + ".full.json",
+          config -> FlightHud.CONFIG_FULL = config);
+
 
   public static ConfigLoader<HudConfig> CONFIG_LOADER_MIN = new ConfigLoader<>(
-    HudConfig.getDefaultMinSettings(), 
-    FlightHud.MODID + ".min.json", 
-    config -> FlightHud.CONFIG_MIN = config);
+          HudConfig.getDefaultMinSettings(),
+          FlightHud.MODID + ".min.json",
+          config -> FlightHud.CONFIG_MIN = config);
 
   private static KeyBinding keyBinding;
   public static KeyBinding killSwitch;
@@ -61,7 +61,7 @@ public class FlightHud implements ClientModInitializer {
     });
 
     killSwitch = new KeyBinding("key.flighthud.killSwitch", InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_CAPS_LOCK, "category.flighthud.killSwitch");
+            GLFW.GLFW_KEY_CAPS_LOCK, "category.flighthud.toggleDisplayMode");
 
     KeyBindingHelper.registerKeyBinding(killSwitch);
   }
