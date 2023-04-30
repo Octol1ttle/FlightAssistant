@@ -8,7 +8,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.torocraft.flighthud.Dimensions;
@@ -26,14 +25,11 @@ public class ElytraHealthIndicator extends HudComponent {
 
   private static final SoundEvent STICK_SHAKER = SoundEvent.of(new Identifier("flighthud:stick_shaker"));
   private static final SoundEvent PULL_UP_TERRAIN = SoundEvent.of(new Identifier("flighthud:pull_up_terrain"));
-  private static final SoundEvent TOO_LOW_TERRAIN = SoundEvent.of(new Identifier("flighthud:too_low_terrain"));
   private static final SoundEvent ELYTRA_LOW = SoundEvent.of(new Identifier("flighthud:elytra_low"));
   private boolean pullUpActive = false;
   private boolean stickShakerActive = false;
-  private boolean tooLowTerrain = false;
   private boolean lowElytraHealthAlarm = false;
   private boolean killSwitchActive = false;
-  private final boolean holdingKillSwitch = false;
 
   public ElytraHealthIndicator(FlightComputer computer, Dimensions dim) {
     this.dim = dim;
@@ -77,13 +73,12 @@ public class ElytraHealthIndicator extends HudComponent {
   public void stopEverything(MinecraftClient mc) {
     stopPullUp(mc);
     stopStickShaker(mc);
-    stopTerrain(mc);
     stopHealthAlarm(mc);
   }
 
   private void updateLowElytraHealthAlarm(MinecraftClient mc) {
-    if (computer.elytraHealth <= 10) {
-      if (!lowElytraHealthAlarm && CONFIG_SETTINGS.lowElytraHealthAlarm) {
+    if (computer.elytraHealth <= 10 && CONFIG_SETTINGS.lowElytraHealthAlarm) {
+      if (!lowElytraHealthAlarm) {
         play(mc, ELYTRA_LOW, 0.75f);
         lowElytraHealthAlarm = true;
       }
@@ -107,42 +102,44 @@ public class ElytraHealthIndicator extends HudComponent {
 
   private void updateGPWS(MinecraftClient mc, MatrixStack m, float tickDelta, float y) {
     double descentSpeed = -computer.velocity.y * TICKS_PER_SECOND;
-    if (CONFIG_SETTINGS.autoGcas && computer.pitch < -2 && !stickShakerActive && descentSpeed * 2 >= computer.distanceFromGround) {
-      drawCenteredFont(mc, m, "AUTO-GCAS", dim.wScreen, y - 15, CONFIG.alertColor);
-      mc.player.changeLookDirection(0, Math.min(-1, computer.pitch) * tickDelta);
+    if (computer.pitch < -2 && !stickShakerActive && descentSpeed > 7) {
+      if (descentSpeed * 2 >= computer.distanceFromGround) {
+        if (CONFIG_SETTINGS.autoGcas) {
+          stopPullUp(mc);
+          drawCenteredFont(mc, m, "AUTO-GCAS", dim.wScreen, y - 15, CONFIG.alertColor);
+          mc.player.changeLookDirection(0, Math.min(-1, computer.pitch) * tickDelta);
+        }
+        return;
+      } else if (descentSpeed * 5 >= computer.distanceFromGround) {
+        if (CONFIG_SETTINGS.gpwsTextAlerts)
+          drawCenteredFont(mc, m, "PULL UP", dim.wScreen, y - 25, CONFIG.alertColor);
+        if (CONFIG_SETTINGS.gpwsVoiceAlerts && !pullUpActive) {
+          play(mc, PULL_UP_TERRAIN, 0.75f);
+          pullUpActive = true;
+        }
+        return;
+      }
     }
 
-    if (Math.max(descentSpeed, 15) > computer.distanceFromGround) {
+    if (descentSpeed <= 5 && computer.velocity.horizontalLength() * TICKS_PER_SECOND <= 7) {
       stopPullUp(mc);
-
-      if (CONFIG_SETTINGS.gpwsTextAlerts)
-        drawCenteredFont(mc, m, "TOO LOW - TERRAIN", dim.wScreen, y - 25, CONFIG.alertColor);
-      if (CONFIG_SETTINGS.gpwsVoiceAlerts && !tooLowTerrain) {
-        play(mc, TOO_LOW_TERRAIN, 0.5f);
-        tooLowTerrain = true;
-      }
       return;
-    } else stopTerrain(mc);
-
-    Vec3d vec3d = mc.player.getCameraPosVec(tickDelta);
-    Vec3d vec3d2 = getRotationVec(computer.flightYaw);
-    float time = Math.min(10, computer.distanceFromGround);
-    Vec3d vec3d3 = vec3d.add(vec3d2.x * TICKS_PER_SECOND * time, vec3d2.y * TICKS_PER_SECOND * time, vec3d2.z * TICKS_PER_SECOND * time);
-    BlockHitResult straightAhead = mc.player.world.raycast(new RaycastContext(vec3d, vec3d3, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, mc.player));
-    if (straightAhead.getType() != HitResult.Type.BLOCK) {
+    }
+    BlockHitResult terrain = raycast(mc, tickDelta, -computer.flightPitch, computer.flightYaw, 10);
+    if (terrain.getType() != HitResult.Type.BLOCK || terrain.getBlockPos().getY() == computer.groundLevel) {
       stopPullUp(mc);
       return;
     }
 
     if (CONFIG_SETTINGS.gpwsTextAlerts)
       drawCenteredFont(mc, m, "OBSTACLE AHEAD", dim.wScreen, y - 25, CONFIG.alertColor);
-    if (CONFIG_SETTINGS.autoGcas && computer.pitch < 55 && (computer.velocity.y * TICKS_PER_SECOND > -10 || computer.pitch < 0) && mc.player.getBlockPos().isWithinDistance(straightAhead.getBlockPos(), computer.speed * Math.min(2, computer.distanceFromGround))) { // Auto-GCAS
-      stopPullUp(mc);
 
+    if (CONFIG_SETTINGS.autoGcas && computer.pitch < 55 && (computer.velocity.y * TICKS_PER_SECOND > -10 || computer.pitch < 0) && mc.player.getBlockPos().isWithinDistance(terrain.getBlockPos(), computer.speed * 2) && raycast(mc, tickDelta, -55, mc.player.getYaw(), 5).getType() != HitResult.Type.BLOCK) { // Auto-GCAS
+      stopPullUp(mc);
       drawCenteredFont(mc, m, "AUTO-GCAS", dim.wScreen, y - 15, CONFIG.alertColor);
       mc.player.changeLookDirection(0, (55 - computer.pitch) * -tickDelta);
-    } else if (mc.player.getBlockPos().isWithinDistance(straightAhead.getBlockPos(), computer.speed * Math.min(5, computer.distanceFromGround))) { // *whoop whoop* "Pull up!"
-      if (CONFIG_SETTINGS.gpwsTextAlerts && descentSpeed * 2 < computer.distanceFromGround)
+    } else if (mc.player.getBlockPos().isWithinDistance(terrain.getBlockPos(), computer.speed * 5)) { // "Obstacle ahead, pull up!"
+      if (CONFIG_SETTINGS.gpwsTextAlerts)
         drawCenteredFont(mc, m, "PULL UP", dim.wScreen, y - 15, CONFIG.alertColor);
       if (CONFIG_SETTINGS.gpwsVoiceAlerts && !pullUpActive) {
         play(mc, PULL_UP_TERRAIN, 0.75f);
@@ -151,10 +148,12 @@ public class ElytraHealthIndicator extends HudComponent {
     } else stopPullUp(mc);
   }
 
-  private Vec3d getRotationVec(float yaw) {
-    float f = MathHelper.cos(-yaw * 0.017453292F - 3.1415927F);
-    float g = MathHelper.sin(-yaw * 0.017453292F - 3.1415927F);
-    return new Vec3d(-g, 0, -f);
+  public BlockHitResult raycast(MinecraftClient mc, float tickDelta, float pitch, float yaw, int seconds) {
+    Vec3d vec3d = mc.player.getCameraPosVec(tickDelta);
+    Vec3d vec3d2 = Vec3d.fromPolar(pitch, yaw);
+    float time = Math.min(10, seconds);
+    Vec3d vec3d3 = vec3d.add(vec3d2.x * TICKS_PER_SECOND * time, vec3d2.y * TICKS_PER_SECOND * time, vec3d2.z * TICKS_PER_SECOND * time);
+    return mc.player.world.raycast(new RaycastContext(vec3d, vec3d3, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, mc.player));
   }
 
   private void stopPullUp(MinecraftClient mc) {
@@ -165,11 +164,6 @@ public class ElytraHealthIndicator extends HudComponent {
   private void stopStickShaker(MinecraftClient mc) {
     stickShakerActive = false;
     mc.getSoundManager().stopSounds(STICK_SHAKER.getId(), SoundCategory.MASTER);
-  }
-
-  private void stopTerrain(MinecraftClient mc) {
-    tooLowTerrain = false;
-    mc.getSoundManager().stopSounds(TOO_LOW_TERRAIN.getId(), SoundCategory.MASTER);
   }
 
   private void stopHealthAlarm(MinecraftClient mc) {

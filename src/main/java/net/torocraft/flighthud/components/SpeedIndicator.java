@@ -6,6 +6,8 @@ import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.FlightComputer;
 import net.torocraft.flighthud.HudComponent;
 
+import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
+
 public class SpeedIndicator extends HudComponent {
   private final Dimensions dim;
   private final FlightComputer computer;
@@ -31,7 +33,11 @@ public class SpeedIndicator extends HudComponent {
 
     if (CONFIG.speed_showReadout) {
       drawRightAlignedFont(mc, m, String.format("%.2f", computer.speed), xSpeedText, dim.yMid - 3);
-        drawBox(m, xSpeedText - 29.5f, dim.yMid - 4.5f, 30);
+
+      float frameWidth = dim.rFrame - dim.lFrame;
+      drawFont(mc, m, String.format("G/S: %.2f", computer.velocity.horizontalLength() * TICKS_PER_SECOND), dim.lFrame + frameWidth * 0.25f, dim.hScreen * 0.8f, CONFIG.color);
+      drawFont(mc, m, String.format("V/S: %.2f", computer.velocity.y * TICKS_PER_SECOND), dim.lFrame + frameWidth * 0.75f - 7, dim.hScreen * 0.8f, CONFIG.color);
+      drawBox(m, xSpeedText - 29.5f, dim.yMid - 4.5f, 30);
     }
 
 

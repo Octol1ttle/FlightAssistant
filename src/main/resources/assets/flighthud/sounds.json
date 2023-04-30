@@ -4,11 +4,6 @@
       "flighthud:stick_shaker"
     ]
   },
-  "too_low_terrain": {
-    "sounds": [
-      "flighthud:too_low_terrain"
-    ]
-  },
   "pull_up_terrain": {
     "sounds": [
       "flighthud:pull_up_terrain"
