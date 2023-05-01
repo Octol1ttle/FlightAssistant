@@ -164,7 +164,7 @@ public class ElytraHealthIndicator extends HudComponent {
       }
     }
 
-    if (descentSpeed <= 5 && computer.velocity.horizontalLength() * TICKS_PER_SECOND <= 7) {
+    if (descentSpeed <= 5 && computer.velocity.horizontalLength() * TICKS_PER_SECOND <= 10) {
       stopPullUp(mc);
       return;
     }
