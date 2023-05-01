@@ -239,23 +239,23 @@ public class ElytraHealthIndicator extends HudComponent {
   }
 
   private void flyToCruiseAltitude(MinecraftClient mc, float tickDelta) {
-      float targetPitch = (float) Math.toDegrees(-Math.asin((autopilotCruiseAltitude - mc.player.getY()) / (Math.abs(autopilotCruiseAltitude - mc.player.getY()) + computer.velocity.horizontalLength() * TICKS_PER_SECOND)));
-      float targetYaw = (float) Math.toDegrees(-Math.atan2(autopilotDestX - mc.player.getX(), autopilotDestZ - mc.player.getZ()));
+    float targetPitch = (float) Math.toDegrees(-Math.asin((autopilotCruiseAltitude - mc.player.getY()) / (Math.abs(autopilotCruiseAltitude - mc.player.getY()) + computer.velocity.horizontalLength() * TICKS_PER_SECOND)));
+    float targetYaw = (float) Math.toDegrees(-Math.atan2(autopilotDestX - mc.player.getX(), autopilotDestZ - mc.player.getZ()));
 
-      if (!(mc.player.getMainHandStack().getItem() instanceof FireworkRocketItem) && !(mc.player.getOffHandStack().getItem() instanceof FireworkRocketItem)) {
-          drawAlert("AUTO FLT A/THR UNAVAILABLE");
-          targetPitch = -2;
-      }
+    if (!(mc.player.getMainHandStack().getItem() instanceof FireworkRocketItem) && !(mc.player.getOffHandStack().getItem() instanceof FireworkRocketItem)) {
+      drawAlert("AUTO FLT A/THR UNAVAILABLE");
+      targetPitch = -2;
+    }
 
-      mc.player.changeLookDirection((targetYaw - mc.player.getYaw()) * tickDelta, (Math.max(-45, targetPitch) - mc.player.getPitch(tickDelta)) * tickDelta);
+    mc.player.changeLookDirection((targetYaw - mc.player.getYaw()) * tickDelta, (Math.max(-45, targetPitch) - mc.player.getPitch(tickDelta)) * tickDelta);
 
-      if (computer.speed < 30) {
-          long currentTime = Util.getMeasuringTimeMs();
-          if (targetPitch < -10 && currentTime - lastFireworkActivationTimeMs > 1000) {
-              if (mc.player.getMainHandStack().getItem() instanceof FireworkRocketItem) {
-                  mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
-                  lastFireworkActivationTimeMs = currentTime;
-              } else if (mc.player.getOffHandStack().getItem() instanceof FireworkRocketItem) {
+    if (computer.speed < 30) {
+      long currentTime = Util.getMeasuringTimeMs();
+      if (targetPitch < -10 && currentTime - lastFireworkActivationTimeMs > 1000) {
+        if (mc.player.getMainHandStack().getItem() instanceof FireworkRocketItem) {
+          mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
+          lastFireworkActivationTimeMs = currentTime;
+        } else if (mc.player.getOffHandStack().getItem() instanceof FireworkRocketItem) {
           mc.interactionManager.interactItem(mc.player, Hand.OFF_HAND);
           lastFireworkActivationTimeMs = currentTime;
         }
