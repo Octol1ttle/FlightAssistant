@@ -104,7 +104,7 @@ public class FlightComputer {
     return client.player.getPitch(parital) * -1;
   }
 
-  private boolean isGround(BlockPos pos, MinecraftClient client) {
+  public static boolean isGround(BlockPos pos, MinecraftClient client) {
     BlockState block = client.world.getBlockState(pos);
     return !block.isAir();
   }

@@ -8,17 +8,12 @@ import net.torocraft.flighthud.HudRenderer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
-
-  @Unique
-  private final HudRenderer hud = new HudRenderer();
-
   @Final
   @Shadow
   private MinecraftClient client;
@@ -27,7 +22,7 @@ public class InGameHudMixin {
   private void render(MatrixStack ms, float partial, CallbackInfo info) {
     if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
       net.raphimc.immediatelyfast.feature.batching.BatchingBuffers.beginHudBatching();
-    hud.render(ms, partial, client);
+    HudRenderer.INSTANCE.render(ms, partial, client);
     if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
       net.raphimc.immediatelyfast.feature.batching.BatchingBuffers.endHudBatching();
   }

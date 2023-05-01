@@ -1,7 +1,7 @@
 package net.torocraft.flighthud;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -11,6 +11,9 @@ import net.torocraft.flighthud.config.HudConfig;
 import net.torocraft.flighthud.config.SettingsConfig;
 import net.torocraft.flighthud.config.loader.ConfigLoader;
 import org.lwjgl.glfw.GLFW;
+
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class FlightHud implements ClientModInitializer {
   public static final String MODID = "flighthud";
@@ -67,7 +70,12 @@ public class FlightHud implements ClientModInitializer {
   }
 
   private static void setupCommand() {
-    ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(ClientCommandManager.literal("flighthud")
-            .then(ClientCommandManager.literal("toggle").executes(new SwitchDisplayModeCommand()))));
+    ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(literal("flighthud")
+            .then(literal("toggle").executes(new SwitchDisplayModeCommand()))
+            .then(literal("ap")
+                    .then(argument("destinationX", IntegerArgumentType.integer(-30_000_000, 30_000_000))
+                            .then(argument("destinationZ", IntegerArgumentType.integer(-30_000_000, 30_000_000))
+                                    .then(argument("cruiseAltitude", IntegerArgumentType.integer(0, 640))
+                                            .executes(new AutopilotCommand())))))));
   }
 }

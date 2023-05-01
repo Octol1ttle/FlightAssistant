@@ -12,13 +12,14 @@ import net.torocraft.flighthud.components.SpeedIndicator;
 import net.torocraft.flighthud.config.SettingsConfig.DisplayMode;
 
 public class HudRenderer extends HudComponent {
+  public static final HudRenderer INSTANCE = new HudRenderer();
 
   private final Dimensions dim = new Dimensions();
   public final FlightComputer computer = new FlightComputer();
   private static final String FULL = DisplayMode.FULL.toString();
   private static final String MIN = DisplayMode.MIN.toString();
 
-  private final ElytraHealthIndicator automationComponent = new ElytraHealthIndicator(computer, dim);
+  protected final ElytraHealthIndicator automationComponent = new ElytraHealthIndicator(computer, dim);
 
   private final HudComponent[] components =
           new HudComponent[]{new FlightPathIndicator(computer, dim), new LocationIndicator(dim),
