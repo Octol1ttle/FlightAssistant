@@ -7,6 +7,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -110,10 +111,9 @@ public class FlightComputer {
   }
 
   public BlockPos findGround(MinecraftClient client) {
-    BlockPos pos = client.player.getBlockPos();
+    BlockPos.Mutable pos = client.player.getBlockPos().mutableCopy();
     while (pos.getY() >= -64) {
-      pos = pos.down();
-      if (isGround(pos, client)) {
+      if (isGround(pos.move(Direction.DOWN), client)) {
         return pos;
       }
     }

@@ -23,6 +23,7 @@ public class SettingsConfig implements IConfig {
   public boolean stickShaker = true;
   public boolean stickPusher = true;
   public boolean lowElytraHealthAlarm = true;
+  public int lowElytraHealthAlarmThreshold = 10;
 
   @Override
   public void update() {
