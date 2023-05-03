@@ -262,11 +262,14 @@ public class ElytraHealthIndicator extends HudComponent {
     BlockHitResult toTargetPath = raycast(mc, tickDelta, targetPitch, targetYaw, 5);
 
     if (toTargetPath.getType() == HitResult.Type.BLOCK) {
-      allowFireworks = true;
       BlockPos highest = findGroundPos(mc, toTargetPath.getBlockPos().mutableCopy().setY(320 + 1));
       double targetY = Math.max(dest.y, highest.getY() + 10);
       Vec3d avoidVec = new Vec3d(highest.getX(), targetY, highest.getZ());
-      targetPitch = (float) Math.min(35, Math.toDegrees(-Math.asin((targetY - mc.player.getY()) / avoidVec.distanceTo(mc.player.getPos()))));
+      double distanceToObstacle = avoidVec.distanceTo(mc.player.getPos());
+      if (dest.distanceTo(mc.player.getPos()) > distanceToObstacle) {
+        allowFireworks = true;
+        targetPitch = (float) Math.min(35, Math.toDegrees(-Math.asin((targetY - mc.player.getY()) / distanceToObstacle)));
+      }
     }
 
     if (Float.isNaN(targetPitch) || Float.isNaN(targetYaw)) {
