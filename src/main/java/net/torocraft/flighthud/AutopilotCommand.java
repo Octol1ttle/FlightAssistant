@@ -15,7 +15,7 @@ public class AutopilotCommand implements Command<FabricClientCommandSource> {
         int cruiseAltitude = IntegerArgumentType.getInteger(context, "cruiseAltitude");
         if (context.getSource().getWorld().getDimension().hasCeiling() && (context.getSource().getPosition().y < 128 || cruiseAltitude < 128))
             throw CANNOT_USE_AP_IN_NETHER.create();
-        HudRenderer.INSTANCE.automationComponent.setAutopilotSettings(IntegerArgumentType.getInteger(context, "destinationX"), IntegerArgumentType.getInteger(context, "destinationZ"), cruiseAltitude);
+        HudRenderer.INSTANCE.automationComponent.setAutopilotSettings(context.getSource().getClient(), IntegerArgumentType.getInteger(context, "destinationX"), IntegerArgumentType.getInteger(context, "destinationZ"), cruiseAltitude);
         return 0;
     }
 }

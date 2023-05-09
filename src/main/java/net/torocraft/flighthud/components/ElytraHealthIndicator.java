@@ -1,7 +1,6 @@
 package net.torocraft.flighthud.components;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.EntityTrackingSoundInstance;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.server.world.ChunkHolder;
@@ -19,6 +18,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
+import net.torocraft.flighthud.AlertSoundInstance;
 import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.FlightComputer;
 import net.torocraft.flighthud.HudComponent;
@@ -40,8 +40,7 @@ public class ElytraHealthIndicator extends HudComponent {
   private static final SoundEvent STICK_SHAKER = SoundEvent.of(new Identifier("flighthud:stick_shaker"));
   private static final SoundEvent PULL_UP_TERRAIN = SoundEvent.of(new Identifier("flighthud:pull_up_terrain"));
   private static final SoundEvent ELYTRA_LOW = SoundEvent.of(new Identifier("flighthud:elytra_low"));
-  private static final SoundEvent AUTOPILOT_DISCONNECT_AUTOMATIC = SoundEvent.of(new Identifier("flighthud:autopilot_disconnect_automatic"));
-  private static final SoundEvent AUTOPILOT_DISCONNECT_MANUAL = SoundEvent.of(new Identifier("flighthud:autopilot_disconnect_manual"));
+  private static final SoundEvent AUTOPILOT_DISCONNECT = SoundEvent.of(new Identifier("flighthud:autopilot_disconnect"));
   private boolean pullUpActive = false;
   private boolean stickShakerActive = false;
   private boolean lowElytraHealthAlarm = false;
@@ -76,7 +75,7 @@ public class ElytraHealthIndicator extends HudComponent {
         stopAutopilotWarning(mc);
       else if (autopilotEngaged) {
         autopilotEngaged = false;
-        play(mc, AUTOPILOT_DISCONNECT_MANUAL, 1);
+        playApDisconnect(mc);
       } else
         killSwitchActive = !killSwitchActive;
     }
@@ -107,18 +106,11 @@ public class ElytraHealthIndicator extends HudComponent {
     }
   }
 
-  public void stopEverything(MinecraftClient mc) {
-    stopPullUp(mc);
-    stopStickShaker(mc);
-    stopHealthAlarm(mc);
-    stopAutopilotWarning(mc);
-  }
-
   private void updateLowElytraHealthAlarm(MinecraftClient mc) {
     if (CONFIG_SETTINGS.lowElytraHealthAlarm && computer.elytraHealth <= CONFIG_SETTINGS.lowElytraHealthAlarmThreshold) {
       drawAlert("ELYTRA HEALTH LOW - LAND ASAP");
       if (!lowElytraHealthAlarm) {
-        play(mc, ELYTRA_LOW, 0.75f);
+        playRepeating(mc, ELYTRA_LOW, 0.75f);
         lowElytraHealthAlarm = true;
       }
     } else stopHealthAlarm(mc);
@@ -129,7 +121,7 @@ public class ElytraHealthIndicator extends HudComponent {
       disconnectAutopilot(mc);
       drawAlert("STALL");
       if (CONFIG_SETTINGS.stickShaker && !stickShakerActive) {
-        play(mc, STICK_SHAKER, 1);
+        playRepeating(mc, STICK_SHAKER, 1);
         stickShakerActive = true;
       }
 
@@ -151,10 +143,12 @@ public class ElytraHealthIndicator extends HudComponent {
         }
         return;
       } else if (descentSpeed * 5 >= computer.distanceFromGround) {
-        if (CONFIG_SETTINGS.gpwsTextAlerts)
+        if (CONFIG_SETTINGS.gpwsTextAlerts) {
+          drawAlert("SINKRATE");
           drawAlert("PULL UP");
+        }
         if (CONFIG_SETTINGS.gpwsVoiceAlerts && !pullUpActive) {
-          play(mc, PULL_UP_TERRAIN, 0.75f);
+          playRepeating(mc, PULL_UP_TERRAIN, 0.75f);
           pullUpActive = true;
         }
         return;
@@ -182,18 +176,10 @@ public class ElytraHealthIndicator extends HudComponent {
       if (CONFIG_SETTINGS.gpwsTextAlerts)
         drawAlert("PULL UP");
       if (CONFIG_SETTINGS.gpwsVoiceAlerts && !pullUpActive) {
-        play(mc, PULL_UP_TERRAIN, 0.75f);
+        playRepeating(mc, PULL_UP_TERRAIN, 0.75f);
         pullUpActive = true;
       }
     } else stopPullUp(mc);
-  }
-
-  public BlockHitResult raycast(MinecraftClient mc, float tickDelta, float pitch, float yaw, int seconds) {
-    Vec3d vec3d = mc.player.getCameraPosVec(tickDelta);
-    Vec3d vec3d2 = Vec3d.fromPolar(pitch, yaw);
-    float time = Math.min(10, seconds);
-    Vec3d vec3d3 = vec3d.add(vec3d2.x * TICKS_PER_SECOND * time, vec3d2.y * TICKS_PER_SECOND * time, vec3d2.z * TICKS_PER_SECOND * time);
-    return mc.player.world.raycast(new RaycastContext(vec3d, vec3d3, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, mc.player));
   }
 
   private void updateAutopilot(MinecraftClient mc, float tickDelta) {
@@ -203,7 +189,7 @@ public class ElytraHealthIndicator extends HudComponent {
     Vec3d cruise = new Vec3d(mutable.getX(), autopilotCruiseAltitude, mutable.getZ());
 
     if (isPosLoaded(mc.player.world, mutable)) {
-      mutable = findGroundPos(mc, mutable);
+      mutable = findLandingPos(mc, mutable);
       if (mutable.getY() <= -255) {
         drawMessage("ALT CRZ");
         flyToCruiseAltitude(mc, tickDelta, true, cruise);
@@ -211,16 +197,19 @@ public class ElytraHealthIndicator extends HudComponent {
         Vec3d dest = new Vec3d(mutable.getX(), mutable.getY(), mutable.getZ());
 
         BlockHitResult toDest = mc.world.raycast(new RaycastContext(mc.player.getPos(), dest, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, mc.player));
-        if (mc.player.getY() > dest.y && (toDest.getType() != HitResult.Type.BLOCK || Math.abs(toDest.getPos().getY() - dest.y) <= 2)) {
-          drawMessage("LAND");
+        if (mc.player.getY() + 0.5 > dest.y && (toDest.getType() != HitResult.Type.BLOCK || Math.abs(toDest.getPos().getY() - dest.y) <= 2)) {
           double distance = dest.distanceTo(mc.player.getPos());
-          if (distance < 5.0) {
-            disconnectAutopilot(mc);
-            return;
-          }
 
-          float targetPitch = (float) Math.toDegrees(-Math.asin((dest.y - mc.player.getY()) / distance));
           float targetYaw = (float) Math.toDegrees(Math.atan2(-(dest.x - mc.player.getX()), dest.z - mc.player.getZ()));
+          float targetPitch;
+
+          if (dest.subtract(mc.player.getPos()).horizontalLength() <= 7.5) {
+            drawMessage("FLARE");
+            targetPitch = -40;
+          } else {
+            drawMessage("LAND");
+            targetPitch = (float) Math.toDegrees(-Math.asin((dest.y - mc.player.getY()) / distance));
+          }
 
           if (Float.isNaN(targetPitch) || Float.isNaN(targetYaw)) {
             disconnectAutopilot(mc);
@@ -229,7 +218,7 @@ public class ElytraHealthIndicator extends HudComponent {
           mc.player.changeLookDirection((targetYaw - mc.player.getYaw()) * tickDelta, (Math.max(-55, Math.min(35, targetPitch)) - mc.player.getPitch()) * tickDelta);
         } else {
           drawMessage("APPR");
-          flyToCruiseAltitude(mc, tickDelta, dest.y > mc.player.getY(), new Vec3d(dest.x, Math.max(cruise.y, dest.y + 10), dest.z));
+          flyToCruiseAltitude(mc, tickDelta, dest.y > mc.player.getY(), new Vec3d(dest.x, Math.max(cruise.y, Math.max(dest.y, toDest.getPos().y) + 10), dest.z));
         }
       }
     } else {
@@ -246,7 +235,7 @@ public class ElytraHealthIndicator extends HudComponent {
     else
       distanceToDest = Math.min(distanceToDest, currentDistance);
 
-    if (currentDistance - 10 > distanceToDest) { // It appears we are flying away from the destination
+    if (currentDistance - 15 > distanceToDest) { // It appears we are flying away from the destination
       disconnectAutopilot(mc);
       return;
     }
@@ -262,7 +251,7 @@ public class ElytraHealthIndicator extends HudComponent {
     BlockHitResult toTargetPath = raycast(mc, tickDelta, targetPitch, targetYaw, 5);
 
     if (toTargetPath.getType() == HitResult.Type.BLOCK) {
-      BlockPos highest = findGroundPos(mc, toTargetPath.getBlockPos().mutableCopy().setY(320 + 1));
+      BlockPos highest = findLandingPos(mc, toTargetPath.getBlockPos().mutableCopy().setY(320 + 1));
       double targetY = Math.max(dest.y, highest.getY() + 10);
       Vec3d avoidVec = new Vec3d(highest.getX(), targetY, highest.getZ());
       double distanceToObstacle = avoidVec.distanceTo(mc.player.getPos());
@@ -294,13 +283,28 @@ public class ElytraHealthIndicator extends HudComponent {
     }
   }
 
-  private BlockPos.Mutable findGroundPos(MinecraftClient mc, BlockPos.Mutable pos) {
+  public BlockHitResult raycast(MinecraftClient mc, float tickDelta, float pitch, float yaw, int seconds) {
+    Vec3d vec3d = mc.player.getCameraPosVec(tickDelta);
+    Vec3d vec3d2 = Vec3d.fromPolar(pitch, yaw);
+    float time = Math.min(10, seconds);
+    Vec3d vec3d3 = vec3d.add(vec3d2.x * TICKS_PER_SECOND * time, vec3d2.y * TICKS_PER_SECOND * time, vec3d2.z * TICKS_PER_SECOND * time);
+    return mc.player.world.raycast(new RaycastContext(vec3d, vec3d3, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, mc.player));
+  }
+
+  private BlockPos.Mutable findLandingPos(MinecraftClient mc, BlockPos.Mutable pos) {
     while (pos.getY() >= -64) {
       if (FlightComputer.isGround(pos.move(Direction.DOWN), mc)) {
-        return pos;
+        return pos.move(Direction.UP); // Land ABOVE the block to avoid collisions when the player is below the landing point
       }
     }
     return pos.setY(-255); // I regret to inform you that we are in the FUCKING VOID
+  }
+
+  private static boolean isPosLoaded(World world, BlockPos pos) {
+    int i = ChunkSectionPos.getSectionCoord(pos.getX());
+    int j = ChunkSectionPos.getSectionCoord(pos.getZ());
+    WorldChunk worldChunk = world.getChunkManager().getWorldChunk(i, j);
+    return worldChunk != null && worldChunk.getLevelType() != ChunkHolder.LevelType.INACCESSIBLE;
   }
 
   private void drawEcam(MinecraftClient mc, MatrixStack m, float y) {
@@ -317,14 +321,9 @@ public class ElytraHealthIndicator extends HudComponent {
     alerts.clear();
   }
 
-  private static boolean isPosLoaded(World world, BlockPos pos) {
-    int i = ChunkSectionPos.getSectionCoord(pos.getX());
-    int j = ChunkSectionPos.getSectionCoord(pos.getZ());
-    WorldChunk worldChunk = world.getChunkManager().getWorldChunk(i, j);
-    return worldChunk != null && worldChunk.getLevelType() != ChunkHolder.LevelType.INACCESSIBLE;
-  }
-
-  public void setAutopilotSettings(int destX, int destZ, int cruiseAltitude) {
+  public void setAutopilotSettings(MinecraftClient mc, int destX, int destZ, int cruiseAltitude) {
+    stopAutopilotWarning(mc);
+    stopPullUp(mc);
     autopilotEngaged = true;
     autopilotDestX = destX;
     autopilotDestZ = destZ;
@@ -337,9 +336,18 @@ public class ElytraHealthIndicator extends HudComponent {
 
     autopilotEngaged = false;
     if (!autopilotWarningActive) {
-      play(mc, AUTOPILOT_DISCONNECT_AUTOMATIC, 1);
+      playRepeating(mc, AUTOPILOT_DISCONNECT, 1);
       autopilotWarningActive = true;
     }
+  }
+
+  public void stopEverything(MinecraftClient mc) {
+    stopPullUp(mc);
+    stopStickShaker(mc);
+    stopHealthAlarm(mc);
+    stopAutopilotWarning(mc);
+    if (distanceToDest > -1 && distanceToDest <= 10)
+      autopilotEngaged = false;
   }
 
   private void stopPullUp(MinecraftClient mc) {
@@ -359,11 +367,15 @@ public class ElytraHealthIndicator extends HudComponent {
 
   private void stopAutopilotWarning(MinecraftClient mc) {
     autopilotWarningActive = false;
-    mc.getSoundManager().stopSounds(AUTOPILOT_DISCONNECT_AUTOMATIC.getId(), SoundCategory.MASTER);
+    mc.getSoundManager().stopSounds(AUTOPILOT_DISCONNECT.getId(), SoundCategory.MASTER);
   }
 
-  private void play(MinecraftClient mc, SoundEvent event, float volume) {
-    mc.getSoundManager().play(new EntityTrackingSoundInstance(event, SoundCategory.MASTER, volume, 1, mc.player, 0));
+  private void playApDisconnect(MinecraftClient mc) {
+    mc.getSoundManager().play(new AlertSoundInstance(ElytraHealthIndicator.AUTOPILOT_DISCONNECT, (float) 1, mc.player, false));
+  }
+
+  private void playRepeating(MinecraftClient mc, SoundEvent event, float volume) {
+    mc.getSoundManager().play(new AlertSoundInstance(event, volume, mc.player, true));
   }
 
   private void drawAlert(String s) {

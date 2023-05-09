@@ -14,14 +14,9 @@
       "flighthud:elytra_low"
     ]
   },
-  "autopilot_disconnect_automatic": {
+  "autopilot_disconnect": {
     "sounds": [
-      "flighthud:autopilot_disconnect_automatic"
-    ]
-  },
-  "autopilot_disconnect_manual": {
-    "sounds": [
-      "flighthud:autopilot_disconnect_manual"
+      "flighthud:autopilot_disconnect"
     ]
   }
 }
