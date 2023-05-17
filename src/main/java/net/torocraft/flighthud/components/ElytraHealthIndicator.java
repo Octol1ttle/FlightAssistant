@@ -110,7 +110,7 @@ public class ElytraHealthIndicator extends HudComponent {
     if (CONFIG_SETTINGS.lowElytraHealthAlarm && computer.elytraHealth <= CONFIG_SETTINGS.lowElytraHealthAlarmThreshold) {
       drawAlert("ELYTRA HEALTH LOW - LAND ASAP");
       if (!lowElytraHealthAlarm) {
-        playRepeating(mc, ELYTRA_LOW, 0.75f);
+        playRepeating(mc, ELYTRA_LOW, 0.5f);
         lowElytraHealthAlarm = true;
       }
     } else stopHealthAlarm(mc);
@@ -121,7 +121,7 @@ public class ElytraHealthIndicator extends HudComponent {
       disconnectAutopilot(mc);
       drawAlert("STALL");
       if (CONFIG_SETTINGS.stickShaker && !stickShakerActive) {
-        playRepeating(mc, STICK_SHAKER, 1);
+        playRepeating(mc, STICK_SHAKER, 0.75f);
         stickShakerActive = true;
       }
 
@@ -135,6 +135,9 @@ public class ElytraHealthIndicator extends HudComponent {
   private void updateGPWS(MinecraftClient mc, float tickDelta) {
     double descentSpeed = -computer.velocity.y * TICKS_PER_SECOND;
     if (computer.pitch < -2 && !stickShakerActive && descentSpeed > 10) {
+      if (CONFIG_SETTINGS.gpwsTextAlerts && descentSpeed * 10 >= computer.distanceFromGround)
+        drawAlert("SINKRATE");
+
       if (descentSpeed * 2 >= computer.distanceFromGround) {
         if (CONFIG_SETTINGS.autoGcas) {
           stopPullUp(mc);
@@ -143,10 +146,8 @@ public class ElytraHealthIndicator extends HudComponent {
         }
         return;
       } else if (descentSpeed * 5 >= computer.distanceFromGround) {
-        if (CONFIG_SETTINGS.gpwsTextAlerts) {
-          drawAlert("SINKRATE");
+        if (CONFIG_SETTINGS.gpwsTextAlerts)
           drawAlert("PULL UP");
-        }
         if (CONFIG_SETTINGS.gpwsVoiceAlerts && !pullUpActive) {
           playRepeating(mc, PULL_UP_TERRAIN, 0.75f);
           pullUpActive = true;
@@ -186,29 +187,33 @@ public class ElytraHealthIndicator extends HudComponent {
     drawMessage("A/P ON - " + killSwitch.getBoundKeyLocalizedText().getString() + " TO DISENGAGE");
 
     BlockPos.Mutable mutable = new BlockPos.Mutable(autopilotDestX, 320 + 1, autopilotDestZ);
-    Vec3d cruise = new Vec3d(mutable.getX(), autopilotCruiseAltitude, mutable.getZ());
+    Vec3d cruise = new Vec3d(mutable.getX() + 0.5, autopilotCruiseAltitude, mutable.getZ() + 0.5);
 
     if (isPosLoaded(mc.player.world, mutable)) {
       mutable = findLandingPos(mc, mutable);
-      if (mutable.getY() <= -255) {
-        drawMessage("ALT CRZ");
-        flyToCruiseAltitude(mc, tickDelta, true, cruise);
-      } else {
-        Vec3d dest = new Vec3d(mutable.getX(), mutable.getY(), mutable.getZ());
+      if (mutable.getY() <= -255)
+        disconnectAutopilot(mc);
+      else {
+        Vec3d dest = new Vec3d(mutable.getX() + 0.5, mutable.getY(), mutable.getZ() + 0.5);
 
         BlockHitResult toDest = mc.world.raycast(new RaycastContext(mc.player.getPos(), dest, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, mc.player));
         if (mc.player.getY() + 0.5 > dest.y && (toDest.getType() != HitResult.Type.BLOCK || Math.abs(toDest.getPos().getY() - dest.y) <= 2)) {
-          double distance = dest.distanceTo(mc.player.getPos());
+          double horizontalDistance = dest.subtract(mc.player.getPos()).horizontalLength();
 
           float targetYaw = (float) Math.toDegrees(Math.atan2(-(dest.x - mc.player.getX()), dest.z - mc.player.getZ()));
           float targetPitch;
 
-          if (dest.subtract(mc.player.getPos()).horizontalLength() <= 7.5) {
+          if (distanceToDest < 0)
+            distanceToDest = horizontalDistance;
+          else
+            distanceToDest = Math.min(distanceToDest, horizontalDistance);
+
+          if (distanceToDest <= 7.5) {
             drawMessage("FLARE");
             targetPitch = -40;
           } else {
             drawMessage("LAND");
-            targetPitch = (float) Math.toDegrees(-Math.asin((dest.y - mc.player.getY()) / distance));
+            targetPitch = (float) Math.toDegrees(-Math.asin((dest.y - mc.player.getY()) / dest.distanceTo(mc.player.getPos())));
           }
 
           if (Float.isNaN(targetPitch) || Float.isNaN(targetYaw)) {
@@ -218,16 +223,16 @@ public class ElytraHealthIndicator extends HudComponent {
           mc.player.changeLookDirection((targetYaw - mc.player.getYaw()) * tickDelta, (Math.max(-55, Math.min(35, targetPitch)) - mc.player.getPitch()) * tickDelta);
         } else {
           drawMessage("APPR");
-          flyToCruiseAltitude(mc, tickDelta, dest.y > mc.player.getY(), new Vec3d(dest.x, Math.max(cruise.y, Math.max(dest.y, toDest.getPos().y) + 10), dest.z));
+          flyToCruiseAltitude(mc, tickDelta, dest.y > mc.player.getY(), new Vec3d(dest.x, Math.max(cruise.y, Math.max(dest.y, toDest.getPos().y) + 10), dest.z), 25);
         }
       }
     } else {
       drawMessage("ALT CRZ");
-      flyToCruiseAltitude(mc, tickDelta, true, cruise);
+      flyToCruiseAltitude(mc, tickDelta, true, cruise, 15);
     }
   }
 
-  private void flyToCruiseAltitude(MinecraftClient mc, float tickDelta, boolean allowFireworks, Vec3d dest) {
+  private void flyToCruiseAltitude(MinecraftClient mc, float tickDelta, boolean allowFireworks, Vec3d dest, int maxTolerableDistanceDeviation) {
     double currentDistance = dest.subtract(mc.player.getPos()).horizontalLength();
 
     if (distanceToDest < 0)
@@ -235,7 +240,7 @@ public class ElytraHealthIndicator extends HudComponent {
     else
       distanceToDest = Math.min(distanceToDest, currentDistance);
 
-    if (currentDistance - 15 > distanceToDest) { // It appears we are flying away from the destination
+    if (currentDistance - maxTolerableDistanceDeviation > distanceToDest) { // It appears we are flying away from the destination
       disconnectAutopilot(mc);
       return;
     }
@@ -253,7 +258,7 @@ public class ElytraHealthIndicator extends HudComponent {
     if (toTargetPath.getType() == HitResult.Type.BLOCK) {
       BlockPos highest = findLandingPos(mc, toTargetPath.getBlockPos().mutableCopy().setY(320 + 1));
       double targetY = Math.max(dest.y, highest.getY() + 10);
-      Vec3d avoidVec = new Vec3d(highest.getX(), targetY, highest.getZ());
+      Vec3d avoidVec = new Vec3d(highest.getX() + 0.5, targetY, highest.getZ() + 0.5);
       double distanceToObstacle = avoidVec.distanceTo(mc.player.getPos());
       if (dest.distanceTo(mc.player.getPos()) > distanceToObstacle) {
         allowFireworks = true;

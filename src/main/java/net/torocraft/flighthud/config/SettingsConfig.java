@@ -14,8 +14,6 @@ public class SettingsConfig implements IConfig {
   public String displayModeWhenFlying = DisplayMode.FULL.toString();
   public String displayModeWhenNotFlying = DisplayMode.NONE.toString();
   public boolean calculateRoll = true;
-  public float rollTurningForce = 1.25f;
-  public float rollSmoothing = 0.85f;
 
   public boolean gpwsTextAlerts = true;
   public boolean gpwsVoiceAlerts = true;

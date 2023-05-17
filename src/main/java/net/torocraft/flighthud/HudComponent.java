@@ -3,9 +3,8 @@ package net.torocraft.flighthud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.config.HudConfig;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public abstract class HudComponent extends DrawableHelper {
 
@@ -13,20 +12,8 @@ public abstract class HudComponent extends DrawableHelper {
 
   public static HudConfig CONFIG;
 
-  public static Vector3f POSITIVE_Z = new Vector3f(0.0f, 0.0f, 1.0f);
-
   protected static int i(float f) {
     return Math.round(f);
-  }
-
-  public static Quaternionf getDegreesQuaternion(float rotationAngle) {
-    rotationAngle *= (float) Math.PI / 180;
-    float f = (float) Math.sin(rotationAngle / 2.0f);
-    float x = POSITIVE_Z.x() * f;
-    float y = POSITIVE_Z.y() * f;
-    float z = POSITIVE_Z.z() * f;
-    float w = (float) Math.cos(rotationAngle / 2.0f);
-    return new Quaternionf(x, y, z, w);
   }
 
   protected float wrapHeading(float degrees) {
@@ -44,7 +31,7 @@ public abstract class HudComponent extends DrawableHelper {
   protected void drawPointer(MatrixStack m, float x, float y, float rot) {
     m.push();
     m.translate(x, y, 0);
-    m.multiply(getDegreesQuaternion(rot + 45));
+    m.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rot + 45));
     drawVerticalLine(m, 0, 0, 5, CONFIG.color);
     drawHorizontalLine(m, 0, 5, 0, CONFIG.color);
     m.pop();

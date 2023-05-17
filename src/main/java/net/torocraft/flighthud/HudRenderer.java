@@ -2,13 +2,7 @@ package net.torocraft.flighthud;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
-import net.torocraft.flighthud.components.AltitudeIndicator;
-import net.torocraft.flighthud.components.ElytraHealthIndicator;
-import net.torocraft.flighthud.components.FlightPathIndicator;
-import net.torocraft.flighthud.components.HeadingIndicator;
-import net.torocraft.flighthud.components.LocationIndicator;
-import net.torocraft.flighthud.components.PitchIndicator;
-import net.torocraft.flighthud.components.SpeedIndicator;
+import net.torocraft.flighthud.components.*;
 import net.torocraft.flighthud.config.SettingsConfig.DisplayMode;
 
 public class HudRenderer extends HudComponent {
@@ -65,7 +59,6 @@ public class HudRenderer extends HudComponent {
         m.scale(scale, scale, scale);
       }
 
-      computer.update(client, partial);
       dim.update(client);
 
       for (HudComponent component : components) {

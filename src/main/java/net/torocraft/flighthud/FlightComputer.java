@@ -8,13 +8,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix3f;
 
 public class FlightComputer {
   private static final float TICKS_PER_SECOND = 20;
 
-  private float previousRollAngle = 0.0f;
+  private final float previousRollAngle = 0.0f;
 
   public Vec3d velocity;
   public float speed;
@@ -29,17 +29,17 @@ public class FlightComputer {
   public Float distanceFromGround;
   public Float elytraHealth;
 
-  public void update(MinecraftClient client, float partial) {
+  public void update(MinecraftClient client, Matrix3f normal) {
     velocity = client.player.getVelocity();
-    pitch = computePitch(client, partial);
+    pitch = computePitch(client);
     speed = computeSpeed(client);
-    roll = computeRoll(client);
+    roll = computeRoll(normal);
     heading = computeHeading(client);
     altitude = computeAltitude(client);
     groundLevel = computeGroundLevel(client);
     distanceFromGround = computeDistanceFromGround(altitude, groundLevel);
     flightPitch = computeFlightPitch(velocity, pitch);
-    flightYaw = computeFlightYaw(velocity, client.player.getYaw(partial));
+    flightYaw = computeFlightYaw(velocity, client.player.getYaw());
     flightHeading = toHeading(flightYaw);
     elytraHealth = computeElytraHealth(client);
   }
@@ -68,41 +68,18 @@ public class FlightComputer {
     return (float) Math.toDegrees(-Math.atan2(velocity.x, velocity.z));
   }
 
-  /**
-   * Roll logic is from:
-   * <a href="https://github.com/Jorbon/cool_elytra/blob/main/src/main/java/edu/jorbonism/cool_elytra/mixin/GameRendererMixin.java">...</a>
-   * to enable both mods will sync up when used together.
-   */
-  private float computeRoll(MinecraftClient client) {
+  private float computeRoll(Matrix3f normalMatrix) {
     if (!FlightHud.CONFIG_SETTINGS.calculateRoll) {
-      return 0;
+      return 0.0f;
     }
 
-    float wingPower = FlightHud.CONFIG_SETTINGS.rollTurningForce;
-    float rollSmoothing = FlightHud.CONFIG_SETTINGS.rollSmoothing;
-    Vec3d facing = client.player.getRotationVecClient();
-    Vec3d velocity = client.player.getVelocity();
-    double horizontalFacing2 = facing.horizontalLengthSquared();
-    double horizontalSpeed2 = velocity.horizontalLengthSquared();
-
-    float rollAngle = 0.0f;
-
-    if (horizontalFacing2 > 0.0D && horizontalSpeed2 > 0.0D) {
-      double dot = (velocity.x * facing.x + velocity.z * facing.z) / Math.sqrt(horizontalFacing2 * horizontalSpeed2);
-      dot = MathHelper.clamp(dot, -1, 1);
-      double direction = Math.signum(velocity.x * facing.z - velocity.z * facing.x);
-      rollAngle = (float) (Math.atan(Math.sqrt(horizontalSpeed2) * Math.acos(dot) * wingPower) * direction
-              * 57.29577951308);
-    }
-
-    rollAngle = (float) ((1.0 - rollSmoothing) * rollAngle + rollSmoothing * previousRollAngle);
-    previousRollAngle = rollAngle;
-
-    return rollAngle;
+    float y = normalMatrix.getRowColumn(0, 1);
+    float x = normalMatrix.getRowColumn(1, 1);
+    return (float) Math.toDegrees(Math.atan2(y, x));
   }
 
-  private float computePitch(MinecraftClient client, float parital) {
-    return client.player.getPitch(parital) * -1;
+  private float computePitch(MinecraftClient client) {
+    return -client.player.getPitch();
   }
 
   public static boolean isGround(BlockPos pos, MinecraftClient client) {
