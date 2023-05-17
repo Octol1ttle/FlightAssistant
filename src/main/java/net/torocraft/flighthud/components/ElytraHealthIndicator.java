@@ -320,7 +320,7 @@ public class ElytraHealthIndicator extends HudComponent {
     for (int i = allMessages.size() - 1; i >= 0; i--) {
       String s = allMessages.get(i);
       drawCenteredFont(mc, m, s, dim.wScreen, drawY, information.contains(s) ? CONFIG.color : CONFIG.alertColor);
-      drawY -= 10;
+      drawY -= 8.5f;
     }
     information.clear();
     alerts.clear();

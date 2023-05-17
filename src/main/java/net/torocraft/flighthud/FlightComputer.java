@@ -14,8 +14,6 @@ import org.joml.Matrix3f;
 public class FlightComputer {
   private static final float TICKS_PER_SECOND = 20;
 
-  private final float previousRollAngle = 0.0f;
-
   public Vec3d velocity;
   public float speed;
   public float pitch;
@@ -62,10 +60,10 @@ public class FlightComputer {
   }
 
   private float computeFlightYaw(Vec3d velocity, float yaw) {
-    if (velocity.length() < 0.01) {
+    if (velocity.horizontalLength() < 0.01) {
       return yaw;
     }
-    return (float) Math.toDegrees(-Math.atan2(velocity.x, velocity.z));
+    return (float) Math.toDegrees(Math.atan2(-velocity.x, velocity.z));
   }
 
   private float computeRoll(Matrix3f normalMatrix) {
