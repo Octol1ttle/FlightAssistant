@@ -1,0 +1,48 @@
+name: Build Octol1ttle/FlightHud
+on: [ pull_request, push ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Restore Gradle caches
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/loom-cache
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Setup JDK 8
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: 17
+
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew build --stacktrace
+
+      - name: Extract current branch name
+        shell: bash
+        # bash pattern expansion to grab branch name without slashes
+        run: ref="${GITHUB_REF#refs/heads/}" && echo "branch=${ref////-}" >> $GITHUB_OUTPUT
+        id: ref
+
+      - name: Publish build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: octol1ttle-flighthud-${{ steps.ref.outputs.branch }}
+          path: build/libs/
