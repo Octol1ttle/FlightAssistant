@@ -1,0 +1,173 @@
+package net.torocraft.flighthud;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.FireworkRocketItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ChunkHolder;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.WorldChunk;
+
+import java.util.List;
+
+import static net.torocraft.flighthud.AutoFlightManager.changeLookDirection;
+import static net.torocraft.flighthud.FlightHud.CONFIG_SETTINGS;
+import static net.torocraft.flighthud.FlightHud.LOGGER;
+import static net.torocraft.flighthud.HudComponent.CONFIG;
+
+public class FlightSafetyMonitor {
+    public static float deltaTime = 0.0f;
+
+    public static List<Hand> unsafeFireworkHands = new ObjectArrayList<>(2);
+    public static Hand usableFireworkHand = null;
+
+    public static boolean isElytraLow = false;
+
+    public static boolean isStalling = false;
+    public static float maximumSafePitch = 0.0f;
+
+    public static float secondsUntilGroundImpact = 0.0f;
+    public static float secondsUntilTerrainImpact = 0.0f;
+    public static int gpwsLampColor;
+
+    public static float lampThreshold = 0.0f;
+    public static float cautionThreshold = 0.0f;
+    public static float warningThreshold = 0.0f;
+    public static float correctThreshold = 0.0f;
+
+    public static boolean flightProtectionsEnabled = true;
+    public static boolean radioAltFault = false;
+    public static boolean terrainDetectionFault = false;
+
+    public static boolean thrustSet = true;
+    public static long lastFireworkActivationTimeMs = 0;
+
+    public static void update(MinecraftClient mc, FlightComputer computer) {
+        if (CONFIG == null || mc.player == null || !mc.player.isFallFlying()) {
+            flightProtectionsEnabled = true;
+            return;
+        }
+        radioAltFault = computer.distanceFromGround == null;
+        if (radioAltFault) {
+            flightProtectionsEnabled = false;
+            secondsUntilGroundImpact = Float.MAX_VALUE;
+            maximumSafePitch = 40.0f;
+        } else {
+            maximumSafePitch = updateMaximumSafePitch(computer);
+            secondsUntilGroundImpact = updateUnsafeSinkrate(computer);
+        }
+
+        boolean hasCeiling = mc.player.world.getDimension().hasCeiling();
+        lampThreshold    = hasCeiling ? 7.5f : 10.0f;
+        cautionThreshold = hasCeiling ? 5.0f : 7.5f;
+        warningThreshold = hasCeiling ? 2.5f : 5.0f;
+        correctThreshold = hasCeiling ? 1.0f : 2.5f;
+
+        if (secondsUntilGroundImpact <= warningThreshold || secondsUntilTerrainImpact <= warningThreshold)
+            gpwsLampColor = CONFIG.alertColor;
+        else if (secondsUntilGroundImpact <= lampThreshold || secondsUntilTerrainImpact <= lampThreshold)
+            gpwsLampColor = CONFIG.amberColor;
+        else
+            gpwsLampColor = radioAltFault || terrainDetectionFault ? CONFIG.adviceColor : CONFIG.color;
+
+        isStalling = updateStallStatus(computer);
+        isElytraLow = updateElytraLow(computer);
+        secondsUntilTerrainImpact = updateUnsafeTerrainClearance(mc.player, computer);
+        updateUnsafeFireworks(mc.player);
+
+        if (flightProtectionsEnabled) { // Make corrections to flight path to ensure safety
+            if (computer.distanceFromGround > 2 && computer.pitch > maximumSafePitch)
+                changeLookDirection(mc.player, Math.max(0, computer.pitch - maximumSafePitch) * deltaTime, 0);
+
+            else if (secondsUntilGroundImpact <= correctThreshold)
+                changeLookDirection(mc.player, Math.min(0, computer.pitch) * deltaTime, 0);
+        }
+    }
+
+    private static void updateUnsafeFireworks(PlayerEntity player) {
+        unsafeFireworkHands.clear();
+        if (!CONFIG_SETTINGS.unsafeFireworksAlert) return;
+
+        ItemStack main = player.getMainHandStack();
+        ItemStack off = player.getOffHandStack();
+
+        usableFireworkHand = null;
+        if (off.getItem() instanceof FireworkRocketItem) {
+            NbtCompound nbtCompound = off.getSubNbt("Fireworks");
+            if (nbtCompound != null && !nbtCompound.getList("Explosions", 10).isEmpty())
+                unsafeFireworkHands.add(Hand.OFF_HAND);
+            else usableFireworkHand = Hand.OFF_HAND;
+        }
+        if (main.getItem() instanceof FireworkRocketItem) {
+            NbtCompound nbtCompound = main.getSubNbt("Fireworks");
+            if (nbtCompound != null && !nbtCompound.getList("Explosions", 10).isEmpty())
+                unsafeFireworkHands.add(Hand.MAIN_HAND);
+            else usableFireworkHand = Hand.MAIN_HAND;
+        }
+    }
+
+    private static boolean updateElytraLow(FlightComputer computer) {
+        final boolean b = CONFIG_SETTINGS.lowElytraHealthAlarm && computer.elytraHealth != null && computer.elytraHealth <= CONFIG_SETTINGS.lowElytraHealthAlarmThreshold;
+        if (b && !isElytraLow) LOGGER.error("Elytra health low: {}; threshold {}", computer.elytraHealth, CONFIG_SETTINGS.lowElytraHealthAlarmThreshold);
+
+        return b;
+    }
+
+    private static boolean updateStallStatus(FlightComputer computer) {
+        final boolean b = computer.pitch > 0 && (computer.distanceFromGround == null || computer.distanceFromGround > 2) && computer.velocity.horizontalLength() < -computer.velocity.y;
+        if (b && !isStalling) LOGGER.error("Stall: pitch {}; radar altitude {}; G/S {}; V/S {}", computer.pitch, computer.distanceFromGround == null ? "N/A" : computer.distanceFromGround, computer.velocityPerSecond.horizontalLength(), computer.velocityPerSecond.y);
+
+        return b;
+    }
+
+    private static float updateMaximumSafePitch(FlightComputer computer) {
+        return isStalling && computer.velocityPerSecond.y <= -9 ? 0.0f : computer.speed * 3;
+    }
+
+    private static float updateUnsafeSinkrate(FlightComputer computer) {
+        if (!CONFIG_SETTINGS.gpws || isStalling || computer.distanceFromGround <= 2 || computer.velocityPerSecond.y > -10)
+            return Float.MAX_VALUE;
+        float f = (float) (computer.distanceFromGround / -computer.velocityPerSecond.y);
+        if (f <= 10.0f && secondsUntilGroundImpact > 10.0f)
+            LOGGER.error("Excessive sink rate: radar altitude {}; V/S {}; seconds until impact {}",
+                    computer.distanceFromGround, computer.velocityPerSecond.y, f);
+
+        return f;
+    }
+
+    private static float updateUnsafeTerrainClearance(PlayerEntity player, FlightComputer computer) {
+        if (!CONFIG_SETTINGS.gpws || isStalling || computer.velocityPerSecond.horizontalLength() <= 15) return Float.MAX_VALUE;
+        Vec3d vec = raycast(player, computer, 10);
+        if (vec == null) return Float.MAX_VALUE;
+
+        return (float) (vec.subtract(player.getPos()).length() / computer.velocityPerSecond.length());
+    }
+
+    public static Vec3d raycast(PlayerEntity player, FlightComputer computer, int seconds) {
+        Vec3d vel = computer.velocityPerSecond;
+        Vec3d end = player.getPos().add(vel.multiply(seconds));
+        terrainDetectionFault = !isPosLoaded(player.world, player.getPos().add(vel.multiply(seconds * 0.4)));
+        if (terrainDetectionFault) return null;
+
+        BlockHitResult result = player.world.raycast(new RaycastContext(player.getPos(), end, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, player));
+        if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP || result.getSide() == Direction.DOWN)
+            return null;
+        return computer.groundLevel == null || Math.abs(result.getPos().y - computer.groundLevel) > 2 ? result.getPos() : null;
+    }
+
+    public static boolean isPosLoaded(World world, Vec3d vec) {
+        int i = ChunkSectionPos.getSectionCoord(vec.x);
+        int j = ChunkSectionPos.getSectionCoord(vec.z);
+        WorldChunk worldChunk = world.getChunkManager().getWorldChunk(i, j);
+        return worldChunk != null && worldChunk.getLevelType() != ChunkHolder.LevelType.INACCESSIBLE;
+    }
+}

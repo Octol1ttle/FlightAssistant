@@ -16,7 +16,7 @@ public abstract class HudComponent extends DrawableHelper {
     return Math.round(f);
   }
 
-  protected float wrapHeading(float degrees) {
+  public static float wrapHeading(float degrees) {
     degrees = degrees % 360;
     while (degrees < 0) {
       degrees += 360;
@@ -43,9 +43,9 @@ public abstract class HudComponent extends DrawableHelper {
   }
 
   protected void drawRightAlignedFont(MinecraftClient mc, MatrixStack m, String s, float x,
-                                      float y) {
+                                      float y, int color) {
     int w = mc.textRenderer.getWidth(s);
-    drawFont(mc, m, s, x - w, y);
+    drawFont(mc, m, s, x - w, y, color);
   }
 
   protected void drawCenteredFont(MinecraftClient mc, MatrixStack m, String s, float width, float y,
@@ -54,7 +54,7 @@ public abstract class HudComponent extends DrawableHelper {
   }
 
   protected void drawHorizontalLineDashed(MatrixStack m, float x1, float x2, float y,
-                                          int dashCount) {
+                                          int dashCount, int color) {
     float width = x2 - x1;
     int segmentCount = dashCount * 2 - 1;
     float dashSize = width / segmentCount;
@@ -69,21 +69,21 @@ public abstract class HudComponent extends DrawableHelper {
       } else {
         dx2 = ((i + 1) * dashSize) + x1;
       }
-      drawHorizontalLine(m, dx1, dx2, y);
+      drawHorizontalLine(m, dx1, dx2, y, color);
     }
   }
 
-  protected void drawHorizontalLine(MatrixStack matrices, float x1, float x2, float y) {
+  protected void drawHorizontalLine(MatrixStack matrices, float x1, float x2, float y, int color) {
     if (x2 < x1) {
       float i = x1;
       x1 = x2;
       x2 = i;
     }
     fill(matrices, x1 - CONFIG.halfThickness, y - CONFIG.halfThickness, x2 + CONFIG.halfThickness,
-        y + CONFIG.halfThickness);
+        y + CONFIG.halfThickness, color);
   }
 
-  protected void drawVerticalLine(MatrixStack matrices, float x, float y1, float y2) {
+  protected void drawVerticalLine(MatrixStack matrices, float x, float y1, float y2, int color) {
     if (y2 < y1) {
       float i = y1;
       y1 = y2;
@@ -91,17 +91,17 @@ public abstract class HudComponent extends DrawableHelper {
     }
 
     fill(matrices, x - CONFIG.halfThickness, y1 + CONFIG.halfThickness, x + CONFIG.halfThickness,
-            y2 - CONFIG.halfThickness);
+            y2 - CONFIG.halfThickness, color);
   }
 
-  public static void fill(MatrixStack matrices, float x1, float y1, float x2, float y2) {
-    DrawableHelper.fill(matrices, i(x1), i(y1), i(x2), i(y2), CONFIG.color);
+  public static void fill(MatrixStack matrices, float x1, float y1, float x2, float y2, int color) {
+    DrawableHelper.fill(matrices, i(x1), i(y1), i(x2), i(y2), color);
   }
 
   protected void drawBox(MatrixStack m, float x, float y, float w) {
-    drawHorizontalLine(m, x, x + w, y);
-    drawHorizontalLine(m, x, x + w, y + 10);
-    drawVerticalLine(m, x, y, y + 10);
-    drawVerticalLine(m, x + w, y, y + 10);
+    drawHorizontalLine(m, x, x + w, y, CONFIG.color);
+    drawHorizontalLine(m, x, x + w, y + 10, CONFIG.color);
+    drawVerticalLine(m, x, y, y + 10, CONFIG.color);
+    drawVerticalLine(m, x + w, y, y + 10, CONFIG.color);
   }
 }

@@ -15,6 +15,7 @@ public class FlightComputer {
   private static final float TICKS_PER_SECOND = 20;
 
   public Vec3d velocity;
+  public Vec3d velocityPerSecond;
   public float speed;
   public float pitch;
   public float heading;
@@ -29,6 +30,7 @@ public class FlightComputer {
 
   public void update(MinecraftClient client, Matrix3f normal) {
     velocity = client.player.getVelocity();
+    velocityPerSecond = velocity.multiply(TICKS_PER_SECOND);
     pitch = computePitch(client);
     speed = computeSpeed(client);
     roll = computeRoll(normal);
@@ -40,6 +42,9 @@ public class FlightComputer {
     flightYaw = computeFlightYaw(velocity, client.player.getYaw());
     flightHeading = toHeading(flightYaw);
     elytraHealth = computeElytraHealth(client);
+
+    FlightSafetyMonitor.update(client, this);
+    AutoFlightManager.update(client, this);
   }
 
   private Float computeElytraHealth(MinecraftClient client) {
@@ -103,7 +108,7 @@ public class FlightComputer {
   private Float computeDistanceFromGround(float altitude,
                                           Integer groundLevel) {
     if (groundLevel == null) {
-      return 0.0f;
+      return null;
     }
     return Math.max(-64f, altitude - groundLevel);
   }

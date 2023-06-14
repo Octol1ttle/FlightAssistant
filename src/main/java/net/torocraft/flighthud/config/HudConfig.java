@@ -1,11 +1,15 @@
 package net.torocraft.flighthud.config;
 
-import java.awt.*;
 import net.torocraft.flighthud.config.loader.IConfig;
+
+import java.awt.*;
 
 public class HudConfig implements IConfig {
   public transient int color = Color.GREEN.getRGB();
   public transient int alertColor = Color.RED.getRGB();
+  public transient int amberColor = Color.ORANGE.getRGB();
+  public transient int adviceColor = Color.CYAN.getRGB();
+  public transient int blankColor = Color.BLACK.getRGB();
   public transient float halfThickness = 0.5f;
 
   public boolean watchForConfigChanges = true;

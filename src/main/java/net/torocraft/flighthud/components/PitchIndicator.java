@@ -5,6 +5,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.FlightComputer;
+import net.torocraft.flighthud.FlightSafetyMonitor;
 import net.torocraft.flighthud.HudComponent;
 
 public class PitchIndicator extends HudComponent {
@@ -30,28 +31,29 @@ public class PitchIndicator extends HudComponent {
     float roll = computer.roll * (CONFIG.pitchLadder_reverseRoll ? -1 : 1);
 
     if (CONFIG.pitchLadder_showRoll) {
-        m.push();
+      m.push();
       m.translate(b, a, 0);
       m.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(roll));
       m.translate(-b, -a, 0);
     }
 
-      if (CONFIG.pitchLadder_showLadder) {
-          drawLadder(mc, m, yHorizon);
-      }
+    if (CONFIG.pitchLadder_showLadder) {
+      drawLadder(mc, m, yHorizon);
+    }
 
-      drawReferenceMark(m, yHorizon, CONFIG.pitchLadder_optimumClimbAngle);
-      drawReferenceMark(m, yHorizon, CONFIG.pitchLadder_optimumGlideAngle);
+    drawReferenceMark(m, yHorizon, CONFIG.pitchLadder_optimumClimbAngle, CONFIG.color);
+    drawReferenceMark(m, yHorizon, CONFIG.pitchLadder_optimumGlideAngle, CONFIG.color);
+    drawReferenceMark(m, yHorizon, FlightSafetyMonitor.maximumSafePitch, CONFIG.alertColor);
 
-      if (CONFIG.pitchLadder_showHorizon) {
-          pitchData.l1 -= pitchData.margin;
-          pitchData.r2 += pitchData.margin;
-          drawDegreeBar(mc, m, 0, yHorizon);
-      }
+    if (CONFIG.pitchLadder_showHorizon) {
+      pitchData.l1 -= pitchData.margin;
+      pitchData.r2 += pitchData.margin;
+      drawDegreeBar(mc, m, 0, yHorizon);
+    }
 
-      if (CONFIG.pitchLadder_showRoll) {
-          m.pop();
-      }
+    if (CONFIG.pitchLadder_showRoll) {
+      m.pop();
+    }
   }
 
   private void drawLadder(MinecraftClient mc, MatrixStack m, float yHorizon) {
@@ -69,23 +71,23 @@ public class PitchIndicator extends HudComponent {
 
   }
 
-    private void drawReferenceMark(MatrixStack m, float yHorizon, float degrees) {
-        if (degrees == 0) {
-            return;
-        }
+  private void drawReferenceMark(MatrixStack m, float yHorizon, float degrees, int color) {
+    if (degrees == 0) {
+      return;
+    }
 
-        float y = (-degrees * dim.degreesPerPixel) + yHorizon;
+    float y = (-degrees * dim.degreesPerPixel) + yHorizon;
 
-        if (y < dim.tFrame || y > dim.bFrame) {
-            return;
-        }
+    if (y < dim.tFrame || y > dim.bFrame) {
+      return;
+    }
 
     float width = (pitchData.l2 - pitchData.l1) * 0.45f;
     float l1 = pitchData.l2 - width;
     float r2 = pitchData.r1 + width;
 
-    drawHorizontalLineDashed(m, l1, pitchData.l2, y, 3);
-    drawHorizontalLineDashed(m, pitchData.r1, r2, y, 3);
+    drawHorizontalLineDashed(m, l1, pitchData.l2, y, 3, color);
+    drawHorizontalLineDashed(m, pitchData.r1, r2, y, 3, color);
   }
 
   private void drawDegreeBar(MinecraftClient mc, MatrixStack m, float degree, float y) {
@@ -96,20 +98,20 @@ public class PitchIndicator extends HudComponent {
 
     int dashes = degree < 0 ? 4 : 1;
 
-    drawHorizontalLineDashed(m, pitchData.l1, pitchData.l2, y, dashes);
-    drawHorizontalLineDashed(m, pitchData.r1, pitchData.r2, y, dashes);
+    drawHorizontalLineDashed(m, pitchData.l1, pitchData.l2, y, dashes, CONFIG.color);
+    drawHorizontalLineDashed(m, pitchData.r1, pitchData.r2, y, dashes, CONFIG.color);
 
     int sideTickHeight = degree >= 0 ? 5 : -5;
-    drawVerticalLine(m, pitchData.l1, y, y + sideTickHeight);
-    drawVerticalLine(m, pitchData.r2, y, y + sideTickHeight);
+    drawVerticalLine(m, pitchData.l1, y, y + sideTickHeight, CONFIG.color);
+    drawVerticalLine(m, pitchData.r2, y, y + sideTickHeight, CONFIG.color);
 
     int fontVerticalOffset = degree >= 0 ? 0 : 6;
 
-      drawFont(mc, m, String.format("%d", i(Math.abs(degree))), pitchData.r2 + 6,
-              y - fontVerticalOffset);
+    drawFont(mc, m, String.format("%d", i(Math.abs(degree))), pitchData.r2 + 6,
+            y - fontVerticalOffset);
 
-      drawFont(mc, m, String.format("%d", i(Math.abs(degree))), pitchData.l1 - 17,
-              y - fontVerticalOffset);
+    drawFont(mc, m, String.format("%d", i(Math.abs(degree))), pitchData.l1 - 17,
+            y - fontVerticalOffset);
   }
 
   private static class PitchIndicatorData {
@@ -139,5 +141,4 @@ public class PitchIndicator extends HudComponent {
       return (int) Math.round(d);
     }
   }
-
 }

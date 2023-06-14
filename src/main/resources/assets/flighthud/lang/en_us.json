@@ -1,6 +1,10 @@
 {
   "key.flighthud.toggleDisplayMode": "Switch Display Mode",
-  "key.flighthud.killSwitch": "Disable Warnings and Automation",
+  "key.flighthud.masterWarning": "Silence Master Warning",
+  "key.flighthud.flightLawSwitch": "Switch Flight Law",
+  "key.flighthud.gpwsSwitch": "Turn On/Off GPWS",
+  "key.flighthud.fdSwitch": "Turn On/Off Flight Directors",
+  "key.flighthud.aThrSwitch": "Turn On/Off Auto Thrust",
   "category.flighthud.toggleDisplayMode": "Flight HUD",
   "commands.flighthud.cannotUseApInNether": "Cannot use the autopilot below the Nether ceiling!"
 }

@@ -43,14 +43,14 @@ public class FlightPathIndicator extends HudComponent {
     float t = y - 3 - CONFIG.halfThickness;
     float b = y + 3 - CONFIG.halfThickness;
 
-    drawVerticalLine(m, l, t, b);
-    drawVerticalLine(m, r, t, b);
+    drawVerticalLine(m, l, t, b, CONFIG.color);
+    drawVerticalLine(m, r, t, b, CONFIG.color);
 
-    drawHorizontalLine(m, l, r, t);
-    drawHorizontalLine(m, l, r, b);
+    drawHorizontalLine(m, l, r, t, CONFIG.color);
+    drawHorizontalLine(m, l, r, b, CONFIG.color);
 
-    drawVerticalLine(m, x, t - 5, t);
-    drawHorizontalLine(m, l - 4, l, y - CONFIG.halfThickness);
-    drawHorizontalLine(m, r, r + 4, y - CONFIG.halfThickness);
+    drawVerticalLine(m, x, t - 5, t, CONFIG.color);
+    drawHorizontalLine(m, l - 4, l, y - CONFIG.halfThickness, CONFIG.color);
+    drawHorizontalLine(m, r, r + 4, y - CONFIG.halfThickness, CONFIG.color);
   }
 }

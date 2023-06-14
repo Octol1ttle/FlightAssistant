@@ -54,12 +54,12 @@ public class AltitudeIndicator extends HudComponent {
           continue;
 
         if (i % 50 == 0) {
-          drawHorizontalLine(m, left, right + 2, y);
+          drawHorizontalLine(m, left, right + 2, y, CONFIG.color);
           if (!CONFIG.altitude_showReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
             drawFont(mc, m, String.format("%d", i), xAltText, y - 3);
           }
         }
-        drawHorizontalLine(m, left, right, y);
+        drawHorizontalLine(m, left, right, y, CONFIG.color);
       }
     }
   }
@@ -70,16 +70,16 @@ public class AltitudeIndicator extends HudComponent {
     float yAlt = bottom - i((computer.altitude + 64) * blocksPerPixel);
     float yFloor = bottom - i(64 * blocksPerPixel);
 
-    drawVerticalLine(m, x, top - 1, bottom + 1);
+    drawVerticalLine(m, x, top - 1, bottom + 1, CONFIG.color);
 
     if (computer.groundLevel != null) {
       float yGroundLevel = bottom - (computer.groundLevel + 64f) * blocksPerPixel;
-      fill(m, x - 3, yGroundLevel + 2, x, yFloor);
+      fill(m, x - 3, yGroundLevel + 2, x, yFloor, CONFIG.color);
     }
 
-    drawHorizontalLine(m, x - 6, x - 1, top);
-    drawHorizontalLine(m, x - 6, x - 1, yFloor);
-    drawHorizontalLine(m, x - 6, x - 1, bottom);
+    drawHorizontalLine(m, x - 6, x - 1, top, CONFIG.color);
+    drawHorizontalLine(m, x - 6, x - 1, yFloor, CONFIG.color);
+    drawHorizontalLine(m, x - 6, x - 1, bottom, CONFIG.color);
 
     drawPointer(m, x, yAlt, 90);
   }

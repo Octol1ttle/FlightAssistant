@@ -4,6 +4,8 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [],
   "client": [
+    "ClientPlayerInteractionManagerMixin",
+    "EntityMixin",
     "GameRendererMixin",
     "InGameHudMixin"
   ],

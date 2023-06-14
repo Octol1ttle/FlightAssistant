@@ -15,13 +15,11 @@ public class SettingsConfig implements IConfig {
   public String displayModeWhenNotFlying = DisplayMode.NONE.toString();
   public boolean calculateRoll = true;
 
-  public boolean gpwsTextAlerts = true;
-  public boolean gpwsVoiceAlerts = true;
-  public boolean autoGcas = true;
+  public boolean gpws = true;
   public boolean stickShaker = true;
-  public boolean stickPusher = true;
   public boolean lowElytraHealthAlarm = true;
   public int lowElytraHealthAlarmThreshold = 10;
+  public boolean unsafeFireworksAlert = true;
 
   @Override
   public void update() {

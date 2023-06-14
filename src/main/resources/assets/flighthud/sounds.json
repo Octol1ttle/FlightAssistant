@@ -1,17 +1,32 @@
 {
+  "master_warning": {
+    "sounds": [
+      "flighthud:master_warning"
+    ]
+  },
+  "master_caution": {
+    "sounds": [
+      "flighthud:master_caution"
+    ]
+  },
   "stick_shaker": {
     "sounds": [
       "flighthud:stick_shaker"
     ]
   },
-  "pull_up_terrain": {
+  "sinkrate": {
     "sounds": [
-      "flighthud:pull_up_terrain"
+      "flighthud:sinkrate"
     ]
   },
-  "elytra_low": {
+  "terrain": {
     "sounds": [
-      "flighthud:elytra_low"
+      "flighthud:terrain"
+    ]
+  },
+  "pull_up": {
+    "sounds": [
+      "flighthud:pull_up"
     ]
   },
   "autopilot_disconnect": {

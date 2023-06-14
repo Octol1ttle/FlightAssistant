@@ -43,14 +43,14 @@ public class HeadingIndicator extends HudComponent {
             drawFont(mc, m, headingToDirection(i), x - 2, yText + 10);
             drawFont(mc, m, headingToAxis(i), x - 8, yText + 20);
           } else {
-            drawVerticalLine(m, x, top + 3, top + 10);
+            drawVerticalLine(m, x, top + 3, top + 10, CONFIG.color);
           }
 
           if (!CONFIG.heading_showReadout || x <= dim.xMid - 26 || x >= dim.xMid + 26) {
             drawFont(mc, m, String.format("%03d", i(wrapHeading(i))), x - 8, yText);
           }
         } else {
-          drawVerticalLine(m, x, top + 6, top + 10);
+          drawVerticalLine(m, x, top + 6, top + 10, CONFIG.color);
         }
       }
     }

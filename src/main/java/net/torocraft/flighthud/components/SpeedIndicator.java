@@ -7,6 +7,8 @@ import net.torocraft.flighthud.FlightComputer;
 import net.torocraft.flighthud.HudComponent;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
+import static net.torocraft.flighthud.FlightSafetyMonitor.isStalling;
+import static net.torocraft.flighthud.FlightSafetyMonitor.secondsUntilGroundImpact;
 
 public class SpeedIndicator extends HudComponent {
   private final Dimensions dim;
@@ -32,11 +34,11 @@ public class SpeedIndicator extends HudComponent {
     float xSpeedText = left - 5;
 
     if (CONFIG.speed_showReadout) {
-      drawRightAlignedFont(mc, m, String.format("%.2f", computer.speed), xSpeedText, dim.yMid - 3);
+      drawRightAlignedFont(mc, m, String.format("%.2f", computer.speed), xSpeedText, dim.yMid - 3, isStalling ? CONFIG.alertColor : CONFIG.color);
 
       float frameWidth = dim.rFrame - dim.lFrame;
       drawFont(mc, m, String.format("G/S: %.2f", computer.velocity.horizontalLength() * TICKS_PER_SECOND), dim.lFrame + frameWidth * 0.25f, dim.hScreen * 0.8f, CONFIG.color);
-      drawFont(mc, m, String.format("V/S: %.2f", computer.velocity.y * TICKS_PER_SECOND), dim.lFrame + frameWidth * 0.75f - 7, dim.hScreen * 0.8f, CONFIG.color);
+      drawFont(mc, m, String.format("V/S: %.2f", computer.velocity.y * TICKS_PER_SECOND), dim.lFrame + frameWidth * 0.75f - 7, dim.hScreen * 0.8f, secondsUntilGroundImpact <= 10.0f ? CONFIG.alertColor : CONFIG.color);
       drawBox(m, xSpeedText - 29.5f, dim.yMid - 4.5f, 30);
     }
 
@@ -48,12 +50,12 @@ public class SpeedIndicator extends HudComponent {
           continue;
 
         if (i % 1 == 0) {
-          drawHorizontalLine(m, left - 2, right, y);
+          drawHorizontalLine(m, left - 2, right, y, CONFIG.color);
           if (!CONFIG.speed_showReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
-            drawRightAlignedFont(mc, m, String.format("%.0f", i), xSpeedText, y - 3);
+            drawRightAlignedFont(mc, m, String.format("%.0f", i), xSpeedText, y - 3, CONFIG.color);
           }
         }
-        drawHorizontalLine(m, left, right, y);
+        drawHorizontalLine(m, left, right, y, CONFIG.color);
       }
     }
   }
