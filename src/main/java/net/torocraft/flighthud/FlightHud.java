@@ -116,8 +116,8 @@ public class FlightHud implements ClientModInitializer {
       }
 
       while (fdSwitch.wasPressed()) {
-        FlightStatusIndicator.flightDirectorsEnabled = !FlightStatusIndicator.flightDirectorsEnabled;
-        LOGGER.info("Flight directors turned {}", FlightStatusIndicator.flightDirectorsEnabled ? "on" : "off");
+        AutoFlightManager.flightDirectorsEnabled = !AutoFlightManager.flightDirectorsEnabled;
+        LOGGER.info("Flight directors turned {}", AutoFlightManager.flightDirectorsEnabled ? "on" : "off");
       }
 
       while (aThrSwitch.wasPressed()) {

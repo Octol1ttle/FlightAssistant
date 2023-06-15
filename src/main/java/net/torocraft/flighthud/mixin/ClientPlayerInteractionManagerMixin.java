@@ -21,8 +21,12 @@ public class ClientPlayerInteractionManagerMixin {
         if (FlightSafetyMonitor.flightProtectionsEnabled && FlightSafetyMonitor.unsafeFireworkHands.contains(hand))
             cir.setReturnValue(ActionResult.FAIL);
         else if (player.getStackInHand(hand).getItem() instanceof FireworkRocketItem) {
-            FlightSafetyMonitor.lastFireworkActivationTimeMs = Util.getMeasuringTimeMs();
-            FlightSafetyMonitor.thrustSet = false;
+            if (FlightSafetyMonitor.flightProtectionsEnabled && !FlightSafetyMonitor.thrustSet)
+                cir.setReturnValue(ActionResult.FAIL);
+            else {
+                FlightSafetyMonitor.lastFireworkActivationTimeMs = Util.getMeasuringTimeMs();
+                FlightSafetyMonitor.thrustSet = false;
+            }
         }
     }
 }

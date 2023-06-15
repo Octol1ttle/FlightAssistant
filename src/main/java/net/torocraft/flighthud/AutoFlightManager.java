@@ -2,16 +2,18 @@ package net.torocraft.flighthud;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
-import net.torocraft.flighthud.components.FlightStatusIndicator;
 
 import static net.torocraft.flighthud.FlightSafetyMonitor.*;
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 import static net.torocraft.flighthud.HudComponent.wrapHeading;
 
 public class AutoFlightManager {
-    public static final float FIREWORK_ACCELERATION_SPEED = 33.62f;
+    public static Long lastUpdateTimeMs = null;
+    public static Float deltaTime;
 
+    public static boolean flightDirectorsEnabled = false;
     public static boolean autoThrustEnabled = false;
     public static boolean autoPilotEnabled = false;
 
@@ -28,27 +30,42 @@ public class AutoFlightManager {
 
     public static void update(MinecraftClient mc, FlightComputer computer) {
         statusString = "";
+        long currentTimeMs = Util.getMeasuringTimeMs();
+        if (lastUpdateTimeMs != null)
+            deltaTime = Math.min(1, (currentTimeMs - lastUpdateTimeMs) * 0.001f);
+        else
+            deltaTime = 1f / mc.options.getMaxFps().getValue();
+        lastUpdateTimeMs = currentTimeMs;
+
         if (CONFIG == null || mc.player == null || !mc.player.isFallFlying() || mc.interactionManager == null)
             return;
+        boolean approachingDestination = distanceToTarget != null && distanceToTarget < Math.max(40, computer.velocityPerSecond.horizontalLength());
 
         if (computer.speed > 30) thrustSet = true;
         if (autoThrustEnabled && usableFireworkHand != null) {
-            if (gpwsLampColor == CONFIG.color && computer.pitch > 0 && (distanceToTarget == null || distanceToTarget > 25)) {
-                if (thrustSet && (computer.speed < 25 || computer.velocityPerSecond.y < -8)) {
+            if (gpwsLampColor == CONFIG.color && computer.velocityPerSecond.horizontalLength() > 0.01 && computer.pitch > (autoPilotEnabled ? 0 : 10) && !approachingDestination) {
+                if (thrustSet && (computer.speed < 28 || computer.velocityPerSecond.y < -8)) {
                     mc.interactionManager.interactItem(mc.player, usableFireworkHand);
-                    lastFireworkActivationTimeMs = FlightStatusIndicator.currentTimeMs;
+                    lastFireworkActivationTimeMs = lastUpdateTimeMs;
                     thrustSet = false;
                 }
                 statusString += "THR MCT";
             } else statusString += "THR IDLE";
         }
 
-        if ((distanceToTarget == null || distanceToTarget > 25) && targetAltitude != null) {
-            float pitchLimiter = (float) (Math.abs(targetAltitude - mc.player.getY()) + Math.max(computer.velocityPerSecond.horizontalLength(), FIREWORK_ACCELERATION_SPEED));
+        targetPitch = null;
+        if (AutoFlightManager.autoPilotEnabled && (secondsUntilTerrainImpact <= correctThreshold || computer.velocityPerSecond.horizontalLength() < 0.01)) {
+            targetPitch = -maximumSafePitch;
+            statusString += "".equals(statusString) ? "GPWS" : " | GPWS";
+        } else if (approachingDestination || (AutoFlightManager.autoThrustEnabled && usableFireworkHand == null)) {
+            targetPitch = 2.2f;
+            statusString += "".equals(statusString) ? "OPT GLD" : " | OPT GLD";
+        } else if (targetAltitude != null) {
+            float pitchLimiter = (float) (Math.abs(targetAltitude - mc.player.getY()) + computer.velocityPerSecond.length());
             targetPitch = (float) Math.max(-maximumSafePitch, Math.toDegrees(-Math.asin((targetAltitude - mc.player.getY()) / pitchLimiter)));
             statusString += "".equals(statusString) ? "ALT" : " | ALT";
-        } else
-            targetPitch = null;
+        }
+
 
         if (destinationX != null && destinationZ != null) {
             targetYaw = (float) Math.toDegrees(Math.atan2(-(destinationX - mc.player.getX()), destinationZ - mc.player.getZ()));

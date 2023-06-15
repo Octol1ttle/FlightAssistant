@@ -10,7 +10,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.chunk.WorldChunk;
 import net.torocraft.flighthud.*;
@@ -29,12 +28,11 @@ public class FlightStatusIndicator extends HudComponent {
     public static final SoundEvent PULL_UP = SoundEvent.of(new Identifier("flighthud:pull_up"));
     public static final SoundEvent AUTOPILOT_DISCONNECT = SoundEvent.of(new Identifier("flighthud:autopilot_disconnect"));
 
-    public static boolean flightDirectorsEnabled = false;
-    public static long currentTimeMs;
-
     private final List<SoundEvent> activeEvents = new ObjectArrayList<>(4);
     private final Dimensions dim;
     private final FlightComputer computer;
+
+    private boolean lastAutopilotState = false;
 
     public FlightStatusIndicator(FlightComputer computer, Dimensions dim) {
         this.dim = dim;
@@ -44,8 +42,6 @@ public class FlightStatusIndicator extends HudComponent {
     @Override
     public void render(MatrixStack m, float partial, MinecraftClient mc) {
         if (mc.player == null || !mc.player.isFallFlying()) return;
-        FlightSafetyMonitor.deltaTime = Math.min(1, (Util.getMeasuringTimeMs() - currentTimeMs) * 0.001f);
-        currentTimeMs = Util.getMeasuringTimeMs();
 
         float x = dim.lFrame + 5;
         float xRight = dim.rFrame - 5;
@@ -68,7 +64,7 @@ public class FlightStatusIndicator extends HudComponent {
             drawFont(mc, m, " -ELYTRA: REPLACE", x, y += 10, CONFIG.adviceColor);
         }
 
-        if (!FlightSafetyMonitor.thrustSet && currentTimeMs - FlightSafetyMonitor.lastFireworkActivationTimeMs > 1000) {
+        if (!FlightSafetyMonitor.thrustSet && AutoFlightManager.lastUpdateTimeMs - FlightSafetyMonitor.lastFireworkActivationTimeMs > 1000) {
             playRepeating(mc, MASTER_WARNING, 0.5f);
             drawFont(mc, m, "FRWK ACTIVATION FAIL", x, y += 10, CONFIG.alertColor);
             if (!mc.isInSingleplayer()) {
@@ -122,7 +118,7 @@ public class FlightStatusIndicator extends HudComponent {
             drawRightAlignedFont(mc, m, "MSTR CAUT", xRight, yRight += 10, CONFIG.amberColor);
         if (!CONFIG_SETTINGS.gpws || FlightSafetyMonitor.gpwsLampColor != CONFIG.color)
             drawRightAlignedFont(mc, m, "GPWS", xRight, yRight += 10, CONFIG_SETTINGS.gpws ? FlightSafetyMonitor.gpwsLampColor : CONFIG.blankColor);
-        if (flightDirectorsEnabled) {
+        if (AutoFlightManager.flightDirectorsEnabled) {
             drawRightAlignedFont(mc, m, "FD", xRight, yRight += 10, CONFIG.color);
 
             // Flight directors
@@ -143,16 +139,23 @@ public class FlightStatusIndicator extends HudComponent {
             }
         }
         if (AutoFlightManager.distanceToTarget != null) {
-            double time = AutoFlightManager.distanceToTarget / computer.velocityPerSecond.length();
-            drawRightAlignedFont(mc, m, String.format("DISTANCE: %.1f (%.1f SEC)", AutoFlightManager.distanceToTarget, time), xRight, yRight += 10, CONFIG.color);
+            double time = AutoFlightManager.distanceToTarget / Math.max(1, computer.velocityPerSecond.horizontalLength());
+            drawRightAlignedFont(mc, m, String.format("DIST: %.1f (%.1f SEC)", AutoFlightManager.distanceToTarget, time), xRight, yRight += 10, CONFIG.color);
         }
         drawCenteredFont(mc, m, AutoFlightManager.statusString, dim.wScreen, dim.tFrame + 5, CONFIG.color);
 
         // Aural alerts
-        if (!FlightSafetyMonitor.isElytraLow && FlightSafetyMonitor.unsafeFireworkHands.isEmpty() && (FlightSafetyMonitor.thrustSet || currentTimeMs - FlightSafetyMonitor.lastFireworkActivationTimeMs <= 1000))
+        if (!FlightSafetyMonitor.isElytraLow && FlightSafetyMonitor.unsafeFireworkHands.isEmpty() && (FlightSafetyMonitor.thrustSet || AutoFlightManager.lastUpdateTimeMs - FlightSafetyMonitor.lastFireworkActivationTimeMs <= 1000))
             stopEvent(mc, MASTER_WARNING);
         if (FlightSafetyMonitor.flightProtectionsEnabled && !FlightSafetyMonitor.radioAltFault && !FlightSafetyMonitor.terrainDetectionFault && (!AutoFlightManager.autoThrustEnabled || FlightSafetyMonitor.usableFireworkHand != null))
             stopEvent(mc, MASTER_CAUTION);
+
+        if (lastAutopilotState) {
+            if (!AutoFlightManager.autoPilotEnabled)
+                playOnce(mc, AUTOPILOT_DISCONNECT, 1f);
+            else stopEvent(mc, AUTOPILOT_DISCONNECT);
+        }
+        lastAutopilotState = AutoFlightManager.autoPilotEnabled;
 
         if (FlightSafetyMonitor.isStalling && CONFIG_SETTINGS.stickShaker && computer.velocityPerSecond.y <= -10) {
             playRepeating(mc, STICK_SHAKER, 0.75f);

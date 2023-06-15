@@ -20,13 +20,12 @@ import net.minecraft.world.chunk.WorldChunk;
 import java.util.List;
 
 import static net.torocraft.flighthud.AutoFlightManager.changeLookDirection;
+import static net.torocraft.flighthud.AutoFlightManager.deltaTime;
 import static net.torocraft.flighthud.FlightHud.CONFIG_SETTINGS;
 import static net.torocraft.flighthud.FlightHud.LOGGER;
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 
 public class FlightSafetyMonitor {
-    public static float deltaTime = 0.0f;
-
     public static List<Hand> unsafeFireworkHands = new ObjectArrayList<>(2);
     public static Hand usableFireworkHand = null;
 
@@ -37,6 +36,7 @@ public class FlightSafetyMonitor {
 
     public static float secondsUntilGroundImpact = 0.0f;
     public static float secondsUntilTerrainImpact = 0.0f;
+    public static float terrainDetectionTimer = 0.0f;
     public static int gpwsLampColor;
 
     public static float lampThreshold = 0.0f;
@@ -53,7 +53,7 @@ public class FlightSafetyMonitor {
 
     public static void update(MinecraftClient mc, FlightComputer computer) {
         if (CONFIG == null || mc.player == null || !mc.player.isFallFlying()) {
-            flightProtectionsEnabled = true;
+            flightProtectionsEnabled = thrustSet = true;
             return;
         }
         radioAltFault = computer.distanceFromGround == null;
@@ -86,10 +86,10 @@ public class FlightSafetyMonitor {
 
         if (flightProtectionsEnabled) { // Make corrections to flight path to ensure safety
             if (computer.distanceFromGround > 2 && computer.pitch > maximumSafePitch)
-                changeLookDirection(mc.player, Math.max(0, computer.pitch - maximumSafePitch) * deltaTime, 0);
+                changeLookDirection(mc.player, Math.max(0, computer.pitch - maximumSafePitch) * AutoFlightManager.deltaTime, 0);
 
             else if (secondsUntilGroundImpact <= correctThreshold)
-                changeLookDirection(mc.player, Math.min(0, computer.pitch) * deltaTime, 0);
+                changeLookDirection(mc.player, Math.min(0, computer.pitch) * (AutoFlightManager.deltaTime / Math.min(1, secondsUntilGroundImpact)), 0);
         }
     }
 
@@ -145,11 +145,23 @@ public class FlightSafetyMonitor {
     }
 
     private static float updateUnsafeTerrainClearance(PlayerEntity player, FlightComputer computer) {
-        if (!CONFIG_SETTINGS.gpws || isStalling || computer.velocityPerSecond.horizontalLength() <= 15) return Float.MAX_VALUE;
+        if (!CONFIG_SETTINGS.gpws || isStalling || computer.velocityPerSecond.horizontalLength() <= 15)
+            return Float.MAX_VALUE;
         Vec3d vec = raycast(player, computer, 10);
-        if (vec == null) return Float.MAX_VALUE;
+        float f = vec == null ? Float.MAX_VALUE : (float) (vec.subtract(player.getPos()).horizontalLength() / computer.velocityPerSecond.horizontalLength());
+        if (f <= 10.0f) {
+            if (secondsUntilTerrainImpact > 10.0f)
+                LOGGER.error("Unsafe terrain clearance: terrain XZ: {} {}; G/S {}; seconds until impact {}",
+                        vec.x, vec.z, computer.velocityPerSecond.horizontalLength(), f);
+            f = Math.min(f, secondsUntilTerrainImpact);
+            terrainDetectionTimer = Math.min(0.5f, terrainDetectionTimer + deltaTime);
+        } else {
+            terrainDetectionTimer = Math.max(0.0f, terrainDetectionTimer - deltaTime);
+            if (terrainDetectionTimer > 0.0f)
+                f = Math.min(f, secondsUntilTerrainImpact);
+        }
 
-        return (float) (vec.subtract(player.getPos()).length() / computer.velocityPerSecond.length());
+        return f > 10.0f || terrainDetectionTimer >= Math.min(0.5f, f * 0.2f) ? f : Float.MAX_VALUE;
     }
 
     public static Vec3d raycast(PlayerEntity player, FlightComputer computer, int seconds) {
@@ -161,7 +173,7 @@ public class FlightSafetyMonitor {
         BlockHitResult result = player.world.raycast(new RaycastContext(player.getPos(), end, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, player));
         if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP || result.getSide() == Direction.DOWN)
             return null;
-        return computer.groundLevel == null || Math.abs(result.getPos().y - computer.groundLevel) > 2 ? result.getPos() : null;
+        return result.getPos();
     }
 
     public static boolean isPosLoaded(World world, Vec3d vec) {

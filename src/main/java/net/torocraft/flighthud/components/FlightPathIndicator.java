@@ -6,6 +6,8 @@ import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.FlightComputer;
 import net.torocraft.flighthud.HudComponent;
 
+import static net.torocraft.flighthud.FlightSafetyMonitor.gpwsLampColor;
+
 public class FlightPathIndicator extends HudComponent {
   private final Dimensions dim;
   private final FlightComputer computer;
@@ -43,14 +45,14 @@ public class FlightPathIndicator extends HudComponent {
     float t = y - 3 - CONFIG.halfThickness;
     float b = y + 3 - CONFIG.halfThickness;
 
-    drawVerticalLine(m, l, t, b, CONFIG.color);
-    drawVerticalLine(m, r, t, b, CONFIG.color);
+    drawVerticalLine(m, l, t, b, gpwsLampColor);
+    drawVerticalLine(m, r, t, b, gpwsLampColor);
 
-    drawHorizontalLine(m, l, r, t, CONFIG.color);
-    drawHorizontalLine(m, l, r, b, CONFIG.color);
+    drawHorizontalLine(m, l, r, t, gpwsLampColor);
+    drawHorizontalLine(m, l, r, b, gpwsLampColor);
 
-    drawVerticalLine(m, x, t - 5, t, CONFIG.color);
-    drawHorizontalLine(m, l - 4, l, y - CONFIG.halfThickness, CONFIG.color);
-    drawHorizontalLine(m, r, r + 4, y - CONFIG.halfThickness, CONFIG.color);
+    drawVerticalLine(m, x, t - 5, t, gpwsLampColor);
+    drawHorizontalLine(m, l - 4, l, y - CONFIG.halfThickness, gpwsLampColor);
+    drawHorizontalLine(m, r, r + 4, y - CONFIG.halfThickness, gpwsLampColor);
   }
 }

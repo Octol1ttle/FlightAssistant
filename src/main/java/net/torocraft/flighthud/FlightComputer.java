@@ -43,8 +43,8 @@ public class FlightComputer {
     flightHeading = toHeading(flightYaw);
     elytraHealth = computeElytraHealth(client);
 
-    FlightSafetyMonitor.update(client, this);
     AutoFlightManager.update(client, this);
+    FlightSafetyMonitor.update(client, this);
   }
 
   private Float computeElytraHealth(MinecraftClient client) {
