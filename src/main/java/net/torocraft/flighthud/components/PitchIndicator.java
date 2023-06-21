@@ -1,7 +1,7 @@
 package net.torocraft.flighthud.components;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.FlightComputer;
@@ -19,7 +19,7 @@ public class PitchIndicator extends HudComponent {
   }
 
   @Override
-  public void render(MatrixStack m, float partial, MinecraftClient mc) {
+  public void render(DrawContext context, MinecraftClient mc) {
     pitchData.update(dim);
 
     float horizonOffset = computer.pitch * dim.degreesPerPixel;
@@ -31,32 +31,32 @@ public class PitchIndicator extends HudComponent {
     float roll = computer.roll * (CONFIG.pitchLadder_reverseRoll ? -1 : 1);
 
     if (CONFIG.pitchLadder_showRoll) {
-      m.push();
-      m.translate(b, a, 0);
-      m.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(roll));
-      m.translate(-b, -a, 0);
+      context.getMatrices().push();
+      context.getMatrices().translate(b, a, 0);
+      context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(roll));
+      context.getMatrices().translate(-b, -a, 0);
     }
 
     if (CONFIG.pitchLadder_showLadder) {
-      drawLadder(mc, m, yHorizon);
+      drawLadder(mc, context, yHorizon);
     }
 
-    drawReferenceMark(m, yHorizon, CONFIG.pitchLadder_optimumClimbAngle, CONFIG.color);
-    drawReferenceMark(m, yHorizon, CONFIG.pitchLadder_optimumGlideAngle, CONFIG.color);
-    drawReferenceMark(m, yHorizon, FlightSafetyMonitor.maximumSafePitch, CONFIG.alertColor);
+    drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumClimbAngle, CONFIG.color);
+    drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumGlideAngle, CONFIG.color);
+    drawReferenceMark(context, yHorizon, FlightSafetyMonitor.maximumSafePitch, CONFIG.alertColor);
 
     if (CONFIG.pitchLadder_showHorizon) {
       pitchData.l1 -= pitchData.margin;
       pitchData.r2 += pitchData.margin;
-      drawDegreeBar(mc, m, 0, yHorizon);
+      drawDegreeBar(mc, context, 0, yHorizon);
     }
 
     if (CONFIG.pitchLadder_showRoll) {
-      m.pop();
+      context.getMatrices().pop();
     }
   }
 
-  private void drawLadder(MinecraftClient mc, MatrixStack m, float yHorizon) {
+  private void drawLadder(MinecraftClient mc, DrawContext context, float yHorizon) {
     int degreesPerBar = CONFIG.pitchLadder_degreesPerBar;
 
     if (degreesPerBar < 1) {
@@ -65,13 +65,13 @@ public class PitchIndicator extends HudComponent {
 
     for (int i = degreesPerBar; i <= 90; i = i + degreesPerBar) {
       float offset = dim.degreesPerPixel * i;
-      drawDegreeBar(mc, m, -i, yHorizon + offset);
-      drawDegreeBar(mc, m, i, yHorizon - offset);
+      drawDegreeBar(mc, context, -i, yHorizon + offset);
+      drawDegreeBar(mc, context, i, yHorizon - offset);
     }
 
   }
 
-  private void drawReferenceMark(MatrixStack m, float yHorizon, float degrees, int color) {
+  private void drawReferenceMark(DrawContext context, float yHorizon, float degrees, int color) {
     if (degrees == 0) {
       return;
     }
@@ -86,11 +86,11 @@ public class PitchIndicator extends HudComponent {
     float l1 = pitchData.l2 - width;
     float r2 = pitchData.r1 + width;
 
-    drawHorizontalLineDashed(m, l1, pitchData.l2, y, 3, color);
-    drawHorizontalLineDashed(m, pitchData.r1, r2, y, 3, color);
+    drawHorizontalLineDashed(context, l1, pitchData.l2, y, 3, color);
+    drawHorizontalLineDashed(context, pitchData.r1, r2, y, 3, color);
   }
 
-  private void drawDegreeBar(MinecraftClient mc, MatrixStack m, float degree, float y) {
+  private void drawDegreeBar(MinecraftClient mc, DrawContext context, float degree, float y) {
 
     if (y < dim.tFrame || y > dim.bFrame) {
       return;
@@ -98,19 +98,19 @@ public class PitchIndicator extends HudComponent {
 
     int dashes = degree < 0 ? 4 : 1;
 
-    drawHorizontalLineDashed(m, pitchData.l1, pitchData.l2, y, dashes, CONFIG.color);
-    drawHorizontalLineDashed(m, pitchData.r1, pitchData.r2, y, dashes, CONFIG.color);
+    drawHorizontalLineDashed(context, pitchData.l1, pitchData.l2, y, dashes, CONFIG.color);
+    drawHorizontalLineDashed(context, pitchData.r1, pitchData.r2, y, dashes, CONFIG.color);
 
     int sideTickHeight = degree >= 0 ? 5 : -5;
-    drawVerticalLine(m, pitchData.l1, y, y + sideTickHeight, CONFIG.color);
-    drawVerticalLine(m, pitchData.r2, y, y + sideTickHeight, CONFIG.color);
+    drawVerticalLine(context, pitchData.l1, y, y + sideTickHeight, CONFIG.color);
+    drawVerticalLine(context, pitchData.r2, y, y + sideTickHeight, CONFIG.color);
 
     int fontVerticalOffset = degree >= 0 ? 0 : 6;
 
-    drawFont(mc, m, String.format("%d", i(Math.abs(degree))), pitchData.r2 + 6,
+    drawFont(mc, context, String.format("%d", i(Math.abs(degree))), pitchData.r2 + 6,
             y - fontVerticalOffset);
 
-    drawFont(mc, m, String.format("%d", i(Math.abs(degree))), pitchData.l1 - 17,
+    drawFont(mc, context, String.format("%d", i(Math.abs(degree))), pitchData.l1 - 17,
             y - fontVerticalOffset);
   }
 

@@ -3,14 +3,14 @@
   "id": "flighthud",
   "version": "${version}",
   "name": "Flight HUD",
-  "description": "Displays a flight styled hud while flying with elytra.",
+  "description": "Displays a flight styled hud while flying with elytra and provides flight protections and warnings",
   "authors": [
-    "ToroCraft"
+    "ToroCraft",
+    "Octol1ttle"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/flight-hud",
-    "issues": "https://github.com/frodare/FlightHud/issues",
-    "sources": "https://github.com/frodare/FlightHud"
+    "issues": "https://github.com/Octol1ttle/FlightHud/issues",
+    "sources": "https://github.com/Octol1ttle/FlightHud"
   },
   "license": "GPL3",
   "icon": "assets/flighthud/icon.png",
@@ -26,7 +26,7 @@
   "depends": {
     "fabricloader": ">=0.14.7",
     "fabric-api": "*",
-    "minecraft": "1.19.4",
+    "minecraft": "1.20.1",
     "java": ">=17"
   },
   "recommends": {

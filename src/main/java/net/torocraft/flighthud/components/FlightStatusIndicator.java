@@ -2,16 +2,15 @@ package net.torocraft.flighthud.components;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.SoundManager;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.world.ClientChunkManager;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ChunkHolder;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkSectionPos;
-import net.minecraft.world.chunk.WorldChunk;
 import net.torocraft.flighthud.*;
 
 import java.util.List;
@@ -39,9 +38,15 @@ public class FlightStatusIndicator extends HudComponent {
         this.computer = computer;
     }
 
+    public static boolean isPosLoaded(ClientChunkManager manager, PlayerEntity player) {
+        int i = ChunkSectionPos.getSectionCoord(player.getX());
+        int j = ChunkSectionPos.getSectionCoord(player.getZ());
+        return manager.isChunkLoaded(i, j);
+    }
+
     @Override
-    public void render(MatrixStack m, float partial, MinecraftClient mc) {
-        if (mc.player == null || !mc.player.isFallFlying()) return;
+    public void render(DrawContext context, MinecraftClient mc) {
+        if (mc.world == null || mc.player == null || !mc.player.isFallFlying()) return;
 
         float x = dim.lFrame + 5;
         float xRight = dim.rFrame - 5;
@@ -53,79 +58,79 @@ public class FlightStatusIndicator extends HudComponent {
             playRepeating(mc, MASTER_WARNING, 0.5f);
             for (Hand hand : FlightSafetyMonitor.unsafeFireworkHands) {
                 String handStr = hand.toString().replace('_', ' ');
-                drawFont(mc, m, handStr + " FRWKS UNSAFE", x, y += 10, CONFIG.alertColor);
-                drawFont(mc, m, " -" + handStr + " FRWKS: REPLACE", x, y += 10, CONFIG.adviceColor);
+                drawFont(mc, context, handStr + " FRWKS UNSAFE", x, y += 10, CONFIG.alertColor);
+                drawFont(mc, context, " -" + handStr + " FRWKS: REPLACE", x, y += 10, CONFIG.adviceColor);
             }
         }
 
         if (FlightSafetyMonitor.isElytraLow) {
             playRepeating(mc, MASTER_WARNING, 0.5f);
-            drawFont(mc, m, "ELYTRA HEALTH LOW", x, y += 10, CONFIG.alertColor);
-            drawFont(mc, m, " -ELYTRA: REPLACE", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, "ELYTRA HEALTH LOW", x, y += 10, CONFIG.alertColor);
+            drawFont(mc, context, " -ELYTRA: REPLACE", x, y += 10, CONFIG.adviceColor);
         }
 
         if (!FlightSafetyMonitor.thrustSet && AutoFlightManager.lastUpdateTimeMs - FlightSafetyMonitor.lastFireworkActivationTimeMs > 1000) {
             playRepeating(mc, MASTER_WARNING, 0.5f);
-            drawFont(mc, m, "FRWK ACTIVATION FAIL", x, y += 10, CONFIG.alertColor);
+            drawFont(mc, context, "FRWK ACTIVATION FAIL", x, y += 10, CONFIG.alertColor);
             if (!mc.isInSingleplayer()) {
-                drawFont(mc, m, " DISCONNECT ASAP", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, m, " -SERVER LIST LATENCY: CHECK", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, m, " MAX LATENCY: 250 MS", x, y += 10, CONFIG.adviceColor);
+                drawFont(mc, context, " DISCONNECT ASAP", x, y += 10, CONFIG.adviceColor);
+                drawFont(mc, context, " -SERVER LIST LATENCY: CHECK", x, y += 10, CONFIG.adviceColor);
+                drawFont(mc, context, " MAX LATENCY: 250 MS", x, y += 10, CONFIG.adviceColor);
             }
         }
 
         if (!FlightSafetyMonitor.flightProtectionsEnabled) {
             playOnce(mc, MASTER_CAUTION, 0.75f);
-            drawFont(mc, m, "F/CTL ALTN LAW (PROT LOST)", x, y += 10, CONFIG.amberColor);
-            drawFont(mc, m, " MAX PITCH: 40* UP", x, y += 10, CONFIG.adviceColor);
-            drawFont(mc, m, " MIN V/S: -8 BPS", x, y += 10, CONFIG.adviceColor);
-            drawFont(mc, m, " -FRWK NBT: CHECK", x, y += 10, CONFIG.adviceColor);
-            drawFont(mc, m, " MANEUVER WITH CARE", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, "F/CTL ALTN LAW (PROT LOST)", x, y += 10, CONFIG.amberColor);
+            drawFont(mc, context, " MAX PITCH: 40* UP", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " MIN V/S: -8 BPS", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " -FRWK NBT: CHECK", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " MANEUVER WITH CARE", x, y += 10, CONFIG.adviceColor);
         }
 
         if (FlightSafetyMonitor.radioAltFault) {
             playOnce(mc, MASTER_CAUTION, 0.75f);
-            drawFont(mc, m, "NAV GPWS FAULT", x, y += 10, CONFIG.amberColor);
-            if (isPosLoaded(mc.player))
-                drawFont(mc, m, " MIN ALT: -60", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, "NAV GPWS FAULT", x, y += 10, CONFIG.amberColor);
+            if (isPosLoaded(mc.world.getChunkManager(), mc.player))
+                drawFont(mc, context, " MIN ALT: -60", x, y += 10, CONFIG.adviceColor);
             else {
-                drawFont(mc, m, " MAX G/S: 15 BPS", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, m, " WAIT FOR CHUNK LOAD", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, m, " -REJOIN: CONSIDER", x, y += 10, CONFIG.adviceColor);
+                drawFont(mc, context, " MAX G/S: 15 BPS", x, y += 10, CONFIG.adviceColor);
+                drawFont(mc, context, " WAIT FOR CHUNK LOAD", x, y += 10, CONFIG.adviceColor);
+                drawFont(mc, context, " -REJOIN: CONSIDER", x, y += 10, CONFIG.adviceColor);
             }
         }
 
         if (FlightSafetyMonitor.terrainDetectionFault) {
             playOnce(mc, MASTER_CAUTION, 0.75f);
-            drawFont(mc, m, "NAV GPWS TERR DET FAULT", x, y += 10, CONFIG.amberColor);
+            drawFont(mc, context, "NAV GPWS TERR DET FAULT", x, y += 10, CONFIG.amberColor);
             if (!FlightSafetyMonitor.radioAltFault) {
-                drawFont(mc, m, " MAX G/S: 15 BPS", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, m, " WAIT FOR CHUNK LOAD", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, m, " -REJOIN: CONSIDER", x, y += 10, CONFIG.adviceColor);
+                drawFont(mc, context, " MAX G/S: 15 BPS", x, y += 10, CONFIG.adviceColor);
+                drawFont(mc, context, " WAIT FOR CHUNK LOAD", x, y += 10, CONFIG.adviceColor);
+                drawFont(mc, context, " -REJOIN: CONSIDER", x, y += 10, CONFIG.adviceColor);
             }
         }
 
         if (AutoFlightManager.autoThrustEnabled && FlightSafetyMonitor.usableFireworkHand == null) {
             playOnce(mc, MASTER_CAUTION, 0.75f);
-            drawFont(mc, m, "AUTO FLT A/THR LIMITED", x, y += 10, CONFIG.amberColor);
-            drawFont(mc, m ," -FRWKS: SELECT", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, "AUTO FLT A/THR LIMITED", x, y += 10, CONFIG.amberColor);
+            drawFont(mc, context, " -FRWKS: SELECT", x, y += 10, CONFIG.adviceColor);
         }
 
         // Right-side ECAM
         if (activeEvents.contains(MASTER_WARNING))
-            drawRightAlignedFont(mc, m, "MSTR WARN", xRight, yRight += 10, CONFIG.alertColor);
+            drawRightAlignedFont(mc, context, "MSTR WARN", xRight, yRight += 10, CONFIG.alertColor);
         if (activeEvents.contains(MASTER_CAUTION))
-            drawRightAlignedFont(mc, m, "MSTR CAUT", xRight, yRight += 10, CONFIG.amberColor);
+            drawRightAlignedFont(mc, context, "MSTR CAUT", xRight, yRight += 10, CONFIG.amberColor);
         if (!CONFIG_SETTINGS.gpws || FlightSafetyMonitor.gpwsLampColor != CONFIG.color)
-            drawRightAlignedFont(mc, m, "GPWS", xRight, yRight += 10, CONFIG_SETTINGS.gpws ? FlightSafetyMonitor.gpwsLampColor : CONFIG.blankColor);
+            drawRightAlignedFont(mc, context, "GPWS", xRight, yRight += 10, CONFIG_SETTINGS.gpws ? FlightSafetyMonitor.gpwsLampColor : CONFIG.blankColor);
         if (AutoFlightManager.flightDirectorsEnabled) {
-            drawRightAlignedFont(mc, m, "FD", xRight, yRight += 10, CONFIG.color);
+            drawRightAlignedFont(mc, context, "FD", xRight, yRight += 10, CONFIG.color);
 
             // Flight directors
             if (AutoFlightManager.targetPitch != null) {
                 float deltaPitch = computer.pitch + AutoFlightManager.targetPitch;
                 float fdY = Math.max(dim.tFrame, Math.min(dim.bFrame, dim.yMid + i(deltaPitch * dim.degreesPerPixel)));
-                drawHorizontalLine(m, dim.xMid - dim.wFrame * 0.15f, dim.xMid + dim.wFrame * 0.15f, fdY, CONFIG.adviceColor);
+                drawHorizontalLine(context, dim.xMid - dim.wFrame * 0.15f, dim.xMid + dim.wFrame * 0.15f, fdY, CONFIG.adviceColor);
             }
 
             if (AutoFlightManager.targetHeading != null) {
@@ -135,14 +140,14 @@ public class FlightStatusIndicator extends HudComponent {
                 }
 
                 float fdX = Math.max(dim.lFrame, Math.min(dim.rFrame, dim.xMid + i(deltaHeading * dim.degreesPerPixel)));
-                drawVerticalLine(m, fdX, dim.yMid - dim.hFrame * 0.15f, dim.yMid + dim.hFrame * 0.15f, CONFIG.adviceColor);
+                drawVerticalLine(context, fdX, dim.yMid - dim.hFrame * 0.15f, dim.yMid + dim.hFrame * 0.15f, CONFIG.adviceColor);
             }
         }
         if (AutoFlightManager.distanceToTarget != null) {
             double time = AutoFlightManager.distanceToTarget / Math.max(1, computer.velocityPerSecond.horizontalLength());
-            drawRightAlignedFont(mc, m, String.format("DIST: %.1f (%.1f SEC)", AutoFlightManager.distanceToTarget, time), xRight, yRight += 10, CONFIG.color);
+            drawRightAlignedFont(mc, context, String.format("DIST: %.1f (%.1f SEC)", AutoFlightManager.distanceToTarget, time), xRight, yRight += 10, CONFIG.color);
         }
-        drawCenteredFont(mc, m, AutoFlightManager.statusString, dim.wScreen, dim.tFrame + 5, CONFIG.color);
+        drawCenteredFont(mc, context, AutoFlightManager.statusString, dim.wScreen, dim.tFrame + 5, CONFIG.color);
 
         // Aural alerts
         if (!FlightSafetyMonitor.isElytraLow && FlightSafetyMonitor.unsafeFireworkHands.isEmpty() && (FlightSafetyMonitor.thrustSet || AutoFlightManager.lastUpdateTimeMs - FlightSafetyMonitor.lastFireworkActivationTimeMs <= 1000))
@@ -159,7 +164,7 @@ public class FlightStatusIndicator extends HudComponent {
 
         if (FlightSafetyMonitor.isStalling && CONFIG_SETTINGS.stickShaker && computer.velocityPerSecond.y <= -10) {
             playRepeating(mc, STICK_SHAKER, 0.75f);
-            drawRightAlignedFont(mc, m, "STALL", xRight, yRight += 10, CONFIG.alertColor);
+            drawRightAlignedFont(mc, context, "STALL", xRight, yRight += 10, CONFIG.alertColor);
         } else stopEvent(mc, STICK_SHAKER);
 
         if (FlightSafetyMonitor.secondsUntilGroundImpact <= FlightSafetyMonitor.warningThreshold || FlightSafetyMonitor.secondsUntilTerrainImpact <= FlightSafetyMonitor.warningThreshold)
@@ -170,13 +175,6 @@ public class FlightStatusIndicator extends HudComponent {
             playOnce(mc, SINKRATE, 0.75f);
         else
             stopGpwsEvents(mc);
-    }
-
-    public static boolean isPosLoaded(PlayerEntity player) {
-        int i = ChunkSectionPos.getSectionCoord(player.getX());
-        int j = ChunkSectionPos.getSectionCoord(player.getZ());
-        WorldChunk worldChunk = player.world.getChunkManager().getWorldChunk(i, j);
-        return worldChunk != null && worldChunk.getLevelType() != ChunkHolder.LevelType.INACCESSIBLE;
     }
 
     public void tryStopEvents(PlayerEntity player, SoundManager manager) {
