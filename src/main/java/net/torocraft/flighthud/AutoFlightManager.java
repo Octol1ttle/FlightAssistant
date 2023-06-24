@@ -57,7 +57,7 @@ public class AutoFlightManager {
         if (AutoFlightManager.autoPilotEnabled && (secondsUntilTerrainImpact <= correctThreshold || computer.velocityPerSecond.horizontalLength() < 0.01)) {
             targetPitch = -maximumSafePitch;
             statusString += "".equals(statusString) ? "GPWS" : " | GPWS";
-        } else if (approachingDestination || (AutoFlightManager.autoThrustEnabled && usableFireworkHand == null)) {
+        } else if (approachingDestination || FlightSafetyMonitor.fireworkCount <= 0 || (AutoFlightManager.autoThrustEnabled && usableFireworkHand == null)) {
             targetPitch = 2.2f;
             statusString += "".equals(statusString) ? "OPT GLD" : " | OPT GLD";
         } else if (targetAltitude != null) {

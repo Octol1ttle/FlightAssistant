@@ -53,7 +53,7 @@ public class FlightStatusIndicator extends HudComponent {
         float y = dim.tFrame - 5;
         float yRight = y;
 
-        // Left-side ECAM
+        // Left-side ECAM - warnings
         if (!FlightSafetyMonitor.unsafeFireworkHands.isEmpty()) {
             playRepeating(mc, MASTER_WARNING, 0.5f);
             for (Hand hand : FlightSafetyMonitor.unsafeFireworkHands) {
@@ -72,13 +72,26 @@ public class FlightStatusIndicator extends HudComponent {
         if (!FlightSafetyMonitor.thrustSet && AutoFlightManager.lastUpdateTimeMs - FlightSafetyMonitor.lastFireworkActivationTimeMs > 1000) {
             playRepeating(mc, MASTER_WARNING, 0.5f);
             drawFont(mc, context, "FRWK ACTIVATION FAIL", x, y += 10, CONFIG.alertColor);
-            if (!mc.isInSingleplayer()) {
-                drawFont(mc, context, " DISCONNECT ASAP", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, context, " -SERVER LIST LATENCY: CHECK", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, context, " MAX LATENCY: 250 MS", x, y += 10, CONFIG.adviceColor);
-            }
+            if (AutoFlightManager.autoPilotEnabled || AutoFlightManager.flightDirectorsEnabled)
+                drawFont(mc, context, " -AP+FD: OFF", x, y += 10, CONFIG.adviceColor);
+            if (AutoFlightManager.autoThrustEnabled)
+                drawFont(mc, context, " -ATHR: OFF", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " -PITCH: MAX SAFE UP", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " -FWRKS: DO NOT USE", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " SPD MAY BE UNREL", x, y += 10, CONFIG.adviceColor);
         }
 
+        if (FlightSafetyMonitor.fireworkCount <= 0) {
+            playRepeating(mc, MASTER_WARNING, 0.5f);
+            drawFont(mc, context, "FWOB AT ZERO", x, y += 10, CONFIG.alertColor);
+            if (AutoFlightManager.targetAltitude != null)
+                drawFont(mc, context, " -AP ALT: RESET", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " -DIVERSION: INITIATE", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " OPT GLD PITCH: -2* DOWN", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " GLDG DIST: 100 BLKS/10 GND ALT", x, y += 10, CONFIG.adviceColor);
+        }
+
+        // Left-side ECAM - cautions
         if (!FlightSafetyMonitor.flightProtectionsEnabled) {
             playOnce(mc, MASTER_CAUTION, 0.75f);
             drawFont(mc, context, "F/CTL ALTN LAW (PROT LOST)", x, y += 10, CONFIG.amberColor);
@@ -86,6 +99,15 @@ public class FlightStatusIndicator extends HudComponent {
             drawFont(mc, context, " MIN V/S: -8 BPS", x, y += 10, CONFIG.adviceColor);
             drawFont(mc, context, " -FRWK NBT: CHECK", x, y += 10, CONFIG.adviceColor);
             drawFont(mc, context, " MANEUVER WITH CARE", x, y += 10, CONFIG.adviceColor);
+        }
+
+        if (FlightSafetyMonitor.fireworkCount > 0 && FlightSafetyMonitor.fireworkCount < 24) {
+            playOnce(mc, MASTER_CAUTION, 0.75f);
+            drawFont(mc, context, "FWOB BELOW 24", x, y += 10, CONFIG.amberColor);
+            if (AutoFlightManager.autoThrustEnabled)
+                drawFont(mc, context, " -ATHR: OFF", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " -CLIMB: INITIATE", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " OPT CLB PITCH: 55* UP", x, y += 10, CONFIG.adviceColor);
         }
 
         if (FlightSafetyMonitor.radioAltFault) {
@@ -117,6 +139,10 @@ public class FlightStatusIndicator extends HudComponent {
         }
 
         // Right-side ECAM
+        int fwobLampColor = FlightSafetyMonitor.fireworkCount > 0
+                ? (FlightSafetyMonitor.fireworkCount < 24 ? CONFIG.amberColor : CONFIG.color)
+                : CONFIG.alertColor;
+        drawRightAlignedFont(mc, context, "FWOB: " + FlightSafetyMonitor.fireworkCount, xRight, yRight += 10, fwobLampColor);
         if (activeEvents.contains(MASTER_WARNING))
             drawRightAlignedFont(mc, context, "MSTR WARN", xRight, yRight += 10, CONFIG.alertColor);
         if (activeEvents.contains(MASTER_CAUTION))
@@ -150,9 +176,14 @@ public class FlightStatusIndicator extends HudComponent {
         drawCenteredFont(mc, context, AutoFlightManager.statusString, dim.wScreen, dim.tFrame + 5, CONFIG.color);
 
         // Aural alerts
-        if (!FlightSafetyMonitor.isElytraLow && FlightSafetyMonitor.unsafeFireworkHands.isEmpty() && (FlightSafetyMonitor.thrustSet || AutoFlightManager.lastUpdateTimeMs - FlightSafetyMonitor.lastFireworkActivationTimeMs <= 1000))
+        if (!FlightSafetyMonitor.isElytraLow && FlightSafetyMonitor.unsafeFireworkHands.isEmpty()
+                && (FlightSafetyMonitor.thrustSet || AutoFlightManager.lastUpdateTimeMs - FlightSafetyMonitor.lastFireworkActivationTimeMs <= 1000)
+                && FlightSafetyMonitor.fireworkCount > 0)
             stopEvent(mc, MASTER_WARNING);
-        if (FlightSafetyMonitor.flightProtectionsEnabled && !FlightSafetyMonitor.radioAltFault && !FlightSafetyMonitor.terrainDetectionFault && (!AutoFlightManager.autoThrustEnabled || FlightSafetyMonitor.usableFireworkHand != null))
+        if (FlightSafetyMonitor.flightProtectionsEnabled && !FlightSafetyMonitor.radioAltFault
+                && !FlightSafetyMonitor.terrainDetectionFault
+                && (!AutoFlightManager.autoThrustEnabled || FlightSafetyMonitor.usableFireworkHand != null)
+                && (FlightSafetyMonitor.fireworkCount <= 0 || FlightSafetyMonitor.fireworkCount > 24))
             stopEvent(mc, MASTER_CAUTION);
 
         if (lastAutopilotState) {

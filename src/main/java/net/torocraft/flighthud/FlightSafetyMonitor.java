@@ -6,6 +6,7 @@ import net.minecraft.client.world.ClientChunkManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -49,6 +50,8 @@ public class FlightSafetyMonitor {
     public static boolean thrustSet = true;
     public static long lastFireworkActivationTimeMs = 0;
 
+    public static int fireworkCount = Integer.MAX_VALUE;
+
     public static void update(MinecraftClient mc, FlightComputer computer) {
         if (CONFIG == null || mc.world == null || mc.player == null || !mc.player.isFallFlying()) {
             flightProtectionsEnabled = thrustSet = true;
@@ -81,6 +84,7 @@ public class FlightSafetyMonitor {
         isElytraLow = updateElytraLow(computer);
         secondsUntilTerrainImpact = updateUnsafeTerrainClearance(mc.player, mc.world.getChunkManager(), computer);
         updateUnsafeFireworks(mc.player);
+        fireworkCount = countSafeFireworks(mc.player);
 
         if (flightProtectionsEnabled) { // Make corrections to flight path to ensure safety
             if (computer.distanceFromGround > 2 && computer.pitch > maximumSafePitch)
@@ -160,6 +164,21 @@ public class FlightSafetyMonitor {
         }
 
         return f > 10.0f || terrainDetectionTimer >= Math.min(0.5f, f * 0.2f) ? f : Float.MAX_VALUE;
+    }
+
+    private static int countSafeFireworks(PlayerEntity player) {
+        int i = 0;
+
+        for (int j = 0; j < player.getInventory().size(); j++) {
+            ItemStack stack = player.getInventory().getStack(j);
+            if (stack.getItem().equals(Items.FIREWORK_ROCKET)) {
+                NbtCompound nbtCompound = stack.getSubNbt("Fireworks");
+                if (nbtCompound == null || nbtCompound.getList("Explosions", 10).isEmpty())
+                    i += stack.getCount();
+            }
+        }
+
+        return i;
     }
 
     public static Vec3d raycast(PlayerEntity player, ClientChunkManager manager, FlightComputer computer, int seconds) {
