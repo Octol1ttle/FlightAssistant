@@ -148,7 +148,7 @@ public class FlightSafetyMonitor {
         Vec3d vec = raycast(player, manager, computer, 10);
         float f = vec == null ? Float.MAX_VALUE : (float) (vec.subtract(player.getPos()).horizontalLength() / computer.velocityPerSecond.horizontalLength());
         if (f <= 10.0f) {
-            if (secondsUntilTerrainImpact > 5.0f)
+            if (f <= 5.0f && secondsUntilTerrainImpact > 5.0f)
                 LOGGER.error("Unsafe terrain clearance: terrain XZ: {} {}; G/S {}; seconds until impact {}",
                         vec.x, vec.z, computer.velocityPerSecond.horizontalLength(), f);
             f = Math.min(f, secondsUntilTerrainImpact);
