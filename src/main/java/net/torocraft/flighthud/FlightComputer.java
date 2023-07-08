@@ -24,8 +24,8 @@ public class FlightComputer {
   public float flightHeading;
   public float roll;
   public float altitude;
-  public Integer groundLevel;
-  public Float distanceFromGround;
+  public int groundLevel;
+  public float distanceFromGround;
   public Float elytraHealth;
 
   public void update(MinecraftClient client, Matrix3f normal) {
@@ -100,16 +100,13 @@ public class FlightComputer {
     return null;
   }
 
-  private Integer computeGroundLevel(MinecraftClient client) {
+  private int computeGroundLevel(MinecraftClient client) {
     BlockPos ground = findGround(client);
-    return ground == null ? null : ground.getY();
+    return ground == null ? -50 : ground.getY();
   }
 
-  private Float computeDistanceFromGround(float altitude,
+  private float computeDistanceFromGround(float altitude,
                                           Integer groundLevel) {
-    if (groundLevel == null) {
-      return null;
-    }
     return Math.max(-64f, altitude - groundLevel);
   }
 

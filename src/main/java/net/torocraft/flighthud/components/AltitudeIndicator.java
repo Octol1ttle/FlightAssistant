@@ -34,14 +34,13 @@ public class AltitudeIndicator extends HudComponent {
     }
 
     if (CONFIG.altitude_showReadout) {
-      drawFont(mc, context, String.format("%.0f", computer.altitude), xAltText, dim.yMid - 3);
+      drawFont(mc, context, String.format("%.0f", computer.altitude), xAltText, dim.yMid - 3, computer.altitude <= -50 ? CONFIG.alertColor : CONFIG.color);
       drawBox(context, xAltText - 2, dim.yMid - 4.5f, 28);
     }
 
     if (CONFIG.altitude_showHeight) {
       drawFont(mc, context, "G", xAltText - 10, bottom + 3);
-      String heightText = computer.distanceFromGround == null ? "??"
-              : String.format("%d", i(computer.distanceFromGround));
+      String heightText = String.format("%d", i(computer.distanceFromGround));
       drawFont(mc, context, heightText, xAltText, bottom + 3);
       drawBox(context, xAltText - 2, bottom + 1.5f, 28);
     }
@@ -72,10 +71,8 @@ public class AltitudeIndicator extends HudComponent {
 
     drawVerticalLine(context, x, top - 1, bottom + 1, CONFIG.color);
 
-    if (computer.groundLevel != null) {
-      float yGroundLevel = bottom - (computer.groundLevel + 64f) * blocksPerPixel;
-      fill(context, x - 3, yGroundLevel + 2, x, yFloor, CONFIG.color);
-    }
+    float yGroundLevel = bottom - (computer.groundLevel + 64f) * blocksPerPixel;
+    fill(context, x - 3, yGroundLevel + 2, x, yFloor, CONFIG.color);
 
     drawHorizontalLine(context, x - 6, x - 1, top, CONFIG.color);
     drawHorizontalLine(context, x - 6, x - 1, yFloor, CONFIG.color);

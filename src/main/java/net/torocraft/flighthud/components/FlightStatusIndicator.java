@@ -110,26 +110,12 @@ public class FlightStatusIndicator extends HudComponent {
             drawFont(mc, context, " OPT CLB PITCH: 55* UP", x, y += 10, CONFIG.adviceColor);
         }
 
-        if (FlightSafetyMonitor.radioAltFault) {
-            playOnce(mc, MASTER_CAUTION, 0.75f);
-            drawFont(mc, context, "NAV GPWS FAULT", x, y += 10, CONFIG.amberColor);
-            if (isPosLoaded(mc.world.getChunkManager(), mc.player))
-                drawFont(mc, context, " MIN ALT: -60", x, y += 10, CONFIG.adviceColor);
-            else {
-                drawFont(mc, context, " MAX G/S: 15 BPS", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, context, " WAIT FOR CHUNK LOAD", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, context, " -REJOIN: CONSIDER", x, y += 10, CONFIG.adviceColor);
-            }
-        }
-
         if (FlightSafetyMonitor.terrainDetectionFault) {
             playOnce(mc, MASTER_CAUTION, 0.75f);
             drawFont(mc, context, "NAV GPWS TERR DET FAULT", x, y += 10, CONFIG.amberColor);
-            if (!FlightSafetyMonitor.radioAltFault) {
-                drawFont(mc, context, " MAX G/S: 15 BPS", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, context, " WAIT FOR CHUNK LOAD", x, y += 10, CONFIG.adviceColor);
-                drawFont(mc, context, " -REJOIN: CONSIDER", x, y += 10, CONFIG.adviceColor);
-            }
+            drawFont(mc, context, " MAX G/S: 15 BPS", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " WAIT FOR CHUNK LOAD", x, y += 10, CONFIG.adviceColor);
+            drawFont(mc, context, " -REJOIN: CONSIDER", x, y += 10, CONFIG.adviceColor);
         }
 
         if (AutoFlightManager.autoThrustEnabled && FlightSafetyMonitor.usableFireworkHand == null) {
@@ -180,7 +166,7 @@ public class FlightStatusIndicator extends HudComponent {
                 && (FlightSafetyMonitor.thrustSet || AutoFlightManager.lastUpdateTimeMs - FlightSafetyMonitor.lastFireworkActivationTimeMs <= 1000)
                 && FlightSafetyMonitor.fireworkCount > 0)
             stopEvent(mc, MASTER_WARNING);
-        if (FlightSafetyMonitor.flightProtectionsEnabled && !FlightSafetyMonitor.radioAltFault
+        if (FlightSafetyMonitor.flightProtectionsEnabled
                 && !FlightSafetyMonitor.terrainDetectionFault
                 && (!AutoFlightManager.autoThrustEnabled || FlightSafetyMonitor.usableFireworkHand != null)
                 && (FlightSafetyMonitor.fireworkCount <= 0 || FlightSafetyMonitor.fireworkCount > 24))

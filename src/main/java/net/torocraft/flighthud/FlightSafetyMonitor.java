@@ -44,7 +44,6 @@ public class FlightSafetyMonitor {
     public static float correctThreshold = 0.0f;
 
     public static boolean flightProtectionsEnabled = true;
-    public static boolean radioAltFault = false;
     public static boolean terrainDetectionFault = false;
 
     public static boolean thrustSet = true;
@@ -57,18 +56,11 @@ public class FlightSafetyMonitor {
             flightProtectionsEnabled = thrustSet = true;
             return;
         }
-        radioAltFault = computer.distanceFromGround == null;
-        if (radioAltFault) {
-            flightProtectionsEnabled = false;
-            secondsUntilGroundImpact = Float.MAX_VALUE;
-            maximumSafePitch = 40.0f;
-        } else {
-            maximumSafePitch = updateMaximumSafePitch(computer);
-            secondsUntilGroundImpact = updateUnsafeSinkrate(computer);
-        }
+        maximumSafePitch = updateMaximumSafePitch(computer);
+        secondsUntilGroundImpact = updateUnsafeSinkrate(computer);
 
         boolean hasCeiling = mc.player.getWorld().getDimension().hasCeiling();
-        lampThreshold    = hasCeiling ? 7.5f : 10.0f;
+        lampThreshold = hasCeiling ? 7.5f : 10.0f;
         cautionThreshold = hasCeiling ? 5.0f : 7.5f;
         warningThreshold = hasCeiling ? 2.5f : 5.0f;
         correctThreshold = hasCeiling ? 1.0f : 2.5f;
@@ -78,12 +70,15 @@ public class FlightSafetyMonitor {
         else if (secondsUntilGroundImpact <= lampThreshold || secondsUntilTerrainImpact <= lampThreshold)
             gpwsLampColor = CONFIG.amberColor;
         else
-            gpwsLampColor = radioAltFault || terrainDetectionFault ? CONFIG.adviceColor : CONFIG.color;
+            gpwsLampColor = terrainDetectionFault ? CONFIG.adviceColor : CONFIG.color;
 
         isStalling = updateStallStatus(computer);
         isElytraLow = updateElytraLow(computer);
         secondsUntilTerrainImpact = updateUnsafeTerrainClearance(mc.player, mc.world.getChunkManager(), computer);
+        boolean wereFireworksSafe = unsafeFireworkHands.isEmpty();
         updateUnsafeFireworks(mc.player);
+        if (wereFireworksSafe && !unsafeFireworkHands.isEmpty())
+            LOGGER.error("Unsafe fireworks in {}", unsafeFireworkHands.get(0).toString().replace('_', ' '));
         fireworkCount = countSafeFireworks(mc.player);
 
         if (flightProtectionsEnabled) { // Make corrections to flight path to ensure safety
@@ -125,8 +120,9 @@ public class FlightSafetyMonitor {
     }
 
     private static boolean updateStallStatus(FlightComputer computer) {
-        final boolean b = computer.pitch > 0 && (computer.distanceFromGround == null || computer.distanceFromGround > 2) && computer.velocity.horizontalLength() < -computer.velocity.y;
-        if (b && !isStalling) LOGGER.error("Stall: pitch {}; radar altitude {}; G/S {}; V/S {}", computer.pitch, computer.distanceFromGround == null ? "N/A" : computer.distanceFromGround, computer.velocityPerSecond.horizontalLength(), computer.velocityPerSecond.y);
+        final boolean b = computer.pitch > 0 && computer.distanceFromGround > 2 && computer.velocity.horizontalLength() < -computer.velocity.y;
+        if (b && !isStalling)
+            LOGGER.error("Stall: pitch {}; radar altitude {}; G/S {}; V/S {}", computer.pitch, computer.distanceFromGround, computer.velocityPerSecond.horizontalLength(), computer.velocityPerSecond.y);
 
         return b;
     }
