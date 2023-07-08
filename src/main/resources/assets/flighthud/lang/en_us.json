@@ -5,6 +5,7 @@
   "key.flighthud.gpwsSwitch": "Turn On/Off GPWS",
   "key.flighthud.fdSwitch": "Turn On/Off Flight Directors",
   "key.flighthud.aThrSwitch": "Turn On/Off Auto Thrust",
+  "key.flighthud.apSwitch": "Turn On/Off Auto Pilot",
   "category.flighthud.toggleDisplayMode": "Flight HUD",
   "commands.flighthud.cannotUseApInNether": "Cannot use the autopilot below the Nether ceiling!"
 }
