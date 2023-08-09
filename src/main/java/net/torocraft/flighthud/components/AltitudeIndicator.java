@@ -30,7 +30,7 @@ public class AltitudeIndicator extends HudComponent {
     float xAltText = right + 5;
 
     if (CONFIG.altitude_showGroundInfo) {
-      drawHeightIndicator(mc, context, left - 1, dim.yMid, bottom - dim.yMid);
+      drawHeightIndicator(mc, context, left - 1, dim.yMid, bottom - dim.yMid, CONFIG.color);
     }
 
     if (CONFIG.altitude_showReadout) {
@@ -63,20 +63,20 @@ public class AltitudeIndicator extends HudComponent {
     }
   }
 
-  private void drawHeightIndicator(MinecraftClient client, DrawContext context, float x, float top, float h) {
+  private void drawHeightIndicator(MinecraftClient client, DrawContext context, float x, float top, float h, int color) {
     float bottom = top + h;
     float blocksPerPixel = h / (client.world.getHeight() + 64f);
     float yAlt = bottom - i((computer.altitude + 64) * blocksPerPixel);
     float yFloor = bottom - i(64 * blocksPerPixel);
 
-    drawVerticalLine(context, x, top - 1, bottom + 1, CONFIG.color);
+    drawVerticalLine(context, x, top - 1, bottom + 1, color);
 
     float yGroundLevel = bottom - (computer.groundLevel + 64f) * blocksPerPixel;
-    fill(context, x - 3, yGroundLevel + 2, x, yFloor, CONFIG.color);
+    fill(context, x - 3, yGroundLevel + 2, x, yFloor, color);
 
-    drawHorizontalLine(context, x - 6, x - 1, top, CONFIG.color);
-    drawHorizontalLine(context, x - 6, x - 1, yFloor, CONFIG.color);
-    drawHorizontalLine(context, x - 6, x - 1, bottom, CONFIG.color);
+    drawHorizontalLine(context, x - 6, x - 1, top, color);
+    drawHorizontalLine(context, x - 6, x - 1, yFloor, color);
+    drawHorizontalLine(context, x - 6, x - 1, bottom, color);
 
     drawPointer(context, x, yAlt, 90);
   }

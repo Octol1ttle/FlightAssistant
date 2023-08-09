@@ -21,9 +21,9 @@ public class InGameHudMixin {
   @Inject(method = "render", at = @At("RETURN"))
   private void render(DrawContext context, float tickDelta, CallbackInfo ci) {
     if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
-      net.raphimc.immediatelyfast.feature.batching.BatchingBuffers.beginHudBatching();
+      net.torocraft.flighthud.compat.ImmediatelyFastBatchingAccessor.beginHudBatching();
     HudRenderer.INSTANCE.render(context, client);
     if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
-      net.raphimc.immediatelyfast.feature.batching.BatchingBuffers.endHudBatching();
+      net.torocraft.flighthud.compat.ImmediatelyFastBatchingAccessor.endHudBatching();
   }
 }

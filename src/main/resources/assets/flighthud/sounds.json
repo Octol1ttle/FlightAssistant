@@ -1,12 +1,7 @@
 {
-  "master_warning": {
+  "alert": {
     "sounds": [
-      "flighthud:master_warning"
-    ]
-  },
-  "master_caution": {
-    "sounds": [
-      "flighthud:master_caution"
+      "flighthud:alert"
     ]
   },
   "stick_shaker": {

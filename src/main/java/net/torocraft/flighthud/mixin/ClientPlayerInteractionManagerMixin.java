@@ -21,7 +21,8 @@ public class ClientPlayerInteractionManagerMixin {
         if (FlightSafetyMonitor.flightProtectionsEnabled && FlightSafetyMonitor.unsafeFireworkHands.contains(hand))
             cir.setReturnValue(ActionResult.FAIL);
         else if (player.getStackInHand(hand).getItem() instanceof FireworkRocketItem) {
-            if (FlightSafetyMonitor.flightProtectionsEnabled && !FlightSafetyMonitor.thrustSet)
+            if (FlightSafetyMonitor.flightProtectionsEnabled && !FlightSafetyMonitor.thrustSet
+                    || FlightSafetyMonitor.thrustLocked)
                 cir.setReturnValue(ActionResult.FAIL);
             else {
                 FlightSafetyMonitor.lastFireworkActivationTimeMs = Util.getMeasuringTimeMs();

@@ -39,9 +39,10 @@ public abstract class HudComponent {
     context.getMatrices().pop();
   }
 
-  protected void drawFont(MinecraftClient mc, DrawContext context, String s, float x, float y,
-                          int color) {
+  public static int drawFont(MinecraftClient mc, DrawContext context, String s, float x, float y,
+                             int color) {
     context.drawText(mc.textRenderer, s, i(x), i(y), color, false);
+    return 1;
   }
 
   protected void drawRightAlignedFont(MinecraftClient mc, DrawContext context, String s, float x,
@@ -50,9 +51,9 @@ public abstract class HudComponent {
     drawFont(mc, context, s, x - w, y, color);
   }
 
-  protected void drawCenteredFont(MinecraftClient mc, DrawContext context, String s, float width, float y,
+  public static void drawCenteredFont(MinecraftClient mc, DrawContext context, String s, float width, float y,
                                   int color) {
-    context.drawText(mc.textRenderer, s, i((width - mc.textRenderer.getWidth(s))) / 2, i(y), color, false);
+    context.drawText(mc.textRenderer, s, i(width - mc.textRenderer.getWidth(s)) / 2, i(y), color, false);
   }
 
   protected void drawHorizontalLineDashed(DrawContext context, float x1, float x2, float y,
@@ -75,7 +76,7 @@ public abstract class HudComponent {
     }
   }
 
-  protected void drawHorizontalLine(DrawContext context, float x1, float x2, float y, int color) {
+  public static void drawHorizontalLine(DrawContext context, float x1, float x2, float y, int color) {
     if (x2 < x1) {
       float i = x1;
       x1 = x2;
@@ -85,7 +86,7 @@ public abstract class HudComponent {
             y + CONFIG.halfThickness, color);
   }
 
-  protected void drawVerticalLine(DrawContext context, float x, float y1, float y2, int color) {
+  public static void drawVerticalLine(DrawContext context, float x, float y1, float y2, int color) {
     if (y2 < y1) {
       float i = y1;
       y1 = y2;
@@ -96,7 +97,7 @@ public abstract class HudComponent {
             y2 - CONFIG.halfThickness, color);
   }
 
-  protected void drawBox(DrawContext context, float x, float y, float w) {
+  public static void drawBox(DrawContext context, float x, float y, float w) {
     drawHorizontalLine(context, x, x + w, y, CONFIG.color);
     drawHorizontalLine(context, x, x + w, y + 10, CONFIG.color);
     drawVerticalLine(context, x, y, y + 10, CONFIG.color);

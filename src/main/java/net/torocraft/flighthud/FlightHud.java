@@ -7,8 +7,12 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.sound.SoundCategory;
-import net.torocraft.flighthud.commands.*;
+import net.torocraft.flighthud.alerts.Alert;
+import net.torocraft.flighthud.commands.AltitudeResetCommand;
+import net.torocraft.flighthud.commands.AltitudeSelectCommand;
+import net.torocraft.flighthud.commands.DestinationResetCommand;
+import net.torocraft.flighthud.commands.DestinationSelectCommand;
+import net.torocraft.flighthud.commands.SwitchDisplayModeCommand;
 import net.torocraft.flighthud.components.FlightStatusIndicator;
 import net.torocraft.flighthud.config.HudConfig;
 import net.torocraft.flighthud.config.SettingsConfig;
@@ -46,7 +50,8 @@ public class FlightHud implements ClientModInitializer {
           config -> FlightHud.CONFIG_MIN = config);
 
   private static KeyBinding keyBinding;
-  private static KeyBinding masterWarning;
+  private static KeyBinding hideAlertSwitch;
+  private static KeyBinding showAlertSwitch;
   private static KeyBinding flightLawSwitch;
   private static KeyBinding gpwsSwitch;
   private static KeyBinding fdSwitch;
@@ -66,14 +71,17 @@ public class FlightHud implements ClientModInitializer {
     keyBinding = new KeyBinding("key.flighthud.toggleDisplayMode", InputUtil.Type.KEYSYM,
         GLFW.GLFW_KEY_GRAVE_ACCENT, "category.flighthud.toggleDisplayMode");
 
-    masterWarning = new KeyBinding("key.flighthud.masterWarning", InputUtil.Type.KEYSYM,
+    hideAlertSwitch = new KeyBinding("key.flighthud.hideAlertSwitch", InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_KP_0, "category.flighthud.toggleDisplayMode");
 
-    flightLawSwitch = new KeyBinding("key.flighthud.flightLawSwitch", InputUtil.Type.KEYSYM,
+    showAlertSwitch = new KeyBinding("key.flighthud.showAlertSwitch", InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_KP_DECIMAL, "category.flighthud.toggleDisplayMode");
 
-    gpwsSwitch = new KeyBinding("key.flighthud.gpwsSwitch", InputUtil.Type.KEYSYM,
+    flightLawSwitch = new KeyBinding("key.flighthud.flightLawSwitch", InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_KP_ENTER, "category.flighthud.toggleDisplayMode");
+
+    gpwsSwitch = new KeyBinding("key.flighthud.gpwsSwitch", InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_KP_ADD, "category.flighthud.toggleDisplayMode");
 
     fdSwitch = new KeyBinding("key.flighthud.fdSwitch", InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_KP_1, "category.flighthud.toggleDisplayMode");
@@ -85,7 +93,8 @@ public class FlightHud implements ClientModInitializer {
             GLFW.GLFW_KEY_KP_3, "category.flighthud.toggleDisplayMode");
 
     KeyBindingHelper.registerKeyBinding(keyBinding);
-    KeyBindingHelper.registerKeyBinding(masterWarning);
+    KeyBindingHelper.registerKeyBinding(hideAlertSwitch);
+    KeyBindingHelper.registerKeyBinding(showAlertSwitch);
     KeyBindingHelper.registerKeyBinding(flightLawSwitch);
     KeyBindingHelper.registerKeyBinding(gpwsSwitch);
     KeyBindingHelper.registerKeyBinding(fdSwitch);
@@ -97,9 +106,21 @@ public class FlightHud implements ClientModInitializer {
         CONFIG_SETTINGS.toggleDisplayMode();
       }
 
-      while (masterWarning.wasPressed()) {
-        client.getSoundManager().stopSounds(FlightStatusIndicator.MASTER_WARNING.getId(), SoundCategory.MASTER);
-        LOGGER.warn("Master warning suppressed");
+      while (hideAlertSwitch.wasPressed()) {
+        for (Alert alert : FlightStatusIndicator.activeAlerts) {
+          if (alert.hidden) continue;
+          alert.hidden = true;
+          break;
+        }
+      }
+
+      while (showAlertSwitch.wasPressed()) {
+        for (int i = FlightStatusIndicator.activeAlerts.size() - 1; i >= 0; i--) {
+          Alert alert = FlightStatusIndicator.activeAlerts.get(i);
+          if (!alert.hidden) continue;
+          alert.hidden = false;
+          break;
+        }
       }
 
       while (flightLawSwitch.wasPressed()) {
@@ -119,6 +140,8 @@ public class FlightHud implements ClientModInitializer {
 
       while (aThrSwitch.wasPressed()) {
         AutoFlightManager.autoThrustEnabled = !AutoFlightManager.autoThrustEnabled;
+        if (!AutoFlightManager.autoThrustEnabled)
+          FlightSafetyMonitor.thrustLocked = false;
         LOGGER.info("Auto thrust turned {}", AutoFlightManager.autoThrustEnabled ? "on" : "off");
       }
 

@@ -5,7 +5,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 
-import static net.torocraft.flighthud.FlightSafetyMonitor.*;
+import static net.torocraft.flighthud.FlightSafetyMonitor.correctThreshold;
+import static net.torocraft.flighthud.FlightSafetyMonitor.gpwsLampColor;
+import static net.torocraft.flighthud.FlightSafetyMonitor.lastFireworkActivationTimeMs;
+import static net.torocraft.flighthud.FlightSafetyMonitor.maximumSafePitch;
+import static net.torocraft.flighthud.FlightSafetyMonitor.secondsUntilTerrainImpact;
+import static net.torocraft.flighthud.FlightSafetyMonitor.thrustSet;
+import static net.torocraft.flighthud.FlightSafetyMonitor.usableFireworkHand;
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 import static net.torocraft.flighthud.HudComponent.wrapHeading;
 
@@ -47,7 +53,6 @@ public class AutoFlightManager {
                 if (thrustSet && (computer.speed < 28 || computer.velocityPerSecond.y < -8)) {
                     mc.interactionManager.interactItem(mc.player, usableFireworkHand);
                     lastFireworkActivationTimeMs = lastUpdateTimeMs;
-                    thrustSet = false;
                 }
                 statusString += "THR MCT";
             } else statusString += "THR IDLE";

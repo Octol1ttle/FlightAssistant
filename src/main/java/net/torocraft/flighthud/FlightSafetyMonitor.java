@@ -2,7 +2,6 @@ package net.torocraft.flighthud;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientChunkManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
@@ -11,7 +10,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
@@ -44,16 +42,17 @@ public class FlightSafetyMonitor {
     public static float correctThreshold = 0.0f;
 
     public static boolean flightProtectionsEnabled = true;
-    public static boolean terrainDetectionFault = false;
 
     public static boolean thrustSet = true;
     public static long lastFireworkActivationTimeMs = 0;
 
     public static int fireworkCount = Integer.MAX_VALUE;
+    public static boolean thrustLocked = false;
 
     public static void update(MinecraftClient mc, FlightComputer computer) {
         if (CONFIG == null || mc.world == null || mc.player == null || !mc.player.isFallFlying()) {
             flightProtectionsEnabled = thrustSet = true;
+            thrustLocked = false;
             return;
         }
         maximumSafePitch = updateMaximumSafePitch(computer);
@@ -70,11 +69,11 @@ public class FlightSafetyMonitor {
         else if (secondsUntilGroundImpact <= lampThreshold || secondsUntilTerrainImpact <= lampThreshold)
             gpwsLampColor = CONFIG.amberColor;
         else
-            gpwsLampColor = terrainDetectionFault ? CONFIG.adviceColor : CONFIG.color;
+            gpwsLampColor = CONFIG.color;
 
         isStalling = updateStallStatus(computer);
         isElytraLow = updateElytraLow(computer);
-        secondsUntilTerrainImpact = updateUnsafeTerrainClearance(mc.player, mc.world.getChunkManager(), computer);
+        secondsUntilTerrainImpact = updateUnsafeTerrainClearance(mc.player, computer);
         boolean wereFireworksSafe = unsafeFireworkHands.isEmpty();
         updateUnsafeFireworks(mc.player);
         if (wereFireworksSafe && !unsafeFireworkHands.isEmpty())
@@ -142,10 +141,10 @@ public class FlightSafetyMonitor {
         return f;
     }
 
-    private static float updateUnsafeTerrainClearance(PlayerEntity player, ClientChunkManager manager, FlightComputer computer) {
+    private static float updateUnsafeTerrainClearance(PlayerEntity player, FlightComputer computer) {
         if (!CONFIG_SETTINGS.gpws || isStalling || computer.velocityPerSecond.horizontalLength() <= 15)
             return Float.MAX_VALUE;
-        Vec3d vec = raycast(player, manager, computer, 10);
+        Vec3d vec = raycast(player, computer, 10);
         float f = vec == null ? Float.MAX_VALUE : (float) (vec.subtract(player.getPos()).horizontalLength() / computer.velocityPerSecond.horizontalLength());
         if (f <= 10.0f) {
             if (f <= 5.0f && secondsUntilTerrainImpact > 5.0f)
@@ -177,21 +176,13 @@ public class FlightSafetyMonitor {
         return i;
     }
 
-    public static Vec3d raycast(PlayerEntity player, ClientChunkManager manager, FlightComputer computer, int seconds) {
+    public static Vec3d raycast(PlayerEntity player, FlightComputer computer, int seconds) {
         Vec3d vel = computer.velocityPerSecond;
         Vec3d end = player.getPos().add(vel.multiply(seconds));
-        terrainDetectionFault = !isPosLoaded(manager, player.getPos().add(vel.multiply(seconds * 0.4)));
-        if (terrainDetectionFault) return null;
 
-        BlockHitResult result = player.getWorld().raycast(new RaycastContext(player.getPos(), end, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, player));
+        BlockHitResult result = player.getWorld().raycast(new RaycastContext(player.getPos(), end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
         if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP || result.getSide() == Direction.DOWN)
             return null;
         return result.getPos();
-    }
-
-    public static boolean isPosLoaded(ClientChunkManager manager, Vec3d vec) {
-        int i = ChunkSectionPos.getSectionCoord(vec.x);
-        int j = ChunkSectionPos.getSectionCoord(vec.z);
-        return manager.isChunkLoaded(i, j);
     }
 }
