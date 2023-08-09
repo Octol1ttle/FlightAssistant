@@ -1,8 +1,16 @@
 package net.torocraft.flighthud;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.torocraft.flighthud.components.*;
+import net.torocraft.flighthud.components.AltitudeIndicator;
+import net.torocraft.flighthud.components.ElytraHealthIndicator;
+import net.torocraft.flighthud.components.FlightPathIndicator;
+import net.torocraft.flighthud.components.FlightStatusIndicator;
+import net.torocraft.flighthud.components.HeadingIndicator;
+import net.torocraft.flighthud.components.LocationIndicator;
+import net.torocraft.flighthud.components.PitchIndicator;
+import net.torocraft.flighthud.components.SpeedIndicator;
 import net.torocraft.flighthud.config.SettingsConfig.DisplayMode;
 
 public class HudRenderer extends HudComponent {
@@ -56,11 +64,15 @@ public class HudRenderer extends HudComponent {
       dim.update(client);
 
       for (HudComponent component : components) {
+        if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
+          net.torocraft.flighthud.compat.ImmediatelyFastBatchingAccessor.beginHudBatching();
         component.render(context, client);
+        if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
+          net.torocraft.flighthud.compat.ImmediatelyFastBatchingAccessor.endHudBatching();
       }
       context.getMatrices().pop();
     } catch (Exception e) {
-      e.printStackTrace();
+      FlightHud.LOGGER.error("Exception rendering components", e);
     }
   }
 }
