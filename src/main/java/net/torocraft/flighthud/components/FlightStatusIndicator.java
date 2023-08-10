@@ -85,12 +85,12 @@ public class FlightStatusIndicator extends HudComponent {
 
         for (Alert alert : activeAlerts) {
             if (alert.hidden) continue;
-            y += 10 * alert.drawText(mc, context, x, y, highlight);
+            y += 9 * alert.drawText(mc, context, x, y, highlight);
         }
 
         // Right-side ECAM
         if (AutoFlightManager.flightDirectorsEnabled) {
-            drawRightAlignedFont(mc, context, "FD", xRight, yRight += 10, CONFIG.color);
+            drawRightAlignedFont(mc, context, "FD", xRight, yRight += 9, CONFIG.color);
 
             // Flight directors
             if (AutoFlightManager.targetPitch != null) {
@@ -110,7 +110,7 @@ public class FlightStatusIndicator extends HudComponent {
             }
         }
         if (AutoFlightManager.distanceToTarget != null) {
-            drawRightAlignedFont(mc, context, String.format("DIST: %.1f", AutoFlightManager.distanceToTarget), xRight, yRight += 10, CONFIG.color);
+            drawRightAlignedFont(mc, context, String.format("DIST: %.1f", AutoFlightManager.distanceToTarget), xRight, yRight += 9, CONFIG.color);
         }
         drawCenteredFont(mc, context, AutoFlightManager.statusString, dim.wScreen, dim.tFrame + 15, CONFIG.color);
 

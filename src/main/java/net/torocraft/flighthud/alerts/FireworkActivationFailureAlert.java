@@ -19,10 +19,10 @@ public class FireworkActivationFailureAlert extends Alert {
     public int drawText(MinecraftClient mc, DrawContext context, float x, float y, boolean highlight) {
         int i = drawWarning(mc, context, x, y, highlight, "FRWK ACTIVATION FAIL");
         if (AutoFlightManager.autoPilotEnabled || AutoFlightManager.flightDirectorsEnabled)
-            i += HudComponent.drawFont(mc, context, " -AP+FD: OFF", x, y += 10, CONFIG.adviceColor);
+            i += HudComponent.drawFont(mc, context, " -AP+FD: OFF", x, y += 9, CONFIG.adviceColor);
         if (AutoFlightManager.autoThrustEnabled)
-            i += HudComponent.drawFont(mc, context, " -ATHR: OFF", x, y += 10, CONFIG.adviceColor);
-        i += HudComponent.drawFont(mc, context, " SPD MAY BE UNREL", x, y += 10, CONFIG.adviceColor);
+            i += HudComponent.drawFont(mc, context, " -ATHR: OFF", x, y += 9, CONFIG.adviceColor);
+        i += HudComponent.drawFont(mc, context, " SPD MAY BE UNREL", x, y += 9, CONFIG.adviceColor);
         return i;
     }
 }

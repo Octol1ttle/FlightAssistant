@@ -24,7 +24,7 @@ public class UnsafeFireworksAlert extends Alert {
                 String text = handStr + " FRWKS UNSAFE";
                 HudComponent.drawTextHighlight(mc.textRenderer, context, x, y, text, CONFIG.alertColor);
                 HudComponent.drawFont(mc, context, text, x, y, CONFIG.white);
-                y += 10;
+                y += 9;
                 linesDrawn++;
             }
             return linesDrawn;
@@ -34,7 +34,7 @@ public class UnsafeFireworksAlert extends Alert {
             String handStr = hand.toString().replace('_', ' ');
             String result = handStr + " FRWKS UNSAFE";
             HudComponent.drawFont(mc, context, result, x, y, CONFIG.alertColor);
-            y += 10;
+            y += 9;
             linesDrawn++;
         }
         return linesDrawn;

@@ -19,12 +19,12 @@ public class ThrustLockedAlert extends Alert {
     public int drawText(MinecraftClient mc, DrawContext context, float x, float y, boolean highlight) {
         int i = drawCaution(mc, context, x, y, highlight, "THRUST LOCKED");
         if (!CONFIG_SETTINGS.gpws || !AutoFlightManager.autoPilotEnabled)
-            i += HudComponent.drawFont(mc, context, "-GPWS+AP: ON", x, y += 10, CONFIG.adviceColor);
+            i += HudComponent.drawFont(mc, context, "-GPWS+AP: ON", x, y += 9, CONFIG.adviceColor);
         if (!AutoFlightManager.autoThrustEnabled) {
-            i += HudComponent.drawFont(mc, context, "-ATHR: ON THEN OFF", x, y += 10, CONFIG.adviceColor);
+            i += HudComponent.drawFont(mc, context, "-ATHR: ON THEN OFF", x, y += 9, CONFIG.adviceColor);
             return i;
         }
-        i += HudComponent.drawFont(mc, context, "-ATHR: OFF", x, y += 10, CONFIG.adviceColor);
+        i += HudComponent.drawFont(mc, context, "-ATHR: OFF", x, y += 9, CONFIG.adviceColor);
         return i;
     }
 }
