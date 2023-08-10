@@ -16,8 +16,8 @@ public class AutoThrustLimitedAlert extends Alert {
 
     @Override
     public int drawText(MinecraftClient mc, DrawContext context, float x, float y, boolean highlight) {
-        int i = drawWarning(mc, context, x, y, highlight, "AUTO FLT A/THR LIMITED");
-        i += HudComponent.drawFont(mc, context, " -FRWKS: SELECT", x, y += 10, CONFIG.adviceColor);
+        int i = drawCaution(mc, context, x, y, highlight, "AUTO FLT A/THR LIMITED");
+        i += HudComponent.drawFont(mc, context, " -FRWKS: SELECT", x, y + 10, CONFIG.adviceColor);
         return i;
     }
 }
