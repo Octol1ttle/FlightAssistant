@@ -1,10 +1,13 @@
 package net.torocraft.flighthud;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.config.HudConfig;
+
+import java.util.function.Consumer;
 
 public abstract class HudComponent {
   public static void fill(DrawContext context, float x1, float y1, float x2, float y2, int color) {
@@ -107,5 +110,13 @@ public abstract class HudComponent {
 
   public static void drawTextHighlight(TextRenderer renderer, DrawContext context, float x, float y, String text, int color) {
     HudComponent.fill(context, x - 1.5f, y - 1.5f, x + renderer.getWidth(text), y + 8.0f, color);
+  }
+
+  public static void drawUnbatched(Consumer<DrawContext> c, DrawContext context) {
+    if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
+      net.torocraft.flighthud.compat.ImmediatelyFastBatchingAccessor.endHudBatching();
+    c.accept(context);
+    if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
+      net.torocraft.flighthud.compat.ImmediatelyFastBatchingAccessor.beginHudBatching();
   }
 }
