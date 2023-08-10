@@ -21,9 +21,9 @@ public class UnsafeFireworksAlert extends Alert {
         if (highlight) {
             for (Hand hand : FlightSafetyMonitor.unsafeFireworkHands) {
                 String handStr = hand.toString().replace('_', ' ');
-                String result = handStr + " FRWKS UNSAFE";
-                HudComponent.fill(context, x - 1.5f, y - 1.5f, x + mc.textRenderer.getWidth(result) + CONFIG.halfThickness, y + 9, CONFIG.alertColor);
-                HudComponent.drawFont(mc, context, result, x, y, CONFIG.white);
+                String text = handStr + " FRWKS UNSAFE";
+                HudComponent.drawTextHighlight(mc.textRenderer, context, x, y, text, CONFIG.alertColor);
+                HudComponent.drawFont(mc, context, text, x, y, CONFIG.white);
                 y += 10;
                 linesDrawn++;
             }

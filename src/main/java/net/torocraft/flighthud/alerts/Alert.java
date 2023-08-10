@@ -11,7 +11,7 @@ public abstract class Alert {
 
     public static int drawWarning(MinecraftClient mc, DrawContext context, float x, float y, boolean highlight, String text) {
         if (highlight) {
-            HudComponent.fill(context, x - 1.5f, y - 1.5f, x + mc.textRenderer.getWidth(text) + CONFIG.halfThickness, y + 9, CONFIG.alertColor);
+            HudComponent.drawTextHighlight(mc.textRenderer, context, x, y, text, CONFIG.alertColor);
             HudComponent.drawFont(mc, context, text, x, y, CONFIG.white);
             return 1;
         }
@@ -21,7 +21,7 @@ public abstract class Alert {
 
     public static int drawCaution(MinecraftClient mc, DrawContext context, float x, float y, boolean highlight, String text) {
         if (highlight) {
-            HudComponent.fill(context, x - 1.5f, y - 1.5f, x + mc.textRenderer.getWidth(text) + CONFIG.halfThickness, y + 9, CONFIG.amberColor);
+            HudComponent.drawTextHighlight(mc.textRenderer, context, x, y, text, CONFIG.amberColor);
             HudComponent.drawFont(mc, context, text, x, y, CONFIG.black);
             return 1;
         }

@@ -1,6 +1,7 @@
 package net.torocraft.flighthud;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.config.HudConfig;
@@ -102,5 +103,9 @@ public abstract class HudComponent {
     drawHorizontalLine(context, x, x + w, y + 10, CONFIG.color);
     drawVerticalLine(context, x, y, y + 10, CONFIG.color);
     drawVerticalLine(context, x + w, y, y + 10, CONFIG.color);
+  }
+
+  public static void drawTextHighlight(TextRenderer renderer, DrawContext context, float x, float y, String text, int color) {
+    HudComponent.fill(context, x - 1.5f, y - 1.5f, x + renderer.getWidth(text), y + 8.0f, color);
   }
 }
