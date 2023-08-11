@@ -1,8 +1,10 @@
 package net.torocraft.flighthud;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
@@ -144,19 +146,24 @@ public class FlightHud implements ClientModInitializer {
     }
 
     private static void setupCommand() {
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(literal("flighthud")
-                .then(literal("toggle").executes(new SwitchDisplayModeCommand()))
-                .then(literal("nav")
-                        .then(argument("destinationX", IntegerArgumentType.integer(-30_000_000, 30_000_000))
-                                .then(argument("destinationZ", IntegerArgumentType.integer(-30_000_000, 30_000_000))
-                                        .executes(new DestinationSelectCommand())))
-                        .then(literal("reset")
-                                .executes(new DestinationResetCommand())))
-                .then(literal("alt")
-                        .then(argument("targetAltitude", IntegerArgumentType.integer(0, 640))
-                                .executes(new AltitudeSelectCommand()))
-                        .then(literal("reset")
-                                .executes(new AltitudeResetCommand())))));
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+
+            LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(literal("flighthud")
+                    .then(literal("toggle").executes(new SwitchDisplayModeCommand()))
+                    .then(literal("nav")
+                            .then(argument("destinationX", IntegerArgumentType.integer(-30_000_000, 30_000_000))
+                                    .then(argument("destinationZ", IntegerArgumentType.integer(-30_000_000, 30_000_000))
+                                            .executes(new DestinationSelectCommand())))
+                            .then(literal("reset")
+                                    .executes(new DestinationResetCommand())))
+                    .then(literal("alt")
+                            .then(argument("targetAltitude", IntegerArgumentType.integer(0, 640))
+                                    .executes(new AltitudeSelectCommand()))
+                            .then(literal("reset")
+                                    .executes(new AltitudeResetCommand()))));
+            dispatcher.register(literal("fhud").redirect(node));
+            dispatcher.register(literal("fh").redirect(node));
+        });
     }
 
     @Override
