@@ -10,6 +10,7 @@ import static net.torocraft.flighthud.FlightSafetyMonitor.gpwsLampColor;
 import static net.torocraft.flighthud.FlightSafetyMonitor.lastFireworkActivationTimeMs;
 import static net.torocraft.flighthud.FlightSafetyMonitor.maximumSafePitch;
 import static net.torocraft.flighthud.FlightSafetyMonitor.secondsUntilTerrainImpact;
+import static net.torocraft.flighthud.FlightSafetyMonitor.thrustLocked;
 import static net.torocraft.flighthud.FlightSafetyMonitor.thrustSet;
 import static net.torocraft.flighthud.FlightSafetyMonitor.usableFireworkHand;
 import static net.torocraft.flighthud.HudComponent.CONFIG;
@@ -48,8 +49,8 @@ public class AutoFlightManager {
         boolean approachingDestination = distanceToTarget != null && distanceToTarget < Math.max(40, computer.velocityPerSecond.horizontalLength());
 
         if (computer.speed > 30) thrustSet = true;
-        if (autoThrustEnabled && usableFireworkHand != null) {
-            if (gpwsLampColor == CONFIG.color && computer.velocityPerSecond.horizontalLength() > 0.01 && computer.pitch > (autoPilotEnabled ? 0 : 10) && !approachingDestination) {
+        else if (autoThrustEnabled && usableFireworkHand != null) {
+            if (!thrustLocked && gpwsLampColor == CONFIG.color && computer.velocityPerSecond.horizontalLength() > 0.01 && computer.pitch > (autoPilotEnabled ? 0 : 10) && !approachingDestination) {
                 if (thrustSet && (computer.speed < 28 || computer.velocityPerSecond.y < -8)) {
                     mc.interactionManager.interactItem(mc.player, usableFireworkHand);
                     lastFireworkActivationTimeMs = lastUpdateTimeMs;
@@ -91,7 +92,7 @@ public class AutoFlightManager {
 
             changeLookDirection(mc.player, targetPitch != null ? (targetPitch + computer.pitch) * deltaTime : 0.0f,
                     deltaHeading * deltaTime * 1.25f);
-            statusString += "".equals(statusString) ? "AP" : " | AP";
+            statusString += "".equals(statusString) ? "A/P" : " | A/P";
         }
     }
 

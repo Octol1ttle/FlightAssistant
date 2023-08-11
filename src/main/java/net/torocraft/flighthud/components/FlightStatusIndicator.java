@@ -86,6 +86,10 @@ public class FlightStatusIndicator extends HudComponent {
             y += 9 * alert.drawText(mc, context, x, y, highlight);
         }
 
+        int fwobLampColor = FlightSafetyMonitor.fireworkCount > 0
+                ? (FlightSafetyMonitor.fireworkCount < 24 ? CONFIG.amberColor : CONFIG.color)
+                : CONFIG.alertColor;
+        drawRightAlignedFont(mc, context, "FRWK CNT: " + FlightSafetyMonitor.fireworkCount, xRight, yRight += 9, fwobLampColor);
         // Right-side ECAM
         if (AutoFlightManager.flightDirectorsEnabled) {
             drawRightAlignedFont(mc, context, "FD", xRight, yRight += 9, CONFIG.color);
@@ -108,7 +112,7 @@ public class FlightStatusIndicator extends HudComponent {
             }
         }
         if (AutoFlightManager.distanceToTarget != null) {
-            drawRightAlignedFont(mc, context, String.format("DIST: %.1f", AutoFlightManager.distanceToTarget), xRight, yRight + 9, CONFIG.color);
+            drawRightAlignedFont(mc, context, String.format("DIST: %.0f", AutoFlightManager.distanceToTarget), xRight, yRight + 9, CONFIG.color);
         }
         drawCenteredFont(mc, context, AutoFlightManager.statusString, dim.wScreen, dim.tFrame + 15, CONFIG.color);
 
@@ -120,7 +124,7 @@ public class FlightStatusIndicator extends HudComponent {
         lastAutopilotState = AutoFlightManager.autoPilotEnabled;
 
         if (FlightSafetyMonitor.isStalling && CONFIG_SETTINGS.stickShaker && computer.velocityPerSecond.y <= -10) {
-            playRepeating(mc, STICK_SHAKER, 0.75f);
+            playStickShaker(mc);
             drawCenteredWarning(mc, context, dim.wScreen, dim.hScreen / 2 + 10, highlight, "STALL");
         } else stopEvent(mc, STICK_SHAKER);
 
@@ -139,8 +143,8 @@ public class FlightStatusIndicator extends HudComponent {
         float x = (width - mc.textRenderer.getWidth(text)) / 2;
         if (highlight) {
             HudComponent.drawUnbatched(drawContext -> {
-                HudComponent.drawTextHighlight(mc.textRenderer, context, x, y, text, CONFIG.alertColor);
-                HudComponent.drawCenteredFont(mc, context, text, width, y, CONFIG.white);
+                HudComponent.drawTextHighlight(mc.textRenderer, drawContext, x, y, text, CONFIG.alertColor);
+                HudComponent.drawCenteredFont(mc, drawContext, text, width, y, CONFIG.white);
             }, context);
             return;
         }
@@ -164,10 +168,10 @@ public class FlightStatusIndicator extends HudComponent {
         }
     }
 
-    private void playRepeating(MinecraftClient mc, SoundEvent event, float volume) {
-        if (!activeEvents.contains(event)) {
-            mc.getSoundManager().play(new AlertSoundInstance(event, volume, mc.player, true));
-            activeEvents.add(event);
+    private void playStickShaker(MinecraftClient mc) {
+        if (!activeEvents.contains(FlightStatusIndicator.STICK_SHAKER)) {
+            mc.getSoundManager().play(new AlertSoundInstance(FlightStatusIndicator.STICK_SHAKER, (float) 0.75, mc.player, true));
+            activeEvents.add(FlightStatusIndicator.STICK_SHAKER);
         }
     }
 
