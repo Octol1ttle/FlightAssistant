@@ -22,7 +22,7 @@ public class FireworkActivationFailureAlert extends Alert {
             i += HudComponent.drawFont(mc, context, " -AP+FD: OFF", x, y += 9, CONFIG.adviceColor);
         if (AutoFlightManager.autoThrustEnabled)
             i += HudComponent.drawFont(mc, context, " -ATHR: OFF", x, y += 9, CONFIG.adviceColor);
-        i += HudComponent.drawFont(mc, context, " SPD MAY BE UNREL", x, y += 9, CONFIG.adviceColor);
+        i += HudComponent.drawFont(mc, context, " SPD MAY BE UNREL", x, y + 9, CONFIG.adviceColor);
         return i;
     }
 }

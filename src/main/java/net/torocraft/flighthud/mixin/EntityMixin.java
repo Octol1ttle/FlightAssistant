@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class EntityMixin {
     @Inject(method = "setPitch", at = @At("HEAD"), cancellable = true)
     public void preventUpsetPitch(float pitch, CallbackInfo ci) {
-        Entity that = (Entity)(Object)this;
+        Entity that = (Entity) (Object) this;
 
         if (that instanceof ClientPlayerEntity cpe && cpe.isFallFlying() && FlightSafetyMonitor.flightProtectionsEnabled) {
             boolean approachingStall = pitch < that.getPitch() && pitch < -FlightSafetyMonitor.maximumSafePitch;

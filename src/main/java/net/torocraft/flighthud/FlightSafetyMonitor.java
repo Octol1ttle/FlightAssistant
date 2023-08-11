@@ -113,7 +113,8 @@ public class FlightSafetyMonitor {
 
     private static boolean updateElytraLow(FlightComputer computer) {
         final boolean b = CONFIG_SETTINGS.lowElytraHealthAlarm && computer.elytraHealth != null && computer.elytraHealth <= CONFIG_SETTINGS.lowElytraHealthAlarmThreshold;
-        if (b && !isElytraLow) LOGGER.error("Elytra health low: {}; threshold {}", computer.elytraHealth, CONFIG_SETTINGS.lowElytraHealthAlarmThreshold);
+        if (b && !isElytraLow)
+            LOGGER.error("Elytra health low: {}; threshold {}", computer.elytraHealth, CONFIG_SETTINGS.lowElytraHealthAlarmThreshold);
 
         return b;
     }

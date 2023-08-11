@@ -19,7 +19,7 @@ public class NoFireworksAlert extends Alert {
         int i = drawWarning(mc, context, x, y, highlight, "NO FRWKS ON BOARD");
         if (AutoFlightManager.targetAltitude != null)
             i += HudComponent.drawFont(mc, context, " -AP ALT: RESET", x, y += 9, CONFIG.adviceColor);
-        i += HudComponent.drawFont(mc, context, " GLDG DIST: 100 BLKS/10 GND ALT", x, y += 9, CONFIG.adviceColor);
+        i += HudComponent.drawFont(mc, context, " GLDG DIST: 100 BLKS/10 GND ALT", x, y + 9, CONFIG.adviceColor);
         return i;
     }
 }

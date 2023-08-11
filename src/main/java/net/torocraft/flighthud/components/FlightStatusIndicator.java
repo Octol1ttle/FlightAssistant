@@ -48,13 +48,11 @@ public class FlightStatusIndicator extends HudComponent {
     };
     public static final List<Alert> activeAlerts = new ArrayList<>();
     private static long lastHighlightTimeMs = 0L;
-    @Deprecated
-    private final List<SoundEvent> activeEvents = new ObjectArrayList<>(2);
-    public boolean highlight = true;
 
+    private final List<SoundEvent> activeEvents = new ObjectArrayList<>(2);
     private final Dimensions dim;
     private final FlightComputer computer;
-
+    public boolean highlight = true;
     private boolean lastAutopilotState = false;
 
     public FlightStatusIndicator(FlightComputer computer, Dimensions dim) {
@@ -110,7 +108,7 @@ public class FlightStatusIndicator extends HudComponent {
             }
         }
         if (AutoFlightManager.distanceToTarget != null) {
-            drawRightAlignedFont(mc, context, String.format("DIST: %.1f", AutoFlightManager.distanceToTarget), xRight, yRight += 9, CONFIG.color);
+            drawRightAlignedFont(mc, context, String.format("DIST: %.1f", AutoFlightManager.distanceToTarget), xRight, yRight + 9, CONFIG.color);
         }
         drawCenteredFont(mc, context, AutoFlightManager.statusString, dim.wScreen, dim.tFrame + 15, CONFIG.color);
 

@@ -25,146 +25,146 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.arg
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class FlightHud implements ClientModInitializer {
-  public static final String MODID = "flighthud";
-  public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
+    public static final String MODID = "flighthud";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
-  public static SettingsConfig CONFIG_SETTINGS = new SettingsConfig();
-  public static HudConfig CONFIG_MIN = new HudConfig();
-  public static HudConfig CONFIG_FULL = new HudConfig();
+    public static SettingsConfig CONFIG_SETTINGS = new SettingsConfig();
+    public static HudConfig CONFIG_MIN = new HudConfig();
+    public static HudConfig CONFIG_FULL = new HudConfig();
 
-  public static ConfigLoader<SettingsConfig> CONFIG_LOADER_SETTINGS = new ConfigLoader<>(
-          new SettingsConfig(),
-          FlightHud.MODID + ".settings.json",
-          config -> FlightHud.CONFIG_SETTINGS = config);
-
-
-  public static ConfigLoader<HudConfig> CONFIG_LOADER_FULL = new ConfigLoader<>(
-          new HudConfig(),
-          FlightHud.MODID + ".full.json",
-          config -> FlightHud.CONFIG_FULL = config);
+    public static ConfigLoader<SettingsConfig> CONFIG_LOADER_SETTINGS = new ConfigLoader<>(
+            new SettingsConfig(),
+            FlightHud.MODID + ".settings.json",
+            config -> FlightHud.CONFIG_SETTINGS = config);
 
 
-  public static ConfigLoader<HudConfig> CONFIG_LOADER_MIN = new ConfigLoader<>(
-          HudConfig.getDefaultMinSettings(),
-          FlightHud.MODID + ".min.json",
-          config -> FlightHud.CONFIG_MIN = config);
+    public static ConfigLoader<HudConfig> CONFIG_LOADER_FULL = new ConfigLoader<>(
+            new HudConfig(),
+            FlightHud.MODID + ".full.json",
+            config -> FlightHud.CONFIG_FULL = config);
 
-  private static KeyBinding keyBinding;
-  private static KeyBinding hideAlertSwitch;
-  private static KeyBinding showAlertSwitch;
-  private static KeyBinding flightLawSwitch;
-  private static KeyBinding gpwsSwitch;
-  private static KeyBinding fdSwitch;
-  private static KeyBinding aThrSwitch;
-  private static KeyBinding apSwitch;
 
-  @Override
-  public void onInitializeClient() {
-    CONFIG_LOADER_SETTINGS.load();
-    CONFIG_LOADER_FULL.load();
-    CONFIG_LOADER_MIN.load();
-    setupKeycCode();
-    setupCommand();
-  }
+    public static ConfigLoader<HudConfig> CONFIG_LOADER_MIN = new ConfigLoader<>(
+            HudConfig.getDefaultMinSettings(),
+            FlightHud.MODID + ".min.json",
+            config -> FlightHud.CONFIG_MIN = config);
 
-  private static void setupKeycCode() {
-    keyBinding = new KeyBinding("key.flighthud.toggleDisplayMode", InputUtil.Type.KEYSYM,
-        GLFW.GLFW_KEY_GRAVE_ACCENT, "category.flighthud.toggleDisplayMode");
+    private static KeyBinding keyBinding;
+    private static KeyBinding hideAlertSwitch;
+    private static KeyBinding showAlertSwitch;
+    private static KeyBinding flightLawSwitch;
+    private static KeyBinding gpwsSwitch;
+    private static KeyBinding fdSwitch;
+    private static KeyBinding aThrSwitch;
+    private static KeyBinding apSwitch;
 
-    hideAlertSwitch = new KeyBinding("key.flighthud.hideAlertSwitch", InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_KP_0, "category.flighthud.toggleDisplayMode");
+    private static void setupKeycCode() {
+        keyBinding = new KeyBinding("key.flighthud.toggleDisplayMode", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_GRAVE_ACCENT, "category.flighthud.toggleDisplayMode");
 
-    showAlertSwitch = new KeyBinding("key.flighthud.showAlertSwitch", InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_KP_DECIMAL, "category.flighthud.toggleDisplayMode");
+        hideAlertSwitch = new KeyBinding("key.flighthud.hideAlertSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_0, "category.flighthud.toggleDisplayMode");
 
-    flightLawSwitch = new KeyBinding("key.flighthud.flightLawSwitch", InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_KP_ENTER, "category.flighthud.toggleDisplayMode");
+        showAlertSwitch = new KeyBinding("key.flighthud.showAlertSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_DECIMAL, "category.flighthud.toggleDisplayMode");
 
-    gpwsSwitch = new KeyBinding("key.flighthud.gpwsSwitch", InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_KP_ADD, "category.flighthud.toggleDisplayMode");
+        flightLawSwitch = new KeyBinding("key.flighthud.flightLawSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_ENTER, "category.flighthud.toggleDisplayMode");
 
-    fdSwitch = new KeyBinding("key.flighthud.fdSwitch", InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_KP_1, "category.flighthud.toggleDisplayMode");
+        gpwsSwitch = new KeyBinding("key.flighthud.gpwsSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_ADD, "category.flighthud.toggleDisplayMode");
 
-    aThrSwitch = new KeyBinding("key.flighthud.aThrSwitch", InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_KP_2, "category.flighthud.toggleDisplayMode");
+        fdSwitch = new KeyBinding("key.flighthud.fdSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_1, "category.flighthud.toggleDisplayMode");
 
-    apSwitch = new KeyBinding("key.flighthud.apSwitch", InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_KP_3, "category.flighthud.toggleDisplayMode");
+        aThrSwitch = new KeyBinding("key.flighthud.aThrSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_2, "category.flighthud.toggleDisplayMode");
 
-    KeyBindingHelper.registerKeyBinding(keyBinding);
-    KeyBindingHelper.registerKeyBinding(hideAlertSwitch);
-    KeyBindingHelper.registerKeyBinding(showAlertSwitch);
-    KeyBindingHelper.registerKeyBinding(flightLawSwitch);
-    KeyBindingHelper.registerKeyBinding(gpwsSwitch);
-    KeyBindingHelper.registerKeyBinding(fdSwitch);
-    KeyBindingHelper.registerKeyBinding(aThrSwitch);
-    KeyBindingHelper.registerKeyBinding(apSwitch);
+        apSwitch = new KeyBinding("key.flighthud.apSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_3, "category.flighthud.toggleDisplayMode");
 
-    ClientTickEvents.END_CLIENT_TICK.register(client -> {
-      while (keyBinding.wasPressed()) {
-        CONFIG_SETTINGS.toggleDisplayMode();
-      }
+        KeyBindingHelper.registerKeyBinding(keyBinding);
+        KeyBindingHelper.registerKeyBinding(hideAlertSwitch);
+        KeyBindingHelper.registerKeyBinding(showAlertSwitch);
+        KeyBindingHelper.registerKeyBinding(flightLawSwitch);
+        KeyBindingHelper.registerKeyBinding(gpwsSwitch);
+        KeyBindingHelper.registerKeyBinding(fdSwitch);
+        KeyBindingHelper.registerKeyBinding(aThrSwitch);
+        KeyBindingHelper.registerKeyBinding(apSwitch);
 
-      while (hideAlertSwitch.wasPressed()) {
-        for (Alert alert : FlightStatusIndicator.activeAlerts) {
-          if (alert.hidden) continue;
-          alert.hidden = true;
-          break;
-        }
-      }
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (keyBinding.wasPressed()) {
+                CONFIG_SETTINGS.toggleDisplayMode();
+            }
 
-      while (showAlertSwitch.wasPressed()) {
-        for (int i = FlightStatusIndicator.activeAlerts.size() - 1; i >= 0; i--) {
-          Alert alert = FlightStatusIndicator.activeAlerts.get(i);
-          if (!alert.hidden) continue;
-          alert.hidden = false;
-          break;
-        }
-      }
+            while (hideAlertSwitch.wasPressed()) {
+                for (Alert alert : FlightStatusIndicator.activeAlerts) {
+                    if (alert.hidden) continue;
+                    alert.hidden = true;
+                    break;
+                }
+            }
 
-      while (flightLawSwitch.wasPressed()) {
-        FlightSafetyMonitor.flightProtectionsEnabled = !FlightSafetyMonitor.flightProtectionsEnabled;
-        LOGGER.warn("Flight protections turned {}", FlightSafetyMonitor.flightProtectionsEnabled ? "on" : "off");
-      }
+            while (showAlertSwitch.wasPressed()) {
+                for (int i = FlightStatusIndicator.activeAlerts.size() - 1; i >= 0; i--) {
+                    Alert alert = FlightStatusIndicator.activeAlerts.get(i);
+                    if (!alert.hidden) continue;
+                    alert.hidden = false;
+                    break;
+                }
+            }
 
-      while (gpwsSwitch.wasPressed()) {
-        CONFIG_SETTINGS.gpws = !CONFIG_SETTINGS.gpws;
-        LOGGER.warn("GPWS turned {}", CONFIG_SETTINGS.gpws ? "on" : "off");
-      }
+            while (flightLawSwitch.wasPressed()) {
+                FlightSafetyMonitor.flightProtectionsEnabled = !FlightSafetyMonitor.flightProtectionsEnabled;
+                LOGGER.warn("Flight protections turned {}", FlightSafetyMonitor.flightProtectionsEnabled ? "on" : "off");
+            }
 
-      while (fdSwitch.wasPressed()) {
-        AutoFlightManager.flightDirectorsEnabled = !AutoFlightManager.flightDirectorsEnabled;
-        LOGGER.info("Flight directors turned {}", AutoFlightManager.flightDirectorsEnabled ? "on" : "off");
-      }
+            while (gpwsSwitch.wasPressed()) {
+                CONFIG_SETTINGS.gpws = !CONFIG_SETTINGS.gpws;
+                LOGGER.warn("GPWS turned {}", CONFIG_SETTINGS.gpws ? "on" : "off");
+            }
 
-      while (aThrSwitch.wasPressed()) {
-        AutoFlightManager.autoThrustEnabled = !AutoFlightManager.autoThrustEnabled;
-        if (!AutoFlightManager.autoThrustEnabled)
-          FlightSafetyMonitor.thrustLocked = false;
-        LOGGER.info("Auto thrust turned {}", AutoFlightManager.autoThrustEnabled ? "on" : "off");
-      }
+            while (fdSwitch.wasPressed()) {
+                AutoFlightManager.flightDirectorsEnabled = !AutoFlightManager.flightDirectorsEnabled;
+                LOGGER.info("Flight directors turned {}", AutoFlightManager.flightDirectorsEnabled ? "on" : "off");
+            }
 
-      while (apSwitch.wasPressed()) {
-        AutoFlightManager.autoPilotEnabled = !AutoFlightManager.autoPilotEnabled;
-        LOGGER.info("Auto pilot turned {}", AutoFlightManager.autoPilotEnabled ? "on" : "off");
-      }
-    });
-  }
+            while (aThrSwitch.wasPressed()) {
+                AutoFlightManager.autoThrustEnabled = !AutoFlightManager.autoThrustEnabled;
+                if (!AutoFlightManager.autoThrustEnabled)
+                    FlightSafetyMonitor.thrustLocked = false;
+                LOGGER.info("Auto thrust turned {}", AutoFlightManager.autoThrustEnabled ? "on" : "off");
+            }
 
-  private static void setupCommand() {
-    ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(literal("flighthud")
-            .then(literal("toggle").executes(new SwitchDisplayModeCommand()))
-            .then(literal("nav")
-                    .then(argument("destinationX", IntegerArgumentType.integer(-30_000_000, 30_000_000))
-                            .then(argument("destinationZ", IntegerArgumentType.integer(-30_000_000, 30_000_000))
-                                            .executes(new DestinationSelectCommand())))
-                    .then(literal("reset")
-                            .executes(new DestinationResetCommand())))
-            .then(literal("alt")
-                    .then(argument("targetAltitude", IntegerArgumentType.integer(0, 640))
-                            .executes(new AltitudeSelectCommand()))
-                    .then(literal("reset")
-                            .executes(new AltitudeResetCommand())))));
-  }
+            while (apSwitch.wasPressed()) {
+                AutoFlightManager.autoPilotEnabled = !AutoFlightManager.autoPilotEnabled;
+                LOGGER.info("Auto pilot turned {}", AutoFlightManager.autoPilotEnabled ? "on" : "off");
+            }
+        });
+    }
+
+    private static void setupCommand() {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> dispatcher.register(literal("flighthud")
+                .then(literal("toggle").executes(new SwitchDisplayModeCommand()))
+                .then(literal("nav")
+                        .then(argument("destinationX", IntegerArgumentType.integer(-30_000_000, 30_000_000))
+                                .then(argument("destinationZ", IntegerArgumentType.integer(-30_000_000, 30_000_000))
+                                        .executes(new DestinationSelectCommand())))
+                        .then(literal("reset")
+                                .executes(new DestinationResetCommand())))
+                .then(literal("alt")
+                        .then(argument("targetAltitude", IntegerArgumentType.integer(0, 640))
+                                .executes(new AltitudeSelectCommand()))
+                        .then(literal("reset")
+                                .executes(new AltitudeResetCommand())))));
+    }
+
+    @Override
+    public void onInitializeClient() {
+        CONFIG_LOADER_SETTINGS.load();
+        CONFIG_LOADER_FULL.load();
+        CONFIG_LOADER_MIN.load();
+        setupKeycCode();
+        setupCommand();
+    }
 }

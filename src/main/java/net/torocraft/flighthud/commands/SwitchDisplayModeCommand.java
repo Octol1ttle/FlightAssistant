@@ -7,10 +7,10 @@ import net.torocraft.flighthud.FlightHud;
 
 public class SwitchDisplayModeCommand implements Command<FabricClientCommandSource> {
 
-  @Override
-  public int run(CommandContext<FabricClientCommandSource> context) {
-    FlightHud.CONFIG_SETTINGS.toggleDisplayMode();
-    return 0;
-  }
+    @Override
+    public int run(CommandContext<FabricClientCommandSource> context) {
+        FlightHud.CONFIG_SETTINGS.toggleDisplayMode();
+        return 0;
+    }
 
 }
