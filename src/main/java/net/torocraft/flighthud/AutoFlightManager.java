@@ -49,7 +49,8 @@ public class AutoFlightManager {
         boolean approachingDestination = distanceToTarget != null && distanceToTarget < Math.max(40, computer.velocityPerSecond.horizontalLength());
 
         if (computer.speed > 30) thrustSet = true;
-        else if (autoThrustEnabled && usableFireworkHand != null) {
+
+        if (autoThrustEnabled && usableFireworkHand != null) {
             if (!thrustLocked && gpwsLampColor == CONFIG.color && computer.velocityPerSecond.horizontalLength() > 0.01 && computer.pitch > (autoPilotEnabled ? 0 : 10) && !approachingDestination) {
                 if (thrustSet && (computer.speed < 28 || computer.velocityPerSecond.y < -8)) {
                     mc.interactionManager.interactItem(mc.player, usableFireworkHand);
