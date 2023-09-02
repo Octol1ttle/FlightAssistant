@@ -30,6 +30,9 @@
     "java": ">=17"
   },
   "recommends": {
-    "immediatelyfast": ">=1.1.1"
+    "immediatelyfast": ">=1.2.0"
+  },
+  "breaks": {
+    "immediatelyfast": "<1.2.0"
   }
 }

@@ -27,8 +27,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modCompileOnlyApi "maven.modrinth:immediatelyfast:${project.immediatelyfast_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}+${project.minecraft_version}"
+    modCompileOnlyApi "maven.modrinth:immediatelyfast:${project.immediatelyfast_version}+${project.minecraft_version}"
 }
 
 processResources {
