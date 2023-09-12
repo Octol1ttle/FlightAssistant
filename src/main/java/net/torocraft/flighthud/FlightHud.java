@@ -28,7 +28,7 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.lit
 
 public class FlightHud implements ClientModInitializer {
     public static final String MODID = "flighthud";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
+    public static final Logger LOGGER = LoggerFactory.getLogger("FlightHud");
 
     public static SettingsConfig CONFIG_SETTINGS = new SettingsConfig();
     public static HudConfig CONFIG_MIN = new HudConfig();
@@ -118,29 +118,24 @@ public class FlightHud implements ClientModInitializer {
 
             while (flightLawSwitch.wasPressed()) {
                 FlightSafetyMonitor.flightProtectionsEnabled = !FlightSafetyMonitor.flightProtectionsEnabled;
-                LOGGER.warn("Flight protections turned {}", FlightSafetyMonitor.flightProtectionsEnabled ? "on" : "off");
             }
 
             while (gpwsSwitch.wasPressed()) {
                 CONFIG_SETTINGS.gpws = !CONFIG_SETTINGS.gpws;
-                LOGGER.warn("GPWS turned {}", CONFIG_SETTINGS.gpws ? "on" : "off");
             }
 
             while (fdSwitch.wasPressed()) {
                 AutoFlightManager.flightDirectorsEnabled = !AutoFlightManager.flightDirectorsEnabled;
-                LOGGER.info("Flight directors turned {}", AutoFlightManager.flightDirectorsEnabled ? "on" : "off");
             }
 
             while (aThrSwitch.wasPressed()) {
                 AutoFlightManager.autoThrustEnabled = !AutoFlightManager.autoThrustEnabled;
                 if (!AutoFlightManager.autoThrustEnabled)
                     FlightSafetyMonitor.thrustLocked = false;
-                LOGGER.info("Auto thrust turned {}", AutoFlightManager.autoThrustEnabled ? "on" : "off");
             }
 
             while (apSwitch.wasPressed()) {
                 AutoFlightManager.autoPilotEnabled = !AutoFlightManager.autoPilotEnabled;
-                LOGGER.info("Auto pilot turned {}", AutoFlightManager.autoPilotEnabled ? "on" : "off");
             }
         });
     }

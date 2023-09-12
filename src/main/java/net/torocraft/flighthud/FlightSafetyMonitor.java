@@ -19,7 +19,6 @@ import java.util.List;
 import static net.torocraft.flighthud.AutoFlightManager.changeLookDirection;
 import static net.torocraft.flighthud.AutoFlightManager.deltaTime;
 import static net.torocraft.flighthud.FlightHud.CONFIG_SETTINGS;
-import static net.torocraft.flighthud.FlightHud.LOGGER;
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 
 public class FlightSafetyMonitor {
@@ -74,10 +73,8 @@ public class FlightSafetyMonitor {
         isStalling = updateStallStatus(computer);
         isElytraLow = updateElytraLow(computer);
         secondsUntilTerrainImpact = updateUnsafeTerrainClearance(mc.player, computer);
-        boolean wereFireworksSafe = unsafeFireworkHands.isEmpty();
         updateUnsafeFireworks(mc.player);
         if (wereFireworksSafe && !unsafeFireworkHands.isEmpty())
-            LOGGER.error("Unsafe fireworks in {}", unsafeFireworkHands.get(0).toString().replace('_', ' '));
         fireworkCount = countSafeFireworks(mc.player);
 
         if (flightProtectionsEnabled) { // Make corrections to flight path to ensure safety
@@ -112,34 +109,21 @@ public class FlightSafetyMonitor {
     }
 
     private static boolean updateElytraLow(FlightComputer computer) {
-        final boolean b = CONFIG_SETTINGS.lowElytraHealthAlarm && computer.elytraHealth != null && computer.elytraHealth <= CONFIG_SETTINGS.lowElytraHealthAlarmThreshold;
-        if (b && !isElytraLow)
-            LOGGER.error("Elytra health low: {}; threshold {}", computer.elytraHealth, CONFIG_SETTINGS.lowElytraHealthAlarmThreshold);
-
-        return b;
+        return CONFIG_SETTINGS.lowElytraHealthAlarm && computer.elytraHealth != null && computer.elytraHealth <= CONFIG_SETTINGS.lowElytraHealthAlarmThreshold;
     }
 
     private static boolean updateStallStatus(FlightComputer computer) {
-        final boolean b = computer.pitch > 0 && computer.distanceFromGround > 2 && computer.velocity.horizontalLength() < -computer.velocity.y;
-        if (b && !isStalling)
-            LOGGER.error("Stall: pitch {}; radar altitude {}; G/S {}; V/S {}", computer.pitch, computer.distanceFromGround, computer.velocityPerSecond.horizontalLength(), computer.velocityPerSecond.y);
-
-        return b;
+        return computer.pitch > 0 && computer.distanceFromGround > 2 && computer.airSpeed.length() <= 1.0f;
     }
 
     private static float updateMaximumSafePitch(FlightComputer computer) {
-        return isStalling && computer.velocityPerSecond.y <= -9 ? 0.0f : computer.speed * 3;
+        return (float) (computer.airSpeed.length() * 3f);
     }
 
     private static float updateUnsafeSinkrate(FlightComputer computer) {
         if (!CONFIG_SETTINGS.gpws || isStalling || computer.distanceFromGround <= 2 || computer.velocityPerSecond.y > -10)
             return Float.MAX_VALUE;
-        float f = (float) (computer.distanceFromGround / -computer.velocityPerSecond.y);
-        if (f <= 10.0f && secondsUntilGroundImpact > 10.0f)
-            LOGGER.error("Excessive sink rate: radar altitude {}; V/S {}; seconds until impact {}",
-                    computer.distanceFromGround, computer.velocityPerSecond.y, f);
-
-        return f;
+        return (float) (computer.distanceFromGround / -computer.velocityPerSecond.y);
     }
 
     private static float updateUnsafeTerrainClearance(PlayerEntity player, FlightComputer computer) {
@@ -148,9 +132,6 @@ public class FlightSafetyMonitor {
         Vec3d vec = raycast(player, computer, 10);
         float f = vec == null ? Float.MAX_VALUE : (float) (vec.subtract(player.getPos()).horizontalLength() / computer.velocityPerSecond.horizontalLength());
         if (f <= 10.0f) {
-            if (f <= 5.0f && secondsUntilTerrainImpact > 5.0f)
-                LOGGER.error("Unsafe terrain clearance: terrain XZ: {} {}; G/S {}; seconds until impact {}",
-                        vec.x, vec.z, computer.velocityPerSecond.horizontalLength(), f);
             f = Math.min(f, secondsUntilTerrainImpact);
             terrainDetectionTimer = Math.min(0.5f, terrainDetectionTimer + deltaTime);
         } else {

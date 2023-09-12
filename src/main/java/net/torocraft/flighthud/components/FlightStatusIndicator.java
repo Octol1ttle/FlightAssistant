@@ -30,7 +30,6 @@ import java.util.List;
 
 import static net.torocraft.flighthud.AutoFlightManager.lastUpdateTimeMs;
 import static net.torocraft.flighthud.FlightHud.CONFIG_SETTINGS;
-import static net.torocraft.flighthud.FlightHud.LOGGER;
 
 public class FlightStatusIndicator extends HudComponent {
     public static final SoundEvent ALERT = SoundEvent.of(new Identifier("flighthud:alert"));
@@ -183,7 +182,6 @@ public class FlightStatusIndicator extends HudComponent {
 
     private void stopEvent(MinecraftClient mc, SoundEvent event) {
         mc.getSoundManager().stopSounds(event.getId(), SoundCategory.MASTER);
-        if (activeEvents.remove(event))
-            LOGGER.info("Alert stopped: {}", event.getId().getPath());
+        activeEvents.remove(event);
     }
 }
