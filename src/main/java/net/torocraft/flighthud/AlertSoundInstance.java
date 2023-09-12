@@ -11,4 +11,13 @@ public class AlertSoundInstance extends EntityTrackingSoundInstance {
         this.attenuationType = AttenuationType.NONE;
         this.repeat = repeat;
     }
+
+    public void setVolume(float volume) {
+        this.volume = Math.max(0, Math.min(1, volume));
+    }
+
+    @Override
+    public boolean shouldAlwaysPlay() {
+        return true;
+    }
 }

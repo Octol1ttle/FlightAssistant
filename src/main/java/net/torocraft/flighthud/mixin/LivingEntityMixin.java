@@ -15,7 +15,8 @@ public class LivingEntityMixin {
     @Inject(method = "onDamaged", at = @At("HEAD"))
     public void detectWallCollision(DamageSource damageSource, CallbackInfo ci) {
         LivingEntity $this = (LivingEntity) (Object) this;
-        if ($this instanceof ClientPlayerEntity && damageSource.isOf(DamageTypes.FLY_INTO_WALL))
+        if ($this instanceof ClientPlayerEntity && damageSource.isOf(DamageTypes.FLY_INTO_WALL)) {
             FlightSafetyMonitor.thrustLocked = true;
+        }
     }
 }

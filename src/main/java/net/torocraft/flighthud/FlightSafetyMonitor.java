@@ -74,7 +74,6 @@ public class FlightSafetyMonitor {
         isElytraLow = updateElytraLow(computer);
         secondsUntilTerrainImpact = updateUnsafeTerrainClearance(mc.player, computer);
         updateUnsafeFireworks(mc.player);
-        if (wereFireworksSafe && !unsafeFireworkHands.isEmpty())
         fireworkCount = countSafeFireworks(mc.player);
 
         if (flightProtectionsEnabled) { // Make corrections to flight path to ensure safety

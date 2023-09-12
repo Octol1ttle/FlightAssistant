@@ -122,10 +122,7 @@ public class FlightStatusIndicator extends HudComponent {
         }
         lastAutopilotState = AutoFlightManager.autoPilotEnabled;
 
-        if (FlightSafetyMonitor.isStalling && CONFIG_SETTINGS.stickShaker && computer.velocityPerSecond.y <= -10) {
-            playStickShaker(mc);
-            drawCenteredWarning(mc, context, dim.wScreen, dim.hScreen / 2 + 10, highlight, "STALL");
-        } else stopEvent(mc, STICK_SHAKER);
+        tryPlayStickShaker(mc, context);
 
         if (FlightSafetyMonitor.secondsUntilGroundImpact <= FlightSafetyMonitor.warningThreshold || FlightSafetyMonitor.secondsUntilTerrainImpact <= FlightSafetyMonitor.warningThreshold) {
             playOnce(mc, PULL_UP, 0.75f, true);
@@ -167,10 +164,27 @@ public class FlightStatusIndicator extends HudComponent {
         }
     }
 
-    private void playStickShaker(MinecraftClient mc) {
-        if (!activeEvents.contains(FlightStatusIndicator.STICK_SHAKER)) {
-            mc.getSoundManager().play(new AlertSoundInstance(FlightStatusIndicator.STICK_SHAKER, (float) 0.75, mc.player, true));
-            activeEvents.add(FlightStatusIndicator.STICK_SHAKER);
+    private void tryPlayStickShaker(MinecraftClient mc, DrawContext context) {
+        if (FlightSafetyMonitor.isStalling) {
+            if (CONFIG_SETTINGS.stickShaker) {
+                if (stickShakerInstance == null) {
+                    mc.getSoundManager().play(stickShakerInstance = new AlertSoundInstance(STICK_SHAKER, 0.0f, mc.player, true));
+                }
+
+                stickShakerInstance.setVolume(stickShakerInstance.getVolume() + deltaTime * 2.0f);
+            }
+            drawCenteredWarning(mc, context, dim.wScreen, dim.hScreen / 2 + 10, highlight, "STALL");
+            return;
+        }
+
+        if (stickShakerInstance == null) {
+            return;
+        }
+
+        stickShakerInstance.setVolume(stickShakerInstance.getVolume() - deltaTime * 2.0f);
+        if (stickShakerInstance.getVolume() <= 0.0f) {
+            mc.getSoundManager().stop(stickShakerInstance);
+            stickShakerInstance = null;
         }
     }
 
