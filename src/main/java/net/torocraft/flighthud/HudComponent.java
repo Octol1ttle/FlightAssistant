@@ -1,13 +1,12 @@
 package net.torocraft.flighthud;
 
+import java.util.function.Consumer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.config.HudConfig;
-
-import java.util.function.Consumer;
 
 public abstract class HudComponent {
     public static HudConfig CONFIG;
@@ -60,11 +59,11 @@ public abstract class HudComponent {
                 y2 - CONFIG.halfThickness, color);
     }
 
-    public static void drawBox(DrawContext context, float x, float y, float w) {
-        drawHorizontalLine(context, x, x + w, y, CONFIG.color);
-        drawHorizontalLine(context, x, x + w, y + 10, CONFIG.color);
-        drawVerticalLine(context, x, y, y + 10, CONFIG.color);
-        drawVerticalLine(context, x + w, y, y + 10, CONFIG.color);
+    public static void drawBox(DrawContext context, float x, float y, float w, int color) {
+        drawHorizontalLine(context, x, x + w, y, color);
+        drawHorizontalLine(context, x, x + w, y + 10, color);
+        drawVerticalLine(context, x, y, y + 10, color);
+        drawVerticalLine(context, x + w, y, y + 10, color);
     }
 
     public static void drawTextHighlight(TextRenderer renderer, DrawContext context, float x, float y, String text, int color) {

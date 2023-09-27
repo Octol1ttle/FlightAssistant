@@ -24,9 +24,10 @@ public class ElytraHealthIndicator extends HudComponent {
         float y = dim.hScreen * CONFIG.elytra_y;
 
         if (CONFIG.elytra_showHealth && computer.elytraHealth != null) {
-            drawBox(context, x - 3.5f, y - 1.5f, 30);
-            drawFont(mc, context, "E", x - 10, y);
-            drawFont(mc, context, String.format("%d", i(computer.elytraHealth)) + "%", x, y, computer.elytraHealth <= CONFIG_SETTINGS.lowElytraHealthAlarmThreshold ? CONFIG.alertColor : CONFIG.color);
+            int color = computer.elytraHealth <= CONFIG_SETTINGS.lowElytraHealthAlarmThreshold ? CONFIG.alertColor : CONFIG.color;
+            drawBox(context, x - 3.5f, y - 1.5f, 30, color);
+            drawFont(mc, context, "E", x - 10, y, color);
+            drawFont(mc, context, String.format("%d", i(computer.elytraHealth)) + "%", x, y, color);
         }
     }
 }

@@ -28,7 +28,7 @@ public class HeadingIndicator extends HudComponent {
 
         if (CONFIG.heading_showReadout) {
             drawFont(mc, context, String.format("%03d", i(wrapHeading(computer.heading))), dim.xMid - 8, yText);
-            drawBox(context, dim.xMid - 15, yText - 1.5f, 30);
+            drawBox(context, dim.xMid - 15, yText - 1.5f, 30, CONFIG.color);
         }
 
         if (CONFIG.heading_showScale) {

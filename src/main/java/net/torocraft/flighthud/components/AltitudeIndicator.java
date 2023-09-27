@@ -34,15 +34,16 @@ public class AltitudeIndicator extends HudComponent {
         }
 
         if (CONFIG.altitude_showReadout) {
-            drawFont(mc, context, String.format("%.0f", computer.altitude), xAltText, dim.yMid - 3, computer.altitude <= -50 ? CONFIG.alertColor : CONFIG.color);
-            drawBox(context, xAltText - 2, dim.yMid - 4.5f, 28);
+            int color = computer.altitude <= -50 ? CONFIG.alertColor : CONFIG.color;
+            drawFont(mc, context, String.format("%.0f", computer.altitude), xAltText, dim.yMid - 3, color);
+            drawBox(context, xAltText - 2, dim.yMid - 4.5f, 28, color);
         }
 
         if (CONFIG.altitude_showHeight) {
             drawFont(mc, context, "G", xAltText - 10, bottom + 3);
             String heightText = String.format("%d", i(computer.distanceFromGround));
             drawFont(mc, context, heightText, xAltText, bottom + 3);
-            drawBox(context, xAltText - 2, bottom + 1.5f, 28);
+            drawBox(context, xAltText - 2, bottom + 1.5f, 28, CONFIG.color);
         }
 
         if (CONFIG.altitude_showScale) {

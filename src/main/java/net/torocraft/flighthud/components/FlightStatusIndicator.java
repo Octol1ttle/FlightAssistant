@@ -1,6 +1,8 @@
 package net.torocraft.flighthud.components;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.SoundManager;
@@ -22,18 +24,18 @@ import net.torocraft.flighthud.alerts.GPWSOffAlert;
 import net.torocraft.flighthud.alerts.LowElytraHealthAlert;
 import net.torocraft.flighthud.alerts.LowFireworksAlert;
 import net.torocraft.flighthud.alerts.NoFireworksAlert;
+import net.torocraft.flighthud.alerts.PassengerDismountedAlert;
 import net.torocraft.flighthud.alerts.ThrustLockedAlert;
 import net.torocraft.flighthud.alerts.UnsafeFireworksAlert;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static net.torocraft.flighthud.AutoFlightManager.deltaTime;
 import static net.torocraft.flighthud.AutoFlightManager.lastUpdateTimeMs;
 import static net.torocraft.flighthud.FlightHud.CONFIG_SETTINGS;
 
 public class FlightStatusIndicator extends HudComponent {
     public static final SoundEvent ALERT = SoundEvent.of(new Identifier("flighthud:alert"));
     public static final SoundEvent STICK_SHAKER = SoundEvent.of(new Identifier("flighthud:stick_shaker"));
+    public static final SoundEvent STALL_WARNING = SoundEvent.of(new Identifier("flighthud:stall_warning"));
     public static final SoundEvent SINKRATE = SoundEvent.of(new Identifier("flighthud:sinkrate"));
     public static final SoundEvent TERRAIN = SoundEvent.of(new Identifier("flighthud:terrain"));
     public static final SoundEvent PULL_UP = SoundEvent.of(new Identifier("flighthud:pull_up"));
@@ -44,6 +46,7 @@ public class FlightStatusIndicator extends HudComponent {
             new LowElytraHealthAlert(),
             new LowFireworksAlert(), new NoFireworksAlert(),
             new UnsafeFireworksAlert(), new FireworkActivationFailureAlert(),
+            new PassengerDismountedAlert()
     };
     public static final List<Alert> activeAlerts = new ArrayList<>();
     private static long lastHighlightTimeMs = 0L;
@@ -53,6 +56,7 @@ public class FlightStatusIndicator extends HudComponent {
     private final FlightComputer computer;
     public boolean highlight = true;
     private boolean lastAutopilotState = false;
+    private AlertSoundInstance stickShakerInstance;
 
     public FlightStatusIndicator(FlightComputer computer, Dimensions dim) {
         this.dim = dim;
@@ -148,10 +152,16 @@ public class FlightStatusIndicator extends HudComponent {
     }
 
     public void tryStopEvents(PlayerEntity player, SoundManager manager) {
-        if (!activeEvents.isEmpty() && !player.isFallFlying()) {
-            for (SoundEvent event : activeEvents)
-                manager.stopSounds(event.getId(), SoundCategory.MASTER);
-            activeEvents.clear();
+        if (!player.isFallFlying()) {
+            if (!activeEvents.isEmpty()) {
+                for (SoundEvent event : activeEvents)
+                    manager.stopSounds(event.getId(), SoundCategory.MASTER);
+                activeEvents.clear();
+            }
+            if (stickShakerInstance != null) {
+                manager.stop(stickShakerInstance);
+                stickShakerInstance = null;
+            }
         }
         activeAlerts.removeIf(alert -> !alert.shouldActivate());
     }
@@ -173,9 +183,16 @@ public class FlightStatusIndicator extends HudComponent {
 
                 stickShakerInstance.setVolume(stickShakerInstance.getVolume() + deltaTime * 2.0f);
             }
+
+            if (computer.velocityPerSecond.y <= -10) {
+                playOnce(mc, STALL_WARNING, 1.0f, true);
+            } else
+                stopEvent(mc, STALL_WARNING);
             drawCenteredWarning(mc, context, dim.wScreen, dim.hScreen / 2 + 10, highlight, "STALL");
             return;
         }
+
+        stopEvent(mc, STALL_WARNING);
 
         if (stickShakerInstance == null) {
             return;

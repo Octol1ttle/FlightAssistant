@@ -9,6 +9,11 @@
       "flighthud:stick_shaker"
     ]
   },
+  "stall_warning": {
+    "sounds": [
+      "flighthud:stall_warning"
+    ]
+  },
   "sinkrate": {
     "sounds": [
       "flighthud:sinkrate"

@@ -102,7 +102,7 @@ public class FlightComputer {
 
     private int computeGroundLevel(MinecraftClient client) {
         BlockPos ground = findGround(client);
-        return ground == null ? -50 : ground.getY();
+        return ground == null ? Math.min(client.player.getBlockY() + 4, -50) : ground.getY();
     }
 
     private float computeDistanceFromGround(float altitude,

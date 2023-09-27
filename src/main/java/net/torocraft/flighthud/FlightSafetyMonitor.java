@@ -1,7 +1,9 @@
 package net.torocraft.flighthud;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import java.util.List;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
@@ -13,8 +15,6 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
-
-import java.util.List;
 
 import static net.torocraft.flighthud.AutoFlightManager.changeLookDirection;
 import static net.torocraft.flighthud.AutoFlightManager.deltaTime;
@@ -43,15 +43,18 @@ public class FlightSafetyMonitor {
     public static boolean flightProtectionsEnabled = true;
 
     public static boolean thrustSet = true;
+    public static boolean havePassengersDismounted = false;
     public static long lastFireworkActivationTimeMs = 0;
 
     public static int fireworkCount = Integer.MAX_VALUE;
     public static boolean thrustLocked = false;
+    private static int lastPassengers = 0;
 
     public static void update(MinecraftClient mc, FlightComputer computer) {
         if (CONFIG == null || mc.world == null || mc.player == null || !mc.player.isFallFlying()) {
             flightProtectionsEnabled = thrustSet = true;
-            thrustLocked = false;
+            thrustLocked = havePassengersDismounted = false;
+            lastPassengers = 0;
             return;
         }
         maximumSafePitch = updateMaximumSafePitch(computer);
@@ -76,13 +79,23 @@ public class FlightSafetyMonitor {
         updateUnsafeFireworks(mc.player);
         fireworkCount = countSafeFireworks(mc.player);
 
+        havePassengersDismounted = updatePassengersDismounted(mc);
+
         if (flightProtectionsEnabled) { // Make corrections to flight path to ensure safety
-            if (computer.distanceFromGround > 2 && computer.pitch > maximumSafePitch)
-                changeLookDirection(mc.player, Math.max(0, computer.pitch - maximumSafePitch) * AutoFlightManager.deltaTime, 0);
+            float delta = deltaTime / Math.min(1, secondsUntilGroundImpact);
+            if (computer.distanceFromGround > 3 && computer.pitch > maximumSafePitch)
+                changeLookDirection(mc.player, Math.max(0, computer.pitch - maximumSafePitch) * delta, 0);
 
             else if (secondsUntilGroundImpact <= correctThreshold)
-                changeLookDirection(mc.player, Math.min(0, computer.pitch) * (AutoFlightManager.deltaTime / Math.min(1, secondsUntilGroundImpact)), 0);
+                changeLookDirection(mc.player, Math.min(0, computer.pitch) * delta, 0);
         }
+    }
+
+    private static boolean updatePassengersDismounted(MinecraftClient mc) {
+        int currentPassengers = (int) mc.player.getPassengerList().stream().flatMap(Entity::streamSelfAndPassengers).count();
+        boolean b = currentPassengers < lastPassengers;
+        lastPassengers = currentPassengers;
+        return b;
     }
 
     private static void updateUnsafeFireworks(PlayerEntity player) {
@@ -112,15 +125,15 @@ public class FlightSafetyMonitor {
     }
 
     private static boolean updateStallStatus(FlightComputer computer) {
-        return computer.pitch > 0 && computer.distanceFromGround > 2 && computer.airSpeed.length() <= 1.0f;
+        return computer.pitch > 0 && computer.distanceFromGround > 3 && computer.velocity.horizontalLength() < -computer.velocity.y;
     }
 
     private static float updateMaximumSafePitch(FlightComputer computer) {
-        return (float) (computer.airSpeed.length() * 3f);
+        return isStalling && computer.velocityPerSecond.y <= -10 ? 0.0f : computer.speed * 3;
     }
 
     private static float updateUnsafeSinkrate(FlightComputer computer) {
-        if (!CONFIG_SETTINGS.gpws || isStalling || computer.distanceFromGround <= 2 || computer.velocityPerSecond.y > -10)
+        if (!CONFIG_SETTINGS.gpws || isStalling || computer.distanceFromGround <= 3 || computer.velocityPerSecond.y > -10)
             return Float.MAX_VALUE;
         return (float) (computer.distanceFromGround / -computer.velocityPerSecond.y);
     }
