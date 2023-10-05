@@ -17,8 +17,19 @@ public class InGameHudMixin {
     @Shadow
     private MinecraftClient client;
 
-    @Inject(method = "render", at = @At("RETURN"))
+    @Inject(method = "render", at = @At("TAIL"))
     private void render(DrawContext context, float tickDelta, CallbackInfo ci) {
-        HudRenderer.INSTANCE.render(context, client);
+        if (HudRenderer.INSTANCE != null) {
+            HudRenderer.INSTANCE.render(context, client);
+            HudRenderer.INSTANCE.computer.tickPitchController(tickDelta);
+        }
+    }
+
+    @Inject(method = "tick()V", at = @At("TAIL"))
+    private void tick(CallbackInfo ci) {
+        if (HudRenderer.INSTANCE == null) {
+            HudRenderer.INSTANCE = new HudRenderer(client);
+        }
+        HudRenderer.INSTANCE.computer.tick();
     }
 }

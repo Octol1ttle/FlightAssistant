@@ -10,11 +10,6 @@ public class SettingsConfig implements IConfig {
     public String displayModeWhenFlying = DisplayMode.FULL.toString();
     public String displayModeWhenNotFlying = DisplayMode.NONE.toString();
     public boolean calculateRoll = true;
-    public boolean gpws = true;
-    public boolean stickShaker = true;
-    public boolean lowElytraHealthAlarm = true;
-    public int lowElytraHealthAlarmThreshold = 10;
-    public boolean unsafeFireworksAlert = true;
 
     private static String toggle(String curr) {
         DisplayMode m = parseDisplayMode(curr);

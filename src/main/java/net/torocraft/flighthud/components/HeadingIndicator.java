@@ -3,8 +3,8 @@ package net.torocraft.flighthud.components;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.torocraft.flighthud.Dimensions;
-import net.torocraft.flighthud.FlightComputer;
 import net.torocraft.flighthud.HudComponent;
+import net.torocraft.flighthud.computers.FlightComputer;
 
 public class HeadingIndicator extends HudComponent {
 

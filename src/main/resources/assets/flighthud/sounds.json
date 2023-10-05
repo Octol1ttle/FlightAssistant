@@ -1,17 +1,17 @@
 {
-  "alert": {
+  "autopilot_disconnect": {
     "sounds": [
-      "flighthud:alert"
+      "flighthud:autopilot_disconnect"
     ]
   },
-  "stick_shaker": {
+  "caution": {
     "sounds": [
-      "flighthud:stick_shaker"
+      "flighthud:caution"
     ]
   },
-  "stall_warning": {
+  "pull_up": {
     "sounds": [
-      "flighthud:stall_warning"
+      "flighthud:pull_up"
     ]
   },
   "sinkrate": {
@@ -24,14 +24,9 @@
       "flighthud:terrain"
     ]
   },
-  "pull_up": {
+  "warning": {
     "sounds": [
-      "flighthud:pull_up"
-    ]
-  },
-  "autopilot_disconnect": {
-    "sounds": [
-      "flighthud:autopilot_disconnect"
+      "flighthud:warning"
     ]
   }
 }

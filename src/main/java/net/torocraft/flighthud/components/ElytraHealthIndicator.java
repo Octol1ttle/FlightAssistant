@@ -3,10 +3,8 @@ package net.torocraft.flighthud.components;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.torocraft.flighthud.Dimensions;
-import net.torocraft.flighthud.FlightComputer;
 import net.torocraft.flighthud.HudComponent;
-
-import static net.torocraft.flighthud.FlightHud.CONFIG_SETTINGS;
+import net.torocraft.flighthud.computers.FlightComputer;
 
 public class ElytraHealthIndicator extends HudComponent {
 
@@ -24,7 +22,7 @@ public class ElytraHealthIndicator extends HudComponent {
         float y = dim.hScreen * CONFIG.elytra_y;
 
         if (CONFIG.elytra_showHealth && computer.elytraHealth != null) {
-            int color = computer.elytraHealth <= CONFIG_SETTINGS.lowElytraHealthAlarmThreshold ? CONFIG.alertColor : CONFIG.color;
+            int color = CONFIG.color;
             drawBox(context, x - 3.5f, y - 1.5f, 30, color);
             drawFont(mc, context, "E", x - 10, y, color);
             drawFont(mc, context, String.format("%d", i(computer.elytraHealth)) + "%", x, y, color);

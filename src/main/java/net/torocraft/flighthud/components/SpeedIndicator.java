@@ -3,10 +3,8 @@ package net.torocraft.flighthud.components;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.torocraft.flighthud.Dimensions;
-import net.torocraft.flighthud.FlightComputer;
 import net.torocraft.flighthud.HudComponent;
-
-import static net.torocraft.flighthud.FlightSafetyMonitor.isStalling;
+import net.torocraft.flighthud.computers.FlightComputer;
 
 public class SpeedIndicator extends HudComponent {
     private final Dimensions dim;
@@ -32,9 +30,8 @@ public class SpeedIndicator extends HudComponent {
         float xSpeedText = left - 5;
 
         if (CONFIG.speed_showReadout) {
-            int color = isStalling ? CONFIG.alertColor : CONFIG.color;
-            drawRightAlignedFont(mc, context, String.format("%.2f", computer.speed), xSpeedText, dim.yMid - 3, color);
-            drawBox(context, xSpeedText - 29.5f, dim.yMid - 4.5f, 30, color);
+            drawRightAlignedFont(mc, context, String.format("%.2f", computer.speed), xSpeedText, dim.yMid - 3, CONFIG.color);
+            drawBox(context, xSpeedText - 29.5f, dim.yMid - 4.5f, 30, CONFIG.color);
 
             float frameWidth = dim.rFrame - dim.lFrame;
             drawFont(mc, context, String.format("G/S: %.2f", computer.velocityPerSecond.horizontalLength()), dim.lFrame + frameWidth * 0.25f, dim.hScreen * 0.8f, CONFIG.color);

@@ -4,9 +4,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.Dimensions;
-import net.torocraft.flighthud.FlightComputer;
-import net.torocraft.flighthud.FlightSafetyMonitor;
 import net.torocraft.flighthud.HudComponent;
+import net.torocraft.flighthud.computers.FlightComputer;
 
 public class PitchIndicator extends HudComponent {
     private final Dimensions dim;
@@ -43,7 +42,7 @@ public class PitchIndicator extends HudComponent {
 
         drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumClimbAngle, CONFIG.color);
         drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumGlideAngle, CONFIG.color);
-        drawReferenceMark(context, yHorizon, FlightSafetyMonitor.maximumSafePitch, CONFIG.alertColor);
+        //drawReferenceMark(context, yHorizon, FlightSafetyMonitor.maximumSafePitch, CONFIG.alertColor);
 
         if (CONFIG.pitchLadder_showHorizon) {
             pitchData.l1 -= pitchData.margin;

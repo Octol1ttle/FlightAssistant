@@ -6,24 +6,30 @@ import net.minecraft.client.gui.DrawContext;
 import net.torocraft.flighthud.components.AltitudeIndicator;
 import net.torocraft.flighthud.components.ElytraHealthIndicator;
 import net.torocraft.flighthud.components.FlightPathIndicator;
-import net.torocraft.flighthud.components.FlightStatusIndicator;
 import net.torocraft.flighthud.components.HeadingIndicator;
 import net.torocraft.flighthud.components.LocationIndicator;
 import net.torocraft.flighthud.components.PitchIndicator;
 import net.torocraft.flighthud.components.SpeedIndicator;
+import net.torocraft.flighthud.computers.FlightComputer;
 import net.torocraft.flighthud.config.SettingsConfig.DisplayMode;
 
 public class HudRenderer extends HudComponent {
-    public static final HudRenderer INSTANCE = new HudRenderer();
     private static final String FULL = DisplayMode.FULL.toString();
     private static final String MIN = DisplayMode.MIN.toString();
-    public final FlightComputer computer = new FlightComputer();
+    public static HudRenderer INSTANCE;
+    public final FlightComputer computer;
     private final Dimensions dim = new Dimensions();
-    private final HudComponent[] components =
-            new HudComponent[]{new FlightPathIndicator(computer, dim), new LocationIndicator(dim),
-                    new HeadingIndicator(computer, dim), new SpeedIndicator(computer, dim),
-                    new AltitudeIndicator(computer, dim), new PitchIndicator(computer, dim),
-                    new ElytraHealthIndicator(computer, dim), new FlightStatusIndicator(computer, dim)};
+    private final HudComponent[] components;
+
+    public HudRenderer(MinecraftClient mc) {
+        this.computer = new FlightComputer(mc);
+        this.components = new HudComponent[]{
+                new FlightPathIndicator(computer, dim), new LocationIndicator(dim),
+                new HeadingIndicator(computer, dim), new SpeedIndicator(computer, dim),
+                new AltitudeIndicator(computer, dim), new PitchIndicator(computer, dim),
+                new ElytraHealthIndicator(computer, dim)
+        };
+    }
 
     private void setupConfig(MinecraftClient client) {
         HudComponent.CONFIG = null;
@@ -45,7 +51,6 @@ public class HudRenderer extends HudComponent {
     @Override
     public void render(DrawContext context, MinecraftClient client) {
         setupConfig(client);
-        ((FlightStatusIndicator) components[components.length - 1]).tryStopEvents(client.player, client.getSoundManager());
 
         if (HudComponent.CONFIG == null) {
             return;
