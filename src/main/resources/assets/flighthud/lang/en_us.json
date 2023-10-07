@@ -2,5 +2,5 @@
   "key.flighthud.toggleDisplayMode": "Switch Display Mode",
   "category.flighthud": "Flight HUD",
   "alerts.flighthud.pull_up": "PULL UP",
-  "alerts.flighthud.sinkrate": "PULL UP"
+  "alerts.flighthud.sinkrate": "SINKRATE"
 }
