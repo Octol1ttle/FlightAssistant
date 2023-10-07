@@ -1,12 +1,13 @@
 package net.torocraft.flighthud.alerts;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import org.jetbrains.annotations.NotNull;
 
 public interface IAlert {
     boolean isTriggered();
 
-    void tick();
+    @NotNull AlertSoundData getAlertSoundData();
 
-    int drawText(MinecraftClient mc, DrawContext context, float x, float y, boolean highlight);
+    void renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight);
 }

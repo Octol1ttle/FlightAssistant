@@ -11,22 +11,24 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.torocraft.flighthud.FlightHud;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 public class FlightComputer {
-    public final GPWSComputer gpws = new GPWSComputer(this);
     @NotNull
     private final MinecraftClient mc;
-    @NotNull
-    private final PlayerEntity player;
-    public AutoFlightComputer autoflight = new AutoFlightComputer(this);
-    public PitchController pitchController = new PitchController();
+    public final GPWSComputer gpws;
+    public final AutoFlightComputer autoflight;
+    public final TimeComputer time;
+    public final PitchController pitchController;
+    public final AlertController alertController;
 
     public Vec3d position;
     public Vec3d velocity;
     public Vec3d velocityPerSecond;
+    @Nullable
     public Vec3d acceleration;
     public float speed;
     public float pitch;
@@ -39,11 +41,21 @@ public class FlightComputer {
     public int groundLevel;
     public float distanceFromGround;
     public Float elytraHealth;
+    public int worldHeight;
 
-    public FlightComputer(MinecraftClient mc) {
+    public FlightComputer(@NotNull MinecraftClient mc) {
         this.mc = mc;
+
+        gpws = new GPWSComputer(this);
+        autoflight = new AutoFlightComputer(this);
+        time = new TimeComputer();
+        pitchController = new PitchController(this);
+        alertController = new AlertController(this, mc.getSoundManager());
+    }
+
+    public @NotNull PlayerEntity getPlayer() {
         assert mc.player != null;
-        this.player = mc.player;
+        return mc.player;
     }
 
     public boolean isGround(BlockPos pos) {
@@ -53,9 +65,11 @@ public class FlightComputer {
     }
 
     public void tick() {
-        position = player.getPos();
-        acceleration = player.getVelocity().subtract(velocity);
-        velocity = player.getVelocity();
+        position = getPlayer().getPos();
+        if (velocity != null) {
+            acceleration = getPlayer().getVelocity().subtract(velocity);
+        }
+        velocity = getPlayer().getVelocity();
         velocityPerSecond = velocity.multiply(TICKS_PER_SECOND);
         pitch = computePitch();
         speed = computeSpeed();
@@ -64,21 +78,36 @@ public class FlightComputer {
         groundLevel = computeGroundLevel();
         distanceFromGround = computeDistanceFromGround(altitude, groundLevel);
         flightPitch = computeFlightPitch(velocity, pitch);
-        flightYaw = computeFlightYaw(velocity, player.getYaw());
+        flightYaw = computeFlightYaw(velocity, getPlayer().getYaw());
         flightHeading = toHeading(flightYaw);
         elytraHealth = computeElytraHealth();
+        worldHeight = getPlayer().getWorld().getHeight();
+
+        if (!getPlayer().isFallFlying()) {
+            return;
+        }
 
         gpws.tick();
         autoflight.tick();
+        alertController.tick();
     }
 
     public void updateRoll(Matrix3f normal) {
         roll = computeRoll(normal);
     }
 
+    public void onRender() {
+        if (!getPlayer().isFallFlying()) {
+            return;
+        }
+
+        time.tick();
+        pitchController.tick(time.deltaTime);
+    }
+
     private Float computeElytraHealth() {
-        ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
-        if (stack != null && stack.getItem() == Items.ELYTRA) {
+        ItemStack stack = getPlayer().getEquippedStack(EquipmentSlot.CHEST);
+        if (stack != null && stack.getItem().equals(Items.ELYTRA)) {
             float remain = ((float) stack.getMaxDamage() - (float) stack.getDamage()) / (float) stack.getMaxDamage();
             return remain * 100f;
         }
@@ -111,11 +140,11 @@ public class FlightComputer {
     }
 
     private float computePitch() {
-        return -player.getPitch();
+        return -getPlayer().getPitch();
     }
 
     public BlockPos findGround() {
-        BlockPos.Mutable pos = player.getBlockPos().mutableCopy();
+        BlockPos.Mutable pos = getPlayer().getBlockPos().mutableCopy();
         while (pos.getY() >= -64) {
             if (isGround(pos.move(Direction.DOWN))) {
                 return pos;
@@ -126,7 +155,7 @@ public class FlightComputer {
 
     private int computeGroundLevel() {
         BlockPos ground = findGround();
-        return ground == null ? Math.min(player.getBlockY() + 4, -50) : ground.getY();
+        return ground == null ? Math.min(getPlayer().getBlockY() - 4, -50) : ground.getY();
     }
 
     private float computeDistanceFromGround(float altitude,
@@ -135,11 +164,11 @@ public class FlightComputer {
     }
 
     private float computeAltitude() {
-        return (float) player.getPos().y - 1;
+        return (float) getPlayer().getPos().y - 1;
     }
 
     private float computeHeading() {
-        return toHeading(player.getYaw());
+        return toHeading(getPlayer().getYaw());
     }
 
     private float computeSpeed() {
@@ -148,9 +177,5 @@ public class FlightComputer {
 
     private float toHeading(float yawDegrees) {
         return (yawDegrees + 180) % 360;
-    }
-
-    public void tickPitchController(float tickDelta) {
-        pitchController.tick(player, tickDelta);
     }
 }

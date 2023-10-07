@@ -1,11 +1,6 @@
 {
   "key.flighthud.toggleDisplayMode": "Switch Display Mode",
-  "key.flighthud.hideAlertSwitch": "Hide Oldest Alert",
-  "key.flighthud.showAlertSwitch": "Show Recently Hidden Alert",
-  "key.flighthud.flightLawSwitch": "Turn On/Off Flight Protections",
-  "key.flighthud.gpwsSwitch": "Turn On/Off GPWS",
-  "key.flighthud.fdSwitch": "Turn On/Off Flight Directors",
-  "key.flighthud.aThrSwitch": "Turn On/Off Auto Thrust",
-  "key.flighthud.apSwitch": "Turn On/Off Auto Pilot",
-  "category.flighthud.toggleDisplayMode": "Flight HUD"
+  "category.flighthud": "Flight HUD",
+  "alerts.flighthud.pull_up": "PULL UP",
+  "alerts.flighthud.sinkrate": "PULL UP"
 }

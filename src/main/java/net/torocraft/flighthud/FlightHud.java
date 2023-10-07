@@ -5,6 +5,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.torocraft.flighthud.commands.SwitchDisplayModeCommand;
@@ -42,15 +43,16 @@ public class FlightHud implements ClientModInitializer {
             FlightHud.MODID + ".min.json",
             config -> FlightHud.CONFIG_MIN = config);
 
-    private static KeyBinding keyBinding;
+    private static KeyBinding toggleDisplayMode;
 
     private static void setupKeycCode() {
-        keyBinding = new KeyBinding("key.flighthud.toggleDisplayMode", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_GRAVE_ACCENT, "category.flighthud.toggleDisplayMode");
+        toggleDisplayMode = new KeyBinding("key.flighthud.toggleDisplayMode", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_GRAVE_ACCENT, "category.flighthud");
 
+        KeyBindingHelper.registerKeyBinding(toggleDisplayMode);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (keyBinding.wasPressed()) {
+            while (toggleDisplayMode.wasPressed()) {
                 CONFIG_SETTINGS.toggleDisplayMode();
             }
         });

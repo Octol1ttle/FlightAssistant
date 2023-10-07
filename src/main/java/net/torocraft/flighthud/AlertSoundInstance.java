@@ -4,6 +4,7 @@ import net.minecraft.client.sound.EntityTrackingSoundInstance;
 import net.minecraft.entity.Entity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 
 public class AlertSoundInstance extends EntityTrackingSoundInstance {
     public AlertSoundInstance(SoundEvent sound, float volume, Entity entity, boolean repeat) {
@@ -13,7 +14,7 @@ public class AlertSoundInstance extends EntityTrackingSoundInstance {
     }
 
     public void setVolume(float volume) {
-        this.volume = Math.max(0, Math.min(1, volume));
+        this.volume = MathHelper.clamp(volume, 0.0f, 1.0f);
     }
 
     @Override

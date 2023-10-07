@@ -1,0 +1,6 @@
+{
+  "key.flighthud.toggleDisplayMode": "Переключить режим интерфейса",
+  "category.flighthud": "Flight HUD",
+  "alerts.flighthud.pull_up": "ТЯНИ ВВЕРХ",
+  "alerts.flighthud.sinkrate": "СКОР. ПАДЕНИЯ"
+}

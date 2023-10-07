@@ -1,18 +1,15 @@
 package net.torocraft.flighthud.computers;
 
-import net.minecraft.util.math.Vec3d;
-import net.torocraft.flighthud.Util;
-
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 public class GPWSComputer {
-    private static final int MAX_SAFE_SINKRATE = -10;
+    public static final float PITCH_CORRECT_THRESHOLD = 2.5f;
+    private static final int MAX_SAFE_SINKRATE = 10;
     private static final int STATUS_VERTICAL_SPEED_SAFE = -1;
-    private static final int MAX_SIMULATION_TICKS = 10 * TICKS_PER_SECOND;
-    private static final int STATUS_SIMULATION_TIME_EXCEEDED = -2;
-    private static final float PITCH_CORRECT_THRESHOLD = 2.5f;
+    private static final int STATUS_ACCELERATION_NOT_AVAILABLE = -2;
+    private static final float BLOCK_PITCH_CONTROL_THRESHOLD = 5.0f;
     private final FlightComputer computer;
-    private float impactTime;
+    public float impactTime;
 
     public GPWSComputer(FlightComputer computer) {
         this.computer = computer;
@@ -20,31 +17,33 @@ public class GPWSComputer {
 
     public void tick() {
         impactTime = this.computeImpactTime();
-    }
 
-    public float getImpactTime() {
-        return impactTime;
+        if (computer.gpws.shouldCorrectPitch()) {
+            // Looks like it's trying to kill us.
+            computer.autoflight.disconnectAutopilot(true);
+        }
+        computer.pitchController.forceLevelOff = computer.gpws.shouldCorrectPitch();
     }
 
     public boolean shouldCorrectPitch() {
-        return getImpactTime() <= PITCH_CORRECT_THRESHOLD;
+        return impactTime > 0 && impactTime <= PITCH_CORRECT_THRESHOLD;
+    }
+
+    public boolean shouldBlockPitchChanges() {
+        return impactTime > 0 && impactTime <= BLOCK_PITCH_CONTROL_THRESHOLD;
     }
 
     private float computeImpactTime() {
-        if (computer.velocity.y > MAX_SAFE_SINKRATE) {
+        if (computer.acceleration == null) {
+            return STATUS_ACCELERATION_NOT_AVAILABLE;
+        }
+        if (-computer.velocityPerSecond.y < MAX_SAFE_SINKRATE) {
             return STATUS_VERTICAL_SPEED_SAFE;
         }
 
-        Vec3d position = Util.copyVec3d(computer.position);
-        Vec3d velocity = Util.copyVec3d(computer.velocity);
-        for (int ticks = 0; ticks < MAX_SIMULATION_TICKS; ticks++) {
-            velocity.add(computer.acceleration);
-            position.add(velocity);
-            if (position.y <= computer.groundLevel) {
-                return (float) ticks / TICKS_PER_SECOND;
-            }
-        }
-
-        return STATUS_SIMULATION_TIME_EXCEEDED;
+        double initialSpeed = -computer.velocityPerSecond.y;
+        double acceleration = -computer.acceleration.y * TICKS_PER_SECOND;
+        return (float) ((-initialSpeed + Math.sqrt(Math.pow(initialSpeed, 2) + 2 * acceleration * computer.distanceFromGround))
+                / acceleration);
     }
 }

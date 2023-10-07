@@ -1,5 +1,6 @@
 package net.torocraft.flighthud.config;
 
+import com.google.gson.annotations.SerializedName;
 import java.awt.*;
 import net.torocraft.flighthud.config.loader.IConfig;
 
@@ -49,7 +50,8 @@ public class HudConfig implements IConfig {
     public boolean altitude_showScale = true;
     public boolean altitude_showReadout = true;
     public boolean altitude_showHeight = true;
-    public boolean altitude_showGroundInfo = true;
+    @SerializedName("altitude_showGroundInfo_v2")
+    public boolean altitude_showGroundInfo = false;
 
     public boolean heading_showScale = true;
     public boolean heading_showReadout = true;

@@ -19,17 +19,20 @@ public class InGameHudMixin {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void render(DrawContext context, float tickDelta, CallbackInfo ci) {
-        if (HudRenderer.INSTANCE != null) {
+        if (HudRenderer.getComputer() != null) {
             HudRenderer.INSTANCE.render(context, client);
-            HudRenderer.INSTANCE.computer.tickPitchController(tickDelta);
+            HudRenderer.getComputer().onRender();
         }
     }
 
     @Inject(method = "tick()V", at = @At("TAIL"))
     private void tick(CallbackInfo ci) {
-        if (HudRenderer.INSTANCE == null) {
+        if (client.player == null) {
+            return;
+        }
+        if (HudRenderer.getComputer() == null) {
             HudRenderer.INSTANCE = new HudRenderer(client);
         }
-        HudRenderer.INSTANCE.computer.tick();
+        HudRenderer.getComputer().tick();
     }
 }

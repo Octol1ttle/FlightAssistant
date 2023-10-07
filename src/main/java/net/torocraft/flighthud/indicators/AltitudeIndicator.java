@@ -1,6 +1,6 @@
-package net.torocraft.flighthud.components;
+package net.torocraft.flighthud.indicators;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.HudComponent;
@@ -16,7 +16,7 @@ public class AltitudeIndicator extends HudComponent {
     }
 
     @Override
-    public void render(DrawContext context, MinecraftClient mc) {
+    public void render(DrawContext context, TextRenderer textRenderer) {
         float top = dim.tFrame;
         float bottom = dim.bFrame;
 
@@ -30,43 +30,43 @@ public class AltitudeIndicator extends HudComponent {
         float xAltText = right + 5;
 
         if (CONFIG.altitude_showGroundInfo) {
-            drawHeightIndicator(mc, context, left - 1, dim.yMid, bottom - dim.yMid, CONFIG.color);
+            drawHeightIndicator(context, left - 1, dim.yMid, bottom - dim.yMid, CONFIG.color);
         }
 
         if (CONFIG.altitude_showReadout) {
-            int color = computer.altitude <= -50 ? CONFIG.alertColor : CONFIG.color;
-            drawFont(mc, context, String.format("%.0f", computer.altitude), xAltText, dim.yMid - 3, color);
+            int color = computer.altitude < computer.groundLevel ? CONFIG.alertColor : CONFIG.color;
+            drawFont(textRenderer, context, String.format("%.0f", computer.altitude), xAltText, dim.yMid - 3, color);
             drawBox(context, xAltText - 2, dim.yMid - 4.5f, 28, color);
         }
 
         if (CONFIG.altitude_showHeight) {
-            drawFont(mc, context, "G", xAltText - 10, bottom + 3);
+            drawFont(textRenderer, context, "G", xAltText - 10, bottom + 3, CONFIG.color);
             String heightText = String.format("%d", i(computer.distanceFromGround));
-            drawFont(mc, context, heightText, xAltText, bottom + 3);
+            drawFont(textRenderer, context, heightText, xAltText, bottom + 3, CONFIG.color);
             drawBox(context, xAltText - 2, bottom + 1.5f, 28, CONFIG.color);
         }
 
         if (CONFIG.altitude_showScale) {
-            for (int i = -100; i < 1000; i = i + 10) {
-
+            for (int i = -100; i < 1000; i += 10) {
                 float y = (dim.hScreen - i * blocksPerPixel) - yFloor;
                 if (y < top || y > (bottom - 5))
                     continue;
 
+                int color = i <= computer.groundLevel ? CONFIG.alertColor : CONFIG.color;
                 if (i % 50 == 0) {
-                    drawHorizontalLine(context, left, right + 2, y, CONFIG.color);
+                    drawHorizontalLine(context, left, right + 2, y, color);
                     if (!CONFIG.altitude_showReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
-                        drawFont(mc, context, String.format("%d", i), xAltText, y - 3);
+                        drawFont(textRenderer, context, String.format("%d", i), xAltText, y - 3, color);
                     }
                 }
-                drawHorizontalLine(context, left, right, y, CONFIG.color);
+                drawHorizontalLine(context, left, right, y, color);
             }
         }
     }
 
-    private void drawHeightIndicator(MinecraftClient client, DrawContext context, float x, float top, float h, int color) {
+    private void drawHeightIndicator(DrawContext context, float x, float top, float h, int color) {
         float bottom = top + h;
-        float blocksPerPixel = h / (client.world.getHeight() + 64f);
+        float blocksPerPixel = h / (computer.worldHeight + 64f);
         float yAlt = bottom - i((computer.altitude + 64) * blocksPerPixel);
         float yFloor = bottom - i(64 * blocksPerPixel);
 

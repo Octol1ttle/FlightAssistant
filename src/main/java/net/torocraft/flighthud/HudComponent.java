@@ -2,14 +2,20 @@ package net.torocraft.flighthud;
 
 import java.util.function.Consumer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.config.HudConfig;
 
 public abstract class HudComponent {
     public static HudConfig CONFIG;
+
+    public static int drawFont(TextRenderer textRenderer, DrawContext context, Text text, float x, float y,
+                               int color) {
+        context.drawText(textRenderer, text, i(x), i(y), color, false);
+        return 1;
+    }
 
     public static void fill(DrawContext context, float x1, float y1, float x2, float y2, int color) {
         context.fill(i(x1), i(y1), i(x2), i(y2), color);
@@ -27,15 +33,29 @@ public abstract class HudComponent {
         return degrees;
     }
 
-    public static int drawFont(MinecraftClient mc, DrawContext context, String s, float x, float y,
+    public static int drawFont(TextRenderer textRenderer, DrawContext context, String text, float x, float y,
                                int color) {
-        context.drawText(mc.textRenderer, s, i(x), i(y), color, false);
+        context.drawText(textRenderer, text, i(x), i(y), color, false);
         return 1;
     }
 
-    public static void drawCenteredFont(MinecraftClient mc, DrawContext context, String s, float width, float y,
-                                        int color) {
-        context.drawText(mc.textRenderer, s, i(width - mc.textRenderer.getWidth(s)) / 2, i(y), color, false);
+    public static void drawHighlightedFont(TextRenderer textRenderer, DrawContext context, float x, float y, Text text, int textColor, int highlightColor, boolean highlight) {
+        if (highlight) {
+            HudRenderer.drawUnbatched(context, ctx -> {
+                HudComponent.fill(context, x - 1.5f, y - 1.5f, x + textRenderer.getWidth(text), y + 8.0f, highlightColor);
+                HudComponent.drawFont(textRenderer, context, text, x, y, textColor);
+            });
+            return;
+        }
+        HudComponent.drawFont(textRenderer, context, text, x, y, highlightColor);
+    }
+
+    public static void drawUnbatched(DrawContext context, Consumer<DrawContext> c) {
+        if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
+            net.torocraft.flighthud.compatibility.ImmediatelyFastBatchingAccessor.endHudBatching();
+        c.accept(context);
+        if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
+            net.torocraft.flighthud.compatibility.ImmediatelyFastBatchingAccessor.beginHudBatching();
     }
 
     public static void drawHorizontalLine(DrawContext context, float x1, float x2, float y, int color) {
@@ -66,25 +86,7 @@ public abstract class HudComponent {
         drawVerticalLine(context, x + w, y, y + 10, color);
     }
 
-    public static void drawTextHighlight(TextRenderer renderer, DrawContext context, float x, float y, String text, int color) {
-        HudComponent.fill(context, x - 1.5f, y - 1.5f, x + renderer.getWidth(text), y + 8.0f, color);
-    }
-
-    public static void drawUnbatched(Consumer<DrawContext> c, DrawContext context) {
-        if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
-            net.torocraft.flighthud.compat.ImmediatelyFastBatchingAccessor.endHudBatching();
-        c.accept(context);
-        if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
-            net.torocraft.flighthud.compat.ImmediatelyFastBatchingAccessor.beginHudBatching();
-    }
-
-    public abstract void render(DrawContext context, MinecraftClient client);
-
-    protected void drawFont(MinecraftClient mc, DrawContext context, String s, float x, float y) {
-        drawFont(mc, context, s, x, y, CONFIG.color);
-    }
-
-    protected void drawPointer(DrawContext context, float x, float y, float rot) {
+    protected static void drawPointer(DrawContext context, float x, float y, float rot) {
         context.getMatrices().push();
         context.getMatrices().translate(x, y, 0);
         context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rot + 45));
@@ -93,13 +95,13 @@ public abstract class HudComponent {
         context.getMatrices().pop();
     }
 
-    protected void drawRightAlignedFont(MinecraftClient mc, DrawContext context, String s, float x,
+    protected static void drawRightAlignedFont(TextRenderer textRenderer, DrawContext context, String s, float x,
                                         float y, int color) {
-        int w = mc.textRenderer.getWidth(s);
-        drawFont(mc, context, s, x - w, y, color);
+        int w = textRenderer.getWidth(s);
+        drawFont(textRenderer, context, s, x - w, y, color);
     }
 
-    protected void drawHorizontalLineDashed(DrawContext context, float x1, float x2, float y,
+    protected static void drawHorizontalLineDashed(DrawContext context, float x1, float x2, float y,
                                             int dashCount, int color) {
         float width = x2 - x1;
         int segmentCount = dashCount * 2 - 1;
@@ -118,4 +120,6 @@ public abstract class HudComponent {
             drawHorizontalLine(context, dx1, dx2, y, color);
         }
     }
+
+    public abstract void render(DrawContext context, TextRenderer textRenderer);
 }

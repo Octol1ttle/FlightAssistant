@@ -1,6 +1,6 @@
-package net.torocraft.flighthud.components;
+package net.torocraft.flighthud.indicators;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.HudComponent;
@@ -16,7 +16,7 @@ public class FlightPathIndicator extends HudComponent {
     }
 
     @Override
-    public void render(DrawContext context, MinecraftClient client) {
+    public void render(DrawContext context, TextRenderer textRenderer) {
         if (!CONFIG.flightPath_show) {
             return;
         }

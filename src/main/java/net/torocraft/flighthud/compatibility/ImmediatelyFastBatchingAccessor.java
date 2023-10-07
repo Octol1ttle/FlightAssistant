@@ -1,4 +1,4 @@
-package net.torocraft.flighthud.compat;
+package net.torocraft.flighthud.compatibility;
 
 public class ImmediatelyFastBatchingAccessor {
     public static void beginHudBatching() {

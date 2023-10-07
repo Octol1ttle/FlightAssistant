@@ -1,6 +1,6 @@
-package net.torocraft.flighthud.components;
+package net.torocraft.flighthud.indicators;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.HudComponent;
@@ -17,7 +17,7 @@ public class HeadingIndicator extends HudComponent {
     }
 
     @Override
-    public void render(DrawContext context, MinecraftClient mc) {
+    public void render(DrawContext context, TextRenderer textRenderer) {
         float left = dim.lFrame;
         float right = dim.rFrame;
         float top = dim.tFrame - 10;
@@ -27,7 +27,7 @@ public class HeadingIndicator extends HudComponent {
         float xNorth = dim.xMid - northOffset;
 
         if (CONFIG.heading_showReadout) {
-            drawFont(mc, context, String.format("%03d", i(wrapHeading(computer.heading))), dim.xMid - 8, yText);
+            drawFont(textRenderer, context, String.format("%03d", i(wrapHeading(computer.heading))), dim.xMid - 8, yText, CONFIG.color);
             drawBox(context, dim.xMid - 15, yText - 1.5f, 30, CONFIG.color);
         }
 
@@ -40,14 +40,14 @@ public class HeadingIndicator extends HudComponent {
 
                 if (i % 15 == 0) {
                     if (i % 90 == 0) {
-                        drawFont(mc, context, headingToDirection(i), x - 2, yText + 10);
-                        drawFont(mc, context, headingToAxis(i), x - 8, yText + 20);
+                        drawFont(textRenderer, context, headingToDirection(i), x - 2, yText + 10, CONFIG.color);
+                        drawFont(textRenderer, context, headingToAxis(i), x - 8, yText + 20, CONFIG.color);
                     } else {
                         drawVerticalLine(context, x, top + 3, top + 10, CONFIG.color);
                     }
 
                     if (!CONFIG.heading_showReadout || x <= dim.xMid - 26 || x >= dim.xMid + 26) {
-                        drawFont(mc, context, String.format("%03d", i(wrapHeading(i))), x - 8, yText);
+                        drawFont(textRenderer, context, String.format("%03d", i(wrapHeading(i))), x - 8, yText, CONFIG.color);
                     }
                 } else {
                     drawVerticalLine(context, x, top + 6, top + 10, CONFIG.color);
