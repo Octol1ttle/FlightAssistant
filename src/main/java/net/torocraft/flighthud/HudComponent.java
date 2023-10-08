@@ -25,25 +25,17 @@ public abstract class HudComponent {
         return Math.round(f);
     }
 
-    public static float wrapHeading(float degrees) {
-        degrees = degrees % 360;
-        while (degrees < 0) {
-            degrees += 360;
-        }
-        return degrees;
-    }
-
     public static int drawFont(TextRenderer textRenderer, DrawContext context, String text, float x, float y,
                                int color) {
         context.drawText(textRenderer, text, i(x), i(y), color, false);
         return 1;
     }
 
-    public static void drawHighlightedFont(TextRenderer textRenderer, DrawContext context, float x, float y, Text text, int textColor, int highlightColor, boolean highlight) {
+    public static void drawHighlightedFont(TextRenderer textRenderer, DrawContext context, float x, float y, Text text, int highlightColor, boolean highlight) {
         if (highlight) {
             HudRenderer.drawUnbatched(context, ctx -> {
                 HudComponent.fill(context, x - 1.5f, y - 1.5f, x + textRenderer.getWidth(text), y + 8.0f, highlightColor);
-                HudComponent.drawFont(textRenderer, context, text, x, y, textColor);
+                HudComponent.drawFont(textRenderer, context, text, x, y, CONFIG.white);
             });
             return;
         }
@@ -105,7 +97,7 @@ public abstract class HudComponent {
                                             int dashCount, int color) {
         float width = x2 - x1;
         int segmentCount = dashCount * 2 - 1;
-        float dashSize = width / segmentCount;
+        float dashSize = width / (float) segmentCount;
         for (int i = 0; i < segmentCount; i++) {
             if (i % 2 != 0) {
                 continue;

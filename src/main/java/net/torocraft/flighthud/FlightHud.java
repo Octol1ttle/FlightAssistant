@@ -53,7 +53,7 @@ public class FlightHud implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (toggleDisplayMode.wasPressed()) {
-                CONFIG_SETTINGS.toggleDisplayMode();
+                CONFIG_SETTINGS.toggleDisplayMode(client);
             }
         });
     }

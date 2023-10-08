@@ -8,7 +8,7 @@ import net.torocraft.flighthud.HudComponent;
 import net.torocraft.flighthud.computers.FlightComputer;
 
 public class PitchIndicator extends HudComponent {
-    private static final int DANGEROUS_DOWN_PITCH = -40;
+    public static final int DANGEROUS_DOWN_PITCH = -40;
     private final Dimensions dim;
     private final FlightComputer computer;
     private final PitchIndicatorData pitchData = new PitchIndicatorData();
@@ -43,7 +43,7 @@ public class PitchIndicator extends HudComponent {
 
         drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumClimbAngle, CONFIG.color);
         drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumGlideAngle, CONFIG.color);
-        //drawReferenceMark(context, yHorizon, FlightSafetyMonitor.maximumSafePitch, CONFIG.alertColor);
+        drawReferenceMark(context, yHorizon, computer.stall.maximumSafePitch, CONFIG.alertColor);
 
         if (CONFIG.pitchLadder_showHorizon) {
             pitchData.l1 -= pitchData.margin;
@@ -126,10 +126,10 @@ public class PitchIndicator extends HudComponent {
         public float r2;
 
         public void update(Dimensions dim) {
-            width = i(dim.wScreen / 3);
+            width = i(dim.wScreen / 3.0f);
             float left = width;
 
-            mid = i((width / 2) + left);
+            mid = i((width * 0.5f) + left);
             margin = i(width * 0.3d);
             l1 = left + margin;
             l2 = mid - 7;

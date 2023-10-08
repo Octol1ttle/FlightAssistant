@@ -8,10 +8,14 @@ import net.minecraft.sound.SoundEvent;
 import net.torocraft.flighthud.AlertSoundInstance;
 import net.torocraft.flighthud.alerts.AlertSoundData;
 import net.torocraft.flighthud.alerts.IAlert;
-import net.torocraft.flighthud.alerts.nav.gpws.UnsafeSinkrateAlert;
+import net.torocraft.flighthud.alerts.StallAlert;
+import net.torocraft.flighthud.alerts.nav.gpws.ExcessiveDescentRateAlert;
 import org.jetbrains.annotations.Nullable;
 
+import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
+
 public class AlertController {
+    private static final int SOUND_DELAY = (int) (TICKS_PER_SECOND * 0.2f);
     public final List<IAlert> activeAlerts;
     private final FlightComputer computer;
     private final SoundManager manager;
@@ -22,7 +26,7 @@ public class AlertController {
         this.computer = computer;
         this.manager = manager;
         ALERTS = new IAlert[]{
-                new UnsafeSinkrateAlert(computer)
+                new ExcessiveDescentRateAlert(computer), new StallAlert(computer)
         };
         activeAlerts = new ArrayList<>();
     }
@@ -56,8 +60,8 @@ public class AlertController {
                 if (activeSound != null) {
                     manager.stop(activeSound);
                 }
-                activeSound = new AlertSoundInstance(data.sound, data.volume, computer.getPlayer(), data.repeat);
-                manager.play(activeSound);
+                activeSound = new AlertSoundInstance(data.sound, data.volume, computer.player, data.repeat);
+                manager.play(activeSound, SOUND_DELAY);
             }
 
             break;

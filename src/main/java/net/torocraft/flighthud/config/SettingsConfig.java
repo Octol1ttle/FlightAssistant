@@ -34,9 +34,8 @@ public class SettingsConfig implements IConfig {
         return watchForConfigChanges;
     }
 
-    public void toggleDisplayMode() {
-        MinecraftClient client = MinecraftClient.getInstance();
-
+    public void toggleDisplayMode(MinecraftClient client) {
+        assert client.player != null;
         if (client.player.isFallFlying()) {
             displayModeWhenFlying = toggle(displayModeWhenFlying);
         } else {

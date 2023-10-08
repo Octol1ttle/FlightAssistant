@@ -31,17 +31,17 @@ public class Dimensions {
             wScreen = wScreen * c.scale;
         }
 
-        degreesPerPixel = hScreen / client.options.getFov().getValue();
-        xMid = wScreen / 2;
-        yMid = hScreen / 2;
+        degreesPerPixel = hScreen / (float) client.options.getFov().getValue();
+        xMid = wScreen * 0.5f;
+        yMid = hScreen * 0.5f;
 
         wFrame = wScreen * c.width;
         hFrame = hScreen * c.height;
 
-        lFrame = ((wScreen - wFrame) / 2) + c.xOffset;
+        lFrame = ((wScreen - wFrame) * 0.5f) + c.xOffset;
         rFrame = lFrame + wFrame;
 
-        tFrame = ((hScreen - hFrame) / 2) + c.yOffset;
+        tFrame = ((hScreen - hFrame) * 0.5f) + c.yOffset;
         bFrame = tFrame + hFrame;
     }
 

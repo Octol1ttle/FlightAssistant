@@ -10,13 +10,13 @@ public class TimeComputer {
      */
     public float deltaTime;
     public boolean highlight;
-    private Long prevMillis;
-    private long highlightMillis;
+    private Float prevMillis;
+    private float highlightMillis;
 
     public void tick() {
-        long millis = Util.getMeasuringTimeMs();
+        float millis = Util.getMeasuringTimeNano() / 1000000.0f;
         if (prevMillis == null) {
-            prevMillis = millis - (1000 / 60);
+            prevMillis = millis - (1000.0f / 60.0f);
         }
         deltaTime = MathHelper.clamp((millis - prevMillis) * 0.001f, 0.001f, 1.0f);
         prevMillis = millis;

@@ -18,8 +18,12 @@ public class AlertIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
+        boolean renderedCentered = false;
         for (IAlert alert : computer.alertController.activeAlerts) {
-            alert.renderCentered(textRenderer, context, dim.wScreen, dim.hScreen / 2 + 10, computer.time.highlight);
+            if (!renderedCentered) {
+                renderedCentered = alert.renderCentered(textRenderer, context, dim.wScreen,
+                        dim.hScreen * 0.5f + 10, computer.time.highlight);
+            }
         }
     }
 }

@@ -3,10 +3,11 @@ package net.torocraft.flighthud.computers;
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 public class GPWSComputer {
+    public static final int MAX_SAFE_SINK_RATE = 10;
     public static final float PITCH_CORRECT_THRESHOLD = 2.5f;
-    private static final int MAX_SAFE_SINKRATE = 10;
-    private static final int STATUS_VERTICAL_SPEED_SAFE = -1;
-    private static final int STATUS_ACCELERATION_NOT_AVAILABLE = -2;
+    private static final int STATUS_ACCELERATION_NOT_AVAILABLE = -1;
+    private static final int STATUS_TOO_LOW_FOR_FALL_DAMAGE = -2;
+    private static final int STATUS_VERTICAL_SPEED_SAFE = -3;
     private static final float BLOCK_PITCH_CONTROL_THRESHOLD = 5.0f;
     private final FlightComputer computer;
     public float impactTime;
@@ -37,7 +38,10 @@ public class GPWSComputer {
         if (computer.acceleration == null) {
             return STATUS_ACCELERATION_NOT_AVAILABLE;
         }
-        if (-computer.velocityPerSecond.y < MAX_SAFE_SINKRATE) {
+        if (computer.distanceFromGround <= 3) {
+            return STATUS_TOO_LOW_FOR_FALL_DAMAGE;
+        }
+        if (-computer.velocityPerSecond.y < MAX_SAFE_SINK_RATE) {
             return STATUS_VERTICAL_SPEED_SAFE;
         }
 

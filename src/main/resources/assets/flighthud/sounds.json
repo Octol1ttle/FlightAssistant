@@ -14,9 +14,14 @@
       "flighthud:pull_up"
     ]
   },
-  "sinkrate": {
+  "sink_rate": {
     "sounds": [
-      "flighthud:sinkrate"
+      "flighthud:sink_rate"
+    ]
+  },
+  "stall": {
+    "sounds": [
+      "flighthud:stall"
     ]
   },
   "terrain": {

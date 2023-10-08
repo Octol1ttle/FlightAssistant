@@ -9,5 +9,5 @@ public interface IAlert {
 
     @NotNull AlertSoundData getAlertSoundData();
 
-    void renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight);
+    boolean renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight);
 }

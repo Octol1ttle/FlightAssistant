@@ -66,7 +66,7 @@ public class AltitudeIndicator extends HudComponent {
 
     private void drawHeightIndicator(DrawContext context, float x, float top, float h, int color) {
         float bottom = top + h;
-        float blocksPerPixel = h / (computer.worldHeight + 64f);
+        float blocksPerPixel = h / (computer.worldHeight + 64.0f);
         float yAlt = bottom - i((computer.altitude + 64) * blocksPerPixel);
         float yFloor = bottom - i(64 * blocksPerPixel);
 

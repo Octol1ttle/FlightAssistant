@@ -9,7 +9,6 @@ public class HudConfig implements IConfig {
     public transient int alertColor = Color.RED.getRGB();
     public transient int amberColor = Color.ORANGE.getRGB();
     public transient int adviceColor = Color.CYAN.getRGB();
-    public transient int black = Color.BLACK.getRGB();
     public transient int white = Color.WHITE.getRGB();
     public transient float halfThickness = 0.5f;
 
@@ -80,7 +79,7 @@ public class HudConfig implements IConfig {
 
     private void updateThickness() {
         try {
-            halfThickness = thickness / 2;
+            halfThickness = thickness * 0.5f;
         } catch (Exception e) {
             halfThickness = 0.5f;
         }

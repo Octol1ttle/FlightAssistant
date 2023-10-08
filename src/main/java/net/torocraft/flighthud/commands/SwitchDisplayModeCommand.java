@@ -9,7 +9,7 @@ public class SwitchDisplayModeCommand implements Command<FabricClientCommandSour
 
     @Override
     public int run(CommandContext<FabricClientCommandSource> context) {
-        FlightHud.CONFIG_SETTINGS.toggleDisplayMode();
+        FlightHud.CONFIG_SETTINGS.toggleDisplayMode(context.getSource().getClient());
         return 0;
     }
 

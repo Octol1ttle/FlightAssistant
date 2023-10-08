@@ -2,6 +2,7 @@ package net.torocraft.flighthud.computers;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
+import net.torocraft.flighthud.indicators.PitchIndicator;
 
 public class PitchController {
     private final FlightComputer computer;
@@ -20,20 +21,41 @@ public class PitchController {
             smoothSetPitch(0.0f, delta / Math.min(1.0f, computer.gpws.impactTime));
             return;
         }
+        if (computer.pitch > computer.stall.maximumSafePitch) {
+            smoothSetPitch(-computer.stall.maximumSafePitch, delta);
+            return;
+        }
 
         smoothSetPitch(targetPitch, delta);
     }
 
+    /**
+     * Smoothly changes the player's pitch to the specified pitch using the delta
+     *
+     * @param pitch Target MINECRAFT pitch (- is up, + is down)
+     * @param delta Delta time, in seconds
+     */
     public void smoothSetPitch(Float pitch, float delta) {
         if (pitch == null) {
             return;
         }
-
-        PlayerEntity player = computer.getPlayer();
-
         checkFloatValidity(pitch, "Target pitch");
-        float newPitch = MathHelper.clamp(player.getPitch() + (pitch - player.getPitch()) * delta, -90.0f, 90.0f);
-        checkFloatValidity(newPitch, "Calculated pitch");
+
+        PlayerEntity player = computer.player;
+        float difference = pitch - player.getPitch();
+
+        if (difference < 0) { // going UP
+            pitch = MathHelper.clamp(pitch, -computer.stall.maximumSafePitch, 90.0f);
+        }
+        if (difference > 0) { // going DOWN
+            pitch = MathHelper.clamp(pitch, -90.0f, -PitchIndicator.DANGEROUS_DOWN_PITCH);
+        }
+        checkFloatValidity(pitch, "Clamped target pitch");
+
+        float newPitch = player.getPitch() + (pitch - player.getPitch()) * delta;
+        //Math.max(-90.0f, -computer.stall.maximumSafePitch),
+        //-PitchIndicator.DANGEROUS_DOWN_PITCH);
+        checkFloatValidity(newPitch, "New pitch");
 
         player.setPitch(newPitch);
     }

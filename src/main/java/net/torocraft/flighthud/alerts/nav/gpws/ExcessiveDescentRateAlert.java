@@ -14,24 +14,24 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 
-public class UnsafeSinkrateAlert implements IAlert {
-    public static final float SINKRATE_THRESHOLD = 7.5f;
-    public static final AlertSoundData SINKRATE = new AlertSoundData(
-            SoundEvent.of(new Identifier("flighthud:sinkrate")),
+public class ExcessiveDescentRateAlert implements IAlert {
+    private static final float SINK_RATE_THRESHOLD = 7.5f;
+    private static final AlertSoundData SINK_RATE = new AlertSoundData(
+            SoundEvent.of(new Identifier("flighthud:sink_rate")),
             1,
-            0.5f,
+            0.75f,
             false
     );
-    public static final float PULL_UP_THRESHOLD = 5.0f;
-    public static final AlertSoundData PULL_UP = new AlertSoundData(
+    private static final float PULL_UP_THRESHOLD = 5.0f;
+    private static final AlertSoundData PULL_UP = new AlertSoundData(
             SoundEvent.of(new Identifier("flighthud:pull_up")),
             1,
-            0.5f,
+            0.75f,
             false
     );
     private final FlightComputer computer;
 
-    public UnsafeSinkrateAlert(FlightComputer computer) {
+    public ExcessiveDescentRateAlert(FlightComputer computer) {
         this.computer = computer;
     }
 
@@ -41,21 +41,26 @@ public class UnsafeSinkrateAlert implements IAlert {
     }
 
     @Override
-    public void renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight) {
+    public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight) {
         if (computer.gpws.impactTime <= PULL_UP_THRESHOLD) {
             Text text = Text.translatable("alerts.flighthud.pull_up");
-            float startX = (width - textRenderer.getWidth(text)) / 2;
+            float startX = (width - textRenderer.getWidth(text)) * 0.5f;
             HudComponent.drawHighlightedFont(textRenderer, context, startX, y, text,
-                    CONFIG.white, CONFIG.alertColor, highlight);
-            return;
+                    CONFIG.alertColor, highlight);
+
+            return true;
         }
 
-        if (computer.gpws.impactTime <= SINKRATE_THRESHOLD) {
-            Text text = Text.translatable("alerts.flighthud.sinkrate");
-            float startX = (width - textRenderer.getWidth(text)) / 2;
+        if (computer.gpws.impactTime <= SINK_RATE_THRESHOLD) {
+            Text text = Text.translatable("alerts.flighthud.sink_rate");
+            float startX = (width - textRenderer.getWidth(text)) * 0.5f;
             HudComponent.drawHighlightedFont(textRenderer, context, startX, y, text,
-                    CONFIG.white, CONFIG.amberColor, highlight);
+                    CONFIG.amberColor, highlight);
+
+            return true;
         }
+
+        return false;
     }
 
     @Override
@@ -63,8 +68,8 @@ public class UnsafeSinkrateAlert implements IAlert {
         if (computer.gpws.impactTime <= PULL_UP_THRESHOLD) {
             return PULL_UP;
         }
-        if (computer.gpws.impactTime <= SINKRATE_THRESHOLD) {
-            return SINKRATE;
+        if (computer.gpws.impactTime <= SINK_RATE_THRESHOLD) {
+            return SINK_RATE;
         }
 
         return AlertSoundData.EMPTY;
