@@ -14,10 +14,10 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 
-public class ExcessiveDescentAlert implements IAlert {
-    private static final float SINK_RATE_THRESHOLD = 7.5f;
-    private static final AlertSoundData SINK_RATE = new AlertSoundData(
-            SoundEvent.of(new Identifier("flighthud:sink_rate")),
+public class ExcessiveTerrainClosureAlert implements IAlert {
+    private static final float TERRAIN_THRESHOLD = 7.5f;
+    private static final AlertSoundData TERRAIN = new AlertSoundData(
+            SoundEvent.of(new Identifier("flighthud:terrain")),
             1,
             0.75f,
             false
@@ -25,18 +25,18 @@ public class ExcessiveDescentAlert implements IAlert {
     private static final float PULL_UP_THRESHOLD = 5.0f;
     private final FlightComputer computer;
 
-    public ExcessiveDescentAlert(FlightComputer computer) {
+    public ExcessiveTerrainClosureAlert(FlightComputer computer) {
         this.computer = computer;
     }
 
     @Override
     public boolean isTriggered() {
-        return computer.gpws.descentImpactTime >= 0.0f;
+        return computer.gpws.descentImpactTime < 0.0f && computer.gpws.terrainImpactTime >= 0.0f;
     }
 
     @Override
     public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight) {
-        if (computer.gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
+        if (computer.gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
             Text text = Text.translatable("alerts.flighthud.pull_up");
             float startX = (width - textRenderer.getWidth(text)) * 0.5f;
             HudComponent.drawHighlightedFont(textRenderer, context, startX, y, text,
@@ -45,8 +45,8 @@ public class ExcessiveDescentAlert implements IAlert {
             return true;
         }
 
-        if (computer.gpws.descentImpactTime <= SINK_RATE_THRESHOLD) {
-            Text text = Text.translatable("alerts.flighthud.sink_rate");
+        if (computer.gpws.terrainImpactTime <= TERRAIN_THRESHOLD) {
+            Text text = Text.translatable("alerts.flighthud.terrain_ahead");
             float startX = (width - textRenderer.getWidth(text)) * 0.5f;
             HudComponent.drawHighlightedFont(textRenderer, context, startX, y, text,
                     CONFIG.amberColor, highlight);
@@ -59,11 +59,11 @@ public class ExcessiveDescentAlert implements IAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        if (computer.gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
+        if (computer.gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
             return GPWSSoundData.PULL_UP;
         }
-        if (computer.gpws.descentImpactTime <= SINK_RATE_THRESHOLD) {
-            return SINK_RATE;
+        if (computer.gpws.terrainImpactTime <= TERRAIN_THRESHOLD) {
+            return TERRAIN;
         }
 
         return AlertSoundData.EMPTY;

@@ -4,10 +4,13 @@
   "alerts.flighthud.pull_up": "ТЯНИ ВВЕРХ",
   "alerts.flighthud.sink_rate": "СКОР. СНИЖЕНИЯ",
   "alerts.flighthud.stall": "СВАЛИВАНИЕ",
+  "alerts.flighthud.terrain_ahead": "ЗЕМЛЯ ВПЕРЕДИ",
   "flighthud.north_short": "С",
   "flighthud.east_short": "В",
   "flighthud.south_short": "Ю",
   "flighthud.west_short": "З",
   "flighthud.ground_level": "З",
-  "flighthud.elytra_short": "Э"
+  "flighthud.elytra_short": "Э",
+  "flighthud.ground_speed_short": "Г/С: %.2f",
+  "flighthud.vertical_speed_short": "В/С: %.2f"
 }

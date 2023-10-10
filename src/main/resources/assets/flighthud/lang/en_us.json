@@ -4,10 +4,13 @@
   "alerts.flighthud.pull_up": "PULL UP",
   "alerts.flighthud.sink_rate": "SINK RATE",
   "alerts.flighthud.stall": "STALL",
+  "alerts.flighthud.terrain_ahead": "TERRAIN AHEAD",
   "flighthud.north_short": "N",
   "flighthud.east_short": "E",
   "flighthud.south_short": "S",
   "flighthud.west_short": "W",
   "flighthud.ground_level": "G",
-  "flighthud.elytra_short": "E"
+  "flighthud.elytra_short": "E",
+  "flighthud.ground_speed_short": "G/S: %.2f",
+  "flighthud.vertical_speed_short": "V/S: %.2f"
 }

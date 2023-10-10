@@ -85,6 +85,7 @@ public class HudRenderer extends HudComponent {
             }
             context.getMatrices().pop();
         } catch (Exception e) {
+            // TODO: alert? lmao
             FlightHud.LOGGER.error("Exception rendering components", e);
         }
     }

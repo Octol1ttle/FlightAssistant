@@ -18,7 +18,7 @@ public class PitchController {
 
     public void tick(float delta) {
         if (forceLevelOff) {
-            smoothSetPitch(0.0f, delta / Math.min(1.0f, computer.gpws.impactTime));
+            smoothSetPitch(0.0f, delta / MathHelper.clamp(computer.gpws.descentImpactTime, 0.001f, 1.0f));
             return;
         }
         if (computer.pitch > computer.stall.maximumSafePitch) {
@@ -53,14 +53,13 @@ public class PitchController {
         checkFloatValidity(pitch, "Clamped target pitch");
 
         float newPitch = player.getPitch() + (pitch - player.getPitch()) * delta;
-        //Math.max(-90.0f, -computer.stall.maximumSafePitch),
-        //-PitchIndicator.DANGEROUS_DOWN_PITCH);
         checkFloatValidity(newPitch, "New pitch");
 
         player.setPitch(newPitch);
     }
 
     private void checkFloatValidity(Float f, String name) {
+        // TODO: convert to alternate law trigger
         if (f.isNaN() || f.isInfinite() || f < -90.0f || f > 90.0f) {
             throw new IllegalArgumentException(name + " out of bounds: " + f);
         }

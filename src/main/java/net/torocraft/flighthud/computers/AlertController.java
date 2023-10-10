@@ -10,6 +10,7 @@ import net.torocraft.flighthud.alerts.AlertSoundData;
 import net.torocraft.flighthud.alerts.IAlert;
 import net.torocraft.flighthud.alerts.StallAlert;
 import net.torocraft.flighthud.alerts.nav.gpws.ExcessiveDescentAlert;
+import net.torocraft.flighthud.alerts.nav.gpws.ExcessiveTerrainClosureAlert;
 import org.jetbrains.annotations.Nullable;
 
 public class AlertController {
@@ -23,7 +24,8 @@ public class AlertController {
         this.computer = computer;
         this.manager = manager;
         ALERTS = new IAlert[]{
-                new ExcessiveDescentAlert(computer), new StallAlert(computer)
+                new ExcessiveDescentAlert(computer), new ExcessiveTerrainClosureAlert(computer), // GPWS
+                new StallAlert(computer)
         };
         activeAlerts = new ArrayList<>();
     }
@@ -34,6 +36,10 @@ public class AlertController {
                 if (!activeAlerts.contains(alert)) {
                     activeAlerts.add(alert);
                 }
+                continue;
+            }
+
+            if (!activeAlerts.contains(alert)) {
                 continue;
             }
 
