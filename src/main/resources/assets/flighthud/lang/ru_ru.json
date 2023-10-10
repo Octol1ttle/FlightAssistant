@@ -3,5 +3,10 @@
   "category.flighthud": "Flight HUD",
   "alerts.flighthud.pull_up": "ТЯНИ ВВЕРХ",
   "alerts.flighthud.sink_rate": "СКОР. СНИЖЕНИЯ",
-  "alerts.flighthud.stall": "СВАЛИВАНИЕ"
+  "alerts.flighthud.stall": "СВАЛИВАНИЕ",
+  "flighthud.north_short": "С",
+  "flighthud.east_short": "В",
+  "flighthud.south_short": "Ю",
+  "flighthud.west_short": "З",
+  "flighthud.ground_level": "З"
 }

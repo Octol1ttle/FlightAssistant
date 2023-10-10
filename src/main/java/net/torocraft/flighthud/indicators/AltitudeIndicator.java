@@ -2,6 +2,7 @@ package net.torocraft.flighthud.indicators;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
 import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.HudComponent;
 import net.torocraft.flighthud.computers.FlightComputer;
@@ -40,7 +41,7 @@ public class AltitudeIndicator extends HudComponent {
         }
 
         if (CONFIG.altitude_showHeight) {
-            drawFont(textRenderer, context, "G", xAltText - 10, bottom + 3, CONFIG.color);
+            drawFont(textRenderer, context, Text.translatable("flighthud.ground_level"), xAltText - 10, bottom + 3, CONFIG.color);
             String heightText = String.format("%d", i(computer.distanceFromGround));
             drawFont(textRenderer, context, heightText, xAltText, bottom + 3, CONFIG.color);
             drawBox(context, xAltText - 2, bottom + 1.5f, 28, CONFIG.color);
