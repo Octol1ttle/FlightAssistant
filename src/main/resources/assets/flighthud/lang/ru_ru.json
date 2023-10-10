@@ -8,5 +8,6 @@
   "flighthud.east_short": "В",
   "flighthud.south_short": "Ю",
   "flighthud.west_short": "З",
-  "flighthud.ground_level": "З"
+  "flighthud.ground_level": "З",
+  "flighthud.elytra_short": "Э"
 }

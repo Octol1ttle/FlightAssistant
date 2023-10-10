@@ -8,5 +8,6 @@
   "flighthud.east_short": "E",
   "flighthud.south_short": "S",
   "flighthud.west_short": "W",
-  "flighthud.ground_level": "G"
+  "flighthud.ground_level": "G",
+  "flighthud.elytra_short": "E"
 }
