@@ -5,24 +5,30 @@ import net.minecraft.util.math.MathHelper;
 import net.torocraft.flighthud.indicators.PitchIndicator;
 
 public class PitchController {
+    private static final float CLIMB_PITCH = -55.0f;
     private final FlightComputer computer;
     /**
      * USE MINECRAFT PITCH (minus is up and plus is down)
      **/
     public Float targetPitch = null;
     public boolean forceLevelOff = false;
+    public boolean forceClimb = false;
 
     public PitchController(FlightComputer computer) {
         this.computer = computer;
     }
 
     public void tick(float delta) {
+        if (computer.pitch > computer.stall.maximumSafePitch) {
+            smoothSetPitch(-computer.stall.maximumSafePitch, delta);
+            return;
+        }
         if (forceLevelOff) {
             smoothSetPitch(0.0f, delta / MathHelper.clamp(computer.gpws.descentImpactTime, 0.001f, 1.0f));
             return;
         }
-        if (computer.pitch > computer.stall.maximumSafePitch) {
-            smoothSetPitch(-computer.stall.maximumSafePitch, delta);
+        if (forceClimb) {
+            smoothSetPitch(CLIMB_PITCH, delta / MathHelper.clamp(computer.gpws.terrainImpactTime, 0.001f, 1.0f));
             return;
         }
 
