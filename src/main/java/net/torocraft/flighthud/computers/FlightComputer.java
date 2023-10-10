@@ -71,6 +71,7 @@ public class FlightComputer {
         assert mc.player != null;
         player = mc.player;
 
+        // TODO: sanity checks?
         position = player.getPos();
         if (velocity != null) {
             acceleration = player.getVelocity().subtract(velocity);
@@ -106,11 +107,15 @@ public class FlightComputer {
 
     public void onRender() {
         time.tick();
-        if (!player.isFallFlying() || mc.isPaused()) {
+        if (!shouldUpdatePitch()) {
             return;
         }
 
         pitchController.tick(time.deltaTime);
+    }
+
+    public boolean shouldUpdatePitch() {
+        return player.isFallFlying() && mc.currentScreen == null && mc.getOverlay() == null;
     }
 
     private Float computeElytraHealth() {
@@ -167,7 +172,7 @@ public class FlightComputer {
 
     private int computeGroundLevel() {
         BlockPos ground = findGround();
-        return ground == null ? Math.min(player.getBlockY() - 4, -50) : ground.getY();
+        return ground == null ? -64 /* TODO: get void level */ : ground.getY();
     }
 
     private float computeDistanceFromGround(float altitude,
@@ -188,6 +193,6 @@ public class FlightComputer {
     }
 
     private float toHeading(float yawDegrees) {
-        return (yawDegrees + 180) % 360;
+        return yawDegrees + 180.0f;
     }
 }
