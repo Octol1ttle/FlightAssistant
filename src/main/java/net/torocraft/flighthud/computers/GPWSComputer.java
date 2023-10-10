@@ -30,11 +30,12 @@ public class GPWSComputer {
         descentImpactTime = this.computeDescentImpactTime();
         terrainImpactTime = this.computeTerrainImpactTime();
 
-        if (computer.gpws.shouldLevelOff()) {
+        computer.pitchController.forceLevelOff = computer.gpws.shouldLevelOff();
+        if (computer.pitchController.forceLevelOff) {
             // Looks like it's trying to kill us.
+            // should this trigger alternate law?
             computer.autoflight.disconnectAutopilot(true);
         }
-        computer.pitchController.forceLevelOff = computer.gpws.shouldLevelOff();
     }
 
     public boolean shouldLevelOff() {
