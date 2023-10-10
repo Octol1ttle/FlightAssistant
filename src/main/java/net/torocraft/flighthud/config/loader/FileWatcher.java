@@ -1,7 +1,5 @@
 package net.torocraft.flighthud.config.loader;
 
-import net.torocraft.flighthud.FlightHud;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.ClosedWatchServiceException;
@@ -10,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import net.torocraft.flighthud.FlightHud;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
@@ -56,7 +55,7 @@ public class FileWatcher implements Runnable {
                 try {
                     listener.onUpdate();
                 } catch (Exception e) {
-                    FlightHud.LOGGER.error("Exception watching file " + file.getAbsolutePath(), e);
+                    FlightHud.LOGGER.error("Exception watching file: " + file.getAbsolutePath(), e);
                 }
             }
         }
