@@ -72,7 +72,7 @@ public class GPWSComputer {
         Vec3d end = computer.position.add(computer.velocityPerSecond.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS).add(accelerationVector.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS * 0.5f)));
 
         BlockHitResult result = computer.player.getWorld().raycast(new RaycastContext(computer.position, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, computer.player));
-        if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP /* TODO: causes false negatives */ || result.getSide() == Direction.DOWN) {
+        if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP || result.getSide() == Direction.DOWN) {
             return STATUS_NO_TERRAIN_AHEAD;
         }
 

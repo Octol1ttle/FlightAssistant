@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 import net.torocraft.flighthud.HudComponent;
 import net.torocraft.flighthud.alerts.AlertSoundData;
 import net.torocraft.flighthud.alerts.GPWSSoundData;
@@ -12,6 +13,7 @@ import net.torocraft.flighthud.alerts.IAlert;
 import net.torocraft.flighthud.computers.FlightComputer;
 import org.jetbrains.annotations.NotNull;
 
+import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 
 public class ExcessiveTerrainClosureAlert implements IAlert {
@@ -23,6 +25,10 @@ public class ExcessiveTerrainClosureAlert implements IAlert {
             false
     );
     private static final float PULL_UP_THRESHOLD = 5.0f;
+    private static final float SECONDS_PER_TICK = 1.0f / TICKS_PER_SECOND;
+    private static final float DELAY_ALERT_FOR = 0.5f;
+    private boolean delayFull = false;
+    private float delay = 0.0f;
     private final FlightComputer computer;
 
     public ExcessiveTerrainClosureAlert(FlightComputer computer) {
@@ -31,7 +37,21 @@ public class ExcessiveTerrainClosureAlert implements IAlert {
 
     @Override
     public boolean isTriggered() {
-        return computer.gpws.descentImpactTime < 0.0f && computer.gpws.terrainImpactTime >= 0.0f;
+        boolean triggered = computer.gpws.descentImpactTime < 0.0f && computer.gpws.terrainImpactTime >= 0.0f;
+        if (triggered) {
+            delay = MathHelper.clamp(delay + SECONDS_PER_TICK, 0.0f, DELAY_ALERT_FOR);
+        } else {
+            delay = MathHelper.clamp(delay - SECONDS_PER_TICK, 0.0f, DELAY_ALERT_FOR);
+        }
+
+        if (delay >= DELAY_ALERT_FOR) {
+            delayFull = true;
+        }
+        if (delay <= 0.0f) {
+            delayFull = false;
+        }
+
+        return delayFull;
     }
 
     @Override
