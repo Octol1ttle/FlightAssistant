@@ -11,6 +11,6 @@
   "flighthud.west_short": "W",
   "flighthud.ground_level": "G",
   "flighthud.elytra_short": "E",
-  "flighthud.ground_speed_short": "G/S: %.2f",
-  "flighthud.vertical_speed_short": "V/S: %.2f"
+  "flighthud.ground_speed_short": "G/S: %s",
+  "flighthud.vertical_speed_short": "V/S: %s"
 }

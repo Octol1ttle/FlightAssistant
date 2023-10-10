@@ -35,8 +35,8 @@ public class SpeedIndicator extends HudComponent {
             drawBox(context, xSpeedText - 29.5f, dim.yMid - 4.5f, 30, CONFIG.color);
 
             float frameWidth = dim.rFrame - dim.lFrame;
-            drawFont(textRenderer, context, Text.translatable("flighthud.ground_speed_short", computer.velocityPerSecond.horizontalLength()), dim.lFrame + frameWidth * 0.25f, dim.hScreen * 0.8f, CONFIG.color);
-            drawFont(textRenderer, context, Text.translatable("flighthud.vertical_speed_short", computer.velocityPerSecond.y), dim.lFrame + frameWidth * 0.75f - 7, dim.hScreen * 0.8f, computer.velocityPerSecond.y <= -10.0f ? CONFIG.alertColor : CONFIG.color);
+            drawFont(textRenderer, context, Text.translatable("flighthud.ground_speed_short", String.format("%.2f", computer.velocityPerSecond.horizontalLength())), dim.lFrame + frameWidth * 0.25f, dim.hScreen * 0.8f, CONFIG.color);
+            drawFont(textRenderer, context, Text.translatable("flighthud.vertical_speed_short", String.format("%.2f", computer.velocityPerSecond.y)), dim.lFrame + frameWidth * 0.75f - 7, dim.hScreen * 0.8f, computer.velocityPerSecond.y <= -10.0f ? CONFIG.alertColor : CONFIG.color);
         }
 
 
