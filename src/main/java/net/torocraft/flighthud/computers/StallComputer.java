@@ -4,7 +4,7 @@ public class StallComputer {
     public static final int STATUS_APPROACHING_STALL = 1;
     private static final int STATUS_FULL_STALL = 2;
     private static final int STATUS_PITCH_SAFE = -1;
-    private static final int STATUS_TOO_LOW_FOR_FALL_DAMAGE = -2;
+    private static final int STATUS_FALL_DISTANCE_TOO_LOW = -2;
     private static final int STATUS_AIRSPEED_SAFE = -3;
     private final FlightComputer computer;
     public int stalling;
@@ -23,8 +23,8 @@ public class StallComputer {
         if (computer.pitch <= 0) {
             return STATUS_PITCH_SAFE;
         }
-        if (computer.distanceFromGround <= 3) {
-            return STATUS_TOO_LOW_FOR_FALL_DAMAGE;
+        if (computer.player.fallDistance <= 3) {
+            return STATUS_FALL_DISTANCE_TOO_LOW;
         }
         if (computer.velocity.horizontalLength() >= -computer.velocity.y) {
             return STATUS_AIRSPEED_SAFE;
@@ -36,6 +36,6 @@ public class StallComputer {
     }
 
     private float computeMaximumSafePitch() {
-        return computer.speed * 3;
+        return stalling == STATUS_FULL_STALL ? 0.0f : computer.speed * 3;
     }
 }
