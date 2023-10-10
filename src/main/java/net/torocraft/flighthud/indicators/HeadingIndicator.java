@@ -2,6 +2,7 @@ package net.torocraft.flighthud.indicators;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
 import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.HudComponent;
 import net.torocraft.flighthud.computers.FlightComputer;
@@ -37,17 +38,18 @@ public class HeadingIndicator extends HudComponent {
                 float x = (i * dim.degreesPerPixel) + xNorth;
                 if (x < left || x > right)
                     continue;
+                int degrees = wrapHeading(i);
 
                 if (i % 15 == 0) {
                     if (i % 90 == 0) {
-                        drawFont(textRenderer, context, headingToDirection(i), x - 2, yText + 10, CONFIG.color);
-                        drawFont(textRenderer, context, headingToAxis(i), x - 8, yText + 20, CONFIG.color);
+                        drawFont(textRenderer, context, headingToDirection(degrees), x - 2, yText + 10, CONFIG.color);
+                        drawFont(textRenderer, context, headingToAxis(degrees), x - 8, yText + 20, CONFIG.color);
                     } else {
                         drawVerticalLine(context, x, top + 3, top + 10, CONFIG.color);
                     }
 
                     if (!CONFIG.heading_showReadout || x <= dim.xMid - 26 || x >= dim.xMid + 26) {
-                        drawFont(textRenderer, context, String.format("%03d", i(i)), x - 8, yText, CONFIG.color);
+                        drawFont(textRenderer, context, String.format("%03d", degrees), x - 8, yText, CONFIG.color);
                     }
                 } else {
                     drawVerticalLine(context, x, top + 6, top + 10, CONFIG.color);
@@ -56,24 +58,33 @@ public class HeadingIndicator extends HudComponent {
         }
     }
 
-    private String headingToDirection(int degrees) {
-        return switch (i(degrees)) {
-            case 0, 360 -> "N";
-            case 90 -> "E";
-            case 180 -> "S";
-            case 270 -> "W";
-            default -> "";
+    // TODO: maybe convert throws into alternate law triggers and disable the component?
+    private Text headingToDirection(int degrees) {
+        return switch (degrees) {
+            case 0, 360 -> Text.translatable("flighthud.north_short");
+            case 90 -> Text.translatable("flighthud.east_short");
+            case 180 -> Text.translatable("flighthud.south_short");
+            case 270 -> Text.translatable("flighthud.west_short");
+            default -> throw new IllegalArgumentException("Degree range out of bounds: " + degrees);
         };
     }
 
     private String headingToAxis(int degrees) {
-        return switch (i(degrees)) {
+        return switch (degrees) {
             case 0, 360 -> "-Z";
             case 90 -> "+X";
             case 180 -> "+Z";
             case 270 -> "-X";
-            default -> "";
+            default -> throw new IllegalArgumentException("Degree range out of bounds: " + degrees);
         };
     }
 
+    private int wrapHeading(int degrees) {
+        int i = degrees % 360;
+        if (i < 0) {
+            i += 360;
+        }
+
+        return i;
+    }
 }
