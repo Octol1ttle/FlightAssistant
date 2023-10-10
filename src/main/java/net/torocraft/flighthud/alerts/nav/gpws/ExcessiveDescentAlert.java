@@ -9,12 +9,11 @@ import net.torocraft.flighthud.HudComponent;
 import net.torocraft.flighthud.alerts.AlertSoundData;
 import net.torocraft.flighthud.alerts.IAlert;
 import net.torocraft.flighthud.computers.FlightComputer;
-import net.torocraft.flighthud.computers.GPWSComputer;
 import org.jetbrains.annotations.NotNull;
 
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 
-public class ExcessiveDescentRateAlert implements IAlert {
+public class ExcessiveDescentAlert implements IAlert {
     private static final float SINK_RATE_THRESHOLD = 7.5f;
     private static final AlertSoundData SINK_RATE = new AlertSoundData(
             SoundEvent.of(new Identifier("flighthud:sink_rate")),
@@ -31,13 +30,13 @@ public class ExcessiveDescentRateAlert implements IAlert {
     );
     private final FlightComputer computer;
 
-    public ExcessiveDescentRateAlert(FlightComputer computer) {
+    public ExcessiveDescentAlert(FlightComputer computer) {
         this.computer = computer;
     }
 
     @Override
     public boolean isTriggered() {
-        return computer.gpws.impactTime >= GPWSComputer.PITCH_CORRECT_THRESHOLD;
+        return computer.gpws.impactTime >= 0.0f;
     }
 
     @Override
