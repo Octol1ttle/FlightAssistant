@@ -1,7 +1,9 @@
 package net.torocraft.flighthud.computers;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
+import net.torocraft.flighthud.FlightHud;
 import net.torocraft.flighthud.indicators.PitchIndicator;
 
 public class PitchController {
@@ -24,11 +26,11 @@ public class PitchController {
             return;
         }
         if (forceLevelOff) {
-            smoothSetPitch(0.0f, delta / MathHelper.clamp(computer.gpws.descentImpactTime, 0.001f, 1.0f));
+            smoothSetPitch(0.0f, MathHelper.clamp(delta / computer.gpws.descentImpactTime, 0.001f, 1.0f));
             return;
         }
         if (forceClimb) {
-            smoothSetPitch(CLIMB_PITCH, delta / MathHelper.clamp(computer.gpws.terrainImpactTime, 0.001f, 1.0f));
+            smoothSetPitch(CLIMB_PITCH, MathHelper.clamp(delta / computer.gpws.terrainImpactTime, 0.001f, 1.0f));
             return;
         }
 
@@ -56,18 +58,26 @@ public class PitchController {
         if (difference > 0) { // going DOWN
             pitch = MathHelper.clamp(pitch, -90.0f, -PitchIndicator.DANGEROUS_DOWN_PITCH);
         }
-        checkFloatValidity(pitch, "Clamped target pitch");
 
         float newPitch = player.getPitch() + (pitch - player.getPitch()) * delta;
-        checkFloatValidity(newPitch, "New pitch");
+        checkFloatValidity(newPitch, "New pitch",
+                new Pair<>("Current pitch", player.getPitch()),
+                new Pair<>("Target pitch", pitch),
+                new Pair<>("Delta", delta));
 
         player.setPitch(newPitch);
     }
 
-    private void checkFloatValidity(Float f, String name) {
+    @SafeVarargs
+    private void checkFloatValidity(Float f, String name, Pair<String, Float>... additionalInfo) {
         // TODO: convert to alternate law trigger
         if (f.isNaN() || f.isInfinite() || f < -90.0f || f > 90.0f) {
-            throw new IllegalArgumentException(name + " out of bounds: " + f);
+            FlightHud.LOGGER.error("{} out of bounds: {}", name, f);
+            FlightHud.LOGGER.error("Additional information:");
+            for (Pair<String, Float> pair : additionalInfo) {
+                FlightHud.LOGGER.error("{}: {}", pair.getLeft(), pair.getRight());
+            }
+            throw new IllegalArgumentException();
         }
     }
 }

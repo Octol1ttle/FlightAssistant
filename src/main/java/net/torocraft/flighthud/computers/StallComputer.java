@@ -1,5 +1,7 @@
 package net.torocraft.flighthud.computers;
 
+import net.minecraft.util.math.MathHelper;
+
 public class StallComputer {
     public static final int STATUS_APPROACHING_STALL = 1;
     private static final int STATUS_FULL_STALL = 2;
@@ -36,6 +38,6 @@ public class StallComputer {
     }
 
     private float computeMaximumSafePitch() {
-        return stalling == STATUS_FULL_STALL ? 0.0f : computer.speed * 3;
+        return stalling == STATUS_FULL_STALL ? 0.0f : MathHelper.clamp(computer.speed * 3, 0.0f, 90.0f);
     }
 }

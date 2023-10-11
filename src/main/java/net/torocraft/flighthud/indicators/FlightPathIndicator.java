@@ -43,14 +43,15 @@ public class FlightPathIndicator extends HudComponent {
         float t = y - 3 - CONFIG.halfThickness;
         float b = y + 3 - CONFIG.halfThickness;
 
-        drawVerticalLine(context, l, t, b, CONFIG.color);
-        drawVerticalLine(context, r, t, b, CONFIG.color);
+        int color = computer.gpws.getGPWSLampColor();
+        drawVerticalLine(context, l, t, b, color);
+        drawVerticalLine(context, r, t, b, color);
 
-        drawHorizontalLine(context, l, r, t, CONFIG.color);
-        drawHorizontalLine(context, l, r, b, CONFIG.color);
+        drawHorizontalLine(context, l, r, t, color);
+        drawHorizontalLine(context, l, r, b, color);
 
-        drawVerticalLine(context, x, t - 5, t, CONFIG.color);
-        drawHorizontalLine(context, l - 4, l, y - CONFIG.halfThickness, CONFIG.color);
-        drawHorizontalLine(context, r, r + 4, y - CONFIG.halfThickness, CONFIG.color);
+        drawVerticalLine(context, x, t - 5, t, color);
+        drawHorizontalLine(context, l - 4, l, y - CONFIG.halfThickness, color);
+        drawHorizontalLine(context, r, r + 4, y - CONFIG.halfThickness, color);
     }
 }

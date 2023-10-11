@@ -172,7 +172,11 @@ public class FlightComputer {
 
     private int computeGroundLevel() {
         BlockPos ground = findGround();
-        return ground == null ? -64 /* TODO: get void level */ : ground.getY();
+        return ground == null ? computeVoidLevel() : ground.getY();
+    }
+
+    private int computeVoidLevel() {
+        return player.getWorld().getBottomY() - 64;
     }
 
     private float computeDistanceFromGround(float altitude,

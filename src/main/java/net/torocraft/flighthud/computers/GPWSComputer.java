@@ -7,6 +7,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
+import static net.torocraft.flighthud.HudComponent.CONFIG;
 
 public class GPWSComputer {
     public static final int MAX_SAFE_SINK_RATE = 10;
@@ -43,6 +44,17 @@ public class GPWSComputer {
         return descentImpactTime > 0.0f && descentImpactTime <= PITCH_CORRECT_THRESHOLD;
     }
 
+    public int getGPWSLampColor() {
+        if ((descentImpactTime > 0.0f && descentImpactTime <= 5.0f) || (terrainImpactTime > 0.0f && terrainImpactTime <= 5.0f)) {
+            return CONFIG.alertColor;
+        }
+        if ((descentImpactTime > 0.0f && descentImpactTime <= 10.0f) || (terrainImpactTime > 0.0f && terrainImpactTime <= 10.0f)) {
+            return CONFIG.amberColor;
+        }
+
+        return CONFIG.color;
+    }
+
     private boolean shouldClimb() {
         return terrainImpactTime > 0.0f && terrainImpactTime <= PITCH_CORRECT_THRESHOLD;
     }
@@ -58,34 +70,46 @@ public class GPWSComputer {
         if (computer.player.fallDistance <= 3) {
             return STATUS_FALL_DISTANCE_TOO_LOW;
         }
-        if (-computer.velocityPerSecond.y < MAX_SAFE_SINK_RATE) {
+
+        double initialSpeed = -computer.velocityPerSecond.y;
+        double acceleration = -computer.acceleration.y * TICKS_PER_SECOND;
+        float time = getTimeWithAcceleration(initialSpeed, acceleration, computer.distanceFromGround);
+
+        if (getSpeedWithAcceleration(initialSpeed, acceleration, time) < MAX_SAFE_SINK_RATE) {
             return STATUS_SPEED_SAFE;
         }
-
-        return getTimeWithAcceleration(-computer.velocityPerSecond.y, -computer.acceleration.y * TICKS_PER_SECOND, computer.distanceFromGround);
+        return time;
     }
 
     private float computeTerrainImpactTime() {
         if (computer.acceleration == null) {
             return STATUS_ACCELERATION_NOT_AVAILABLE;
         }
-        if (computer.velocityPerSecond.horizontalLength() < MAX_SAFE_GROUND_SPEED) {
-            return STATUS_SPEED_SAFE;
-        }
 
         Vec3d accelerationVector = computer.acceleration.multiply(TICKS_PER_SECOND);
-        Vec3d end = computer.position.add(computer.velocityPerSecond.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS).add(accelerationVector.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS * 0.5f)));
+        Vec3d end = computer.position.add(computer.velocityPerSecond.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS).add(accelerationVector.multiply(Math.pow(TERRAIN_RAYCAST_AHEAD_SECONDS, 2)).multiply(0.5f)));
 
         BlockHitResult result = computer.player.getWorld().raycast(new RaycastContext(computer.position, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, computer.player));
         if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP || result.getSide() == Direction.DOWN) {
             return STATUS_NO_TERRAIN_AHEAD;
         }
 
-        return getTimeWithAcceleration(computer.velocityPerSecond.horizontalLength(), accelerationVector.horizontalLength(), result.getPos().subtract(computer.position).horizontalLength());
+        double initialSpeed = computer.velocityPerSecond.horizontalLength();
+        double acceleration = accelerationVector.horizontalLength();
+        float time = getTimeWithAcceleration(initialSpeed, acceleration, result.getPos().subtract(computer.position).horizontalLength());
+
+        if (getSpeedWithAcceleration(initialSpeed, acceleration, time) < MAX_SAFE_GROUND_SPEED) {
+            return STATUS_SPEED_SAFE;
+        }
+        return time;
     }
 
     private float getTimeWithAcceleration(double initialSpeed, double acceleration, double path) {
         return (float) ((-initialSpeed + Math.sqrt(Math.pow(initialSpeed, 2) + 2 * acceleration * path))
                 / acceleration);
+    }
+
+    private float getSpeedWithAcceleration(double initialSpeed, double acceleration, double time) {
+        return (float) (initialSpeed + acceleration * time);
     }
 }
