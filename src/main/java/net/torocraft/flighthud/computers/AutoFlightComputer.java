@@ -2,14 +2,28 @@ package net.torocraft.flighthud.computers;
 
 public class AutoFlightComputer {
     private final FlightComputer computer;
-    private float targetPitch;
+
+    public boolean autoThrustEnabled = false;
+
+    public Integer targetSpeed;
+    public float targetPitch;
 
     public AutoFlightComputer(FlightComputer computer) {
         this.computer = computer;
     }
 
-    public void setTargetPitch(float pitch) {
-        this.targetPitch = pitch;
+    public void tick() {
+        if (targetSpeed != null && computer.speed < targetSpeed) {
+            tryActivateFireworks();
+        }
+    }
+
+    private void tryActivateFireworks() {
+
+    }
+
+    public void toggleAutoThrust() {
+        autoThrustEnabled = !autoThrustEnabled;
     }
 
     public void disconnectAutopilot(boolean force) {
@@ -20,7 +34,4 @@ public class AutoFlightComputer {
 
     }
 
-    public void tick() {
-
-    }
 }

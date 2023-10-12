@@ -7,20 +7,20 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.torocraft.flighthud.HudComponent;
+import net.torocraft.flighthud.alerts.AbstractAlert;
 import net.torocraft.flighthud.alerts.AlertSoundData;
 import net.torocraft.flighthud.alerts.GPWSSoundData;
-import net.torocraft.flighthud.alerts.IAlert;
 import net.torocraft.flighthud.computers.FlightComputer;
 import org.jetbrains.annotations.NotNull;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 
-public class ExcessiveTerrainClosureAlert implements IAlert {
+public class ExcessiveTerrainClosureAlert extends AbstractAlert {
     private static final float TERRAIN_THRESHOLD = 7.5f;
     private static final AlertSoundData TERRAIN = new AlertSoundData(
             SoundEvent.of(new Identifier("flighthud:terrain")),
-            1,
+            2,
             0.75f,
             false
     );

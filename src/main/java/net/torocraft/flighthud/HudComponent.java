@@ -31,15 +31,17 @@ public abstract class HudComponent {
         return 1;
     }
 
-    public static void drawHighlightedFont(TextRenderer textRenderer, DrawContext context, float x, float y, Text text, int highlightColor, boolean highlight) {
+    public static int drawHighlightedFont(TextRenderer textRenderer, DrawContext context, float x, float y, Text text, int highlightColor, boolean highlight) {
         if (highlight) {
             HudRenderer.drawUnbatched(context, ctx -> {
                 HudComponent.fill(context, x - 1.5f, y - 1.5f, x + textRenderer.getWidth(text), y + 8.0f, highlightColor);
                 HudComponent.drawFont(textRenderer, context, text, x, y, CONFIG.white);
             });
-            return;
+            return 1;
         }
         HudComponent.drawFont(textRenderer, context, text, x, y, highlightColor);
+
+        return 1;
     }
 
     public static void drawUnbatched(DrawContext context, Consumer<DrawContext> c) {

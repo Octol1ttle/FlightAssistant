@@ -8,7 +8,9 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.torocraft.flighthud.alerts.ECAMSoundData;
 import net.torocraft.flighthud.commands.SwitchDisplayModeCommand;
+import net.torocraft.flighthud.computers.FlightComputer;
 import net.torocraft.flighthud.config.HudConfig;
 import net.torocraft.flighthud.config.SettingsConfig;
 import net.torocraft.flighthud.config.loader.ConfigLoader;
@@ -44,16 +46,38 @@ public class FlightHud implements ClientModInitializer {
             config -> FlightHud.CONFIG_MIN = config);
 
     private static KeyBinding toggleDisplayMode;
+    private static KeyBinding toggleAutoThrust;
+
+    private static KeyBinding dismissMasterCaution;
 
     private static void setupKeycCode() {
-        toggleDisplayMode = new KeyBinding("key.flighthud.toggleDisplayMode", InputUtil.Type.KEYSYM,
+        toggleDisplayMode = new KeyBinding("key.flighthud.toggle_display_mode", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_GRAVE_ACCENT, "category.flighthud");
+        toggleAutoThrust = new KeyBinding("key.flighthud.toggle_auto_thrust", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_2, "category.flighthud");
+
+        dismissMasterCaution = new KeyBinding("key.flighthud.dismiss_master_caution", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_DECIMAL, "category.flighthud");
 
         KeyBindingHelper.registerKeyBinding(toggleDisplayMode);
+        KeyBindingHelper.registerKeyBinding(toggleAutoThrust);
+
+        KeyBindingHelper.registerKeyBinding(dismissMasterCaution);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (toggleDisplayMode.wasPressed()) {
                 CONFIG_SETTINGS.toggleDisplayMode(client);
+            }
+
+            FlightComputer computer = HudRenderer.getComputer();
+            if (computer != null) {
+                while (toggleAutoThrust.wasPressed()) {
+                    computer.autoflight.toggleAutoThrust();
+                }
+
+                while (dismissMasterCaution.wasPressed()) {
+                    computer.alertController.dismiss(ECAMSoundData.MASTER_CAUTION);
+                }
             }
         });
     }

@@ -1,10 +1,15 @@
 {
-  "key.flighthud.toggleDisplayMode": "Переключить режим интерфейса",
   "category.flighthud": "Flight HUD",
+  "key.flighthud.toggle_display_mode": "Переключить режим интерфейса",
+  "key.flighthud.toggle_auto_thrust": "Вкл/выкл автомат тяги",
+  "key.flighthud.dismiss_master_caution": "Заглушить (убрать) жёлтое предупреждение",
+
   "alerts.flighthud.pull_up": "ТЯНИ ВВЕРХ",
   "alerts.flighthud.sink_rate": "СКОР. СНИЖЕНИЯ",
   "alerts.flighthud.stall": "СВАЛИВАНИЕ",
   "alerts.flighthud.terrain_ahead": "ЗЕМЛЯ ВПЕРЕДИ",
+  "alerts.flighthud.autoflight.athr_speed_not_set": "СКОРОСТЬ А/ТЯГИ НЕ ВЫБРАНА",
+
   "flighthud.north_short": "С",
   "flighthud.east_short": "В",
   "flighthud.south_short": "Ю",

@@ -6,19 +6,19 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.torocraft.flighthud.HudComponent;
+import net.torocraft.flighthud.alerts.AbstractAlert;
 import net.torocraft.flighthud.alerts.AlertSoundData;
 import net.torocraft.flighthud.alerts.GPWSSoundData;
-import net.torocraft.flighthud.alerts.IAlert;
 import net.torocraft.flighthud.computers.FlightComputer;
 import org.jetbrains.annotations.NotNull;
 
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 
-public class ExcessiveDescentAlert implements IAlert {
+public class ExcessiveDescentAlert extends AbstractAlert {
     private static final float SINK_RATE_THRESHOLD = 7.5f;
     private static final AlertSoundData SINK_RATE = new AlertSoundData(
             SoundEvent.of(new Identifier("flighthud:sink_rate")),
-            1,
+            2,
             0.75f,
             false
     );

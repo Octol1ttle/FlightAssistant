@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 
-public class StallAlert implements IAlert {
+public class StallAlert extends AbstractAlert {
     private static final AlertSoundData STALL = new AlertSoundData(
             SoundEvent.of(new Identifier("flighthud:stall")),
             0,
