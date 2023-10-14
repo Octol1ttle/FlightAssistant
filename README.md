@@ -2,14 +2,16 @@
     <img src="https://github.com/mctaylors/FlightHud/assets/95250141/3dbe7fa0-c0df-4e47-822f-2f8fb70f25ee">
 </p>
 
-**Flight HUD** is a client side Fabric Minecraft Mod that adds a flight style HUD like one you would see in a flight simulator.
-
 <p align=center>
     <a href="https://modrinth.com/mod/fabric-api/">
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_vector.svg"></img>
     </a>
     <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/unsupported/forge_vector.svg"></img>
 </p>
+
+---
+
+**Flight HUD** is a client side Fabric Minecraft Mod that adds a flight style HUD like one you would see in a flight simulator.
 
 ## Features
 
