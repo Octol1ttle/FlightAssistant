@@ -30,30 +30,34 @@ public class AltitudeIndicator extends HudComponent {
         float yFloor = dim.yMid - floorOffset;
         float xAltText = right + 5;
 
+        int safeLevel = computer.groundLevel == computer.voidLevel ? computer.voidLevel + 16 : computer.groundLevel;
+        boolean isAltitudeSafe = computer.altitude >= safeLevel;
+
         if (CONFIG.altitude_showGroundInfo) {
             drawHeightIndicator(context, left - 1, dim.yMid, bottom - dim.yMid, CONFIG.color);
         }
 
         if (CONFIG.altitude_showReadout) {
-            int color = computer.altitude < computer.groundLevel ? CONFIG.alertColor : CONFIG.color;
+            int color = !isAltitudeSafe ? CONFIG.alertColor : CONFIG.color;
             drawFont(textRenderer, context, String.format("%.0f", computer.altitude), xAltText, dim.yMid - 3, color);
             drawBox(context, xAltText - 2, dim.yMid - 4.5f, 28, color);
         }
 
         if (CONFIG.altitude_showHeight) {
-            drawFont(textRenderer, context, Text.translatable("flighthud.ground_level"), xAltText - 10, bottom + 3, CONFIG.color);
+            int color = !isAltitudeSafe ? CONFIG.alertColor : CONFIG.color;
+            drawFont(textRenderer, context, Text.translatable(computer.groundLevel == computer.voidLevel ? "flighthud.void_level" : "flighthud.ground_level"), xAltText - 10, bottom + 3, color);
             String heightText = String.format("%d", i(computer.distanceFromGround));
-            drawFont(textRenderer, context, heightText, xAltText, bottom + 3, CONFIG.color);
-            drawBox(context, xAltText - 2, bottom + 1.5f, 28, CONFIG.color);
+            drawFont(textRenderer, context, heightText, xAltText, bottom + 3, color);
+            drawBox(context, xAltText - 2, bottom + 1.5f, 28, color);
         }
 
         if (CONFIG.altitude_showScale) {
-            for (int i = -100; i < 1000; i += 10) {
+            for (int i = -150; i < 1000; i += 10) {
                 float y = (dim.hScreen - i * blocksPerPixel) - yFloor;
                 if (y < top || y > (bottom - 5))
                     continue;
 
-                int color = i <= computer.groundLevel ? CONFIG.alertColor : CONFIG.color;
+                int color = i <= safeLevel ? CONFIG.alertColor : CONFIG.color;
                 if (i % 50 == 0) {
                     drawHorizontalLine(context, left, right + 2, y, color);
                     if (!CONFIG.altitude_showReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {

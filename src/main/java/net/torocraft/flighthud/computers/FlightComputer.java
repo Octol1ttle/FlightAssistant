@@ -43,6 +43,7 @@ public class FlightComputer {
     public float flightHeading;
     public float roll;
     public float altitude;
+    public int voidLevel;
     public int groundLevel;
     public float distanceFromGround;
     public Float elytraHealth;
@@ -83,6 +84,7 @@ public class FlightComputer {
         speed = computeSpeed();
         heading = computeHeading();
         altitude = computeAltitude();
+        voidLevel = computeVoidLevel();
         groundLevel = computeGroundLevel();
         distanceFromGround = computeDistanceFromGround(altitude, groundLevel);
         flightPitch = computeFlightPitch(velocity, pitch);
@@ -172,7 +174,7 @@ public class FlightComputer {
 
     private int computeGroundLevel() {
         BlockPos ground = findGround();
-        return ground == null ? computeVoidLevel() : ground.getY();
+        return ground == null ? voidLevel : ground.getY();
     }
 
     private int computeVoidLevel() {

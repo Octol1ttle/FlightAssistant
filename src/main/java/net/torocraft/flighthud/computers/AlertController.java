@@ -9,6 +9,7 @@ import net.torocraft.flighthud.alerts.AbstractAlert;
 import net.torocraft.flighthud.alerts.AlertSoundData;
 import net.torocraft.flighthud.alerts.StallAlert;
 import net.torocraft.flighthud.alerts.autoflight.ATHRSpeedNotSetAlert;
+import net.torocraft.flighthud.alerts.nav.ApproachingVoidDamageLevelAlert;
 import net.torocraft.flighthud.alerts.nav.gpws.ExcessiveDescentAlert;
 import net.torocraft.flighthud.alerts.nav.gpws.ExcessiveTerrainClosureAlert;
 
@@ -22,8 +23,9 @@ public class AlertController {
         this.computer = computer;
         this.manager = manager;
         ALERTS = new AbstractAlert[]{
-                new ExcessiveDescentAlert(computer), new ExcessiveTerrainClosureAlert(computer), // GPWS
                 new StallAlert(computer),
+                new ExcessiveDescentAlert(computer), new ExcessiveTerrainClosureAlert(computer), // GPWS
+                new ApproachingVoidDamageLevelAlert(computer),
                 new ATHRSpeedNotSetAlert(computer) // Autoflight
         };
         activeAlerts = new ArrayList<>();
@@ -53,6 +55,7 @@ public class AlertController {
             activeAlerts.remove(alert);
         }
 
+        boolean interrupt = false;
         activeAlerts.sort(Comparator.comparingDouble(alert -> alert.getAlertSoundData().priority()));
         for (AbstractAlert alert : activeAlerts) {
             AlertSoundData data = alert.getAlertSoundData();
@@ -61,26 +64,41 @@ public class AlertController {
             }
 
             if (alert.soundInstance != null) {
-                if (manager.isPlaying(alert.soundInstance)) {
-                    break;
+                if (interrupt || alert.dismissed) {
+                    manager.stop(alert.soundInstance);
+                    alert.soundInstance = null;
+                    continue;
                 }
 
+                if (manager.isPlaying(alert.soundInstance)) {
+                    interrupt = true;
+                }
+
+                continue;
+            }
+
+            if (interrupt || alert.dismissed) {
                 continue;
             }
 
             alert.soundInstance = new AlertSoundInstance(data.sound(), data.volume(), computer.player, data.repeat());
             manager.play(alert.soundInstance);
 
-            break;
+            interrupt = true;
         }
     }
 
     public void dismiss(AlertSoundData data) {
+        boolean anyDismissed = false;
         for (AbstractAlert alert : activeAlerts) {
             if (!alert.dismissed && alert.getAlertSoundData().equals(data)) {
                 alert.dismissed = true;
-                return;
+                anyDismissed = true;
             }
+        }
+
+        if (anyDismissed) {
+            return;
         }
 
         for (AbstractAlert alert : activeAlerts) {

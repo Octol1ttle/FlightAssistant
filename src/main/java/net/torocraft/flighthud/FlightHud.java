@@ -48,6 +48,7 @@ public class FlightHud implements ClientModInitializer {
     private static KeyBinding toggleDisplayMode;
     private static KeyBinding toggleAutoThrust;
 
+    private static KeyBinding dismissMasterWarning;
     private static KeyBinding dismissMasterCaution;
 
     private static void setupKeycCode() {
@@ -56,12 +57,15 @@ public class FlightHud implements ClientModInitializer {
         toggleAutoThrust = new KeyBinding("key.flighthud.toggle_auto_thrust", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_KP_2, "category.flighthud");
 
+        dismissMasterWarning = new KeyBinding("key.flighthud.dismiss_master_warning", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_0, "category.flighthud");
         dismissMasterCaution = new KeyBinding("key.flighthud.dismiss_master_caution", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_KP_DECIMAL, "category.flighthud");
 
         KeyBindingHelper.registerKeyBinding(toggleDisplayMode);
         KeyBindingHelper.registerKeyBinding(toggleAutoThrust);
 
+        KeyBindingHelper.registerKeyBinding(dismissMasterWarning);
         KeyBindingHelper.registerKeyBinding(dismissMasterCaution);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -73,6 +77,10 @@ public class FlightHud implements ClientModInitializer {
             if (computer != null) {
                 while (toggleAutoThrust.wasPressed()) {
                     computer.autoflight.toggleAutoThrust();
+                }
+
+                while (dismissMasterWarning.wasPressed()) {
+                    computer.alertController.dismiss(ECAMSoundData.MASTER_WARNING);
                 }
 
                 while (dismissMasterCaution.wasPressed()) {
