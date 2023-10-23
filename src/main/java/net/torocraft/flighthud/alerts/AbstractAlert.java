@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class AbstractAlert {
     @Nullable
     public AlertSoundInstance soundInstance;
+    public boolean played = false;
     public boolean dismissed = false;
     public boolean hidden = false;
 

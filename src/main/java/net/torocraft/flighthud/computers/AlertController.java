@@ -44,6 +44,7 @@ public class AlertController {
                 continue;
             }
 
+            alert.played = false;
             alert.hidden = false;
             alert.dismissed = false;
 
@@ -64,25 +65,34 @@ public class AlertController {
             }
 
             if (alert.soundInstance != null) {
-                if (interrupt || alert.dismissed) {
+                boolean soundChanged = !data.sound().getId().equals(alert.soundInstance.getId());
+                if (soundChanged || interrupt || alert.dismissed) {
                     manager.stop(alert.soundInstance);
                     alert.soundInstance = null;
-                    continue;
+                    if (!interrupt) {
+                        alert.played = false;
+                    }
+                    if (!soundChanged) {
+                        continue;
+                    }
                 }
 
                 if (manager.isPlaying(alert.soundInstance)) {
                     interrupt = true;
                 }
 
-                continue;
+                if (!soundChanged) {
+                    continue;
+                }
             }
 
-            if (interrupt || alert.dismissed) {
+            if (interrupt || alert.played || alert.dismissed) {
                 continue;
             }
 
             alert.soundInstance = new AlertSoundInstance(data.sound(), data.volume(), computer.player, data.repeat());
             manager.play(alert.soundInstance);
+            alert.played = true;
 
             interrupt = true;
         }
