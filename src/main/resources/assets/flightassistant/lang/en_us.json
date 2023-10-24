@@ -1,0 +1,23 @@
+{
+  "category.flightassistant": "Flight HUD",
+  "key.flightassistant.toggle_display_mode": "Switch Display Mode",
+  "key.flightassistant.toggle_auto_thrust": "Toggle Auto Thrust",
+  "key.flightassistant.dismiss_master_warning": "Silence (dismiss) master warning",
+  "key.flightassistant.dismiss_master_caution": "Silence (dismiss) master caution",
+  "alerts.flightassistant.pull_up": "PULL UP",
+  "alerts.flightassistant.sink_rate": "SINK RATE",
+  "alerts.flightassistant.stall": "STALL",
+  "alerts.flightassistant.terrain_ahead": "TERRAIN AHEAD",
+  "alerts.flightassistant.autoflight.athr_speed_not_set": "A/THR SPEED NOT SET",
+  "alerts.flightassistant.nav.approaching_void_damage_level": "APPROACHING VOID DAMAGE LEVEL",
+  "alerts.flightassistant.nav.reached_void_damage_level": "REACHED VOID DAMAGE LEVEL",
+  "flightassistant.north_short": "N",
+  "flightassistant.east_short": "E",
+  "flightassistant.south_short": "S",
+  "flightassistant.west_short": "W",
+  "flightassistant.ground_level": "G",
+  "flightassistant.void_level": "V",
+  "flightassistant.elytra_short": "E",
+  "flightassistant.ground_speed_short": "G/S: %s",
+  "flightassistant.vertical_speed_short": "V/S: %s"
+}

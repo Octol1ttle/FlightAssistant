@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "ru.octol1ttle.flightassistant.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [],
+  "client": [
+    "ClientPlayerInteractionManagerMixin",
+    "EntityMixin",
+    "GameRendererMixin",
+    "InGameHudMixin",
+    "LivingEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

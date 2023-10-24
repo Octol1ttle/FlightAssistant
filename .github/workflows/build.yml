@@ -1,4 +1,4 @@
-name: Build Octol1ttle/FlightHud
+name: Build FlightAssistant
 on: [ pull_request, push ]
 
 jobs:
@@ -44,5 +44,5 @@ jobs:
       - name: Publish build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: octol1ttle-flighthud-${{ steps.ref.outputs.branch }}
+          name: octol1ttle-flightassistant-${{ steps.ref.outputs.branch }}
           path: build/libs/

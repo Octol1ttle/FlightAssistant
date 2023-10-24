@@ -1,27 +1,27 @@
 {
   "schemaVersion": 1,
-  "id": "flighthud",
+  "id": "flightassistant",
   "version": "${version}",
-  "name": "Flight HUD",
-  "description": "Displays a flight styled hud while flying with elytra and provides flight protections and warnings",
+  "name": "Flight Assistant",
+  "description": "TODO",
   "authors": [
-    "ToroCraft",
-    "Octol1ttle"
+    "Octol1ttle",
+    "ToroCraft"
   ],
   "contact": {
-    "issues": "https://github.com/Octol1ttle/FlightHud/issues",
-    "sources": "https://github.com/Octol1ttle/FlightHud"
+    "issues": "https://github.com/Octol1ttle/FlightAssistant/issues",
+    "sources": "https://github.com/Octol1ttle/FlightAssistant"
   },
   "license": "GPL3",
-  "icon": "assets/flighthud/icon.png",
+  "icon": "assets/flightassistant/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [
-      "net.torocraft.flighthud.FlightHud"
+      "ru.octol1ttle.flightassistant.FlightAssistant"
     ]
   },
   "mixins": [
-    "flighthud.mixins.json"
+    "flightassistant.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.14.7",

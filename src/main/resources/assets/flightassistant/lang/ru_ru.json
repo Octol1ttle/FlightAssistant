@@ -1,0 +1,23 @@
+{
+  "category.flightassistant": "Flight HUD",
+  "key.flightassistant.toggle_display_mode": "Переключить режим интерфейса",
+  "key.flightassistant.toggle_auto_thrust": "Вкл/выкл автомат тяги",
+  "key.flightassistant.dismiss_master_warning": "Заглушить (скрыть) предупреждение особой важности",
+  "key.flightassistant.dismiss_master_caution": "Заглушить (скрыть) обычное предупреждение",
+  "alerts.flightassistant.pull_up": "ТЯНИ ВВЕРХ",
+  "alerts.flightassistant.sink_rate": "СКОР. СНИЖЕНИЯ",
+  "alerts.flightassistant.stall": "СВАЛИВАНИЕ",
+  "alerts.flightassistant.terrain_ahead": "ЗЕМЛЯ ВПЕРЕДИ",
+  "alerts.flightassistant.autoflight.athr_speed_not_set": "СКОРОСТЬ А/ТЯГИ НЕ ВЫБРАНА",
+  "alerts.flightassistant.nav.approaching_void_damage_level": "ПРИБЛИЖЕНИЕ К ВЫСОТЕ УРОНА ПУСТОТЫ",
+  "alerts.flightassistant.nav.reached_void_damage_level": "ДОСТИГНУТА ВЫСОТА УРОНА ПУСТОТЫ",
+  "flightassistant.north_short": "С",
+  "flightassistant.east_short": "В",
+  "flightassistant.south_short": "Ю",
+  "flightassistant.west_short": "З",
+  "flightassistant.ground_level": "З",
+  "flightassistant.void_level": "П",
+  "flightassistant.elytra_short": "Э",
+  "flightassistant.ground_speed_short": "Г/С: %.2f",
+  "flightassistant.vertical_speed_short": "В/С: %.2f"
+}

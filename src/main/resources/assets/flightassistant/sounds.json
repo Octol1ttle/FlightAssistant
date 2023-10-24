@@ -1,0 +1,37 @@
+{
+  "autopilot_disconnect": {
+    "sounds": [
+      "flightassistant:autopilot_disconnect"
+    ]
+  },
+  "caution": {
+    "sounds": [
+      "flightassistant:caution"
+    ]
+  },
+  "pull_up": {
+    "sounds": [
+      "flightassistant:pull_up"
+    ]
+  },
+  "sink_rate": {
+    "sounds": [
+      "flightassistant:sink_rate"
+    ]
+  },
+  "stall": {
+    "sounds": [
+      "flightassistant:stall"
+    ]
+  },
+  "terrain": {
+    "sounds": [
+      "flightassistant:terrain"
+    ]
+  },
+  "warning": {
+    "sounds": [
+      "flightassistant:warning"
+    ]
+  }
+}
