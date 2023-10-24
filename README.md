@@ -3,11 +3,15 @@
 </p>
 
 <p align=center>
+    <a href="https://modrinth.com/mod/flightassistant">
+        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/available/modrinth_vector.svg"
+            alt="Available on Modrinth"></img></a>
     <a href="https://modrinth.com/mod/fabric-api/">
-        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_vector.svg"></img>
-    </a>
-    <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/unsupported/forge_vector.svg"></img>
-    <br><br><!--duh--><i>An unofficial continuation of <a href="https://github.com/frodare/FlightHud">FlightHUD mod by frodare</a></i>
+        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_vector.svg"
+            alt="Requires Fabric API"></img></a>
+    <a href=""> <!-- don't open image preview -->
+        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/unsupported/forge_vector.svg"
+            alt="Won't support Forge"></img></a>
 </p>
 
 ---
@@ -36,3 +40,6 @@
 - Block Zero Mark
 - Void Damage Mark
 - Height (distance from ground)
+
+#
+<sup><b>FlightAssistant</b> is an unofficial continuation of <a href="https://github.com/frodare/FlightHud">FlightHUD</a> mod by <a href="https://github.com/frodare">frodare</a>.</sup>
