@@ -8,6 +8,7 @@ import net.torocraft.flighthud.alerts.AbstractAlert;
 import net.torocraft.flighthud.alerts.AlertSoundData;
 import net.torocraft.flighthud.alerts.ECAMSoundData;
 import net.torocraft.flighthud.computers.FlightComputer;
+import net.torocraft.flighthud.computers.VoidDamageLevelComputer;
 import org.jetbrains.annotations.NotNull;
 
 import static net.torocraft.flighthud.HudComponent.CONFIG;
@@ -21,7 +22,7 @@ public class ApproachingVoidDamageLevelAlert extends AbstractAlert {
 
     @Override
     public boolean isTriggered() {
-        return computer.groundLevel == computer.voidLevel && computer.altitude < computer.voidLevel + 8;
+        return computer.voidDamage.status >= VoidDamageLevelComputer.STATUS_APPROACHING_DAMAGE_LEVEL;
     }
 
     @Override
@@ -31,8 +32,11 @@ public class ApproachingVoidDamageLevelAlert extends AbstractAlert {
 
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
-        return HudComponent.drawHighlightedFont(textRenderer, context, x, y,
-                Text.translatable("alerts.flighthud.nav.approaching_void_damage_level"),
+        Text text = computer.voidDamage.status == VoidDamageLevelComputer.STATUS_REACHED_DAMAGE_LEVEL
+                ? Text.translatable("alerts.flighthud.nav.reached_void_damage_level")
+                : Text.translatable("alerts.flighthud.nav.approaching_void_damage_level");
+
+        return HudComponent.drawHighlightedFont(textRenderer, context, x, y, text,
                 CONFIG.alertColor,
                 !dismissed && highlight);
     }

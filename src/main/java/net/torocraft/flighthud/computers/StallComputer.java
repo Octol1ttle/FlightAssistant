@@ -3,11 +3,11 @@ package net.torocraft.flighthud.computers;
 import net.minecraft.util.math.MathHelper;
 
 public class StallComputer {
-    public static final int STATUS_APPROACHING_STALL = 1;
     private static final int STATUS_FULL_STALL = 2;
+    public static final int STATUS_APPROACHING_STALL = 1;
     private static final int STATUS_PITCH_SAFE = -1;
-    private static final int STATUS_FALL_DISTANCE_TOO_LOW = -2;
-    private static final int STATUS_AIRSPEED_SAFE = -3;
+    private static final int STATUS_AIRSPEED_SAFE = -2;
+    private static final int STATUS_FALL_DISTANCE_TOO_LOW = -3;
     private final FlightComputer computer;
     public int stalling;
     public float maximumSafePitch;

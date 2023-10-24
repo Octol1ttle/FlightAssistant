@@ -44,6 +44,7 @@ public class PitchIndicator extends HudComponent {
         drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumClimbAngle, CONFIG.color);
         drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumGlideAngle, CONFIG.color);
         drawReferenceMark(context, yHorizon, computer.stall.maximumSafePitch, CONFIG.alertColor);
+        drawReferenceMark(context, yHorizon, computer.voidDamage.minimumSafePitch, CONFIG.alertColor);
 
         if (CONFIG.pitchLadder_showHorizon) {
             pitchData.l1 -= pitchData.margin;

@@ -21,7 +21,8 @@ public abstract class EntityMixin {
             boolean stalling = -pitch > computer.stall.maximumSafePitch
                     || computer.stall.stalling >= StallComputer.STATUS_APPROACHING_STALL;
             boolean highSinkRate = !stalling && computer.gpws.shouldBlockPitchChanges();
-            if (stalling && pitch < that.getPitch() || highSinkRate && pitch > that.getPitch())
+            boolean approachingVoidDamage = -pitch < computer.voidDamage.minimumSafePitch;
+            if (stalling && pitch < that.getPitch() || (highSinkRate || approachingVoidDamage) && pitch > that.getPitch())
                 ci.cancel();
         }
     }

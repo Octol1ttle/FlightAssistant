@@ -2,7 +2,8 @@
   "category.flighthud": "Flight HUD",
   "key.flighthud.toggle_display_mode": "Переключить режим интерфейса",
   "key.flighthud.toggle_auto_thrust": "Вкл/выкл автомат тяги",
-  "key.flighthud.dismiss_master_caution": "Заглушить (убрать) жёлтое предупреждение",
+  "key.flighthud.dismiss_master_warning": "Заглушить (скрыть) предупреждение особой важности",
+  "key.flighthud.dismiss_master_caution": "Заглушить (скрыть) обычное предупреждение",
 
   "alerts.flighthud.pull_up": "ТЯНИ ВВЕРХ",
   "alerts.flighthud.sink_rate": "СКОР. СНИЖЕНИЯ",
@@ -10,6 +11,7 @@
   "alerts.flighthud.terrain_ahead": "ЗЕМЛЯ ВПЕРЕДИ",
   "alerts.flighthud.autoflight.athr_speed_not_set": "СКОРОСТЬ А/ТЯГИ НЕ ВЫБРАНА",
   "alerts.flighthud.nav.approaching_void_damage_level": "ПРИБЛИЖЕНИЕ К ВЫСОТЕ УРОНА ПУСТОТЫ",
+  "alerts.flighthud.nav.reached_void_damage_level": "ДОСТИГНУТА ВЫСОТА УРОНА ПУСТОТЫ",
 
   "flighthud.north_short": "С",
   "flighthud.east_short": "В",

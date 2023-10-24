@@ -24,6 +24,7 @@ public class FlightComputer {
     public final AutoFlightComputer autoflight;
     public final TimeComputer time;
     public final StallComputer stall;
+    public final VoidDamageLevelComputer voidDamage;
     public final PitchController pitchController;
     public final AlertController alertController;
     @NotNull
@@ -57,6 +58,7 @@ public class FlightComputer {
         this.gpws = new GPWSComputer(this);
         this.autoflight = new AutoFlightComputer(this);
         this.stall = new StallComputer(this);
+        this.voidDamage = new VoidDamageLevelComputer(this);
         this.time = new TimeComputer();
         this.pitchController = new PitchController(this);
         this.alertController = new AlertController(this, mc.getSoundManager());
@@ -101,6 +103,7 @@ public class FlightComputer {
         autoflight.tick();
         alertController.tick();
         stall.tick();
+        voidDamage.tick();
     }
 
     public void updateRoll(Matrix3f normal) {

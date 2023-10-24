@@ -2,7 +2,8 @@
   "category.flighthud": "Flight HUD",
   "key.flighthud.toggle_display_mode": "Switch Display Mode",
   "key.flighthud.toggle_auto_thrust": "Toggle Auto Thrust",
-  "key.flighthud.dismiss_master_caution": "Silence (dismiss) yellow alerts",
+  "key.flighthud.dismiss_master_warning": "Silence (dismiss) master warning",
+  "key.flighthud.dismiss_master_caution": "Silence (dismiss) master caution",
 
   "alerts.flighthud.pull_up": "PULL UP",
   "alerts.flighthud.sink_rate": "SINK RATE",
@@ -10,6 +11,7 @@
   "alerts.flighthud.terrain_ahead": "TERRAIN AHEAD",
   "alerts.flighthud.autoflight.athr_speed_not_set": "A/THR SPEED NOT SET",
   "alerts.flighthud.nav.approaching_void_damage_level": "APPROACHING VOID DAMAGE LEVEL",
+  "alerts.flighthud.nav.reached_void_damage_level": "REACHED VOID DAMAGE LEVEL",
 
   "flighthud.north_short": "N",
   "flighthud.east_short": "E",

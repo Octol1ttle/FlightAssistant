@@ -25,6 +25,10 @@ public class PitchController {
             smoothSetPitch(-computer.stall.maximumSafePitch, delta);
             return;
         }
+        if (computer.pitch < computer.voidDamage.minimumSafePitch) {
+            smoothSetPitch(-computer.voidDamage.minimumSafePitch, delta);
+            return;
+        }
         if (forceLevelOff) {
             smoothSetPitch(0.0f, MathHelper.clamp(delta / computer.gpws.descentImpactTime, 0.001f, 1.0f));
             return;
