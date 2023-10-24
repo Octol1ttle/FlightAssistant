@@ -1,5 +1,5 @@
 <p align=center>
-    <img src="https://github.com/mctaylors/FlightHud/assets/95250141/3dbe7fa0-c0df-4e47-822f-2f8fb70f25ee">
+    <img src="https://github.com/mctaylors/FlightHud/assets/95250141/389cae76-abcb-4028-9c06-c1cda7d35327">
 </p>
 
 <p align=center>
@@ -7,11 +7,12 @@
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_vector.svg"></img>
     </a>
     <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/unsupported/forge_vector.svg"></img>
+    <br><br><!--duh--><i>An unofficial continuation of <a href="https://github.com/frodare/FlightHud">FlightHUD mod by frodare</a></i>
 </p>
 
 ---
 
-**Flight HUD** is a client side Fabric Minecraft Mod that adds a flight style HUD like one you would see in a flight simulator.
+**FlightAssistant** is a client side Fabric Minecraft Mod that adds a flight style HUD like one you would see in a flight simulator with some features.
 
 ## Features
 
