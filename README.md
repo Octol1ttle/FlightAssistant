@@ -1,5 +1,5 @@
 <p align=center>
-    <img src="https://github.com/mctaylors/FlightHud/assets/95250141/389cae76-abcb-4028-9c06-c1cda7d35327">
+    <img src="assets/logo.png">
 </p>
 
 <p align=center>
