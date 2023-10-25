@@ -9,9 +9,11 @@
     <a href="https://modrinth.com/mod/flightassistant/versions?l=fabric">
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/supported/fabric_vector.svg"
             alt="Available for Fabric"></img></a>
+    <!-- uncomment if Forge version is released (https://github.com/Octol1ttle/FlightAssistant/pull/2#discussion_r1370700775)
     <a href="https://modrinth.com/mod/flightassistant/versions?l=forge">
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/supported/forge_vector.svg"
             alt="Available for Forge"></img></a>
+    -->
     <a href="https://modrinth.com/mod/fabric-api/">
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_vector.svg"
             alt="Requires Fabric API"></img></a>
