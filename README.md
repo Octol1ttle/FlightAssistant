@@ -6,12 +6,15 @@
     <a href="https://modrinth.com/mod/flightassistant">
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/available/modrinth_vector.svg"
             alt="Available on Modrinth"></img></a>
+    <a href="https://modrinth.com/mod/flightassistant/versions?l=fabric">
+        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/supported/fabric_vector.svg"
+            alt="Available for Fabric"></img></a>
+    <a href="https://modrinth.com/mod/flightassistant/versions?l=forge">
+        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/supported/forge_vector.svg"
+            alt="Available for Forge"></img></a>
     <a href="https://modrinth.com/mod/fabric-api/">
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_vector.svg"
             alt="Requires Fabric API"></img></a>
-    <a href=""> <!-- don't open image preview -->
-        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/unsupported/forge_vector.svg"
-            alt="Won't support Forge"></img></a>
 </p>
 
 ---
