@@ -21,9 +21,33 @@
 
 ---
 
-**FlightAssistant** is a client side Fabric Minecraft Mod that adds a flight style HUD like one you would see in a flight simulator with some features.
+**FlightAssistant** is a client side Fabric Minecraft Mod that adds a flight style HUD like one you would see in a flight simulator with features.
 
-## Features
+## Main Features
+
+- Flight HUD
+- Stall protection<sup>1</sup>, warning and automatic recovery<sup>2</sup>
+- Ground Proximity Warning System:
+  - Sinkrate warning, protection<sup>1</sup> and automatic recovery<sup>2</sup>
+  - Unsafe terrain clearance warning, protection<sup>1</sup> and automatic recovery<sup>2</sup>
+- Autopilot systems:
+  - Automatic path calculation for given coordinates (1.0 only)
+  - Flight planner (2.0 only)
+  - Flight Directors
+  - Auto thrust (fireworks)
+  - Auto pilot
+- Alerts for unsafe flight conditions:
+  - Approaching void damage altitude (2.0 only)
+  - Firework delayed response/no response
+  - Low elytra durability
+  - Unsafe (explosive) fireworks
+  - Low firework count/no fireworks in inventory
+  - Passengers dismounted mid-flight
+
+<sup>1</sup> Protection via blocked pitch changes<br>
+<sup>2</sup> Automatic recovery via automatic pitch changes and firework usage (2.0 only, when applicable)
+
+## HUD Features
 
 <details><summary>Diagram</summary>
 
