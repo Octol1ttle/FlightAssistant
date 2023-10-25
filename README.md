@@ -29,13 +29,12 @@
   - Sinkrate warning, protection<sup>1</sup> and automatic recovery<sup>2</sup>
   - Unsafe terrain clearance warning, protection<sup>1</sup> and automatic recovery<sup>2</sup>
 - Autopilot systems:
-  - Automatic path calculation for given coordinates (1.0 only)
-  - Flight planner (2.0 only)
+  - Flight Planner
   - Flight Directors
   - Auto thrust (fireworks)
   - Auto pilot
 - Alerts for unsafe flight conditions:
-  - Approaching void damage altitude (2.0 only)
+  - Approaching void damage altitude
   - Firework delayed response/no response
   - Low elytra durability
   - Unsafe (explosive) fireworks
