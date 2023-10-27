@@ -1,16 +1,26 @@
 {
   "category.flightassistant": "Flight HUD",
+
   "key.flightassistant.toggle_display_mode": "Switch Display Mode",
   "key.flightassistant.toggle_auto_thrust": "Toggle Auto Thrust",
   "key.flightassistant.dismiss_master_warning": "Silence (dismiss) master warning",
   "key.flightassistant.dismiss_master_caution": "Silence (dismiss) master caution",
+
   "alerts.flightassistant.pull_up": "PULL UP",
   "alerts.flightassistant.sink_rate": "SINK RATE",
   "alerts.flightassistant.stall": "STALL",
   "alerts.flightassistant.terrain_ahead": "TERRAIN AHEAD",
-  "alerts.flightassistant.autoflight.athr_speed_not_set": "A/THR SPEED NOT SET",
+  "alerts.flightassistant.internal_mod_error": "INTERNAL MOD ERROR",
+
   "alerts.flightassistant.nav.approaching_void_damage_level": "APPROACHING VOID DAMAGE LEVEL",
   "alerts.flightassistant.nav.reached_void_damage_level": "REACHED VOID DAMAGE LEVEL",
+  "alerts.flightassistant.firework.delayed_response": "FRWK DELAYED RESPONSE",
+  "alerts.flightassistant.firework.no_response": "FRWK NO RESPONSE",
+  "alerts.flightassistant.firework.no_fireworks": "NO FRWKS IN HOTBAR",
+  "flightassistant.toga_lock": "TOGA LK",
+  "flightassistant.thrust_mode_speed": "SPD %s",
+  "flightassistant.thrust_mode_speed_not_selected": "SPD NOT SEL",
+
   "flightassistant.north_short": "N",
   "flightassistant.east_short": "E",
   "flightassistant.south_short": "S",

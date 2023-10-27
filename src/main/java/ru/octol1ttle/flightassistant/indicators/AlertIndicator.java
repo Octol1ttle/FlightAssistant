@@ -24,14 +24,14 @@ public class AlertIndicator extends HudComponent {
         float y = dim.tFrame + 15;
         float yRight = y - 10;
 
-        for (AbstractAlert alert : computer.alertController.activeAlerts) {
+        for (AbstractAlert alert : computer.alert.activeAlerts) {
             if (!renderedCentered) {
                 renderedCentered = alert.renderCentered(textRenderer, context, dim.wScreen,
                         dim.hScreen * 0.5f + 10, computer.time.highlight);
             }
 
             if (!alert.hidden) {
-                y += 9 * alert.renderECAM(textRenderer, context, x, y, computer.time.highlight);
+                y += 10 * alert.renderECAM(textRenderer, context, x, y, computer.time.highlight);
             }
         }
     }

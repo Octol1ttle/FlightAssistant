@@ -10,7 +10,7 @@ public class TimeComputer {
      */
     public float deltaTime;
     public boolean highlight;
-    private Float prevMillis;
+    public Float prevMillis;
     private float highlightMillis;
 
     public void tick() {

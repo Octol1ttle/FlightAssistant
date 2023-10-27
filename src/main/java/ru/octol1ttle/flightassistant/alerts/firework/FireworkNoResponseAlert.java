@@ -1,4 +1,4 @@
-package ru.octol1ttle.flightassistant.alerts.autoflight;
+package ru.octol1ttle.flightassistant.alerts.firework;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -12,29 +12,28 @@ import ru.octol1ttle.flightassistant.computers.FlightComputer;
 
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
-public class ATHRSpeedNotSetAlert extends AbstractAlert {
+public class FireworkNoResponseAlert extends AbstractAlert {
 
     private final FlightComputer computer;
 
-    public ATHRSpeedNotSetAlert(FlightComputer computer) {
+    public FireworkNoResponseAlert(FlightComputer computer) {
         this.computer = computer;
     }
 
     @Override
     public boolean isTriggered() {
-        return computer.autoflight.autoThrustEnabled && computer.autoflight.targetSpeed == null;
+        return !computer.firework.fireworkResponded && computer.firework.lastDiff > 1500;
     }
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        return ECAMSoundData.MASTER_CAUTION;
+        return ECAMSoundData.MASTER_WARNING;
     }
 
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
-        return HudComponent.drawHighlightedFont(textRenderer, context, x, y,
-                Text.translatable("alerts.flightassistant.autoflight.athr_speed_not_set"),
-                CONFIG.amberColor,
-                !dismissed);
+        return HudComponent.drawHighlightedFont(textRenderer, context, Text.translatable("alerts.flightassistant.firework.no_response"), x, y,
+                CONFIG.alertColor,
+                !dismissed && highlight);
     }
 }

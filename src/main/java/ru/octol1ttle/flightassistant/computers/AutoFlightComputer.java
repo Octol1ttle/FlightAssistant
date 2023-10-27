@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant.computers;
 
+import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
+
 public class AutoFlightComputer {
     private final FlightComputer computer;
 
@@ -13,17 +15,9 @@ public class AutoFlightComputer {
     }
 
     public void tick() {
-        if (targetSpeed != null && computer.speed < targetSpeed) {
-            tryActivateFireworks();
+        if (autoThrustEnabled && targetSpeed != null && computer.speed < targetSpeed && computer.gpws.getGPWSLampColor() != CONFIG.alertColor) {
+            computer.firework.activateFirework(false);
         }
-    }
-
-    private void tryActivateFireworks() {
-
-    }
-
-    public void toggleAutoThrust() {
-        autoThrustEnabled = !autoThrustEnabled;
     }
 
     public void disconnectAutopilot(boolean force) {

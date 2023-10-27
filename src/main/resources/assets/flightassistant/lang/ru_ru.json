@@ -1,16 +1,26 @@
 {
   "category.flightassistant": "Flight HUD",
+
   "key.flightassistant.toggle_display_mode": "Переключить режим интерфейса",
   "key.flightassistant.toggle_auto_thrust": "Вкл/выкл автомат тяги",
   "key.flightassistant.dismiss_master_warning": "Заглушить (скрыть) предупреждение особой важности",
   "key.flightassistant.dismiss_master_caution": "Заглушить (скрыть) обычное предупреждение",
+
   "alerts.flightassistant.pull_up": "ТЯНИ ВВЕРХ",
   "alerts.flightassistant.sink_rate": "СКОР. СНИЖЕНИЯ",
   "alerts.flightassistant.stall": "СВАЛИВАНИЕ",
   "alerts.flightassistant.terrain_ahead": "ЗЕМЛЯ ВПЕРЕДИ",
-  "alerts.flightassistant.autoflight.athr_speed_not_set": "СКОРОСТЬ А/ТЯГИ НЕ ВЫБРАНА",
+  "alerts.flightassistant.internal_mod_error": "ВНУТРЕННЯЯ ОШИБКА МОДА",
+
   "alerts.flightassistant.nav.approaching_void_damage_level": "ПРИБЛИЖЕНИЕ К ВЫСОТЕ УРОНА ПУСТОТЫ",
   "alerts.flightassistant.nav.reached_void_damage_level": "ДОСТИГНУТА ВЫСОТА УРОНА ПУСТОТЫ",
+  "alerts.flightassistant.firework.delayed_response": "ФРВК ПОЗДНЯЯ АКТИВАЦИЯ",
+  "alerts.flightassistant.firework.no_response": "ФРВК ОТКАЗ",
+  "alerts.flightassistant.firework.no_fireworks": "НЕТ ФРВКОВ НА ПАНЕЛИ БЫСТР. ДОСТУПА",
+  "flightassistant.toga_lock": "МАКС. ТЯГА",
+  "flightassistant.thrust_mode_speed": "СКОР %s",
+  "flightassistant.thrust_mode_speed_not_selected": "СКОР. НЕ ЗАДАНА",
+
   "flightassistant.north_short": "С",
   "flightassistant.east_short": "В",
   "flightassistant.south_short": "Ю",

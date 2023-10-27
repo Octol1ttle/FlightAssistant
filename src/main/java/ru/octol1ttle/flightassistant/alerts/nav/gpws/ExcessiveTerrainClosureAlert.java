@@ -58,7 +58,7 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
         if (computer.gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
             Text text = Text.translatable("alerts.flightassistant.pull_up");
             float startX = (width - textRenderer.getWidth(text)) * 0.5f;
-            HudComponent.drawHighlightedFont(textRenderer, context, startX, y, text,
+            HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
                     HudComponent.CONFIG.alertColor, highlight);
 
             return true;
@@ -67,7 +67,7 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
         if (computer.gpws.terrainImpactTime <= TERRAIN_THRESHOLD) {
             Text text = Text.translatable("alerts.flightassistant.terrain_ahead");
             float startX = (width - textRenderer.getWidth(text)) * 0.5f;
-            HudComponent.drawHighlightedFont(textRenderer, context, startX, y, text,
+            HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
                     HudComponent.CONFIG.amberColor, highlight);
 
             return true;

@@ -40,7 +40,7 @@ public class StallAlert extends AbstractAlert {
     public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight) {
         Text text = Text.translatable("alerts.flightassistant.stall");
         float startX = (width - textRenderer.getWidth(text)) * 0.5f;
-        HudComponent.drawHighlightedFont(textRenderer, context, startX, y, text,
+        HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
                 -computer.velocityPerSecond.y >= GPWSComputer.MAX_SAFE_SINK_RATE ?
                         CONFIG.alertColor :
                         CONFIG.amberColor, highlight);

@@ -39,7 +39,7 @@ public class ExcessiveDescentAlert extends AbstractAlert {
         if (computer.gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
             Text text = Text.translatable("alerts.flightassistant.pull_up");
             float startX = (width - textRenderer.getWidth(text)) * 0.5f;
-            HudComponent.drawHighlightedFont(textRenderer, context, startX, y, text,
+            HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
                     CONFIG.alertColor, highlight);
 
             return true;
@@ -48,7 +48,7 @@ public class ExcessiveDescentAlert extends AbstractAlert {
         if (computer.gpws.descentImpactTime <= SINK_RATE_THRESHOLD) {
             Text text = Text.translatable("alerts.flightassistant.sink_rate");
             float startX = (width - textRenderer.getWidth(text)) * 0.5f;
-            HudComponent.drawHighlightedFont(textRenderer, context, startX, y, text,
+            HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
                     CONFIG.amberColor, highlight);
 
             return true;

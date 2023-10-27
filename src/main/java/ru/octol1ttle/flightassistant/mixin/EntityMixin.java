@@ -17,7 +17,7 @@ public abstract class EntityMixin {
         Entity that = (Entity) (Object) this;
 
         FlightComputer computer = HudRenderer.getComputer();
-        if (that instanceof ClientPlayerEntity && computer != null && computer.shouldUpdatePitch()) {
+        if (that instanceof ClientPlayerEntity && computer != null && computer.canAutomationsActivate()) {
             boolean stalling = -pitch > computer.stall.maximumSafePitch
                     || computer.stall.stalling >= StallComputer.STATUS_APPROACHING_STALL;
             boolean highSinkRate = !stalling && computer.gpws.shouldBlockPitchChanges();

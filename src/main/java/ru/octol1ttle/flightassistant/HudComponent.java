@@ -32,7 +32,7 @@ public abstract class HudComponent {
         return 1;
     }
 
-    public static int drawHighlightedFont(TextRenderer textRenderer, DrawContext context, float x, float y, Text text, int highlightColor, boolean highlight) {
+    public static int drawHighlightedFont(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int highlightColor, boolean highlight) {
         if (highlight) {
             drawUnbatched(context, ctx -> {
                 HudComponent.fill(context, x - 1.5f, y - 1.5f, x + textRenderer.getWidth(text), y + 8.0f, highlightColor);

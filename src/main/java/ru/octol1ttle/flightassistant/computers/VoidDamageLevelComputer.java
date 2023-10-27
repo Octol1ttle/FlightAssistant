@@ -20,6 +20,9 @@ public class VoidDamageLevelComputer {
 
     public void tick() {
         status = computeStatus();
+        if (status >= STATUS_ALTITUDE_SAFE && computer.altitude - computer.voidLevel < 12) {
+            computer.pitchControl.forceClimb = computer.firework.activateFirework(true);
+        }
         minimumSafePitch = computeMinimumSafePitch();
     }
 
@@ -40,7 +43,6 @@ public class VoidDamageLevelComputer {
             return STATUS_APPROACHING_DAMAGE_LEVEL;
         }
 
-        // TODO: TOGA LK
         return STATUS_REACHED_DAMAGE_LEVEL;
     }
 

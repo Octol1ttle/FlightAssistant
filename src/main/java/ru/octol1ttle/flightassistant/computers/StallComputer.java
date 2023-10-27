@@ -18,6 +18,9 @@ public class StallComputer {
 
     public void tick() {
         stalling = computeStalling();
+        if (stalling == STATUS_FULL_STALL) {
+            computer.firework.activateFirework(true);
+        }
         maximumSafePitch = computeMaximumSafePitch();
     }
 

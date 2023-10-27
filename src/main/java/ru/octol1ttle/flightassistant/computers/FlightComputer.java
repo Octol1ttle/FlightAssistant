@@ -19,14 +19,15 @@ import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 public class FlightComputer {
     @NotNull
-    private final MinecraftClient mc;
+    public final MinecraftClient mc;
     public final GPWSComputer gpws;
     public final AutoFlightComputer autoflight;
     public final TimeComputer time;
     public final StallComputer stall;
     public final VoidDamageLevelComputer voidDamage;
-    public final PitchController pitchController;
-    public final AlertController alertController;
+    public final FireworkManager firework;
+    public final PitchController pitchControl;
+    public final AlertController alert;
     @NotNull
     public PlayerEntity player;
 
@@ -49,6 +50,7 @@ public class FlightComputer {
     public float distanceFromGround;
     public Float elytraHealth;
     public int worldHeight;
+    public boolean internalError;
 
     public FlightComputer(@NotNull MinecraftClient mc) {
         this.mc = mc;
@@ -59,9 +61,10 @@ public class FlightComputer {
         this.autoflight = new AutoFlightComputer(this);
         this.stall = new StallComputer(this);
         this.voidDamage = new VoidDamageLevelComputer(this);
+        this.firework = new FireworkManager(this);
         this.time = new TimeComputer();
-        this.pitchController = new PitchController(this);
-        this.alertController = new AlertController(this, mc.getSoundManager());
+        this.pitchControl = new PitchController(this);
+        this.alert = new AlertController(this, mc.getSoundManager());
     }
 
     public boolean isGround(BlockPos pos) {
@@ -101,9 +104,10 @@ public class FlightComputer {
 
         gpws.tick();
         autoflight.tick();
-        alertController.tick();
+        alert.tick();
         stall.tick();
         voidDamage.tick();
+        firework.tick();
     }
 
     public void updateRoll(Matrix3f normal) {
@@ -112,14 +116,14 @@ public class FlightComputer {
 
     public void onRender() {
         time.tick();
-        if (!shouldUpdatePitch()) {
+        if (!canAutomationsActivate()) {
             return;
         }
 
-        pitchController.tick(time.deltaTime);
+        pitchControl.tick(time.deltaTime);
     }
 
-    public boolean shouldUpdatePitch() {
+    public boolean canAutomationsActivate() {
         return player.isFallFlying() && mc.currentScreen == null && mc.getOverlay() == null;
     }
 

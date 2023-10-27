@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -12,12 +13,14 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
+import ru.octol1ttle.flightassistant.commands.SetAutoThrustSpeedCommand;
 import ru.octol1ttle.flightassistant.commands.SwitchDisplayModeCommand;
 import ru.octol1ttle.flightassistant.computers.FlightComputer;
 import ru.octol1ttle.flightassistant.config.HudConfig;
 import ru.octol1ttle.flightassistant.config.SettingsConfig;
 import ru.octol1ttle.flightassistant.config.loader.ConfigLoader;
 
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class FlightAssistant implements ClientModInitializer {
@@ -76,15 +79,15 @@ public class FlightAssistant implements ClientModInitializer {
             FlightComputer computer = HudRenderer.getComputer();
             if (computer != null) {
                 while (toggleAutoThrust.wasPressed()) {
-                    computer.autoflight.toggleAutoThrust();
+                    computer.autoflight.autoThrustEnabled = !computer.autoflight.autoThrustEnabled;
                 }
 
                 while (dismissMasterWarning.wasPressed()) {
-                    computer.alertController.dismiss(ECAMSoundData.MASTER_WARNING);
+                    computer.alert.dismiss(ECAMSoundData.MASTER_WARNING);
                 }
 
                 while (dismissMasterCaution.wasPressed()) {
-                    computer.alertController.dismiss(ECAMSoundData.MASTER_CAUTION);
+                    computer.alert.dismiss(ECAMSoundData.MASTER_CAUTION);
                 }
             }
         });
@@ -95,7 +98,11 @@ public class FlightAssistant implements ClientModInitializer {
 
             LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(literal("flightassistant")
                     .then(literal("toggle").executes(new SwitchDisplayModeCommand()))
+                    .then(literal("speed")
+                            .then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
+                                    .executes(new SetAutoThrustSpeedCommand())))
             );
+            dispatcher.register(literal("flas").redirect(node));
             dispatcher.register(literal("fhud").redirect(node));
             dispatcher.register(literal("fh").redirect(node));
         });

@@ -7,8 +7,11 @@ import net.minecraft.client.sound.SoundManager;
 import ru.octol1ttle.flightassistant.AlertSoundInstance;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
+import ru.octol1ttle.flightassistant.alerts.InternalErrorAlert;
 import ru.octol1ttle.flightassistant.alerts.StallAlert;
-import ru.octol1ttle.flightassistant.alerts.autoflight.ATHRSpeedNotSetAlert;
+import ru.octol1ttle.flightassistant.alerts.autoflight.ATHRNoFireworksInHotbarAlert;
+import ru.octol1ttle.flightassistant.alerts.firework.FireworkDelayedResponseAlert;
+import ru.octol1ttle.flightassistant.alerts.firework.FireworkNoResponseAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.ApproachingVoidDamageLevelAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveDescentAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveTerrainClosureAlert;
@@ -22,11 +25,14 @@ public class AlertController {
     public AlertController(FlightComputer computer, SoundManager manager) {
         this.computer = computer;
         this.manager = manager;
+        // TODO: ECAM actions
         ALERTS = new AbstractAlert[]{
                 new StallAlert(computer),
                 new ExcessiveDescentAlert(computer), new ExcessiveTerrainClosureAlert(computer), // GPWS
+                new InternalErrorAlert(computer),
                 new ApproachingVoidDamageLevelAlert(computer),
-                new ATHRSpeedNotSetAlert(computer) // Autoflight
+                new FireworkNoResponseAlert(computer), new FireworkDelayedResponseAlert(computer),
+                new ATHRNoFireworksInHotbarAlert(computer)
         };
         activeAlerts = new ArrayList<>();
     }

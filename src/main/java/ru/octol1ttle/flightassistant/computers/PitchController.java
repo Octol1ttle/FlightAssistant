@@ -7,7 +7,7 @@ import ru.octol1ttle.flightassistant.FlightAssistant;
 import ru.octol1ttle.flightassistant.indicators.PitchIndicator;
 
 public class PitchController {
-    private static final float CLIMB_PITCH = -55.0f;
+    public static final float CLIMB_PITCH = -55.0f;
     private final FlightComputer computer;
     /**
      * USE MINECRAFT PITCH (minus is up and plus is down)

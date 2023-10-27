@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -11,6 +13,7 @@ import ru.octol1ttle.flightassistant.config.SettingsConfig;
 import ru.octol1ttle.flightassistant.indicators.AlertIndicator;
 import ru.octol1ttle.flightassistant.indicators.AltitudeIndicator;
 import ru.octol1ttle.flightassistant.indicators.ElytraHealthIndicator;
+import ru.octol1ttle.flightassistant.indicators.FlightModeIndicator;
 import ru.octol1ttle.flightassistant.indicators.FlightPathIndicator;
 import ru.octol1ttle.flightassistant.indicators.HeadingIndicator;
 import ru.octol1ttle.flightassistant.indicators.LocationIndicator;
@@ -24,16 +27,18 @@ public class HudRenderer extends HudComponent {
     @NotNull
     public final FlightComputer computer;
     private final Dimensions dim = new Dimensions();
-    private final HudComponent[] components;
+    private final List<HudComponent> components;
+    private final List<HudComponent> toDelete;
 
     public HudRenderer(MinecraftClient mc) {
         this.computer = new FlightComputer(mc);
-        this.components = new HudComponent[]{
+        this.components = new ArrayList<>(List.of(
                 new FlightPathIndicator(computer, dim), new LocationIndicator(computer, dim),
                 new HeadingIndicator(computer, dim), new SpeedIndicator(computer, dim),
                 new AltitudeIndicator(computer, dim), new PitchIndicator(computer, dim),
-                new ElytraHealthIndicator(computer, dim), new AlertIndicator(computer, dim)
-        };
+                new ElytraHealthIndicator(computer, dim), new AlertIndicator(computer, dim),
+                new FlightModeIndicator(computer, dim)));
+        this.toDelete = new ArrayList<>();
     }
 
     public static FlightComputer getComputer() {
@@ -67,30 +72,37 @@ public class HudRenderer extends HudComponent {
             return;
         }
 
-        try {
-            context.getMatrices().push();
+        context.getMatrices().push();
 
-            if (HudComponent.CONFIG.scale != 1d) {
-                float scale = 1 / HudComponent.CONFIG.scale;
-                context.getMatrices().scale(scale, scale, scale);
-            }
-
-            dim.update(mc);
-
-            for (HudComponent component : components) {
-                if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
-                    ImmediatelyFastBatchingAccessor.beginHudBatching();
-                }
-                component.render(context, mc.textRenderer);
-                if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
-                    ImmediatelyFastBatchingAccessor.endHudBatching();
-                }
-            }
-            context.getMatrices().pop();
-        } catch (Exception e) {
-            // TODO: alert? lmao
-            FlightAssistant.LOGGER.error("Exception rendering components", e);
+        if (HudComponent.CONFIG.scale != 1d) {
+            float scale = 1 / HudComponent.CONFIG.scale;
+            context.getMatrices().scale(scale, scale, scale);
         }
+
+        dim.update(mc);
+
+        for (HudComponent component : components) {
+            if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
+                ImmediatelyFastBatchingAccessor.beginHudBatching();
+            }
+            try {
+                component.render(context, mc.textRenderer);
+            } catch (Exception e) {
+                FlightAssistant.LOGGER.error("Exception rendering component", e);
+                toDelete.add(component);
+                if (getComputer() != null) {
+                    getComputer().internalError = true;
+                }
+            }
+            if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
+                ImmediatelyFastBatchingAccessor.endHudBatching();
+            }
+        }
+
+        components.removeAll(toDelete);
+        toDelete.clear();
+
+        context.getMatrices().pop();
     }
 
     @Override
