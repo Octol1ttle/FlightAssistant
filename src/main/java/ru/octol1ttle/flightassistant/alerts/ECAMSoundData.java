@@ -7,14 +7,14 @@ public class ECAMSoundData {
     public static final AlertSoundData MASTER_WARNING = new AlertSoundData(
             SoundEvent.of(new Identifier("flightassistant:warning")),
             3,
-            0.75f,
+            0.5f,
             true
     );
 
     public static final AlertSoundData MASTER_CAUTION = new AlertSoundData(
             SoundEvent.of(new Identifier("flightassistant:caution")),
             4,
-            0.75f,
+            0.5f,
             false
     );
 }
