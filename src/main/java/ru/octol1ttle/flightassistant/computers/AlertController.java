@@ -5,45 +5,59 @@ import java.util.Comparator;
 import java.util.List;
 import net.minecraft.client.sound.SoundManager;
 import ru.octol1ttle.flightassistant.AlertSoundInstance;
+import ru.octol1ttle.flightassistant.FlightAssistant;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
-import ru.octol1ttle.flightassistant.alerts.InternalErrorAlert;
-import ru.octol1ttle.flightassistant.alerts.StallAlert;
 import ru.octol1ttle.flightassistant.alerts.autoflight.ATHRNoFireworksInHotbarAlert;
+import ru.octol1ttle.flightassistant.alerts.firework.FireworkCountZeroAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkDelayedResponseAlert;
+import ru.octol1ttle.flightassistant.alerts.firework.FireworkLowCountAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkNoResponseAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.ApproachingVoidDamageLevelAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveDescentAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveTerrainClosureAlert;
+import ru.octol1ttle.flightassistant.alerts.other.ElytraHealthLowAlert;
+import ru.octol1ttle.flightassistant.alerts.other.InternalErrorAlert;
+import ru.octol1ttle.flightassistant.alerts.other.StallAlert;
 
 public class AlertController {
     public final List<AbstractAlert> activeAlerts;
     private final FlightComputer computer;
     private final SoundManager manager;
-    private final AbstractAlert[] ALERTS;
+    private final List<AbstractAlert> allAlerts;
+    private final List<AbstractAlert> toDelete;
 
     public AlertController(FlightComputer computer, SoundManager manager) {
         this.computer = computer;
         this.manager = manager;
         // TODO: ECAM actions
-        ALERTS = new AbstractAlert[]{
+        allAlerts = new ArrayList<>(List.of(
                 new StallAlert(computer),
                 new ExcessiveDescentAlert(computer), new ExcessiveTerrainClosureAlert(computer), // GPWS
                 new InternalErrorAlert(computer),
                 new ApproachingVoidDamageLevelAlert(computer),
+                new ElytraHealthLowAlert(computer),
+                new FireworkCountZeroAlert(computer),
                 new FireworkNoResponseAlert(computer), new FireworkDelayedResponseAlert(computer),
-                new ATHRNoFireworksInHotbarAlert(computer)
-        };
-        activeAlerts = new ArrayList<>();
+                new FireworkLowCountAlert(computer),
+                new ATHRNoFireworksInHotbarAlert(computer)));
+        activeAlerts = new ArrayList<>(allAlerts.size());
+        toDelete = new ArrayList<>(allAlerts.size());
     }
 
     public void tick() {
-        for (AbstractAlert alert : ALERTS) {
-            if (alert.isTriggered()) {
-                if (!activeAlerts.contains(alert)) {
-                    activeAlerts.add(alert);
+        for (AbstractAlert alert : allAlerts) {
+            try {
+                if (alert.isTriggered()) {
+                    if (!activeAlerts.contains(alert)) {
+                        activeAlerts.add(alert);
+                    }
+                    continue;
                 }
-                continue;
+            } catch (Exception e) {
+                FlightAssistant.LOGGER.error("Exception triggering alert", e);
+                toDelete.add(alert);
+                computer.internalError = true;
             }
 
             if (!activeAlerts.contains(alert)) {
@@ -60,6 +74,10 @@ public class AlertController {
             }
 
             activeAlerts.remove(alert);
+        }
+
+        if (allAlerts.removeAll(toDelete)) {
+            toDelete.clear();
         }
 
         boolean interrupt = false;

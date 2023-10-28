@@ -57,8 +57,6 @@ public class HeadingIndicator extends HudComponent {
             }
         }
     }
-
-    // TODO: maybe convert throws into alternate law triggers and disable the component?
     private Text headingToDirection(int degrees) {
         return switch (degrees) {
             case 0, 360 -> Text.translatable("flightassistant.north_short");

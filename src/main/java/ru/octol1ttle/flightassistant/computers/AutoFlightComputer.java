@@ -15,7 +15,7 @@ public class AutoFlightComputer {
     }
 
     public void tick() {
-        if (autoThrustEnabled && targetSpeed != null && computer.speed < targetSpeed && computer.gpws.getGPWSLampColor() != CONFIG.alertColor) {
+        if (autoThrustEnabled && targetSpeed != null && computer.speed < targetSpeed && computer.gpws.getGPWSLampColor() == CONFIG.color) {
             computer.firework.activateFirework(false);
         }
     }

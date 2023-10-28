@@ -1,22 +1,25 @@
-package ru.octol1ttle.flightassistant.alerts;
+package ru.octol1ttle.flightassistant.alerts.other;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
+import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
+import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
+import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
 import ru.octol1ttle.flightassistant.computers.FlightComputer;
 
-public class InternalErrorAlert extends AbstractAlert {
+public class ElytraHealthLowAlert extends AbstractAlert {
     private final FlightComputer computer;
 
-    public InternalErrorAlert(FlightComputer computer) {
+    public ElytraHealthLowAlert(FlightComputer computer) {
         this.computer = computer;
     }
 
     @Override
     public boolean isTriggered() {
-        return computer.internalError;
+        return computer.elytraHealth <= 5.0f;
     }
 
     @Override
@@ -26,7 +29,7 @@ public class InternalErrorAlert extends AbstractAlert {
 
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
-        return HudComponent.drawHighlightedFont(textRenderer, context, Text.translatable("alerts.flightassistant.internal_mod_error"), x, y,
+        return HudComponent.drawHighlightedFont(textRenderer, context, Text.translatable("alerts.flightassistant.elytra_health_low"), x, y,
                 HudComponent.CONFIG.alertColor,
                 !dismissed && highlight);
     }

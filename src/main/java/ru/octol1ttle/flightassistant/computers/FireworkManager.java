@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class FireworkManager {
     private final FlightComputer computer;
+    public int safeFireworkCount;
     public boolean fireworkResponded = true;
     public float lastUseTime = -1.0f;
     public float lastDiff = Float.MAX_VALUE;
@@ -23,12 +24,27 @@ public class FireworkManager {
 
     public void tick() {
         // TODO: client<->server communication to confirm firework activation
+        safeFireworkCount = countSafeFireworks();
         if (computer.speed > 30) {
             fireworkResponded = true;
         }
         if (!fireworkResponded && computer.time.prevMillis != null && lastUseTime > 0) {
             lastDiff = computer.time.prevMillis - lastUseTime;
         }
+    }
+
+    private int countSafeFireworks() {
+        int i = 0;
+
+        PlayerInventory inventory = computer.player.getInventory();
+        for (int j = 0; j < inventory.size(); ++j) {
+            ItemStack itemStack = inventory.getStack(j);
+            if (isFireworkSafe(itemStack)) {
+                i += itemStack.getCount();
+            }
+        }
+
+        return i;
     }
 
     public boolean activateFirework(boolean togaLock) {

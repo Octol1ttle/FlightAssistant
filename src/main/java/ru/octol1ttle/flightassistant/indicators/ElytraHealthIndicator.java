@@ -23,7 +23,12 @@ public class ElytraHealthIndicator extends HudComponent {
         float y = dim.hScreen * CONFIG.elytra_y;
 
         if (CONFIG.elytra_showHealth && computer.elytraHealth != null) {
-            int color = CONFIG.color;
+            int color;
+            if (computer.elytraHealth <= 5.0f) {
+                color = CONFIG.alertColor;
+            } else {
+                color = computer.elytraHealth <= 10.0f ? CONFIG.amberColor : CONFIG.color;
+            }
             drawBox(context, x - 3.5f, y - 1.5f, 30, color);
             drawFont(textRenderer, context, Text.translatable("flightassistant.elytra_short"), x - 10, y, color);
             drawFont(textRenderer, context, String.format("%d", i(computer.elytraHealth)) + "%", x, y, color);

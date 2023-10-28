@@ -74,7 +74,6 @@ public class PitchController {
 
     @SafeVarargs
     private void checkFloatValidity(Float f, String name, Pair<String, Float>... additionalInfo) {
-        // TODO: convert to alternate law trigger
         if (f.isNaN() || f.isInfinite() || f < -90.0f || f > 90.0f) {
             FlightAssistant.LOGGER.error("{} out of bounds: {}", name, f);
             FlightAssistant.LOGGER.error("Additional information:");

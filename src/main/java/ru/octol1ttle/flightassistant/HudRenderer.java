@@ -38,7 +38,7 @@ public class HudRenderer extends HudComponent {
                 new AltitudeIndicator(computer, dim), new PitchIndicator(computer, dim),
                 new ElytraHealthIndicator(computer, dim), new AlertIndicator(computer, dim),
                 new FlightModeIndicator(computer, dim)));
-        this.toDelete = new ArrayList<>();
+        this.toDelete = new ArrayList<>(components.size());
     }
 
     public static FlightComputer getComputer() {
@@ -99,8 +99,9 @@ public class HudRenderer extends HudComponent {
             }
         }
 
-        components.removeAll(toDelete);
-        toDelete.clear();
+        if (components.removeAll(toDelete)) {
+            toDelete.clear();
+        }
 
         context.getMatrices().pop();
     }

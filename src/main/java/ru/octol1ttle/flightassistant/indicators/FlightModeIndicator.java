@@ -20,7 +20,7 @@ public class FlightModeIndicator extends HudComponent {
     public void render(DrawContext context, TextRenderer textRenderer) {
         float x = dim.lFrame + dim.wFrame * 0.2f;
         float y = dim.bFrame + 10;
-        if (computer.firework.lastTogaLock != null && computer.time.prevMillis - computer.firework.lastTogaLock < 1000) {
+        if (computer.firework.lastTogaLock != null && computer.time.prevMillis - computer.firework.lastTogaLock < 2000) {
             Text text = Text.translatable("flightassistant.toga_lock");
             drawHighlightedFont(textRenderer, context,
                     text,

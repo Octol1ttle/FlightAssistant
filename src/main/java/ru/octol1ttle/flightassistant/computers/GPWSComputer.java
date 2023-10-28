@@ -13,10 +13,9 @@ public class GPWSComputer {
     public static final int MAX_SAFE_SINK_RATE = 10;
     public static final float PITCH_CORRECT_THRESHOLD = 2.5f;
     private static final int MAX_SAFE_GROUND_SPEED = 15;
-    private static final int STATUS_ACCELERATION_NOT_AVAILABLE = -1;
-    private static final int STATUS_FALL_DISTANCE_TOO_LOW = -2;
-    private static final int STATUS_SPEED_SAFE = -3;
-    private static final int STATUS_NO_TERRAIN_AHEAD = -4;
+    private static final int STATUS_FALL_DISTANCE_TOO_LOW = -1;
+    private static final int STATUS_SPEED_SAFE = -2;
+    private static final int STATUS_NO_TERRAIN_AHEAD = -3;
     private static final float BLOCK_PITCH_CONTROL_THRESHOLD = 5.0f;
     private static final float TERRAIN_RAYCAST_AHEAD_SECONDS = 10.0f;
     private final FlightComputer computer;
@@ -64,9 +63,6 @@ public class GPWSComputer {
     }
 
     private float computeDescentImpactTime() {
-        if (computer.acceleration == null) {
-            return STATUS_ACCELERATION_NOT_AVAILABLE;
-        }
         if (computer.player.fallDistance <= 3) {
             return STATUS_FALL_DISTANCE_TOO_LOW;
         }
@@ -82,10 +78,6 @@ public class GPWSComputer {
     }
 
     private float computeTerrainImpactTime() {
-        if (computer.acceleration == null) {
-            return STATUS_ACCELERATION_NOT_AVAILABLE;
-        }
-
         Vec3d accelerationVector = computer.acceleration.multiply(TICKS_PER_SECOND);
         Vec3d end = computer.position.add(computer.velocityPerSecond.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS).add(accelerationVector.multiply(Math.pow(TERRAIN_RAYCAST_AHEAD_SECONDS, 2)).multiply(0.5f)));
 
@@ -105,11 +97,17 @@ public class GPWSComputer {
     }
 
     private float getTimeWithAcceleration(double initialSpeed, double acceleration, double path) {
+        if (acceleration <= 0.0) {
+            return (float) (path / initialSpeed);
+        }
         return (float) ((-initialSpeed + Math.sqrt(Math.pow(initialSpeed, 2) + 2 * acceleration * path))
                 / acceleration);
     }
 
     private float getSpeedWithAcceleration(double initialSpeed, double acceleration, double time) {
+        if (acceleration <= 0.0) {
+            return (float) initialSpeed;
+        }
         return (float) (initialSpeed + acceleration * time);
     }
 }

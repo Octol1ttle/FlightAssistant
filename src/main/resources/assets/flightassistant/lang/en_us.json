@@ -10,13 +10,18 @@
   "alerts.flightassistant.sink_rate": "SINK RATE",
   "alerts.flightassistant.stall": "STALL",
   "alerts.flightassistant.terrain_ahead": "TERRAIN AHEAD",
+
   "alerts.flightassistant.internal_mod_error": "INTERNAL MOD ERROR",
+  "alerts.flightassistant.elytra_health_low": "ELYTRA HEALTH LOW",
 
   "alerts.flightassistant.nav.approaching_void_damage_level": "APPROACHING VOID DAMAGE LEVEL",
   "alerts.flightassistant.nav.reached_void_damage_level": "REACHED VOID DAMAGE LEVEL",
   "alerts.flightassistant.firework.delayed_response": "FRWK DELAYED RESPONSE",
   "alerts.flightassistant.firework.no_response": "FRWK NO RESPONSE",
   "alerts.flightassistant.firework.no_fireworks": "NO FRWKS IN HOTBAR",
+  "alerts.flightassistant.firework.low_count": "FRWK CNT BELOW 24",
+  "alerts.flightassistant.firework.count_zero": "FRWK CNT AT ZERO",
+
   "flightassistant.toga_lock": "TOGA LK",
   "flightassistant.thrust_mode_speed": "SPD %s",
   "flightassistant.thrust_mode_speed_not_selected": "SPD NOT SEL",

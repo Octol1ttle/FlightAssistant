@@ -1,4 +1,4 @@
-package ru.octol1ttle.flightassistant.alerts;
+package ru.octol1ttle.flightassistant.alerts.other;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -7,6 +7,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
+import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
+import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.computers.FlightComputer;
 import ru.octol1ttle.flightassistant.computers.GPWSComputer;
 import ru.octol1ttle.flightassistant.computers.StallComputer;

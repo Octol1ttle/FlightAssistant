@@ -11,7 +11,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import ru.octol1ttle.flightassistant.FlightAssistant;
 
@@ -34,8 +33,7 @@ public class FlightComputer {
     public Vec3d position;
     public Vec3d velocity;
     public Vec3d velocityPerSecond;
-    @Nullable
-    public Vec3d acceleration;
+    public Vec3d acceleration = Vec3d.ZERO;
     public float speed;
     public float pitch;
     public float yaw;
@@ -102,12 +100,13 @@ public class FlightComputer {
             return;
         }
 
-        gpws.tick();
-        autoflight.tick();
-        alert.tick();
         stall.tick();
+        gpws.tick();
         voidDamage.tick();
         firework.tick();
+        autoflight.tick();
+
+        alert.tick();
     }
 
     public void updateRoll(Matrix3f normal) {
@@ -190,7 +189,7 @@ public class FlightComputer {
 
     private float computeDistanceFromGround(float altitude,
                                             Integer groundLevel) {
-        return Math.max(-64f, altitude - groundLevel);
+        return Math.max(0.0f, altitude - groundLevel);
     }
 
     private float computeAltitude() {
