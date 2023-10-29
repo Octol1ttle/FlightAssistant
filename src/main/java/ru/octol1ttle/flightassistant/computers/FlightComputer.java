@@ -24,7 +24,7 @@ public class FlightComputer {
     public final TimeComputer time;
     public final StallComputer stall;
     public final VoidDamageLevelComputer voidDamage;
-    public final FireworkManager firework;
+    public final FireworkController firework;
     public final PitchController pitchControl;
     public final AlertController alert;
     @NotNull
@@ -59,7 +59,7 @@ public class FlightComputer {
         this.autoflight = new AutoFlightComputer(this);
         this.stall = new StallComputer(this);
         this.voidDamage = new VoidDamageLevelComputer(this);
-        this.firework = new FireworkManager(this);
+        this.firework = new FireworkController(this);
         this.time = new TimeComputer();
         this.pitchControl = new PitchController(this);
         this.alert = new AlertController(this, mc.getSoundManager());

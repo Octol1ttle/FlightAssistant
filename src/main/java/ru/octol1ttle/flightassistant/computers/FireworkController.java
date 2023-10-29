@@ -8,7 +8,7 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.Nullable;
 
-public class FireworkManager {
+public class FireworkController {
     private final FlightComputer computer;
     public int safeFireworkCount;
     public boolean fireworkResponded = true;
@@ -17,8 +17,9 @@ public class FireworkManager {
     @Nullable
     public Float lastTogaLock;
     public boolean noFireworks;
+    public boolean unsafeFireworks;
 
-    public FireworkManager(FlightComputer computer) {
+    public FireworkController(FlightComputer computer) {
         this.computer = computer;
     }
 
@@ -97,7 +98,7 @@ public class FireworkManager {
         return false;
     }
 
-    private boolean isFireworkSafe(ItemStack stack) {
+    public boolean isFireworkSafe(ItemStack stack) {
         if (!(stack.getItem() instanceof FireworkRocketItem)) {
             return false;
         }

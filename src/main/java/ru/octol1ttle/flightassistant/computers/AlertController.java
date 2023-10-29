@@ -13,6 +13,7 @@ import ru.octol1ttle.flightassistant.alerts.firework.FireworkCountZeroAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkDelayedResponseAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkLowCountAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkNoResponseAlert;
+import ru.octol1ttle.flightassistant.alerts.firework.FireworkUnsafeAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.ApproachingVoidDamageLevelAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveDescentAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveTerrainClosureAlert;
@@ -37,6 +38,7 @@ public class AlertController {
                 new InternalErrorAlert(computer),
                 new ApproachingVoidDamageLevelAlert(computer),
                 new ElytraHealthLowAlert(computer),
+                new FireworkUnsafeAlert(computer),
                 new FireworkCountZeroAlert(computer),
                 new FireworkNoResponseAlert(computer), new FireworkDelayedResponseAlert(computer),
                 new FireworkLowCountAlert(computer),

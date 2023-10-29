@@ -21,6 +21,7 @@
   "alerts.flightassistant.firework.no_fireworks": "НЕТ ФРВКОВ НА ПАНЕЛИ БЫСТР. ДОСТУПА",
   "alerts.flightassistant.firework.low_count": "КОЛ-ВО ФРВКОВ НИЖЕ 24",
   "alerts.flightassistant.firework.count_zero": "КОЛ-ВО ФРВКОВ НА НУЛЕ",
+  "alerts.flightassistant.firework.unsafe": "ФРВК ВЗРЫВООПАСЕН",
 
   "flightassistant.toga_lock": "МАКС. ТЯГА",
   "flightassistant.thrust_mode_speed": "СКОР %s",

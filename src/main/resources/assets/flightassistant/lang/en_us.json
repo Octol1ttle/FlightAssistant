@@ -21,6 +21,7 @@
   "alerts.flightassistant.firework.no_fireworks": "NO FRWKS IN HOTBAR",
   "alerts.flightassistant.firework.low_count": "FRWK CNT BELOW 24",
   "alerts.flightassistant.firework.count_zero": "FRWK CNT AT ZERO",
+  "alerts.flightassistant.firework.unsafe": "FRWK UNSAFE (EXPLOSIVE)",
 
   "flightassistant.toga_lock": "TOGA LK",
   "flightassistant.thrust_mode_speed": "SPD %s",
