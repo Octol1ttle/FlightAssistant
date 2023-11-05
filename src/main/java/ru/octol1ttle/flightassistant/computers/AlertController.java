@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.client.sound.SoundManager;
 import ru.octol1ttle.flightassistant.AlertSoundInstance;
 import ru.octol1ttle.flightassistant.FlightAssistant;
+import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.autoflight.ATHRNoFireworksInHotbarAlert;
@@ -48,6 +49,18 @@ public class AlertController {
     }
 
     public void tick() {
+        if (HudComponent.CONFIG == null) { // HUD hidden
+            for (AbstractAlert alert : activeAlerts) {
+                alert.played = false;
+
+                if (alert.soundInstance != null) {
+                    manager.stop(alert.soundInstance);
+                    alert.soundInstance = null;
+                }
+            }
+            return;
+        }
+
         for (AbstractAlert alert : allAlerts) {
             try {
                 if (alert.isTriggered()) {
@@ -112,7 +125,7 @@ public class AlertController {
                 }
             }
 
-            if (interrupt || alert.played || alert.dismissed) {
+            if (interrupt || alert.played && !data.repeat() || alert.dismissed) {
                 continue;
             }
 

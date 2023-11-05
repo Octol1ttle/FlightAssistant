@@ -19,7 +19,7 @@ public class ElytraHealthLowAlert extends AbstractAlert {
 
     @Override
     public boolean isTriggered() {
-        return computer.elytraHealth <= 5.0f;
+        return computer.elytraHealth != null && computer.elytraHealth <= 5.0f;
     }
 
     @Override

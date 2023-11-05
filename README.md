@@ -5,10 +5,10 @@
 <p align=center>
     <a href="https://modrinth.com/mod/flightassistant">
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/available/modrinth_vector.svg"
-            alt="Available on Modrinth"></img></a>
+            alt="Available on Modrinth"></a>
     <a href="https://modrinth.com/mod/fabric-api/">
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_vector.svg"
-            alt="Requires Fabric API"></img></a>
+            alt="Requires Fabric API"></a>
     <!-- uncomment if Forge version is released (https://github.com/Octol1ttle/FlightAssistant/pull/2#discussion_r1370700775)
     <a href="https://modrinth.com/mod/flightassistant/versions?l=forge">
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/supported/forge_vector.svg"
@@ -26,7 +26,7 @@
 - Flight HUD
 - Stall protection<sup>1</sup>, warning and automatic recovery<sup>2</sup>
 - Ground Proximity Warning System (GPWS):
-  - Sinkrate warning, protection<sup>1</sup> and automatic recovery<sup>2</sup>
+  - Sinkrate warning, protection<sup>1</sup> and automatic recovery
   - Unsafe terrain clearance warning, protection<sup>1</sup> and automatic recovery<sup>2</sup>
 - Autopilot systems:
   - Flight Planner
@@ -42,13 +42,13 @@
   - Passengers dismounted mid-flight
 
 <sup>1</sup> Protection via blocked pitch changes<br>
-<sup>2</sup> Automatic recovery via automatic pitch changes and firework usage (2.0 only, when applicable)
+<sup>2</sup> Automatic recovery via automatic pitch changes and firework usage
 
 ## HUD Features
 
 <details>
     <summary>Diagram</summary>
-    <img src="images/diagram.png"></img>
+    <img src="images/diagram.png">
 </details>
 
 1. Heading

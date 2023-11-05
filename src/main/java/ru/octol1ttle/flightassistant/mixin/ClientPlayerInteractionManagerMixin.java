@@ -26,9 +26,9 @@ public class ClientPlayerInteractionManagerMixin {
             return;
         }
 
+        computer.firework.unsafeFireworks = !computer.firework.isFireworkSafe(stack);
 
-        if (!computer.firework.isFireworkSafe(stack)) {
-            computer.firework.unsafeFireworks = true;
+        if (computer.firework.unsafeFireworks) {
             cir.setReturnValue(ActionResult.FAIL);
         }
     }

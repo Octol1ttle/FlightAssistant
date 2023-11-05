@@ -31,7 +31,7 @@ public class ExcessiveDescentAlert extends AbstractAlert {
 
     @Override
     public boolean isTriggered() {
-        return computer.gpws.descentImpactTime >= 0.0f;
+        return computer.pitch < 0 && computer.gpws.descentImpactTime >= 0.0f;
     }
 
     @Override
