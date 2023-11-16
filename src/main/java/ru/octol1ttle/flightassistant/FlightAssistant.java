@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
 import ru.octol1ttle.flightassistant.commands.SetAutoThrustSpeedCommand;
 import ru.octol1ttle.flightassistant.commands.SwitchDisplayModeCommand;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.config.HudConfig;
 import ru.octol1ttle.flightassistant.config.SettingsConfig;
 import ru.octol1ttle.flightassistant.config.loader.ConfigLoader;
@@ -76,18 +76,18 @@ public class FlightAssistant implements ClientModInitializer {
                 CONFIG_SETTINGS.toggleDisplayMode(client);
             }
 
-            FlightComputer computer = HudRenderer.getComputer();
-            if (computer != null) {
+            ComputerHost host = HudRenderer.getHost();
+            if (host != null) {
                 while (toggleAutoThrust.wasPressed()) {
-                    computer.autoflight.autoThrustEnabled = !computer.autoflight.autoThrustEnabled;
+                    host.autoflight.autoThrustEnabled = !host.autoflight.autoThrustEnabled;
                 }
 
                 while (dismissMasterWarning.wasPressed()) {
-                    computer.alert.dismiss(ECAMSoundData.MASTER_WARNING);
+                    host.alert.dismiss(ECAMSoundData.MASTER_WARNING);
                 }
 
                 while (dismissMasterCaution.wasPressed()) {
-                    computer.alert.dismiss(ECAMSoundData.MASTER_CAUTION);
+                    host.alert.dismiss(ECAMSoundData.MASTER_CAUTION);
                 }
             }
         });

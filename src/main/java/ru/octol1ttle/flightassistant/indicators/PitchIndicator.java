@@ -5,30 +5,36 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.RotationAxis;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
+import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
+import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
 
 public class PitchIndicator extends HudComponent {
     public static final int DANGEROUS_DOWN_PITCH = -40;
     private final Dimensions dim;
-    private final FlightComputer computer;
+    private final AirDataComputer data;
+    private final StallComputer stall;
+    private final VoidLevelComputer voidLevel;
     private final PitchIndicatorData pitchData = new PitchIndicatorData();
 
-    public PitchIndicator(FlightComputer computer, Dimensions dim) {
-        this.computer = computer;
+    public PitchIndicator(Dimensions dim, AirDataComputer data, StallComputer stall, VoidLevelComputer voidLevel) {
         this.dim = dim;
+        this.data = data;
+        this.stall = stall;
+        this.voidLevel = voidLevel;
     }
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
         pitchData.update(dim);
 
-        float horizonOffset = computer.pitch * dim.degreesPerPixel;
+        float horizonOffset = data.pitch * dim.degreesPerPixel;
         float yHorizon = dim.yMid + horizonOffset;
 
         float a = dim.yMid;
         float b = dim.xMid;
 
-        float roll = computer.roll * (CONFIG.pitchLadder_reverseRoll ? -1 : 1);
+        float roll = data.roll * (CONFIG.pitchLadder_reverseRoll ? -1 : 1);
 
         if (CONFIG.pitchLadder_showRoll) {
             context.getMatrices().push();
@@ -43,8 +49,8 @@ public class PitchIndicator extends HudComponent {
 
         drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumClimbAngle, CONFIG.color);
         drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumGlideAngle, CONFIG.color);
-        drawReferenceMark(context, yHorizon, computer.stall.maximumSafePitch, CONFIG.alertColor);
-        drawReferenceMark(context, yHorizon, computer.voidDamage.minimumSafePitch, CONFIG.alertColor);
+        drawReferenceMark(context, yHorizon, stall.maximumSafePitch, CONFIG.alertColor);
+        drawReferenceMark(context, yHorizon, voidLevel.minimumSafePitch, CONFIG.alertColor);
 
         if (CONFIG.pitchLadder_showHorizon) {
             pitchData.l1 -= pitchData.margin;

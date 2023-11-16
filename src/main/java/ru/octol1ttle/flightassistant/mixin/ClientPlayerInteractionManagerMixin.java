@@ -11,24 +11,25 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.octol1ttle.flightassistant.HudRenderer;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.ComputerHost;
 
 @Mixin(ClientPlayerInteractionManager.class)
 public class ClientPlayerInteractionManagerMixin {
     @Inject(method = "interactItem", at = @At("HEAD"), cancellable = true)
     public void disallowUnsafeFireworks(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack stack = player.getStackInHand(hand);
-        FlightComputer computer = HudRenderer.getComputer();
-        if (!player.isFallFlying() || !(stack.getItem() instanceof FireworkRocketItem) || computer == null) {
-            if (computer != null) {
-                computer.firework.unsafeFireworks = false;
-            }
+        ComputerHost host = HudRenderer.getHost();
+        if (host == null || host.faulted.contains(host.firework)) {
+            return;
+        }
+        if (!player.isFallFlying() || !(stack.getItem() instanceof FireworkRocketItem)) {
+            host.firework.unsafeFireworks = false;
             return;
         }
 
-        computer.firework.unsafeFireworks = !computer.firework.isFireworkSafe(stack);
+        host.firework.unsafeFireworks = !host.firework.isFireworkSafe(stack);
 
-        if (computer.firework.unsafeFireworks) {
+        if (host.firework.unsafeFireworks) {
             cir.setReturnValue(ActionResult.FAIL);
         }
     }

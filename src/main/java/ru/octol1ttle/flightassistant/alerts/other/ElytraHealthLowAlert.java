@@ -8,18 +8,18 @@ import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 
 public class ElytraHealthLowAlert extends AbstractAlert {
-    private final FlightComputer computer;
+    private final AirDataComputer data;
 
-    public ElytraHealthLowAlert(FlightComputer computer) {
-        this.computer = computer;
+    public ElytraHealthLowAlert(AirDataComputer data) {
+        this.data = data;
     }
 
     @Override
     public boolean isTriggered() {
-        return computer.elytraHealth != null && computer.elytraHealth <= 5.0f;
+        return data.elytraHealth != null && data.elytraHealth <= 5.0f;
     }
 
     @Override

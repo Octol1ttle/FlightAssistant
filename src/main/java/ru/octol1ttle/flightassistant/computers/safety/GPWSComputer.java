@@ -1,15 +1,18 @@
-package ru.octol1ttle.flightassistant.computers;
+package ru.octol1ttle.flightassistant.computers.safety;
 
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
+import ru.octol1ttle.flightassistant.computers.ITickableComputer;
+import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
-public class GPWSComputer {
+public class GPWSComputer implements ITickableComputer {
     public static final int MAX_SAFE_SINK_RATE = 10;
     public static final float PITCH_CORRECT_THRESHOLD = 2.5f;
     private static final int MAX_SAFE_GROUND_SPEED = 15;
@@ -18,25 +21,21 @@ public class GPWSComputer {
     private static final int STATUS_NO_TERRAIN_AHEAD = -3;
     private static final float BLOCK_PITCH_CONTROL_THRESHOLD = 5.0f;
     private static final float TERRAIN_RAYCAST_AHEAD_SECONDS = 10.0f;
-    private final FlightComputer computer;
+    private final AirDataComputer data;
+    public PitchController pitch;
     public float descentImpactTime;
     public float terrainImpactTime;
 
-    public GPWSComputer(FlightComputer computer) {
-        this.computer = computer;
+    public GPWSComputer(AirDataComputer data) {
+        this.data = data;
     }
 
     public void tick() {
         descentImpactTime = this.computeDescentImpactTime();
         terrainImpactTime = this.computeTerrainImpactTime();
 
-        computer.pitchControl.forceLevelOff = shouldLevelOff();
-        if (computer.pitchControl.forceLevelOff) {
-            // Looks like it's trying to kill us.
-            // should this trigger alternate law?
-            computer.autoflight.disconnectAutopilot(true);
-        }
-        computer.pitchControl.forceClimb = shouldClimb();
+        pitch.forceLevelOff = shouldLevelOff();
+        pitch.forceClimb = shouldClimb();
     }
 
     public boolean shouldLevelOff() {
@@ -63,13 +62,13 @@ public class GPWSComputer {
     }
 
     private float computeDescentImpactTime() {
-        if (computer.player.fallDistance <= 3) {
+        if (data.fallDistance <= 3) {
             return STATUS_FALL_DISTANCE_TOO_LOW;
         }
 
-        double initialSpeed = -computer.velocityPerSecond.y;
-        double acceleration = -computer.acceleration.y * TICKS_PER_SECOND;
-        float time = getTimeWithAcceleration(initialSpeed, acceleration, computer.distanceFromGround);
+        double initialSpeed = -data.velocityPerSecond.y;
+        double acceleration = -data.acceleration.y * TICKS_PER_SECOND;
+        float time = getTimeWithAcceleration(initialSpeed, acceleration, data.distanceFromGround);
 
         if (getSpeedWithAcceleration(initialSpeed, acceleration, time) < MAX_SAFE_SINK_RATE) {
             return STATUS_SPEED_SAFE;
@@ -78,17 +77,17 @@ public class GPWSComputer {
     }
 
     private float computeTerrainImpactTime() {
-        Vec3d accelerationVector = computer.acceleration.multiply(TICKS_PER_SECOND);
-        Vec3d end = computer.position.add(computer.velocityPerSecond.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS).add(accelerationVector.multiply(Math.pow(TERRAIN_RAYCAST_AHEAD_SECONDS, 2)).multiply(0.5f)));
+        Vec3d accelerationVector = data.acceleration.multiply(TICKS_PER_SECOND);
+        Vec3d end = data.position.add(data.velocityPerSecond.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS).add(accelerationVector.multiply(Math.pow(TERRAIN_RAYCAST_AHEAD_SECONDS, 2)).multiply(0.5f)));
 
-        BlockHitResult result = computer.player.getWorld().raycast(new RaycastContext(computer.position, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, computer.player));
+        BlockHitResult result = data.world.raycast(new RaycastContext(data.position, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player));
         if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP || result.getSide() == Direction.DOWN) {
             return STATUS_NO_TERRAIN_AHEAD;
         }
 
-        double initialSpeed = computer.velocityPerSecond.horizontalLength();
+        double initialSpeed = data.velocityPerSecond.horizontalLength();
         double acceleration = accelerationVector.horizontalLength();
-        float time = getTimeWithAcceleration(initialSpeed, acceleration, result.getPos().subtract(computer.position).horizontalLength());
+        float time = getTimeWithAcceleration(initialSpeed, acceleration, result.getPos().subtract(data.position).horizontalLength());
 
         if (getSpeedWithAcceleration(initialSpeed, acceleration, time) < MAX_SAFE_GROUND_SPEED) {
             return STATUS_SPEED_SAFE;
@@ -109,5 +108,10 @@ public class GPWSComputer {
             return (float) initialSpeed;
         }
         return (float) (initialSpeed + acceleration * time);
+    }
+
+    @Override
+    public String getId() {
+        return "gpws";
     }
 }

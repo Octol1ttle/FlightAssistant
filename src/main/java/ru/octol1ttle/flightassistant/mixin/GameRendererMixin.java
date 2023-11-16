@@ -25,9 +25,9 @@ public class GameRendererMixin {
                              MatrixStack matrices,
                              CallbackInfo ci
     ) {
-        if (HudRenderer.getComputer() != null) {
+        if (HudRenderer.getHost() != null) {
             Matrix3f inverseViewRotationMatrix = RenderSystem.getInverseViewRotationMatrix();
-            HudRenderer.getComputer().updateRoll(inverseViewRotationMatrix.invert());
+            HudRenderer.getHost().data.updateRoll(inverseViewRotationMatrix.invert());
         }
     }
 }

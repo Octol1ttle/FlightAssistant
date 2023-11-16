@@ -4,15 +4,18 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
+import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 
 public class FlightPathIndicator extends HudComponent {
     private final Dimensions dim;
-    private final FlightComputer computer;
+    private final AirDataComputer data;
+    private final GPWSComputer gpws;
 
-    public FlightPathIndicator(FlightComputer computer, Dimensions dim) {
-        this.computer = computer;
+    public FlightPathIndicator(Dimensions dim, AirDataComputer data, GPWSComputer gpws) {
         this.dim = dim;
+        this.data = data;
+        this.gpws = gpws;
     }
 
     @Override
@@ -21,8 +24,8 @@ public class FlightPathIndicator extends HudComponent {
             return;
         }
 
-        float deltaPitch = computer.pitch - computer.flightPitch;
-        float deltaHeading = computer.flightHeading - computer.heading;
+        float deltaPitch = data.pitch - data.flightPitch;
+        float deltaHeading = data.flightHeading - data.heading;
 
         if (deltaHeading < -180) {
             deltaHeading += 360;
@@ -43,7 +46,7 @@ public class FlightPathIndicator extends HudComponent {
         float t = y - 3 - CONFIG.halfThickness;
         float b = y + 3 - CONFIG.halfThickness;
 
-        int color = computer.gpws.getGPWSLampColor();
+        int color = gpws.getGPWSLampColor();
         drawVerticalLine(context, l, t, b, color);
         drawVerticalLine(context, r, t, b, color);
 

@@ -8,21 +8,21 @@ import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
 
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
 public class FireworkCountZeroAlert extends AbstractAlert {
 
-    private final FlightComputer computer;
+    private final FireworkController firework;
 
-    public FireworkCountZeroAlert(FlightComputer computer) {
-        this.computer = computer;
+    public FireworkCountZeroAlert(FireworkController firework) {
+        this.firework = firework;
     }
 
     @Override
     public boolean isTriggered() {
-        return computer.firework.safeFireworkCount <= 0;
+        return firework.safeFireworkCount <= 0;
     }
 
     @Override

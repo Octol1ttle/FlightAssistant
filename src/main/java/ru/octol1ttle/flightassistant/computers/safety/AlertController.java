@@ -1,4 +1,4 @@
-package ru.octol1ttle.flightassistant.computers;
+package ru.octol1ttle.flightassistant.computers.safety;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,6 +10,7 @@ import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.autoflight.ATHRNoFireworksInHotbarAlert;
+import ru.octol1ttle.flightassistant.alerts.fault.ComputerFaultAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkCountZeroAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkDelayedResponseAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkLowCountAlert;
@@ -19,31 +20,32 @@ import ru.octol1ttle.flightassistant.alerts.nav.ApproachingVoidDamageLevelAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveDescentAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveTerrainClosureAlert;
 import ru.octol1ttle.flightassistant.alerts.other.ElytraHealthLowAlert;
-import ru.octol1ttle.flightassistant.alerts.other.InternalErrorAlert;
 import ru.octol1ttle.flightassistant.alerts.other.StallAlert;
+import ru.octol1ttle.flightassistant.computers.ComputerHost;
+import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 
-public class AlertController {
+public class AlertController implements ITickableComputer {
     public final List<AbstractAlert> activeAlerts;
-    private final FlightComputer computer;
+    private final ComputerHost host;
     private final SoundManager manager;
     private final List<AbstractAlert> allAlerts;
     private final List<AbstractAlert> toDelete;
 
-    public AlertController(FlightComputer computer, SoundManager manager) {
-        this.computer = computer;
+    public AlertController(ComputerHost host, SoundManager manager) {
+        this.host = host;
         this.manager = manager;
         // TODO: ECAM actions
         allAlerts = new ArrayList<>(List.of(
-                new StallAlert(computer),
-                new ExcessiveDescentAlert(computer), new ExcessiveTerrainClosureAlert(computer), // GPWS
-                new InternalErrorAlert(computer),
-                new ApproachingVoidDamageLevelAlert(computer),
-                new ElytraHealthLowAlert(computer),
-                new FireworkUnsafeAlert(computer),
-                new FireworkCountZeroAlert(computer),
-                new FireworkNoResponseAlert(computer), new FireworkDelayedResponseAlert(computer),
-                new FireworkLowCountAlert(computer),
-                new ATHRNoFireworksInHotbarAlert(computer)));
+                new StallAlert(this.host.stall, this.host.data),
+                new ExcessiveDescentAlert(this.host.data, this.host.gpws), new ExcessiveTerrainClosureAlert(this.host.gpws),
+                new ComputerFaultAlert(this.host),
+                new ApproachingVoidDamageLevelAlert(this.host.voidLevel),
+                new ElytraHealthLowAlert(this.host.data),
+                new FireworkUnsafeAlert(this.host.firework),
+                new FireworkCountZeroAlert(this.host.firework),
+                new FireworkNoResponseAlert(this.host.firework), new FireworkDelayedResponseAlert(this.host.firework),
+                new FireworkLowCountAlert(this.host.firework),
+                new ATHRNoFireworksInHotbarAlert(this.host.firework)));
         activeAlerts = new ArrayList<>(allAlerts.size());
         toDelete = new ArrayList<>(allAlerts.size());
     }
@@ -72,7 +74,6 @@ public class AlertController {
             } catch (Exception e) {
                 FlightAssistant.LOGGER.error("Exception triggering alert", e);
                 toDelete.add(alert);
-                computer.internalError = true;
             }
 
             if (!activeAlerts.contains(alert)) {
@@ -129,7 +130,7 @@ public class AlertController {
                 continue;
             }
 
-            alert.soundInstance = new AlertSoundInstance(data.sound(), data.volume(), computer.player, data.repeat());
+            alert.soundInstance = new AlertSoundInstance(data.sound(), data.volume(), host.data.player, data.repeat());
             manager.play(alert.soundInstance);
             alert.played = true;
 
@@ -156,5 +157,10 @@ public class AlertController {
                 return;
             }
         }
+    }
+
+    @Override
+    public String getId() {
+        return "alert_mgr";
     }
 }

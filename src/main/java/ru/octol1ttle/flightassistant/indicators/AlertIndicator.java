@@ -5,33 +5,34 @@ import net.minecraft.client.gui.DrawContext;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.TimeComputer;
+import ru.octol1ttle.flightassistant.computers.safety.AlertController;
 
 public class AlertIndicator extends HudComponent {
     private final Dimensions dim;
-    private final FlightComputer computer;
+    private final AlertController alert;
+    private final TimeComputer time;
 
-    public AlertIndicator(FlightComputer computer, Dimensions dim) {
+    public AlertIndicator(Dimensions dim, AlertController alert, TimeComputer time) {
         this.dim = dim;
-        this.computer = computer;
+        this.alert = alert;
+        this.time = time;
     }
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
         boolean renderedCentered = false;
         float x = dim.lFrame + 5;
-        float xRight = dim.rFrame - 5;
         float y = dim.tFrame + 15;
-        float yRight = y - 10;
 
-        for (AbstractAlert alert : computer.alert.activeAlerts) {
+        for (AbstractAlert alert : alert.activeAlerts) {
             if (!renderedCentered) {
                 renderedCentered = alert.renderCentered(textRenderer, context, dim.wScreen,
-                        dim.hScreen * 0.5f + 10, computer.time.highlight);
+                        dim.hScreen * 0.5f + 10, time.highlight);
             }
 
             if (!alert.hidden) {
-                y += 10 * alert.renderECAM(textRenderer, context, x, y, computer.time.highlight);
+                y += 10 * alert.renderECAM(textRenderer, context, x, y, time.highlight);
             }
         }
     }

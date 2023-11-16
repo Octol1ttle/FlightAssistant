@@ -6,6 +6,7 @@
   "client": [
     "ClientPlayerInteractionManagerMixin",
     "EntityMixin",
+    "FireworkRocketEntityMixin",
     "GameRendererMixin",
     "InGameHudMixin",
     "LivingEntityMixin"

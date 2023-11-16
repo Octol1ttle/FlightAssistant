@@ -1,14 +1,24 @@
-package ru.octol1ttle.flightassistant.computers;
+package ru.octol1ttle.flightassistant.computers.autoflight;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.FlightAssistant;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
+import ru.octol1ttle.flightassistant.computers.IRenderTickableComputer;
+import ru.octol1ttle.flightassistant.computers.TimeComputer;
+import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
+import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
+import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
 import ru.octol1ttle.flightassistant.indicators.PitchIndicator;
 
-public class PitchController {
+public class PitchController implements IRenderTickableComputer {
     public static final float CLIMB_PITCH = -55.0f;
-    private final FlightComputer computer;
+    private final AirDataComputer data;
+    private final StallComputer stall;
+    private final TimeComputer time;
+    private final VoidLevelComputer voidLevel;
+    private final GPWSComputer gpws;
     /**
      * USE MINECRAFT PITCH (minus is up and plus is down)
      **/
@@ -16,29 +26,33 @@ public class PitchController {
     public boolean forceLevelOff = false;
     public boolean forceClimb = false;
 
-    public PitchController(FlightComputer computer) {
-        this.computer = computer;
+    public PitchController(AirDataComputer data, StallComputer stall, TimeComputer time, VoidLevelComputer voidLevel, GPWSComputer gpws) {
+        this.data = data;
+        this.stall = stall;
+        this.time = time;
+        this.voidLevel = voidLevel;
+        this.gpws = gpws;
     }
 
-    public void tick(float delta) {
-        if (computer.pitch > computer.stall.maximumSafePitch) {
-            smoothSetPitch(-computer.stall.maximumSafePitch, delta);
+    public void tick() {
+        if (data.pitch > stall.maximumSafePitch) {
+            smoothSetPitch(-stall.maximumSafePitch, time.deltaTime);
             return;
         }
-        if (computer.pitch < computer.voidDamage.minimumSafePitch) {
-            smoothSetPitch(-computer.voidDamage.minimumSafePitch, delta);
+        if (data.pitch < voidLevel.minimumSafePitch) {
+            smoothSetPitch(-voidLevel.minimumSafePitch, time.deltaTime);
             return;
         }
         if (forceLevelOff) {
-            smoothSetPitch(0.0f, MathHelper.clamp(delta / computer.gpws.descentImpactTime, 0.001f, 1.0f));
+            smoothSetPitch(0.0f, MathHelper.clamp(time.deltaTime / gpws.descentImpactTime, 0.001f, 1.0f));
             return;
         }
         if (forceClimb) {
-            smoothSetPitch(CLIMB_PITCH, MathHelper.clamp(delta / computer.gpws.terrainImpactTime, 0.001f, 1.0f));
+            smoothSetPitch(CLIMB_PITCH, MathHelper.clamp(time.deltaTime / gpws.terrainImpactTime, 0.001f, 1.0f));
             return;
         }
 
-        smoothSetPitch(targetPitch, delta);
+        smoothSetPitch(targetPitch, time.deltaTime);
     }
 
     /**
@@ -53,11 +67,11 @@ public class PitchController {
         }
         checkFloatValidity(pitch, "Target pitch");
 
-        PlayerEntity player = computer.player;
+        PlayerEntity player = data.player;
         float difference = pitch - player.getPitch();
 
         if (difference < 0) { // going UP
-            pitch = MathHelper.clamp(pitch, -computer.stall.maximumSafePitch, 90.0f);
+            pitch = MathHelper.clamp(pitch, -stall.maximumSafePitch, 90.0f);
         }
         if (difference > 0) { // going DOWN
             pitch = MathHelper.clamp(pitch, -90.0f, -PitchIndicator.DANGEROUS_DOWN_PITCH);
@@ -82,5 +96,10 @@ public class PitchController {
             }
             throw new IllegalArgumentException();
         }
+    }
+
+    @Override
+    public String getId() {
+        return "pitch_ctl";
     }
 }

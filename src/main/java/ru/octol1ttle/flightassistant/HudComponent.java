@@ -12,10 +12,9 @@ import ru.octol1ttle.flightassistant.config.HudConfig;
 public abstract class HudComponent {
     public static HudConfig CONFIG;
 
-    public static int drawFont(TextRenderer textRenderer, DrawContext context, Text text, float x, float y,
-                               int color) {
+    public static void drawFont(TextRenderer textRenderer, DrawContext context, Text text, float x, float y,
+                                int color) {
         context.drawText(textRenderer, text, i(x), i(y), color, false);
-        return 1;
     }
 
     public static void fill(DrawContext context, float x1, float y1, float x2, float y2, int color) {
@@ -26,16 +25,15 @@ public abstract class HudComponent {
         return Math.round(f);
     }
 
-    public static int drawFont(TextRenderer textRenderer, DrawContext context, String text, float x, float y,
-                               int color) {
+    public static void drawFont(TextRenderer textRenderer, DrawContext context, String text, float x, float y,
+                                int color) {
         context.drawText(textRenderer, text, i(x), i(y), color, false);
-        return 1;
     }
 
     public static int drawHighlightedFont(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int highlightColor, boolean highlight) {
         if (highlight) {
             drawUnbatched(context, ctx -> {
-                HudComponent.fill(context, x - 2.0f, y - 1.0f, x + textRenderer.getWidth(text) + 0.5f, y + 8.0f, highlightColor);
+                HudComponent.fill(context, x - 2.0f, y - 1.0f, x + textRenderer.getWidth(text) + 1.5f, y + 8.0f, highlightColor);
                 HudComponent.drawFont(textRenderer, context, text, x, y, CONFIG.white);
             });
             return 1;
@@ -92,10 +90,22 @@ public abstract class HudComponent {
         context.getMatrices().pop();
     }
 
-    protected static void drawRightAlignedFont(TextRenderer textRenderer, DrawContext context, String s, float x,
+    protected static void drawRightAlignedFont(TextRenderer textRenderer, DrawContext context, Text text, float x,
                                         float y, int color) {
-        int w = textRenderer.getWidth(s);
-        drawFont(textRenderer, context, s, x - w, y, color);
+        int w = textRenderer.getWidth(text);
+        drawFont(textRenderer, context, text, x - w, y, color);
+    }
+
+    public static void drawRightAlignedHighlightedFont(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int highlightColor, boolean highlight) {
+        int w = textRenderer.getWidth(text);
+        if (highlight) {
+            drawUnbatched(context, ctx -> {
+                HudComponent.fill(context, x - w - 2.0f, y - 1.0f, x + 1.5f, y + 8.0f, highlightColor);
+                HudComponent.drawFont(textRenderer, context, text, x - w, y, CONFIG.white);
+            });
+            return;
+        }
+        HudComponent.drawFont(textRenderer, context, text, x - w, y, highlightColor);
     }
 
     protected static void drawHorizontalLineDashed(DrawContext context, float x1, float x2, float y,

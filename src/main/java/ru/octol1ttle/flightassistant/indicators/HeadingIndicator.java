@@ -5,16 +5,16 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 
 public class HeadingIndicator extends HudComponent {
 
     private final Dimensions dim;
-    private final FlightComputer computer;
+    private final AirDataComputer data;
 
-    public HeadingIndicator(FlightComputer computer, Dimensions dim) {
-        this.computer = computer;
+    public HeadingIndicator(Dimensions dim, AirDataComputer data) {
         this.dim = dim;
+        this.data = data;
     }
 
     @Override
@@ -24,11 +24,11 @@ public class HeadingIndicator extends HudComponent {
         float top = dim.tFrame - 10;
 
         float yText = top - 7;
-        float northOffset = computer.heading * dim.degreesPerPixel;
+        float northOffset = data.heading * dim.degreesPerPixel;
         float xNorth = dim.xMid - northOffset;
 
         if (CONFIG.heading_showReadout) {
-            drawFont(textRenderer, context, String.format("%03d", i(computer.heading)), dim.xMid - 8, yText, CONFIG.color);
+            drawFont(textRenderer, context, String.format("%03d", i(data.heading)), dim.xMid - 8, yText, CONFIG.color);
             drawBox(context, dim.xMid - 15, yText - 1.5f, 30, CONFIG.color);
         }
 

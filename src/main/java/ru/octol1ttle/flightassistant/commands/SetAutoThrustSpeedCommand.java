@@ -9,8 +9,8 @@ import ru.octol1ttle.flightassistant.HudRenderer;
 public class SetAutoThrustSpeedCommand implements Command<FabricClientCommandSource> {
     @Override
     public int run(CommandContext<FabricClientCommandSource> context) {
-        if (HudRenderer.getComputer() != null) {
-            HudRenderer.getComputer().autoflight.targetSpeed = IntegerArgumentType.getInteger(context, "targetSpeed");
+        if (HudRenderer.getHost() != null) {
+            HudRenderer.getHost().autoflight.targetSpeed = IntegerArgumentType.getInteger(context, "targetSpeed");
         }
         return 0;
     }

@@ -4,16 +4,16 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 
 public class LocationIndicator extends HudComponent {
 
-    private final FlightComputer computer;
     private final Dimensions dim;
+    private final AirDataComputer data;
 
-    public LocationIndicator(FlightComputer computer, Dimensions dim) {
-        this.computer = computer;
+    public LocationIndicator(Dimensions dim, AirDataComputer data) {
         this.dim = dim;
+        this.data = data;
     }
 
     @Override
@@ -25,8 +25,8 @@ public class LocationIndicator extends HudComponent {
         float x = dim.wScreen * CONFIG.location_x;
         float y = dim.hScreen * CONFIG.location_y;
 
-        int xLoc = i((float) computer.position.x);
-        int zLoc = i((float) computer.position.z);
+        int xLoc = i((float) data.position.x);
+        int zLoc = i((float) data.position.z);
 
         drawFont(textRenderer, context, String.format("%d / %d", xLoc, zLoc), x, y, CONFIG.color);
     }

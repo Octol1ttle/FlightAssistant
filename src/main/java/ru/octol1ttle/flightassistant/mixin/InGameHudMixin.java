@@ -19,9 +19,9 @@ public class InGameHudMixin {
 
     @Inject(method = "render", at = @At("TAIL"))
     private void render(DrawContext context, float tickDelta, CallbackInfo ci) {
-        if (HudRenderer.getComputer() != null) {
+        if (HudRenderer.getHost() != null) {
             HudRenderer.INSTANCE.render(context, client);
-            HudRenderer.getComputer().onRender();
+            HudRenderer.getHost().render();
         }
     }
 
@@ -30,9 +30,9 @@ public class InGameHudMixin {
         if (client.player == null) {
             return;
         }
-        if (HudRenderer.getComputer() == null) {
+        if (HudRenderer.getHost() == null) {
             HudRenderer.INSTANCE = new HudRenderer(client);
         }
-        HudRenderer.getComputer().tick();
+        HudRenderer.getHost().tick();
     }
 }

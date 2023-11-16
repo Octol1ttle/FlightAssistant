@@ -8,19 +8,19 @@ import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
-import ru.octol1ttle.flightassistant.computers.VoidDamageLevelComputer;
+import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
 
 public class ApproachingVoidDamageLevelAlert extends AbstractAlert {
-    private final FlightComputer computer;
 
-    public ApproachingVoidDamageLevelAlert(FlightComputer computer) {
-        this.computer = computer;
+    private final VoidLevelComputer voidLevel;
+
+    public ApproachingVoidDamageLevelAlert(VoidLevelComputer voidLevel) {
+        this.voidLevel = voidLevel;
     }
 
     @Override
     public boolean isTriggered() {
-        return computer.voidDamage.status >= VoidDamageLevelComputer.STATUS_APPROACHING_DAMAGE_LEVEL;
+        return voidLevel.status >= VoidLevelComputer.STATUS_APPROACHING_DAMAGE_LEVEL;
     }
 
     @Override
@@ -30,9 +30,9 @@ public class ApproachingVoidDamageLevelAlert extends AbstractAlert {
 
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
-        Text text = computer.voidDamage.status == VoidDamageLevelComputer.STATUS_REACHED_DAMAGE_LEVEL
-                ? Text.translatable("alerts.flightassistant.nav.reached_void_damage_level")
-                : Text.translatable("alerts.flightassistant.nav.approaching_void_damage_level");
+        Text text = voidLevel.status == VoidLevelComputer.STATUS_REACHED_DAMAGE_LEVEL
+                ? Text.translatable("alerts.flightassistant.reached_void_damage_level")
+                : Text.translatable("alerts.flightassistant.approaching_void_damage_level");
 
         return HudComponent.drawHighlightedFont(textRenderer, context, text, x, y,
                 HudComponent.CONFIG.alertColor,

@@ -10,26 +10,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.World;
 import org.joml.Matrix3f;
 import ru.octol1ttle.flightassistant.FlightAssistant;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
-public class FlightComputer {
-    @NotNull
-    public final MinecraftClient mc;
-    public final GPWSComputer gpws;
-    public final AutoFlightComputer autoflight;
-    public final TimeComputer time;
-    public final StallComputer stall;
-    public final VoidDamageLevelComputer voidDamage;
-    public final FireworkController firework;
-    public final PitchController pitchControl;
-    public final AlertController alert;
-    @NotNull
-    public PlayerEntity player;
-
+public class AirDataComputer implements ITickableComputer {
+    public final PlayerEntity player;
+    private final MinecraftClient mc;
     public Vec3d position;
     public Vec3d velocity;
     public Vec3d velocityPerSecond;
@@ -47,35 +36,24 @@ public class FlightComputer {
     public int groundLevel;
     public float distanceFromGround;
     public Float elytraHealth;
-    public int worldHeight;
-    public boolean internalError;
+    public float fallDistance;
+    public World world;
 
-    public FlightComputer(@NotNull MinecraftClient mc) {
+    public AirDataComputer(MinecraftClient mc, PlayerEntity player) {
         this.mc = mc;
-        assert mc.player != null;
-        this.player = mc.player;
+        this.player = player;
+    }
 
-        this.gpws = new GPWSComputer(this);
-        this.autoflight = new AutoFlightComputer(this);
-        this.stall = new StallComputer(this);
-        this.voidDamage = new VoidDamageLevelComputer(this);
-        this.firework = new FireworkController(this);
-        this.time = new TimeComputer();
-        this.pitchControl = new PitchController(this);
-        this.alert = new AlertController(this, mc.getSoundManager());
+    public boolean canAutomationsActivate() {
+        return player.isFallFlying() && mc.currentScreen == null && mc.getOverlay() == null;
     }
 
     public boolean isGround(BlockPos pos) {
-        assert mc.world != null;
-        BlockState block = mc.world.getBlockState(pos);
+        BlockState block = player.getWorld().getBlockState(pos);
         return !block.isAir();
     }
 
     public void tick() {
-        assert mc.player != null;
-        player = mc.player;
-
-        // TODO: sanity checks?
         position = player.getPos();
         if (velocity != null) {
             acceleration = player.getVelocity().subtract(velocity);
@@ -94,36 +72,12 @@ public class FlightComputer {
         flightYaw = computeFlightYaw(velocity, yaw);
         flightHeading = toHeading(flightYaw);
         elytraHealth = computeElytraHealth();
-        worldHeight = player.getWorld().getHeight();
-
-        if (!player.isFallFlying()) {
-            return;
-        }
-
-        stall.tick();
-        gpws.tick();
-        voidDamage.tick();
-        firework.tick();
-        autoflight.tick();
-
-        alert.tick();
+        fallDistance = player.fallDistance;
+        world = player.getWorld();
     }
 
     public void updateRoll(Matrix3f normal) {
         roll = computeRoll(normal);
-    }
-
-    public void onRender() {
-        time.tick();
-        if (!canAutomationsActivate()) {
-            return;
-        }
-
-        pitchControl.tick(time.deltaTime);
-    }
-
-    public boolean canAutomationsActivate() {
-        return player.isFallFlying() && mc.currentScreen == null && mc.getOverlay() == null;
     }
 
     private Float computeElytraHealth() {
@@ -206,5 +160,10 @@ public class FlightComputer {
 
     private float toHeading(float yawDegrees) {
         return yawDegrees + 180.0f;
+    }
+
+    @Override
+    public String getId() {
+        return "air_data";
     }
 }

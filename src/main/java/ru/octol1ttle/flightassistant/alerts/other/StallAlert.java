@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
-import ru.octol1ttle.flightassistant.computers.GPWSComputer;
-import ru.octol1ttle.flightassistant.computers.StallComputer;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
+import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
+import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
@@ -22,15 +22,17 @@ public class StallAlert extends AbstractAlert {
             0.75f,
             true
     );
-    private final FlightComputer computer;
+    private final StallComputer stall;
+    private final AirDataComputer data;
 
-    public StallAlert(FlightComputer computer) {
-        this.computer = computer;
+    public StallAlert(StallComputer stall, AirDataComputer data) {
+        this.stall = stall;
+        this.data = data;
     }
 
     @Override
     public boolean isTriggered() {
-        return computer.stall.stalling >= StallComputer.STATUS_APPROACHING_STALL;
+        return stall.stalling >= StallComputer.STATUS_APPROACHING_STALL;
     }
 
     @Override
@@ -43,7 +45,7 @@ public class StallAlert extends AbstractAlert {
         Text text = Text.translatable("alerts.flightassistant.stall");
         float startX = (width - textRenderer.getWidth(text)) * 0.5f;
         HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
-                -computer.velocityPerSecond.y >= GPWSComputer.MAX_SAFE_SINK_RATE ?
+                -data.velocityPerSecond.y >= GPWSComputer.MAX_SAFE_SINK_RATE ?
                         CONFIG.alertColor :
                         CONFIG.amberColor, highlight);
 

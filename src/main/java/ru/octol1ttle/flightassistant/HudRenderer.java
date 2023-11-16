@@ -8,7 +8,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.compatibility.ImmediatelyFastBatchingAccessor;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.config.SettingsConfig;
 import ru.octol1ttle.flightassistant.indicators.AlertIndicator;
 import ru.octol1ttle.flightassistant.indicators.AltitudeIndicator;
@@ -19,38 +19,39 @@ import ru.octol1ttle.flightassistant.indicators.HeadingIndicator;
 import ru.octol1ttle.flightassistant.indicators.LocationIndicator;
 import ru.octol1ttle.flightassistant.indicators.PitchIndicator;
 import ru.octol1ttle.flightassistant.indicators.SpeedIndicator;
+import ru.octol1ttle.flightassistant.indicators.StatusIndicator;
 
 public class HudRenderer extends HudComponent {
     private static final String FULL = SettingsConfig.DisplayMode.FULL.toString();
     private static final String MIN = SettingsConfig.DisplayMode.MIN.toString();
     public static HudRenderer INSTANCE;
     @NotNull
-    public final FlightComputer computer;
+    public final ComputerHost host;
     private final Dimensions dim = new Dimensions();
     private final List<HudComponent> components;
     private final List<HudComponent> toDelete;
 
     public HudRenderer(MinecraftClient mc) {
-        this.computer = new FlightComputer(mc);
+        this.host = new ComputerHost(mc);
         this.components = new ArrayList<>(List.of(
-                new FlightPathIndicator(computer, dim), new LocationIndicator(computer, dim),
-                new HeadingIndicator(computer, dim), new SpeedIndicator(computer, dim),
-                new AltitudeIndicator(computer, dim), new PitchIndicator(computer, dim),
-                new ElytraHealthIndicator(computer, dim), new AlertIndicator(computer, dim),
-                new FlightModeIndicator(computer, dim)));
+                new FlightPathIndicator(dim, host.data, host.gpws), new LocationIndicator(dim, host.data),
+                new HeadingIndicator(dim, host.data), new SpeedIndicator(dim, host.data),
+                new AltitudeIndicator(dim, host.data), new PitchIndicator(dim, host.data, host.stall, host.voidLevel),
+                new ElytraHealthIndicator(dim, host.data), new AlertIndicator(dim, host.alert, host.time),
+                new FlightModeIndicator(dim, host.firework, host.time, host.autoflight), new StatusIndicator(dim, host.firework)));
         this.toDelete = new ArrayList<>(components.size());
     }
 
-    public static FlightComputer getComputer() {
+    public static ComputerHost getHost() {
         if (INSTANCE == null) {
             return null;
         }
-        return INSTANCE.computer;
+        return INSTANCE.host;
     }
 
     private void setupConfig() {
         HudComponent.CONFIG = null;
-        if (computer.player.isFallFlying()) {
+        if (host.data.player.isFallFlying()) {
             if (FlightAssistant.CONFIG_SETTINGS.displayModeWhenFlying.equals(FULL)) {
                 HudComponent.CONFIG = FlightAssistant.CONFIG_FULL;
             } else if (FlightAssistant.CONFIG_SETTINGS.displayModeWhenFlying.equals(MIN)) {
@@ -90,8 +91,8 @@ public class HudRenderer extends HudComponent {
             } catch (Exception e) {
                 FlightAssistant.LOGGER.error("Exception rendering component", e);
                 toDelete.add(component);
-                if (getComputer() != null) {
-                    getComputer().internalError = true;
+                if (getHost() != null) {
+                    // TODO: indicator fail alert
                 }
             }
             if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {

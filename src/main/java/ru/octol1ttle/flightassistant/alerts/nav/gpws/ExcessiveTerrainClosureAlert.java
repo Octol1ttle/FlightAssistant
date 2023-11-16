@@ -11,7 +11,7 @@ import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.GPWSSoundData;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
@@ -26,17 +26,17 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
     private static final float PULL_UP_THRESHOLD = 5.0f;
     private static final float SECONDS_PER_TICK = 1.0f / TICKS_PER_SECOND;
     private static final float DELAY_ALERT_FOR = 0.5f;
+    private final GPWSComputer gpws;
     private boolean delayFull = false;
     private float delay = 0.0f;
-    private final FlightComputer computer;
 
-    public ExcessiveTerrainClosureAlert(FlightComputer computer) {
-        this.computer = computer;
+    public ExcessiveTerrainClosureAlert(GPWSComputer gpws) {
+        this.gpws = gpws;
     }
 
     @Override
     public boolean isTriggered() {
-        boolean triggered = computer.gpws.descentImpactTime < 0.0f && computer.gpws.terrainImpactTime >= 0.0f;
+        boolean triggered = gpws.descentImpactTime < 0.0f && gpws.terrainImpactTime >= 0.0f;
         if (triggered) {
             delay = MathHelper.clamp(delay + SECONDS_PER_TICK, 0.0f, DELAY_ALERT_FOR);
         } else {
@@ -55,7 +55,7 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
 
     @Override
     public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight) {
-        if (computer.gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
+        if (gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
             Text text = Text.translatable("alerts.flightassistant.pull_up");
             float startX = (width - textRenderer.getWidth(text)) * 0.5f;
             HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
@@ -64,7 +64,7 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
             return true;
         }
 
-        if (computer.gpws.terrainImpactTime <= TERRAIN_THRESHOLD) {
+        if (gpws.terrainImpactTime <= TERRAIN_THRESHOLD) {
             Text text = Text.translatable("alerts.flightassistant.terrain_ahead");
             float startX = (width - textRenderer.getWidth(text)) * 0.5f;
             HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
@@ -78,10 +78,10 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        if (computer.gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
+        if (gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
             return GPWSSoundData.PULL_UP;
         }
-        if (computer.gpws.terrainImpactTime <= TERRAIN_THRESHOLD) {
+        if (gpws.terrainImpactTime <= TERRAIN_THRESHOLD) {
             return TERRAIN;
         }
 

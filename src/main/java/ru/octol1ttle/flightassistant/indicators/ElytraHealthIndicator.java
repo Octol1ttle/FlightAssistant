@@ -5,16 +5,16 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 
 public class ElytraHealthIndicator extends HudComponent {
 
     private final Dimensions dim;
-    private final FlightComputer computer;
+    private final AirDataComputer data;
 
-    public ElytraHealthIndicator(FlightComputer computer, Dimensions dim) {
+    public ElytraHealthIndicator(Dimensions dim, AirDataComputer data) {
         this.dim = dim;
-        this.computer = computer;
+        this.data = data;
     }
 
     @Override
@@ -22,16 +22,16 @@ public class ElytraHealthIndicator extends HudComponent {
         float x = dim.wScreen * CONFIG.elytra_x;
         float y = dim.hScreen * CONFIG.elytra_y;
 
-        if (CONFIG.elytra_showHealth && computer.elytraHealth != null) {
+        if (CONFIG.elytra_showHealth && data.elytraHealth != null) {
             int color;
-            if (computer.elytraHealth <= 5.0f) {
+            if (data.elytraHealth <= 5.0f) { // TODO: configurable
                 color = CONFIG.alertColor;
             } else {
-                color = computer.elytraHealth <= 10.0f ? CONFIG.amberColor : CONFIG.color;
+                color = data.elytraHealth <= 10.0f ? CONFIG.amberColor : CONFIG.color;
             }
             drawBox(context, x - 3.5f, y - 1.5f, 30, color);
             drawFont(textRenderer, context, Text.translatable("flightassistant.elytra_short"), x - 10, y, color);
-            drawFont(textRenderer, context, String.format("%d", i(computer.elytraHealth)) + "%", x, y, color);
+            drawFont(textRenderer, context, String.format("%d", i(data.elytraHealth)) + "%", x, y, color);
         }
     }
 }

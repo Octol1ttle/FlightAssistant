@@ -1,5 +1,6 @@
-package ru.octol1ttle.flightassistant.computers;
+package ru.octol1ttle.flightassistant.computers.autoflight;
 
+import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
@@ -7,9 +8,15 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Hand;
 import org.jetbrains.annotations.Nullable;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
+import ru.octol1ttle.flightassistant.computers.ITickableComputer;
+import ru.octol1ttle.flightassistant.computers.TimeComputer;
 
-public class FireworkController {
-    private final FlightComputer computer;
+public class FireworkController implements ITickableComputer {
+    private final TimeComputer time;
+    private final AirDataComputer data;
+    private final PlayerInventory inventory;
+    private final ClientPlayerInteractionManager interaction;
     public int safeFireworkCount;
     public boolean fireworkResponded = true;
     public float lastUseTime = -1.0f;
@@ -19,25 +26,23 @@ public class FireworkController {
     public boolean noFireworks;
     public boolean unsafeFireworks;
 
-    public FireworkController(FlightComputer computer) {
-        this.computer = computer;
+    public FireworkController(TimeComputer time, AirDataComputer data, PlayerInventory inventory, ClientPlayerInteractionManager interaction) {
+        this.time = time;
+        this.data = data;
+        this.inventory = inventory;
+        this.interaction = interaction;
     }
 
     public void tick() {
-        // TODO: client<->server communication to confirm firework activation
         safeFireworkCount = countSafeFireworks();
-        if (computer.speed > 30) {
-            fireworkResponded = true;
-        }
-        if (!fireworkResponded && computer.time.prevMillis != null && lastUseTime > 0) {
-            lastDiff = computer.time.prevMillis - lastUseTime;
+        if (!fireworkResponded && time.prevMillis != null && lastUseTime > 0) {
+            lastDiff = time.prevMillis - lastUseTime;
         }
     }
 
     private int countSafeFireworks() {
         int i = 0;
 
-        PlayerInventory inventory = computer.player.getInventory();
         for (int j = 0; j < inventory.size(); ++j) {
             ItemStack itemStack = inventory.getStack(j);
             if (isFireworkSafe(itemStack)) {
@@ -49,25 +54,25 @@ public class FireworkController {
     }
 
     public boolean activateFirework(boolean togaLock) {
-        if (!computer.canAutomationsActivate() || lastUseTime > 0 && computer.time.prevMillis - lastUseTime < 750) {
+        if (!data.canAutomationsActivate() || lastUseTime > 0 && time.prevMillis - lastUseTime < 750) {
             return false;
         }
         if (togaLock) {
-            this.lastTogaLock = computer.time.prevMillis;
+            this.lastTogaLock = time.prevMillis;
         }
 
-        if (isFireworkSafe(computer.player.getMainHandStack())) {
-            return tryActivateFirework(Hand.MAIN_HAND);
+        if (isFireworkSafe(inventory.getMainHandStack())) {
+            return tryActivateFirework(Hand.MAIN_HAND, togaLock);
         }
-        if (isFireworkSafe(computer.player.getOffHandStack())) {
-            return tryActivateFirework(Hand.OFF_HAND);
+        if (isFireworkSafe(data.player.getOffHandStack())) {
+            return tryActivateFirework(Hand.OFF_HAND, togaLock);
         }
 
         int i = 0;
         boolean match = false;
         while (PlayerInventory.isValidHotbarIndex(i)) {
-            if (isFireworkSafe(computer.player.getInventory().getStack(i))) {
-                computer.player.getInventory().selectedSlot = i;
+            if (isFireworkSafe(inventory.getStack(i))) {
+                inventory.selectedSlot = i;
                 match = true;
                 break;
             }
@@ -79,18 +84,17 @@ public class FireworkController {
             noFireworks = true;
             return false;
         }
-        return tryActivateFirework(Hand.MAIN_HAND);
+        return tryActivateFirework(Hand.MAIN_HAND, togaLock);
     }
 
-    private boolean tryActivateFirework(Hand hand) {
+    private boolean tryActivateFirework(Hand hand, boolean force) {
         noFireworks = false;
-        if (!fireworkResponded) {
+        if (!force && !fireworkResponded) {
             return false;
         }
 
-        assert computer.mc.interactionManager != null;
-        if (computer.mc.interactionManager.interactItem(computer.player, hand).shouldSwingHand()) {
-            lastUseTime = computer.time.prevMillis;
+        if (interaction.interactItem(data.player, hand).shouldSwingHand()) {
+            lastUseTime = time.prevMillis;
             fireworkResponded = false;
             return true;
         }
@@ -104,5 +108,10 @@ public class FireworkController {
         }
         NbtCompound nbtCompound = stack.getSubNbt("Fireworks");
         return nbtCompound == null || nbtCompound.getList("Explosions", NbtElement.COMPOUND_TYPE).isEmpty();
+    }
+
+    @Override
+    public String getId() {
+        return "frwk_ctl";
     }
 }

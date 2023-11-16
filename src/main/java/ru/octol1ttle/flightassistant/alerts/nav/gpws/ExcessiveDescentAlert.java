@@ -10,7 +10,8 @@ import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.GPWSSoundData;
-import ru.octol1ttle.flightassistant.computers.FlightComputer;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
+import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
@@ -23,20 +24,22 @@ public class ExcessiveDescentAlert extends AbstractAlert {
             false
     );
     private static final float PULL_UP_THRESHOLD = 5.0f;
-    private final FlightComputer computer;
+    private final AirDataComputer data;
+    private final GPWSComputer gpws;
 
-    public ExcessiveDescentAlert(FlightComputer computer) {
-        this.computer = computer;
+    public ExcessiveDescentAlert(AirDataComputer data, GPWSComputer gpws) {
+        this.data = data;
+        this.gpws = gpws;
     }
 
     @Override
     public boolean isTriggered() {
-        return computer.pitch < 0 && computer.gpws.descentImpactTime >= 0.0f;
+        return data.pitch < 0 && gpws.descentImpactTime >= 0.0f;
     }
 
     @Override
     public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight) {
-        if (computer.gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
+        if (gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
             Text text = Text.translatable("alerts.flightassistant.pull_up");
             float startX = (width - textRenderer.getWidth(text)) * 0.5f;
             HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
@@ -45,7 +48,7 @@ public class ExcessiveDescentAlert extends AbstractAlert {
             return true;
         }
 
-        if (computer.gpws.descentImpactTime <= SINK_RATE_THRESHOLD) {
+        if (gpws.descentImpactTime <= SINK_RATE_THRESHOLD) {
             Text text = Text.translatable("alerts.flightassistant.sink_rate");
             float startX = (width - textRenderer.getWidth(text)) * 0.5f;
             HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
@@ -59,10 +62,10 @@ public class ExcessiveDescentAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        if (computer.gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
+        if (gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
             return GPWSSoundData.PULL_UP;
         }
-        if (computer.gpws.descentImpactTime <= SINK_RATE_THRESHOLD) {
+        if (gpws.descentImpactTime <= SINK_RATE_THRESHOLD) {
             return SINK_RATE;
         }
 

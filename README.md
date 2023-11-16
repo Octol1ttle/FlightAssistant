@@ -39,7 +39,6 @@
   - Low elytra durability
   - Unsafe (explosive) fireworks
   - Low firework count/no fireworks in inventory
-  - Passengers dismounted mid-flight
 
 <sup>1</sup> Protection via blocked pitch changes<br>
 <sup>2</sup> Automatic recovery via automatic pitch changes and firework usage
