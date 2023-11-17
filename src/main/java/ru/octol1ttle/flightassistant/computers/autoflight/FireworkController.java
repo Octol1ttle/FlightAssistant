@@ -94,8 +94,10 @@ public class FireworkController implements ITickableComputer {
         }
 
         if (interaction.interactItem(data.player, hand).shouldSwingHand()) {
-            lastUseTime = time.prevMillis;
-            fireworkResponded = false;
+            if (fireworkResponded) {
+                lastUseTime = time.prevMillis;
+                fireworkResponded = false;
+            }
             return true;
         }
 
