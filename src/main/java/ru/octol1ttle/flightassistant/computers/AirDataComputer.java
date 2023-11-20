@@ -182,7 +182,7 @@ public class AirDataComputer implements ITickableComputer {
         flightHeading = 0.0f;
         roll = 0.0f;
         altitude = 0.0f;
-        voidLevel = 0;
+        voidLevel = Integer.MIN_VALUE;
         groundLevel = 0;
         distanceFromGround = 0.0f;
         elytraHealth = null;

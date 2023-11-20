@@ -13,6 +13,8 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
+import ru.octol1ttle.flightassistant.commands.ResetAllComputersCommand;
+import ru.octol1ttle.flightassistant.commands.ResetFaultedComputersCommand;
 import ru.octol1ttle.flightassistant.commands.SetAutoThrustSpeedCommand;
 import ru.octol1ttle.flightassistant.commands.SwitchDisplayModeCommand;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
@@ -100,6 +102,14 @@ public class FlightAssistant implements ClientModInitializer {
                     .then(literal("speed")
                             .then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
                                     .executes(new SetAutoThrustSpeedCommand())))
+                    .then(literal("reset")
+                            .then(literal("computers")
+                                    .then(literal("all")
+                                            .executes(new ResetAllComputersCommand()))
+                                    .then(literal("faulted")
+                                            .executes(new ResetFaultedComputersCommand()))
+                            )
+                    )
             );
             dispatcher.register(literal("flas").redirect(node));
             dispatcher.register(literal("fhud").redirect(node));

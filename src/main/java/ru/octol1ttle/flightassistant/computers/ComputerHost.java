@@ -99,4 +99,31 @@ public class ComputerHost {
             }
         }
     }
+
+    public void resetAll() {
+        for (ITickableComputer tickable : tickables) {
+            tickable.reset();
+        }
+        for (IRenderTickableComputer renderTickable : renderTickables) {
+            renderTickable.reset();
+        }
+        resetFaulted();
+    }
+
+    public void resetFaulted() {
+        for (IComputer computer : faulted) {
+            faulted.remove(computer);
+            computer.reset();
+            if (computer instanceof ITickableComputer tickable) {
+                tickables.add(tickable);
+                return;
+            }
+            if (computer instanceof IRenderTickableComputer renderTickable) {
+                renderTickables.add(renderTickable);
+                return;
+            }
+
+            throw new RuntimeException("Unknown computer type for " + computer);
+        }
+    }
 }
