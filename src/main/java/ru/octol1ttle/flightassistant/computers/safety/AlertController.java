@@ -163,4 +163,11 @@ public class AlertController implements ITickableComputer {
     public String getId() {
         return "alert_mgr";
     }
+
+    @Override
+    public void reset() {
+        activeAlerts.clear();
+        allAlerts.clear();
+        toDelete.clear();
+    }
 }

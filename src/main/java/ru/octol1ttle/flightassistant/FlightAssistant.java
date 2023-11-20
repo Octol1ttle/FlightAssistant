@@ -95,7 +95,6 @@ public class FlightAssistant implements ClientModInitializer {
 
     private static void setupCommand() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-
             LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(literal("flightassistant")
                     .then(literal("toggle").executes(new SwitchDisplayModeCommand()))
                     .then(literal("speed")

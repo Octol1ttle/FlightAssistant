@@ -20,7 +20,7 @@ public class ApproachingVoidDamageLevelAlert extends AbstractAlert {
 
     @Override
     public boolean isTriggered() {
-        return voidLevel.status >= VoidLevelComputer.STATUS_APPROACHING_DAMAGE_LEVEL;
+        return voidLevel.approachingOrReachedDamageLevel();
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ApproachingVoidDamageLevelAlert extends AbstractAlert {
 
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
-        Text text = voidLevel.status == VoidLevelComputer.STATUS_REACHED_DAMAGE_LEVEL
+        Text text = voidLevel.status == VoidLevelComputer.VoidLevelStatus.REACHED_DAMAGE_LEVEL
                 ? Text.translatable("alerts.flightassistant.reached_void_damage_level")
                 : Text.translatable("alerts.flightassistant.approaching_void_damage_level");
 

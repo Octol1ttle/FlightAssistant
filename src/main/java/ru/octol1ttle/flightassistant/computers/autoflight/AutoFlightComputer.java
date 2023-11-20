@@ -40,4 +40,11 @@ public class AutoFlightComputer implements ITickableComputer {
     public String getId() {
         return "auto_flt";
     }
+
+    @Override
+    public void reset() {
+        autoThrustEnabled = false;
+        targetSpeed = null;
+        targetPitch = 0.0f;
+    }
 }

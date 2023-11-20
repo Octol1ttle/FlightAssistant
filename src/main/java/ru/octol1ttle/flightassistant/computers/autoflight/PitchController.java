@@ -35,6 +35,9 @@ public class PitchController implements IRenderTickableComputer {
     }
 
     public void tick() {
+        if (!data.canAutomationsActivate()) {
+            return;
+        }
         if (data.pitch > stall.maximumSafePitch) {
             smoothSetPitch(-stall.maximumSafePitch, time.deltaTime);
             return;
@@ -101,5 +104,12 @@ public class PitchController implements IRenderTickableComputer {
     @Override
     public String getId() {
         return "pitch_ctl";
+    }
+
+    @Override
+    public void reset() {
+        targetPitch = null;
+        forceLevelOff = false;
+        forceClimb = false;
     }
 }

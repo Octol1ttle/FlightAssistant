@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.FlightAssistant;
+import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
 import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
@@ -32,6 +33,7 @@ public class ComputerHost {
     private final PlayerEntity player;
     private final List<ITickableComputer> tickables;
     private final List<IRenderTickableComputer> renderTickables;
+    public boolean ready = false;
 
     public ComputerHost(@NotNull MinecraftClient mc) {
         this.mc = mc;
@@ -55,32 +57,43 @@ public class ComputerHost {
         // computers are sorted in the order they should be ticked to avoid errors
         this.tickables = new ArrayList<>(List.of(data, stall, gpws, voidLevel, firework, autoflight, alert));
         this.renderTickables = new ArrayList<>(List.of(time, pitch));
-        Collections.reverse(this.tickables); // we tick computers in reverse, so reverse the collection so that the order is correct
+        Collections.reverse(this.tickables); // we tick computers in reverse, so reverse the collections so that the order is correct
         Collections.reverse(this.renderTickables);
 
         this.faulted = new ArrayList<>(tickables.size() + renderTickables.size());
     }
 
     public void tick() {
+        if (HudComponent.CONFIG == null) {
+            return;
+        }
+
         for (int i = tickables.size() - 1; i >= 0; i--) {
             ITickableComputer computer = tickables.get(i);
             try {
                 computer.tick();
             } catch (Exception e) {
                 FlightAssistant.LOGGER.error("Exception ticking computer", e);
+                computer.reset();
                 faulted.add(computer);
                 tickables.remove(computer);
             }
         }
+        ready = true;
     }
 
     public void render() {
+        if (HudComponent.CONFIG == null) {
+            return;
+        }
+
         for (int i = renderTickables.size() - 1; i >= 0; i--) {
             IRenderTickableComputer computer = renderTickables.get(i);
             try {
                 computer.tick();
             } catch (Exception e) {
                 FlightAssistant.LOGGER.error("Exception ticking computer (on render)", e);
+                computer.reset();
                 faulted.add(computer);
                 renderTickables.remove(computer);
             }

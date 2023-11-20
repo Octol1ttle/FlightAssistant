@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
-import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
@@ -19,7 +18,7 @@ public abstract class EntityMixin {
         ComputerHost host = HudRenderer.getHost();
         if (that instanceof ClientPlayerEntity && host != null && host.data.canAutomationsActivate()) {
             boolean stalling = !host.faulted.contains(host.stall) && -pitch > host.stall.maximumSafePitch
-                    || host.stall.stalling >= StallComputer.STATUS_APPROACHING_STALL;
+                    || host.stall.anyStall();
             boolean highSinkRate = !host.faulted.contains(host.gpws) && !stalling && host.gpws.shouldBlockPitchChanges();
             boolean approachingVoidDamage = !host.faulted.contains(host.voidLevel) && -pitch < host.voidLevel.minimumSafePitch;
             if (stalling && pitch < that.getPitch() || (highSinkRate || approachingVoidDamage) && pitch > that.getPitch())

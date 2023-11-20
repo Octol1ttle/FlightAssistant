@@ -69,7 +69,7 @@ public class HudRenderer extends HudComponent {
     public void render(DrawContext context, MinecraftClient mc) {
         setupConfig();
 
-        if (HudComponent.CONFIG == null) {
+        if (HudComponent.CONFIG == null || !host.ready) {
             return;
         }
 

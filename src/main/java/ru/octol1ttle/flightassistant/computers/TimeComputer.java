@@ -31,4 +31,12 @@ public class TimeComputer implements IRenderTickableComputer {
     public String getId() {
         return "time_prvd";
     }
+
+    @Override
+    public void reset() {
+        deltaTime = 0.0f;
+        highlight = false;
+        prevMillis = null;
+        highlightMillis = 0.0f;
+    }
 }

@@ -54,10 +54,10 @@ public class FireworkController implements ITickableComputer {
     }
 
     public boolean activateFirework(boolean togaLock) {
-        if (!data.canAutomationsActivate() || lastUseTime > 0 && time.prevMillis - lastUseTime < 750) {
+        if (!data.canAutomationsActivate() || lastUseTime > 0 && time.prevMillis != null && time.prevMillis - lastUseTime < 750) {
             return false;
         }
-        if (togaLock) {
+        if (togaLock && time.prevMillis != null) {
             this.lastTogaLock = time.prevMillis;
         }
 
@@ -95,7 +95,9 @@ public class FireworkController implements ITickableComputer {
 
         if (interaction.interactItem(data.player, hand).shouldSwingHand()) {
             if (fireworkResponded) {
-                lastUseTime = time.prevMillis;
+                if (time.prevMillis != null) {
+                    lastUseTime = time.prevMillis;
+                }
                 fireworkResponded = false;
             }
             return true;
@@ -115,5 +117,16 @@ public class FireworkController implements ITickableComputer {
     @Override
     public String getId() {
         return "frwk_ctl";
+    }
+
+    @Override
+    public void reset() {
+        safeFireworkCount = 0;
+        fireworkResponded = true;
+        lastUseTime = -1.0f;
+        lastDiff = Float.MAX_VALUE;
+        lastTogaLock = null;
+        noFireworks = false;
+        unsafeFireworks = false;
     }
 }

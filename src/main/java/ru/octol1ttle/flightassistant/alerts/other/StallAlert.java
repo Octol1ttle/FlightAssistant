@@ -10,7 +10,6 @@ import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
-import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
@@ -32,7 +31,7 @@ public class StallAlert extends AbstractAlert {
 
     @Override
     public boolean isTriggered() {
-        return stall.stalling >= StallComputer.STATUS_APPROACHING_STALL;
+        return stall.anyStall();
     }
 
     @Override
@@ -45,9 +44,8 @@ public class StallAlert extends AbstractAlert {
         Text text = Text.translatable("alerts.flightassistant.stall");
         float startX = (width - textRenderer.getWidth(text)) * 0.5f;
         HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
-                -data.velocityPerSecond.y >= GPWSComputer.MAX_SAFE_SINK_RATE ?
-                        CONFIG.alertColor :
-                        CONFIG.amberColor, highlight);
+                stall.status == StallComputer.StallStatus.FULL_STALL ? CONFIG.alertColor : CONFIG.amberColor,
+                highlight);
 
         return true;
     }

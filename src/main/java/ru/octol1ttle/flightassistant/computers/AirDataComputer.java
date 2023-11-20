@@ -166,4 +166,27 @@ public class AirDataComputer implements ITickableComputer {
     public String getId() {
         return "air_data";
     }
+
+    @Override
+    public void reset() {
+        position = Vec3d.ZERO;
+        velocity = Vec3d.ZERO;
+        velocityPerSecond = Vec3d.ZERO;
+        acceleration = Vec3d.ZERO;
+        speed = 0.0f;
+        pitch = 0.0f;
+        yaw = 0.0f;
+        heading = 0.0f;
+        flightPitch = 0.0f;
+        flightYaw = 0.0f;
+        flightHeading = 0.0f;
+        roll = 0.0f;
+        altitude = 0.0f;
+        voidLevel = 0;
+        groundLevel = 0;
+        distanceFromGround = 0.0f;
+        elytraHealth = null;
+        fallDistance = 0.0f;
+        world = player.getWorld();
+    }
 }

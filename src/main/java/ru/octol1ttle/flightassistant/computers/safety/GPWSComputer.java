@@ -19,12 +19,13 @@ public class GPWSComputer implements ITickableComputer {
     private static final int STATUS_FALL_DISTANCE_TOO_LOW = -1;
     private static final int STATUS_SPEED_SAFE = -2;
     private static final int STATUS_NO_TERRAIN_AHEAD = -3;
+    private static final int STATUS_UNKNOWN = -4;
     private static final float BLOCK_PITCH_CONTROL_THRESHOLD = 5.0f;
     private static final float TERRAIN_RAYCAST_AHEAD_SECONDS = 10.0f;
     private final AirDataComputer data;
     public PitchController pitch;
-    public float descentImpactTime;
-    public float terrainImpactTime;
+    public float descentImpactTime = STATUS_UNKNOWN;
+    public float terrainImpactTime = STATUS_UNKNOWN;
 
     public GPWSComputer(AirDataComputer data) {
         this.data = data;
@@ -39,14 +40,14 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     public boolean shouldLevelOff() {
-        return descentImpactTime > 0.0f && descentImpactTime <= PITCH_CORRECT_THRESHOLD;
+        return descentImpactTime >= 0.0f && descentImpactTime <= PITCH_CORRECT_THRESHOLD;
     }
 
     public int getGPWSLampColor() {
-        if ((descentImpactTime > 0.0f && descentImpactTime <= 5.0f) || (terrainImpactTime > 0.0f && terrainImpactTime <= 5.0f)) {
+        if ((descentImpactTime >= 0.0f && descentImpactTime <= 5.0f) || (terrainImpactTime >= 0.0f && terrainImpactTime <= 5.0f)) {
             return CONFIG.alertColor;
         }
-        if ((descentImpactTime > 0.0f && descentImpactTime <= 10.0f) || (terrainImpactTime > 0.0f && terrainImpactTime <= 10.0f)) {
+        if ((descentImpactTime >= 0.0f && descentImpactTime <= 10.0f) || (terrainImpactTime >= 0.0f && terrainImpactTime <= 10.0f)) {
             return CONFIG.amberColor;
         }
 
@@ -54,11 +55,11 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     private boolean shouldClimb() {
-        return terrainImpactTime > 0.0f && terrainImpactTime <= PITCH_CORRECT_THRESHOLD;
+        return terrainImpactTime >= 0.0f && terrainImpactTime <= PITCH_CORRECT_THRESHOLD;
     }
 
     public boolean shouldBlockPitchChanges() {
-        return descentImpactTime > 0 && descentImpactTime <= BLOCK_PITCH_CONTROL_THRESHOLD;
+        return descentImpactTime >= 0.0f && descentImpactTime <= BLOCK_PITCH_CONTROL_THRESHOLD;
     }
 
     private float computeDescentImpactTime() {
@@ -113,5 +114,14 @@ public class GPWSComputer implements ITickableComputer {
     @Override
     public String getId() {
         return "gpws";
+    }
+
+    @Override
+    public void reset() {
+        descentImpactTime = STATUS_UNKNOWN;
+        terrainImpactTime = STATUS_UNKNOWN;
+
+        pitch.forceLevelOff = false;
+        pitch.forceClimb = false;
     }
 }
