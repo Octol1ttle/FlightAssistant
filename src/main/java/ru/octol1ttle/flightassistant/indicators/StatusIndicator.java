@@ -33,4 +33,16 @@ public class StatusIndicator extends HudComponent {
                 Text.translatable("status.flightassistant.firework_count", firework.safeFireworkCount),
                 x, y += 10, fireworkColor);
     }
+
+    @Override
+    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
+        drawRightAlignedFont(textRenderer, context,
+                Text.translatable("flightassistant.status_short"),
+                dim.rFrame - 5, dim.tFrame + 15, CONFIG.alertColor);
+    }
+
+    @Override
+    public String getId() {
+        return "status";
+    }
 }

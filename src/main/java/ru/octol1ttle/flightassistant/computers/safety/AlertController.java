@@ -7,10 +7,12 @@ import net.minecraft.client.sound.SoundManager;
 import ru.octol1ttle.flightassistant.AlertSoundInstance;
 import ru.octol1ttle.flightassistant.FlightAssistant;
 import ru.octol1ttle.flightassistant.HudComponent;
+import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.autoflight.ATHRNoFireworksInHotbarAlert;
 import ru.octol1ttle.flightassistant.alerts.fault.ComputerFaultAlert;
+import ru.octol1ttle.flightassistant.alerts.fault.IndicatorFaultAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkCountZeroAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkDelayedResponseAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkLowCountAlert;
@@ -31,7 +33,7 @@ public class AlertController implements ITickableComputer {
     private final List<AbstractAlert> allAlerts;
     private final List<AbstractAlert> toDelete;
 
-    public AlertController(ComputerHost host, SoundManager manager) {
+    public AlertController(ComputerHost host, SoundManager manager, HudRenderer renderer) {
         this.host = host;
         this.manager = manager;
         // TODO: ECAM actions
@@ -39,6 +41,7 @@ public class AlertController implements ITickableComputer {
                 new StallAlert(this.host.stall, this.host.data),
                 new ExcessiveDescentAlert(this.host.data, this.host.gpws), new ExcessiveTerrainClosureAlert(this.host.gpws),
                 new ComputerFaultAlert(this.host),
+                new IndicatorFaultAlert(renderer),
                 new ApproachingVoidDamageLevelAlert(this.host.voidLevel),
                 new ElytraHealthLowAlert(this.host.data),
                 new FireworkUnsafeAlert(this.host.firework),

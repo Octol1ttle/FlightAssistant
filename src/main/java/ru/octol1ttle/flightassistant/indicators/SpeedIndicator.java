@@ -56,4 +56,14 @@ public class SpeedIndicator extends HudComponent {
             }
         }
     }
+
+    @Override
+    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
+        drawRightAlignedFont(textRenderer, context, Text.translatable("flightassistant.speed_short"), dim.lFrame - 7, dim.yMid - 3, CONFIG.alertColor);
+    }
+
+    @Override
+    public String getId() {
+        return "speed";
+    }
 }

@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.indicators;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.RotationAxis;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
@@ -61,6 +62,19 @@ public class PitchIndicator extends HudComponent {
         if (CONFIG.pitchLadder_showRoll) {
             context.getMatrices().pop();
         }
+    }
+
+    @Override
+    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
+        Text text = Text.translatable("flightassistant.pitch_short");
+        drawFont(textRenderer, context, text,
+                (dim.wScreen - textRenderer.getWidth(text)) * 0.5f, dim.yMid - 5,
+                CONFIG.alertColor);
+    }
+
+    @Override
+    public String getId() {
+        return "pitch";
     }
 
     private void drawLadder(TextRenderer textRenderer, DrawContext context, float yHorizon) {

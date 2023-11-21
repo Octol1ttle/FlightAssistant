@@ -57,6 +57,17 @@ public class HeadingIndicator extends HudComponent {
             }
         }
     }
+
+    @Override
+    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
+        drawFont(textRenderer, context, Text.translatable("flightassistant.heading_short"), dim.xMid - 8, dim.tFrame - 17, CONFIG.alertColor);
+    }
+
+    @Override
+    public String getId() {
+        return "heading";
+    }
+
     private Text headingToDirection(int degrees) {
         return switch (degrees) {
             case 0, 360 -> Text.translatable("flightassistant.north_short");

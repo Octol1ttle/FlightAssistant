@@ -47,4 +47,16 @@ public class FlightModeIndicator extends HudComponent {
             }
         }
     }
+
+    @Override
+    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
+        drawFont(textRenderer, context, Text.translatable("flightassistant.flight_mode_short"),
+                dim.lFrame + dim.wFrame * 0.2f, dim.bFrame + 10,
+                CONFIG.alertColor);
+    }
+
+    @Override
+    public String getId() {
+        return "flight_mode";
+    }
 }

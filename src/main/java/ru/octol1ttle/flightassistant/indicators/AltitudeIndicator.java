@@ -69,6 +69,16 @@ public class AltitudeIndicator extends HudComponent {
         }
     }
 
+    @Override
+    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
+        drawFont(textRenderer, context, Text.translatable("flightassistant.altitude_short"), dim.rFrame + 7, dim.yMid - 3, CONFIG.alertColor);
+    }
+
+    @Override
+    public String getId() {
+        return "altitude";
+    }
+
     private void drawHeightIndicator(DrawContext context, float x, float top, float h, int color) {
         float bottom = top + h;
         float blocksPerPixel = h / (data.world.getHeight() + 64.0f);

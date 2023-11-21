@@ -29,17 +29,17 @@ public class HudRenderer extends HudComponent {
     public final ComputerHost host;
     private final Dimensions dim = new Dimensions();
     private final List<HudComponent> components;
-    private final List<HudComponent> toDelete;
+    public final List<HudComponent> faulted;
 
     public HudRenderer(MinecraftClient mc) {
-        this.host = new ComputerHost(mc);
+        this.host = new ComputerHost(mc, this);
         this.components = new ArrayList<>(List.of(
                 new FlightPathIndicator(dim, host.data, host.gpws), new LocationIndicator(dim, host.data),
                 new HeadingIndicator(dim, host.data), new SpeedIndicator(dim, host.data),
                 new AltitudeIndicator(dim, host.data), new PitchIndicator(dim, host.data, host.stall, host.voidLevel),
                 new ElytraHealthIndicator(dim, host.data), new AlertIndicator(dim, host.alert, host.time),
                 new FlightModeIndicator(dim, host.firework, host.time, host.autoflight), new StatusIndicator(dim, host.firework)));
-        this.toDelete = new ArrayList<>(components.size());
+        this.faulted = new ArrayList<>(components.size());
     }
 
     public static ComputerHost getHost() {
@@ -82,7 +82,8 @@ public class HudRenderer extends HudComponent {
 
         dim.update(mc);
 
-        for (HudComponent component : components) {
+        for (int i = components.size() - 1; i >= 0; i--) {
+            HudComponent component = components.get(i);
             if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
                 ImmediatelyFastBatchingAccessor.beginHudBatching();
             }
@@ -90,18 +91,26 @@ public class HudRenderer extends HudComponent {
                 component.render(context, mc.textRenderer);
             } catch (Exception e) {
                 FlightAssistant.LOGGER.error("Exception rendering component", e);
-                toDelete.add(component);
-                if (getHost() != null) {
-                    // TODO: indicator fail alert
-                }
+                faulted.add(component);
+                components.remove(component);
             }
             if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
                 ImmediatelyFastBatchingAccessor.endHudBatching();
             }
         }
 
-        if (components.removeAll(toDelete)) {
-            toDelete.clear();
+        for (HudComponent component : faulted) {
+            if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
+                ImmediatelyFastBatchingAccessor.beginHudBatching();
+            }
+            try {
+                component.renderFaulted(context, mc.textRenderer);
+            } catch (Exception e) {
+                FlightAssistant.LOGGER.error("Exception rendering faulted component", e);
+            }
+            if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
+                ImmediatelyFastBatchingAccessor.endHudBatching();
+            }
         }
 
         context.getMatrices().pop();
@@ -109,6 +118,16 @@ public class HudRenderer extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
+
+    }
+
+    @Override
+    public String getId() {
         throw new IllegalStateException();
     }
 }

@@ -33,7 +33,7 @@ public abstract class HudComponent {
     public static int drawHighlightedFont(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int highlightColor, boolean highlight) {
         if (highlight) {
             drawUnbatched(context, ctx -> {
-                HudComponent.fill(context, x - 2.0f, y - 1.0f, x + textRenderer.getWidth(text) + 1.5f, y + 8.0f, highlightColor);
+                HudComponent.fill(context, x - 2.0f, y - 1.0f, x + textRenderer.getWidth(text) + 1.0f, y + 8.0f, highlightColor);
                 HudComponent.drawFont(textRenderer, context, text, x, y, CONFIG.white);
             });
             return 1;
@@ -129,4 +129,8 @@ public abstract class HudComponent {
     }
 
     public abstract void render(DrawContext context, TextRenderer textRenderer);
+
+    public abstract void renderFaulted(DrawContext context, TextRenderer textRenderer);
+
+    public abstract String getId();
 }

@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.indicators;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
@@ -35,5 +36,16 @@ public class AlertIndicator extends HudComponent {
                 y += 10 * alert.renderECAM(textRenderer, context, x, y, time.highlight);
             }
         }
+    }
+
+    @Override
+    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
+        HudComponent.drawHighlightedFont(textRenderer, context, Text.translatable("alerts.flightassistant.fault.indicators.alert"), dim.lFrame + 5, dim.tFrame + 15,
+                CONFIG.alertColor, time.highlight);
+    }
+
+    @Override
+    public String getId() {
+        return "alert";
     }
 }

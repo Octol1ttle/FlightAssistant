@@ -34,4 +34,16 @@ public class ElytraHealthIndicator extends HudComponent {
             drawFont(textRenderer, context, String.format("%d", i(data.elytraHealth)) + "%", x, y, color);
         }
     }
+
+    @Override
+    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
+        drawFont(textRenderer, context, Text.translatable("flightassistant.elytra_health_short"),
+                dim.wScreen * CONFIG.elytra_x, dim.hScreen * CONFIG.elytra_y,
+                CONFIG.alertColor);
+    }
+
+    @Override
+    public String getId() {
+        return "elytra_health";
+    }
 }

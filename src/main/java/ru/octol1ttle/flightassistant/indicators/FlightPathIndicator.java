@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.indicators;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
@@ -56,5 +57,18 @@ public class FlightPathIndicator extends HudComponent {
         drawVerticalLine(context, x, t - 5, t, color);
         drawHorizontalLine(context, l - 4, l, y - CONFIG.halfThickness, color);
         drawHorizontalLine(context, r, r + 4, y - CONFIG.halfThickness, color);
+    }
+
+    @Override
+    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
+        Text text = Text.translatable("flightassistant.flight_path_short");
+        drawFont(textRenderer, context, text,
+                (dim.wScreen - textRenderer.getWidth(text)) * 0.5f, dim.yMid + 10,
+                CONFIG.alertColor);
+    }
+
+    @Override
+    public String getId() {
+        return "flight_path";
     }
 }
