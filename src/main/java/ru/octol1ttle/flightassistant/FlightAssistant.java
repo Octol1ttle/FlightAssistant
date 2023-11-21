@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
 import ru.octol1ttle.flightassistant.commands.ResetAllComputersCommand;
 import ru.octol1ttle.flightassistant.commands.ResetFaultedComputersCommand;
+import ru.octol1ttle.flightassistant.commands.ResetFaultedIndicatorsCommand;
 import ru.octol1ttle.flightassistant.commands.SetAutoThrustSpeedCommand;
 import ru.octol1ttle.flightassistant.commands.SwitchDisplayModeCommand;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
@@ -98,7 +99,9 @@ public class FlightAssistant implements ClientModInitializer {
     private static void setupCommand() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(literal("flightassistant")
-                    .then(literal("toggle").executes(new SwitchDisplayModeCommand()))
+                    .then(literal("toggle").executes(
+                            new SwitchDisplayModeCommand())
+                    )
                     .then(literal("speed")
                             .then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
                                     .executes(new SetAutoThrustSpeedCommand())))
@@ -108,6 +111,9 @@ public class FlightAssistant implements ClientModInitializer {
                                             .executes(new ResetAllComputersCommand()))
                                     .then(literal("faulted")
                                             .executes(new ResetFaultedComputersCommand()))
+                            )
+                            .then(literal("indicators")
+                                    .executes(new ResetFaultedIndicatorsCommand())
                             )
                     )
             );

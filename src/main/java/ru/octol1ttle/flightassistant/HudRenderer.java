@@ -116,6 +116,13 @@ public class HudRenderer extends HudComponent {
         context.getMatrices().pop();
     }
 
+    public void resetFaulted() {
+        for (HudComponent component : faulted) {
+            faulted.remove(component);
+            components.add(component);
+        }
+    }
+
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
         throw new IllegalStateException();
@@ -123,7 +130,7 @@ public class HudRenderer extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-
+        throw new IllegalStateException();
     }
 
     @Override
