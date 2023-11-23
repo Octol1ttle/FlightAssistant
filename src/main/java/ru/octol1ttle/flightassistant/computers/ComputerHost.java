@@ -12,6 +12,7 @@ import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
 import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
+import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
 import ru.octol1ttle.flightassistant.computers.safety.AlertController;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
@@ -27,6 +28,7 @@ public class ComputerHost {
     public final AlertController alert;
     public final TimeComputer time;
     public final PitchController pitch;
+    public final FlightPlanner plan;
     public final List<IComputer> faulted;
     private final List<ITickableComputer> tickables;
     private final List<IRenderTickableComputer> renderTickables;
@@ -49,6 +51,7 @@ public class ComputerHost {
 
         this.autoflight = new AutoFlightComputer(data, gpws, firework);
         this.alert = new AlertController(this, mc.getSoundManager(), renderer);
+        this.plan = new FlightPlanner();
 
         // computers are sorted in the order they should be ticked to avoid errors
         this.tickables = new ArrayList<>(List.of(data, stall, gpws, voidLevel, firework, autoflight, alert));

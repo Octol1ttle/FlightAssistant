@@ -13,11 +13,15 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
-import ru.octol1ttle.flightassistant.commands.ResetAllComputersCommand;
-import ru.octol1ttle.flightassistant.commands.ResetFaultedComputersCommand;
-import ru.octol1ttle.flightassistant.commands.ResetFaultedIndicatorsCommand;
-import ru.octol1ttle.flightassistant.commands.SetAutoThrustSpeedCommand;
 import ru.octol1ttle.flightassistant.commands.SwitchDisplayModeCommand;
+import ru.octol1ttle.flightassistant.commands.autoflight.SetAutoThrustSpeedCommand;
+import ru.octol1ttle.flightassistant.commands.plan.AddWaypointCommand;
+import ru.octol1ttle.flightassistant.commands.plan.InsertWaypointCommand;
+import ru.octol1ttle.flightassistant.commands.plan.RemoveWaypointCommand;
+import ru.octol1ttle.flightassistant.commands.plan.ReplaceWaypointCommand;
+import ru.octol1ttle.flightassistant.commands.reset.ResetAllComputersCommand;
+import ru.octol1ttle.flightassistant.commands.reset.ResetFaultedComputersCommand;
+import ru.octol1ttle.flightassistant.commands.reset.ResetFaultedIndicatorsCommand;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.config.HudConfig;
 import ru.octol1ttle.flightassistant.config.SettingsConfig;
@@ -102,9 +106,6 @@ public class FlightAssistant implements ClientModInitializer {
                     .then(literal("toggle").executes(
                             new SwitchDisplayModeCommand())
                     )
-                    .then(literal("speed")
-                            .then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
-                                    .executes(new SetAutoThrustSpeedCommand())))
                     .then(literal("reset")
                             .then(literal("computers")
                                     .then(literal("all")
@@ -114,6 +115,37 @@ public class FlightAssistant implements ClientModInitializer {
                             )
                             .then(literal("indicators")
                                     .executes(new ResetFaultedIndicatorsCommand())
+                            )
+                    )
+                    .then(literal("speed")
+                            .then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
+                                    .executes(new SetAutoThrustSpeedCommand())))
+                    .then(literal("plan")
+                            .then(literal("add")
+                                    .then(argument("targetX", IntegerArgumentType.integer()).then(argument("targetZ", IntegerArgumentType.integer()).then(argument("targetAltitude", IntegerArgumentType.integer(-80)).then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
+                                            .executes(new AddWaypointCommand())
+                                    ))))
+                            )
+                            .then(literal("remove")
+                                    .then(argument("waypointIndex", IntegerArgumentType.integer(0))
+                                            .executes(new RemoveWaypointCommand())
+                                    )
+                            )
+                            .then(literal("insert")
+                                    .then(argument("insertAt", IntegerArgumentType.integer(0))
+                                            .then(argument("targetX", IntegerArgumentType.integer()).then(argument("targetZ", IntegerArgumentType.integer()).then(argument("targetAltitude", IntegerArgumentType.integer(-80)).then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
+                                                            .executes(new InsertWaypointCommand())
+                                                    )))
+                                            )
+                                    )
+                            )
+                            .then(literal("replace")
+                                    .then(argument("replaceAt", IntegerArgumentType.integer(0))
+                                            .then(argument("targetX", IntegerArgumentType.integer()).then(argument("targetZ", IntegerArgumentType.integer()).then(argument("targetAltitude", IntegerArgumentType.integer(-80)).then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
+                                                            .executes(new ReplaceWaypointCommand())
+                                                    )))
+                                            )
+                                    )
                             )
                     )
             );

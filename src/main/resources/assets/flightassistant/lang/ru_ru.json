@@ -5,6 +5,11 @@
   "key.flightassistant.toggle_auto_thrust": "Вкл/выкл автомат тяги",
   "key.flightassistant.dismiss_master_warning": "Заглушить (скрыть) предупреждение особой важности",
   "key.flightassistant.dismiss_master_caution": "Заглушить (скрыть) обычное предупреждение",
+  "commands.flightassistant.no_such_waypoint": "На указанной позиции нет точки назначения",
+  "commands.flightassistant.waypoint_created": "Создана точка назначения с позицией %s (теперь всего %s точек назначения)",
+  "commands.flightassistant.waypoint_removed": "Удалена точка назначения с позицией %s (теперь всего %s точек назначения)",
+  "commands.flightassistant.waypoint_inserted": "Добавлена точка назначения на позицию %s (теперь всего %s точек назначения)",
+  "commands.flightassistant.waypoint_replaced": "Заменена точка назначения на позиции %s (теперь всего %s точек назначения)",
 
   "alerts.flightassistant.pull_up": "ТЯНИ ВВЕРХ",
   "alerts.flightassistant.sink_rate": "СКОР. СНИЖЕНИЯ",
