@@ -68,7 +68,7 @@ public class PitchIndicator extends HudComponent {
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
         Text text = Text.translatable("flightassistant.pitch_short");
         drawFont(textRenderer, context, text,
-                (dim.wScreen - textRenderer.getWidth(text)) * 0.5f, dim.yMid - 5,
+                (dim.wScreen - textRenderer.getWidth(text)) * 0.5f, dim.yMid - 10,
                 CONFIG.alertColor);
     }
 
