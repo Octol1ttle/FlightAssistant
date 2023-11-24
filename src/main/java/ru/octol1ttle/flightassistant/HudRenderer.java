@@ -117,7 +117,8 @@ public class HudRenderer extends HudComponent {
     }
 
     public void resetFaulted() {
-        for (HudComponent component : faulted) {
+        for (int i = faulted.size() - 1; i >= 0; i--) {
+            HudComponent component = faulted.get(i);
             faulted.remove(component);
             components.add(component);
         }

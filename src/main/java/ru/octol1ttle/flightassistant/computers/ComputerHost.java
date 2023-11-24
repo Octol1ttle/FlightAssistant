@@ -108,7 +108,8 @@ public class ComputerHost {
     }
 
     public void resetFaulted() {
-        for (IComputer computer : faulted) {
+        for (int i = faulted.size() - 1; i >= 0; i--) {
+            IComputer computer = faulted.get(i);
             faulted.remove(computer);
             computer.reset();
             if (computer instanceof ITickableComputer tickable) {
