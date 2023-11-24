@@ -36,6 +36,17 @@ public class FireworkController implements ITickableComputer {
         if (!fireworkResponded && time.prevMillis != null && lastUseTime > 0) {
             lastDiff = time.prevMillis - lastUseTime;
         }
+
+        PlayerInventory inventory = data.player.getInventory();
+        int i = 0;
+        while (PlayerInventory.isValidHotbarIndex(i)) {
+            if (isFireworkSafe(inventory.getStack(i))) {
+                noFireworks = false;
+                break;
+            }
+
+            i++;
+        }
     }
 
     private int countSafeFireworks() {
@@ -69,8 +80,8 @@ public class FireworkController implements ITickableComputer {
 
         int i = 0;
         boolean match = false;
+        PlayerInventory inventory = data.player.getInventory();
         while (PlayerInventory.isValidHotbarIndex(i)) {
-            PlayerInventory inventory = data.player.getInventory();
             if (isFireworkSafe(inventory.getStack(i))) {
                 inventory.selectedSlot = i;
                 match = true;
@@ -88,7 +99,6 @@ public class FireworkController implements ITickableComputer {
     }
 
     private boolean tryActivateFirework(Hand hand, boolean force) {
-        noFireworks = false;
         if (!force && !fireworkResponded) {
             return false;
         }
