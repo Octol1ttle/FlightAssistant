@@ -1,9 +1,7 @@
 package ru.octol1ttle.flightassistant.computers.autoflight;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
-import ru.octol1ttle.flightassistant.FlightAssistant;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.IRenderTickableComputer;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
@@ -68,7 +66,6 @@ public class PitchController implements IRenderTickableComputer {
         if (pitch == null) {
             return;
         }
-        checkFloatValidity(pitch, "Target pitch");
 
         PlayerEntity player = data.player;
         float difference = pitch - player.getPitch();
@@ -81,24 +78,8 @@ public class PitchController implements IRenderTickableComputer {
         }
 
         float newPitch = player.getPitch() + (pitch - player.getPitch()) * delta;
-        checkFloatValidity(newPitch, "New pitch",
-                new Pair<>("Current pitch", player.getPitch()),
-                new Pair<>("Target pitch", pitch),
-                new Pair<>("Delta", delta));
 
         player.setPitch(newPitch);
-    }
-
-    @SafeVarargs
-    private void checkFloatValidity(Float f, String name, Pair<String, Float>... additionalInfo) {
-        if (f.isNaN() || f.isInfinite() || f < -90.0f || f > 90.0f) {
-            FlightAssistant.LOGGER.error("{} out of bounds: {}", name, f);
-            FlightAssistant.LOGGER.error("Additional information:");
-            for (Pair<String, Float> pair : additionalInfo) {
-                FlightAssistant.LOGGER.error("{}: {}", pair.getLeft(), pair.getRight());
-            }
-            throw new IllegalArgumentException();
-        }
     }
 
     @Override
