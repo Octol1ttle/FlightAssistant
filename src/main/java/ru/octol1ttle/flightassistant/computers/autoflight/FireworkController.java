@@ -15,7 +15,6 @@ import ru.octol1ttle.flightassistant.computers.TimeComputer;
 public class FireworkController implements ITickableComputer {
     private final TimeComputer time;
     private final AirDataComputer data;
-    private final PlayerInventory inventory;
     private final ClientPlayerInteractionManager interaction;
     public int safeFireworkCount;
     public boolean fireworkResponded = true;
@@ -26,10 +25,9 @@ public class FireworkController implements ITickableComputer {
     public boolean noFireworks;
     public boolean unsafeFireworks;
 
-    public FireworkController(TimeComputer time, AirDataComputer data, PlayerInventory inventory, ClientPlayerInteractionManager interaction) {
+    public FireworkController(TimeComputer time, AirDataComputer data, ClientPlayerInteractionManager interaction) {
         this.time = time;
         this.data = data;
-        this.inventory = inventory;
         this.interaction = interaction;
     }
 
@@ -43,6 +41,7 @@ public class FireworkController implements ITickableComputer {
     private int countSafeFireworks() {
         int i = 0;
 
+        PlayerInventory inventory = data.player.getInventory();
         for (int j = 0; j < inventory.size(); ++j) {
             ItemStack itemStack = inventory.getStack(j);
             if (isFireworkSafe(itemStack)) {
@@ -61,7 +60,7 @@ public class FireworkController implements ITickableComputer {
             this.lastTogaLock = time.prevMillis;
         }
 
-        if (isFireworkSafe(inventory.getMainHandStack())) {
+        if (isFireworkSafe(data.player.getInventory().getMainHandStack())) {
             return tryActivateFirework(Hand.MAIN_HAND, togaLock);
         }
         if (isFireworkSafe(data.player.getOffHandStack())) {
@@ -71,6 +70,7 @@ public class FireworkController implements ITickableComputer {
         int i = 0;
         boolean match = false;
         while (PlayerInventory.isValidHotbarIndex(i)) {
+            PlayerInventory inventory = data.player.getInventory();
             if (isFireworkSafe(inventory.getStack(i))) {
                 inventory.selectedSlot = i;
                 match = true;

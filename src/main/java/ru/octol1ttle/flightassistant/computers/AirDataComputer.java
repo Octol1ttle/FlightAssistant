@@ -17,8 +17,8 @@ import ru.octol1ttle.flightassistant.FlightAssistant;
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 public class AirDataComputer implements ITickableComputer {
-    public final PlayerEntity player;
     private final MinecraftClient mc;
+    public PlayerEntity player;
     public Vec3d position = Vec3d.ZERO;
     public Vec3d velocity = Vec3d.ZERO;
     public Vec3d velocityPerSecond = Vec3d.ZERO;
@@ -55,6 +55,9 @@ public class AirDataComputer implements ITickableComputer {
     }
 
     public void tick() {
+        assert mc.player != null;
+        player = mc.player;
+
         position = player.getPos();
         if (velocity != null) {
             acceleration = player.getVelocity().subtract(velocity);

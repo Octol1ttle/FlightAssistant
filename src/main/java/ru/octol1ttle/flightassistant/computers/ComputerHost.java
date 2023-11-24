@@ -39,7 +39,7 @@ public class ComputerHost {
 
         this.data = new AirDataComputer(mc, player);
         this.time = new TimeComputer();
-        this.firework = new FireworkController(time, data, player.getInventory(), mc.interactionManager);
+        this.firework = new FireworkController(time, data, mc.interactionManager);
         this.stall = new StallComputer(firework, data);
         this.voidLevel = new VoidLevelComputer(data, firework, stall);
         this.gpws = new GPWSComputer(data);
