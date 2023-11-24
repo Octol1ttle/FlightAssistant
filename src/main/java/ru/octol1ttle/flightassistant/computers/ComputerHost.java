@@ -32,7 +32,6 @@ public class ComputerHost {
     public final List<IComputer> faulted;
     private final List<ITickableComputer> tickables;
     private final List<IRenderTickableComputer> renderTickables;
-    public boolean ready = false;
 
     public ComputerHost(@NotNull MinecraftClient mc, HudRenderer renderer) {
         assert mc.player != null;
@@ -78,7 +77,6 @@ public class ComputerHost {
                 tickables.remove(computer);
             }
         }
-        ready = true;
     }
 
     public void render() {

@@ -19,9 +19,9 @@ import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 public class AirDataComputer implements ITickableComputer {
     public final PlayerEntity player;
     private final MinecraftClient mc;
-    public Vec3d position;
-    public Vec3d velocity;
-    public Vec3d velocityPerSecond;
+    public Vec3d position = Vec3d.ZERO;
+    public Vec3d velocity = Vec3d.ZERO;
+    public Vec3d velocityPerSecond = Vec3d.ZERO;
     public Vec3d acceleration = Vec3d.ZERO;
     public float speed;
     public float pitch;
@@ -32,7 +32,7 @@ public class AirDataComputer implements ITickableComputer {
     public float flightHeading;
     public float roll;
     public float altitude;
-    public int voidLevel;
+    public int voidLevel = Integer.MIN_VALUE;
     public int groundLevel;
     public float distanceFromGround;
     public Float elytraHealth;
@@ -42,6 +42,7 @@ public class AirDataComputer implements ITickableComputer {
     public AirDataComputer(MinecraftClient mc, PlayerEntity player) {
         this.mc = mc;
         this.player = player;
+        this.world = this.player.getWorld();
     }
 
     public boolean canAutomationsActivate() {
