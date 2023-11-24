@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import net.minecraft.client.sound.SoundManager;
 import ru.octol1ttle.flightassistant.AlertSoundInstance;
-import ru.octol1ttle.flightassistant.FlightAssistant;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
@@ -31,13 +30,12 @@ public class AlertController implements ITickableComputer {
     private final ComputerHost host;
     private final SoundManager manager;
     private final List<AbstractAlert> allAlerts;
-    private final List<AbstractAlert> toDelete;
 
     public AlertController(ComputerHost host, SoundManager manager, HudRenderer renderer) {
         this.host = host;
         this.manager = manager;
         // TODO: ECAM actions
-        allAlerts = new ArrayList<>(List.of(
+        allAlerts = List.of(
                 new StallAlert(this.host.stall, this.host.data),
                 new ExcessiveDescentAlert(this.host.data, this.host.gpws), new ExcessiveTerrainClosureAlert(this.host.gpws),
                 new ComputerFaultAlert(this.host),
@@ -48,9 +46,8 @@ public class AlertController implements ITickableComputer {
                 new FireworkCountZeroAlert(this.host.firework),
                 new FireworkNoResponseAlert(this.host.firework), new FireworkDelayedResponseAlert(this.host.firework),
                 new FireworkLowCountAlert(this.host.firework),
-                new ATHRNoFireworksInHotbarAlert(this.host.firework)));
+                new ATHRNoFireworksInHotbarAlert(this.host.firework));
         activeAlerts = new ArrayList<>(allAlerts.size());
-        toDelete = new ArrayList<>(allAlerts.size());
     }
 
     public void tick() {
@@ -67,16 +64,11 @@ public class AlertController implements ITickableComputer {
         }
 
         for (AbstractAlert alert : allAlerts) {
-            try {
-                if (alert.isTriggered()) {
-                    if (!activeAlerts.contains(alert)) {
-                        activeAlerts.add(alert);
-                    }
-                    continue;
+            if (alert.isTriggered()) {
+                if (!activeAlerts.contains(alert)) {
+                    activeAlerts.add(alert);
                 }
-            } catch (Exception e) {
-                FlightAssistant.LOGGER.error("Exception triggering alert", e);
-                toDelete.add(alert);
+                continue;
             }
 
             if (!activeAlerts.contains(alert)) {
@@ -95,12 +87,9 @@ public class AlertController implements ITickableComputer {
             activeAlerts.remove(alert);
         }
 
-        if (allAlerts.removeAll(toDelete)) {
-            toDelete.clear();
-        }
-
         boolean interrupt = false;
         activeAlerts.sort(Comparator.comparingDouble(alert -> alert.getAlertSoundData().priority()));
+
         for (AbstractAlert alert : activeAlerts) {
             AlertSoundData data = alert.getAlertSoundData();
             if (data.sound() == null) {
@@ -170,7 +159,5 @@ public class AlertController implements ITickableComputer {
     @Override
     public void reset() {
         activeAlerts.clear();
-        allAlerts.clear();
-        toDelete.clear();
     }
 }
