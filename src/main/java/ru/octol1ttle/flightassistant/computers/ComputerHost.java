@@ -114,11 +114,11 @@ public class ComputerHost {
             computer.reset();
             if (computer instanceof ITickableComputer tickable) {
                 tickables.add(tickable);
-                return;
+                continue;
             }
             if (computer instanceof IRenderTickableComputer renderTickable) {
                 renderTickables.add(renderTickable);
-                return;
+                continue;
             }
 
             throw new RuntimeException("Unknown computer type for " + computer);
