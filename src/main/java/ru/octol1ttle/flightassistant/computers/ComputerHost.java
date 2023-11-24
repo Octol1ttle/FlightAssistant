@@ -50,10 +50,10 @@ public class ComputerHost {
 
         this.autoflight = new AutoFlightComputer(data, gpws, firework);
         this.alert = new AlertController(this, mc.getSoundManager(), renderer);
-        this.plan = new FlightPlanner();
+        this.plan = new FlightPlanner(data);
 
         // computers are sorted in the order they should be ticked to avoid errors
-        this.tickables = new ArrayList<>(List.of(data, stall, gpws, voidLevel, firework, autoflight, alert));
+        this.tickables = new ArrayList<>(List.of(data, stall, gpws, voidLevel, firework, plan, autoflight, alert));
         this.renderTickables = new ArrayList<>(List.of(time, pitch));
         Collections.reverse(this.tickables); // we tick computers in reverse, so reverse the collections so that the order is correct
         Collections.reverse(this.renderTickables);
