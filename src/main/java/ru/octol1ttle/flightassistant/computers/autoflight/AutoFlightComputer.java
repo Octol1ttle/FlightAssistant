@@ -44,7 +44,5 @@ public class AutoFlightComputer implements ITickableComputer {
     @Override
     public void reset() {
         autoThrustEnabled = false;
-        targetSpeed = null;
-        targetPitch = 0.0f;
     }
 }
