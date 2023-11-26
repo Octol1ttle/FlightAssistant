@@ -2,14 +2,11 @@ package ru.octol1ttle.flightassistant.alerts.nav.gpws;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
-import ru.octol1ttle.flightassistant.alerts.GPWSSoundData;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 
@@ -17,12 +14,6 @@ import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
 public class ExcessiveDescentAlert extends AbstractAlert {
     private static final float SINK_RATE_THRESHOLD = 7.5f;
-    private static final AlertSoundData SINK_RATE = new AlertSoundData(
-            SoundEvent.of(new Identifier("flightassistant:sink_rate")),
-            2,
-            0.75f,
-            false
-    );
     private static final float PULL_UP_THRESHOLD = 5.0f;
     private final AirDataComputer data;
     private final GPWSComputer gpws;
@@ -63,10 +54,10 @@ public class ExcessiveDescentAlert extends AbstractAlert {
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
         if (gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
-            return GPWSSoundData.PULL_UP;
+            return AlertSoundData.PULL_UP;
         }
         if (gpws.descentImpactTime <= SINK_RATE_THRESHOLD) {
-            return SINK_RATE;
+            return AlertSoundData.SINK_RATE;
         }
 
         return AlertSoundData.EMPTY;

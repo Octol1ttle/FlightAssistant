@@ -2,9 +2,7 @@ package ru.octol1ttle.flightassistant.alerts.other;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
@@ -15,12 +13,6 @@ import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
 public class StallAlert extends AbstractAlert {
-    private static final AlertSoundData STALL = new AlertSoundData(
-            SoundEvent.of(new Identifier("flightassistant:stall")),
-            0,
-            0.75f,
-            true
-    );
     private final StallComputer stall;
     private final AirDataComputer data;
 
@@ -36,7 +28,7 @@ public class StallAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        return STALL;
+        return AlertSoundData.STALL;
     }
 
     @Override

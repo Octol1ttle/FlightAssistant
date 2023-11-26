@@ -8,7 +8,6 @@ import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
-import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
 
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
@@ -27,7 +26,7 @@ public class IndicatorFaultAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        return ECAMSoundData.MASTER_CAUTION;
+        return AlertSoundData.MASTER_CAUTION;
     }
 
     @Override

@@ -12,7 +12,7 @@ import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
+import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.commands.SwitchDisplayModeCommand;
 import ru.octol1ttle.flightassistant.commands.autoflight.SetAutoThrustSpeedCommand;
 import ru.octol1ttle.flightassistant.commands.plan.AddWaypointCommand;
@@ -90,11 +90,12 @@ public class FlightAssistant implements ClientModInitializer {
                 }
 
                 while (dismissMasterWarning.wasPressed()) {
-                    host.alert.dismiss(ECAMSoundData.MASTER_WARNING);
+                    host.alert.dismiss(AlertSoundData.MASTER_WARNING);
                 }
 
                 while (dismissMasterCaution.wasPressed()) {
-                    host.alert.dismiss(ECAMSoundData.MASTER_CAUTION);
+                    host.alert.dismiss(AlertSoundData.ALTITUDE_ALERT);
+                    host.alert.dismiss(AlertSoundData.MASTER_CAUTION);
                 }
             }
         });

@@ -19,7 +19,7 @@ public class WaypointUtil {
             targetAltitude = IntegerArgumentType.getInteger(context, "targetAltitude");
             targetSpeed = IntegerArgumentType.getInteger(context, "targetSpeed");
         } catch (IllegalArgumentException ignored) {
-        } // I wish Brigadier didn't make me do this
+        } // TODO: make proper optional arguments
 
         return new Waypoint(targetPosition, targetAltitude, targetSpeed);
     }

@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
-import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
 
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
@@ -27,7 +26,7 @@ public class FireworkNoResponseAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        return ECAMSoundData.MASTER_WARNING;
+        return AlertSoundData.MASTER_WARNING;
     }
 
     @Override

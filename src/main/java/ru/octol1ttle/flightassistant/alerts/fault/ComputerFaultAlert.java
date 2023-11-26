@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
-import ru.octol1ttle.flightassistant.alerts.ECAMSoundData;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.computers.IComputer;
 
@@ -27,7 +26,7 @@ public class ComputerFaultAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        return host.faulted.contains(host.data) ? ECAMSoundData.MASTER_WARNING : ECAMSoundData.MASTER_CAUTION;
+        return host.faulted.contains(host.data) ? AlertSoundData.MASTER_WARNING : AlertSoundData.MASTER_CAUTION;
     }
 
     @Override
