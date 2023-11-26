@@ -16,6 +16,7 @@ import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.commands.SwitchDisplayModeCommand;
 import ru.octol1ttle.flightassistant.commands.autoflight.SetAutoThrustSpeedCommand;
 import ru.octol1ttle.flightassistant.commands.plan.AddWaypointCommand;
+import ru.octol1ttle.flightassistant.commands.plan.ExecutePlanCommand;
 import ru.octol1ttle.flightassistant.commands.plan.InsertWaypointCommand;
 import ru.octol1ttle.flightassistant.commands.plan.RemoveWaypointCommand;
 import ru.octol1ttle.flightassistant.commands.plan.ReplaceWaypointCommand;
@@ -102,6 +103,7 @@ public class FlightAssistant implements ClientModInitializer {
     }
 
     private static void setupCommand() {
+        // TODO: registers should be in command classes, not here
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(literal("flightassistant")
                     .then(literal("toggle").executes(
@@ -147,6 +149,9 @@ public class FlightAssistant implements ClientModInitializer {
                                                     )))
                                             )
                                     )
+                            )
+                            .then(literal("execute")
+                                    .executes(new ExecutePlanCommand())
                             )
                     )
             );
