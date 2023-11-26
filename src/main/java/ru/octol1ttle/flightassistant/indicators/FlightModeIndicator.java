@@ -8,18 +8,21 @@ import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
+import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
 
 public class FlightModeIndicator extends HudComponent {
     private final Dimensions dim;
     private final FireworkController firework;
     private final TimeComputer time;
     private final AutoFlightComputer autoflight;
+    private final FlightPlanner plan;
 
-    public FlightModeIndicator(Dimensions dim, FireworkController firework, TimeComputer time, AutoFlightComputer autoflight) {
+    public FlightModeIndicator(Dimensions dim, FireworkController firework, TimeComputer time, AutoFlightComputer autoflight, FlightPlanner plan) {
         this.dim = dim;
         this.firework = firework;
         this.time = time;
         this.autoflight = autoflight;
+        this.plan = plan;
     }
 
     @Override
@@ -36,13 +39,14 @@ public class FlightModeIndicator extends HudComponent {
         }
 
         if (autoflight.autoThrustEnabled) {
-            if (autoflight.targetSpeed == null) {
-                Text text = Text.translatable("flightassistant.thrust_mode_speed_not_selected");
+            Integer speed = autoflight.selectedSpeed != null ? autoflight.selectedSpeed : plan.getManagedSpeed();
+            if (speed == null) {
+                Text text = Text.translatable("flightassistant.thrust_mode_speed_not_set");
                 drawHighlightedFont(textRenderer, context, text,
                         x - textRenderer.getWidth(text) * 0.5f, y,
                         CONFIG.amberColor, time.highlight);
             } else {
-                Text text = Text.translatable("flightassistant.thrust_mode_speed", autoflight.targetSpeed);
+                Text text = Text.translatable("flightassistant.thrust_mode_speed", speed);
                 drawFont(textRenderer, context, text, x - textRenderer.getWidth(text) * 0.5f, y, CONFIG.white);
             }
         }

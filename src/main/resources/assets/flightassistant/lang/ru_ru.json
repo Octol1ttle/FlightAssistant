@@ -50,7 +50,7 @@
 
   "flightassistant.toga_lock": "МАКС. ТЯГА",
   "flightassistant.thrust_mode_speed": "СКОР %s",
-  "flightassistant.thrust_mode_speed_not_selected": "СКОР. НЕ ЗАДАНА",
+  "flightassistant.thrust_mode_speed_not_set": "СКОР. НЕ ЗАДАНА",
 
   "flightassistant.north_short": "С",
   "flightassistant.east_short": "В",

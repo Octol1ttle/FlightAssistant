@@ -51,7 +51,7 @@
 
   "flightassistant.toga_lock": "TOGA LK",
   "flightassistant.thrust_mode_speed": "SPD %s",
-  "flightassistant.thrust_mode_speed_not_selected": "SPD NOT SEL",
+  "flightassistant.thrust_mode_speed_not_set": "SPD NOT SET",
 
   "flightassistant.north_short": "N",
   "flightassistant.east_short": "E",

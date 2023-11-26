@@ -48,9 +48,10 @@ public class ComputerHost {
         this.voidLevel.pitch = this.pitch;
         this.gpws.pitch = this.pitch;
 
-        this.autoflight = new AutoFlightComputer(data, gpws, firework);
-        this.alert = new AlertController(this, mc.getSoundManager(), renderer);
         this.plan = new FlightPlanner(data);
+        this.autoflight = new AutoFlightComputer(data, gpws, plan, firework);
+
+        this.alert = new AlertController(this, mc.getSoundManager(), renderer);
 
         // computers are sorted in the order they should be ticked to avoid errors
         this.tickables = new ArrayList<>(List.of(data, stall, gpws, voidLevel, firework, plan, autoflight, alert));
