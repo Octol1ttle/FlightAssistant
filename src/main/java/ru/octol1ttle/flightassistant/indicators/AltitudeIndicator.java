@@ -6,14 +6,17 @@ import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
+import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
 
 public class AltitudeIndicator extends HudComponent {
     private final Dimensions dim;
     private final AirDataComputer data;
+    private final AutoFlightComputer autoflight;
 
-    public AltitudeIndicator(Dimensions dim, AirDataComputer data) {
+    public AltitudeIndicator(Dimensions dim, AirDataComputer data, AutoFlightComputer autoflight) {
         this.dim = dim;
         this.data = data;
+        this.autoflight = autoflight;
     }
 
     @Override
@@ -31,20 +34,19 @@ public class AltitudeIndicator extends HudComponent {
         float xAltText = right + 5;
 
         int safeLevel = data.groundLevel == data.voidLevel ? data.voidLevel + 16 : data.groundLevel;
-        boolean isAltitudeSafe = data.altitude >= safeLevel;
 
         if (CONFIG.altitude_showGroundInfo) {
             drawHeightIndicator(context, left - 1, dim.yMid, bottom - dim.yMid, CONFIG.color);
         }
 
         if (CONFIG.altitude_showReadout) {
-            int color = !isAltitudeSafe ? CONFIG.alertColor : CONFIG.color;
+            int color = getAltitudeColor(safeLevel, data.altitude);
             drawFont(textRenderer, context, String.format("%.0f", data.altitude), xAltText, dim.yMid - 3, color);
             drawBox(context, xAltText - 2, dim.yMid - 4.5f, 28, color);
         }
 
         if (CONFIG.altitude_showHeight) {
-            int color = !isAltitudeSafe ? CONFIG.alertColor : CONFIG.color;
+            int color = data.altitude < safeLevel ? CONFIG.alertColor : CONFIG.color;
             drawFont(textRenderer, context, Text.translatable(data.groundLevel == data.voidLevel ? "flightassistant.void_level" : "flightassistant.ground_level"), xAltText - 10, bottom + 3, color);
             String heightText = String.format("%d", i(data.distanceFromGround));
             drawFont(textRenderer, context, heightText, xAltText, bottom + 3, color);
@@ -52,13 +54,15 @@ public class AltitudeIndicator extends HudComponent {
         }
 
         if (CONFIG.altitude_showScale) {
+            int color = CONFIG.alertColor;
             for (int i = -150; i < 1000; i += 10) {
                 float y = (dim.hScreen - i * blocksPerPixel) - yFloor;
                 if (y < top || y > (bottom - 5))
                     continue;
 
-                int color = i <= safeLevel ? CONFIG.alertColor : CONFIG.color;
-                if (i % 50 == 0) {
+                boolean alwaysMark = color != getAltitudeColor(safeLevel, i);
+                color = getAltitudeColor(safeLevel, i);
+                if (i % 50 == 0 || (color != CONFIG.color && alwaysMark)) {
                     drawHorizontalLine(context, left, right + 2, y, color);
                     if (!CONFIG.altitude_showReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
                         drawFont(textRenderer, context, String.format("%d", i), xAltText, y - 3, color);
@@ -66,6 +70,19 @@ public class AltitudeIndicator extends HudComponent {
                 }
                 drawHorizontalLine(context, left, right, y, color);
             }
+        }
+    }
+
+    private int getAltitudeColor(int safeLevel, float altitude) {
+        if (altitude < safeLevel) {
+            return CONFIG.alertColor;
+        }
+
+        Integer targetAltitude = autoflight.getTargetAltitude();
+        if (targetAltitude != null && Math.abs(targetAltitude - altitude) <= 5.0f) {
+            return CONFIG.adviceColor;
+        } else {
+            return CONFIG.color;
         }
     }
 

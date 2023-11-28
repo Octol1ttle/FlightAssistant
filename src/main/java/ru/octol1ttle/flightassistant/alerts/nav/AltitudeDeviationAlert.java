@@ -14,7 +14,7 @@ public class AltitudeDeviationAlert extends AbstractAlert {
 
     @Override
     public boolean isTriggered() {
-        return plan.minAltitudeDeviation != null && plan.altitudeDeviation - plan.minAltitudeDeviation >= 5;
+        return plan.minAltitudeDeviation != null && plan.altitudeDeviation - plan.minAltitudeDeviation > 5;
     }
 
     @Override

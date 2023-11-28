@@ -51,6 +51,13 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return currentWaypoint.targetSpeed();
     }
 
+    public @Nullable Integer getManagedAltitude() {
+        if (currentWaypoint == null) {
+            return null;
+        }
+        return currentWaypoint.targetAltitude();
+    }
+
     public void execute(int waypointIndex) {
         // TODO: throw exception if waypoint doesn't exist
         if (waypointExistsAt(waypointIndex)) {

@@ -15,14 +15,12 @@ public class FlightModeIndicator extends HudComponent {
     private final FireworkController firework;
     private final TimeComputer time;
     private final AutoFlightComputer autoflight;
-    private final FlightPlanner plan;
 
     public FlightModeIndicator(Dimensions dim, FireworkController firework, TimeComputer time, AutoFlightComputer autoflight, FlightPlanner plan) {
         this.dim = dim;
         this.firework = firework;
         this.time = time;
         this.autoflight = autoflight;
-        this.plan = plan;
     }
 
     @Override
@@ -39,7 +37,7 @@ public class FlightModeIndicator extends HudComponent {
         }
 
         if (autoflight.autoThrustEnabled) {
-            Integer speed = autoflight.selectedSpeed != null ? autoflight.selectedSpeed : plan.getManagedSpeed();
+            Integer speed = autoflight.getTargetSpeed();
             if (speed == null) {
                 Text text = Text.translatable("flightassistant.thrust_mode_speed_not_set");
                 drawHighlightedFont(textRenderer, context, text,

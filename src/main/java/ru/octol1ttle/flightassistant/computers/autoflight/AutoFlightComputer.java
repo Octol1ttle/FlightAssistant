@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.computers.autoflight;
 
+import org.jetbrains.annotations.Nullable;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
@@ -16,7 +17,7 @@ public class AutoFlightComputer implements ITickableComputer {
     public boolean autoThrustEnabled = false;
 
     public Integer selectedSpeed;
-    public float targetPitch;
+    public Integer selectedAltitude;
 
     public AutoFlightComputer(AirDataComputer data, GPWSComputer gpws, FlightPlanner plan, FireworkController firework) {
         this.data = data;
@@ -27,11 +28,19 @@ public class AutoFlightComputer implements ITickableComputer {
 
     public void tick() {
         if (autoThrustEnabled && gpws.getGPWSLampColor() == CONFIG.color) {
-            Integer targetSpeed = selectedSpeed != null ? selectedSpeed : plan.getManagedSpeed();
+            Integer targetSpeed = getTargetSpeed();
             if (targetSpeed != null && data.speed < targetSpeed) {
                 firework.activateFirework(false);
             }
         }
+    }
+
+    public @Nullable Integer getTargetSpeed() {
+        return selectedSpeed != null ? selectedSpeed : plan.getManagedSpeed();
+    }
+
+    public @Nullable Integer getTargetAltitude() {
+        return selectedAltitude != null ? selectedAltitude : plan.getManagedAltitude();
     }
 
     public void disconnectAutopilot(boolean force) {
