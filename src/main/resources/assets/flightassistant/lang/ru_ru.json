@@ -31,6 +31,7 @@
   "alerts.flightassistant.fault.computers.auto_flt": "ОТКАЗ АВТО ПОЛЁТА",
   "alerts.flightassistant.fault.computers.frwk_ctl": "ОТКАЗ УПР. ФРВК (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.computers.pitch_ctl": "ОТКАЗ УПР. ТАНГАЖЕМ (ЗАЩИТЫ ПОТЕР.)",
+  "alerts.flightassistant.fault.computers.flt_plan": "ОТКАЗ ПЛАНИРОВЩИКА ПОЛЁТА",
   "alerts.flightassistant.fault.computers.alert_mgr": "ОТКАЗ ПРЕДУПР. (ВСЕ ПРЕДУПР. ПОТЕР.)",
   "alerts.flightassistant.fault.computers.gpws": "ОТКАЗ GPWS (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.computers.stall_det": "ОТКАЗ СИСТ. ОБНАРУЖ. СВАЛИВ. (ЗАЩИТЫ ПОТЕР.)",

@@ -32,6 +32,7 @@
   "alerts.flightassistant.fault.computers.auto_flt": "AUTO FLIGHT FAULT",
   "alerts.flightassistant.fault.computers.frwk_ctl": "FRWK CTL FAULT (PROT LOST)",
   "alerts.flightassistant.fault.computers.pitch_ctl": "PITCH CTL FAULT (PROT LOST)",
+  "alerts.flightassistant.fault.computers.flt_plan": "FLT PLAN FAULT",
   "alerts.flightassistant.fault.computers.alert_mgr": "ALERT MGR FAULT (ALL ALERTS LOST)",
   "alerts.flightassistant.fault.computers.gpws": "GPWS FAULT (PROT LOST)",
   "alerts.flightassistant.fault.computers.stall_det": "STALL DET FAULT (PROT LOST)",

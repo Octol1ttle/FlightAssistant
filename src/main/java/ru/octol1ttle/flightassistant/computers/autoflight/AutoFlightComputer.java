@@ -18,6 +18,7 @@ public class AutoFlightComputer implements ITickableComputer {
 
     public Integer selectedSpeed;
     public Integer selectedAltitude;
+    public Integer selectedHeading;
 
     public AutoFlightComputer(AirDataComputer data, GPWSComputer gpws, FlightPlanner plan, FireworkController firework) {
         this.data = data;
@@ -41,6 +42,10 @@ public class AutoFlightComputer implements ITickableComputer {
 
     public @Nullable Integer getTargetAltitude() {
         return selectedAltitude != null ? selectedAltitude : plan.getManagedAltitude();
+    }
+
+    public @Nullable Integer getTargetHeading() {
+        return selectedHeading != null ? selectedHeading : plan.getManagedHeading();
     }
 
     public void disconnectAutopilot(boolean force) {

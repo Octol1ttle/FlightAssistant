@@ -6,15 +6,18 @@ import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
+import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
 
 public class HeadingIndicator extends HudComponent {
 
     private final Dimensions dim;
     private final AirDataComputer data;
+    private final AutoFlightComputer autoflight;
 
-    public HeadingIndicator(Dimensions dim, AirDataComputer data) {
+    public HeadingIndicator(Dimensions dim, AirDataComputer data, AutoFlightComputer autoflight) {
         this.dim = dim;
         this.data = data;
+        this.autoflight = autoflight;
     }
 
     @Override
@@ -28,8 +31,9 @@ public class HeadingIndicator extends HudComponent {
         float xNorth = dim.xMid - northOffset;
 
         if (CONFIG.heading_showReadout) {
-            drawFont(textRenderer, context, String.format("%03d", i(data.heading)), dim.xMid - 8, yText, CONFIG.color);
-            drawBox(context, dim.xMid - 15, yText - 1.5f, 30, CONFIG.color);
+            int color = getHeadingColor(data.heading);
+            drawFont(textRenderer, context, String.format("%03d", i(data.heading)), dim.xMid - 8, yText, color);
+            drawBox(context, dim.xMid - 15, yText - 1.5f, 30, color);
         }
 
         if (CONFIG.heading_showScale) {
@@ -55,6 +59,15 @@ public class HeadingIndicator extends HudComponent {
                     drawVerticalLine(context, x, top + 6, top + 10, CONFIG.color);
                 }
             }
+        }
+    }
+
+    private int getHeadingColor(float heading) {
+        Integer targetHeading = autoflight.getTargetHeading();
+        if (targetHeading != null && Math.abs(targetHeading - heading) <= 5.0f) {
+            return CONFIG.adviceColor;
+        } else {
+            return CONFIG.color;
         }
     }
 

@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.computers.navigation;
 
 import java.util.ArrayList;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
@@ -56,6 +57,13 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             return null;
         }
         return currentWaypoint.targetAltitude();
+    }
+
+    public @Nullable Integer getManagedHeading() {
+        if (currentWaypoint == null) {
+            return null;
+        }
+        throw new NotImplementedException();
     }
 
     public void execute(int waypointIndex) {

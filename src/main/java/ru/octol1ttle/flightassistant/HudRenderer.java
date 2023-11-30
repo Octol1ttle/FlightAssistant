@@ -35,7 +35,7 @@ public class HudRenderer extends HudComponent {
         this.host = new ComputerHost(mc, this);
         this.components = new ArrayList<>(List.of(
                 new FlightPathIndicator(dim, host.data, host.gpws), new LocationIndicator(dim, host.data),
-                new HeadingIndicator(dim, host.data), new SpeedIndicator(dim, host.data),
+                new HeadingIndicator(dim, host.data, host.autoflight), new SpeedIndicator(dim, host.data),
                 new AltitudeIndicator(dim, host.data, host.autoflight), new PitchIndicator(dim, host.data, host.stall, host.voidLevel),
                 new ElytraHealthIndicator(dim, host.data), new AlertIndicator(dim, host, host.alert, host.time),
                 new FlightModeIndicator(dim, host.firework, host.time, host.autoflight, host.plan), new StatusIndicator(dim, host.firework)));
