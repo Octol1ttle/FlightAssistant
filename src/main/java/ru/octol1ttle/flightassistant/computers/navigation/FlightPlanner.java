@@ -9,8 +9,8 @@ import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 public class FlightPlanner extends ArrayList<Waypoint> implements ITickableComputer {
     private final AirDataComputer data;
     private @Nullable Waypoint currentWaypoint;
-    public int altitudeDeviation;
-    public @Nullable Integer minAltitudeDeviation;
+    public float altitudeDeviation;
+    public @Nullable Float minAltitudeDeviation;
 
     public FlightPlanner(AirDataComputer data) {
         this.data = data;
@@ -24,7 +24,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         }
 
         if (currentWaypoint.targetAltitude() != null) {
-            altitudeDeviation = (int) Math.abs(data.altitude - currentWaypoint.targetAltitude());
+            altitudeDeviation = Math.abs(data.altitude - currentWaypoint.targetAltitude());
             if (minAltitudeDeviation == null) {
                 minAltitudeDeviation = altitudeDeviation;
             } else {
@@ -68,7 +68,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     @Override
     public void reset() {
         currentWaypoint = null;
-        altitudeDeviation = 0;
+        altitudeDeviation = 0.0f;
         minAltitudeDeviation = null;
     }
 
