@@ -95,8 +95,9 @@ public class FlightAssistant implements ClientModInitializer {
                 }
 
                 while (dismissMasterCaution.wasPressed()) {
-                    host.alert.dismiss(AlertSoundData.ALTITUDE_ALERT);
-                    host.alert.dismiss(AlertSoundData.MASTER_CAUTION);
+                    if (!host.alert.dismiss(AlertSoundData.ALTITUDE_ALERT)) {
+                        host.alert.dismiss(AlertSoundData.MASTER_CAUTION);
+                    }
                 }
             }
         });

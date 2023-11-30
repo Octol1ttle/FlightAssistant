@@ -21,4 +21,9 @@ public class AltitudeDeviationAlert extends AbstractAlert {
     public @NotNull AlertSoundData getAlertSoundData() {
         return AlertSoundData.ALTITUDE_ALERT;
     }
+
+    @Override
+    public boolean canBeHidden() {
+        return false;
+    }
 }

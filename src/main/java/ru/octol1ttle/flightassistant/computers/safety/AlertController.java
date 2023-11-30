@@ -132,7 +132,7 @@ public class AlertController implements ITickableComputer {
         }
     }
 
-    public void dismiss(AlertSoundData data) {
+    public boolean dismiss(AlertSoundData data) {
         boolean anyDismissed = false;
         for (AbstractAlert alert : activeAlerts) {
             if (!alert.dismissed && alert.getAlertSoundData().equals(data)) {
@@ -142,15 +142,16 @@ public class AlertController implements ITickableComputer {
         }
 
         if (anyDismissed) {
-            return;
+            return true;
         }
 
         for (AbstractAlert alert : activeAlerts) {
-            if (!alert.hidden && alert.getAlertSoundData().equals(data)) {
+            if (!alert.hidden && alert.canBeHidden() && alert.getAlertSoundData().equals(data)) {
                 alert.hidden = true;
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     @Override
