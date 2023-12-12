@@ -1,6 +1,8 @@
 package ru.octol1ttle.flightassistant.computers.autoflight;
 
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2d;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
@@ -14,7 +16,9 @@ public class AutoFlightComputer implements ITickableComputer {
     private final FlightPlanner plan;
     private final FireworkController firework;
 
+    public boolean flightDirectorsEnabled = false;
     public boolean autoThrustEnabled = false;
+    public boolean autoPilotEnabled = false;
 
     public Integer selectedSpeed;
     public Integer selectedAltitude;
@@ -44,6 +48,24 @@ public class AutoFlightComputer implements ITickableComputer {
         return selectedAltitude != null ? selectedAltitude : plan.getManagedAltitude();
     }
 
+    public @Nullable Double getTargetPitch() {
+        if (getTargetAltitude() == null) {
+            return null;
+        }
+
+        double altitudeDelta = getTargetAltitude() - data.altitude;
+        double distance;
+
+        Vector2d planPos = plan.getTargetPosition();
+        if (planPos != null) {
+            distance = Vector2d.distance(planPos.x, planPos.y, data.position.x, data.position.z);
+        } else {
+            distance = altitudeDelta;
+        }
+
+        return -Math.toDegrees(MathHelper.atan2(altitudeDelta, distance));
+    }
+
     public @Nullable Double getTargetHeading() {
         return selectedHeading != null ? Double.valueOf(selectedHeading) : plan.getManagedHeading();
     }
@@ -63,6 +85,7 @@ public class AutoFlightComputer implements ITickableComputer {
 
     @Override
     public void reset() {
-        autoThrustEnabled = false;
+        disconnectAutoThrust(true);
+        disconnectAutopilot(true);
     }
 }

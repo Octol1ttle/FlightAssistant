@@ -46,6 +46,7 @@
   "alerts.flightassistant.fault.indicators.pitch": "ОТКАЗ ИНДИК. ТАНГАЖА",
   "alerts.flightassistant.fault.indicators.speed": "ОТКАЗ ИНДИК. СКОРОСТИ",
   "alerts.flightassistant.fault.indicators.status": "ОТКАЗ ИНДИК. СТАТУСА",
+  "alerts.flightassistant.fault.indicators.flt_dir": "ОТКАЗ УКАЗАТЕЛЕЙ ПОЛЁТА",
 
   "status.flightassistant.firework_count": "КОЛ-ВО ФРВКОВ: %s",
 

@@ -47,6 +47,7 @@
   "alerts.flightassistant.fault.indicators.pitch": "PITCH INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.speed": "SPEED INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.status": "STATUS INDICATOR FAULT",
+  "alerts.flightassistant.fault.indicators.flt_dir": "FLT DIRECTORS FAULT",
 
   "status.flightassistant.firework_count": "FRWK CNT: %s",
 

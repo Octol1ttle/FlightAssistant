@@ -13,6 +13,7 @@ import ru.octol1ttle.flightassistant.config.SettingsConfig;
 import ru.octol1ttle.flightassistant.indicators.AlertIndicator;
 import ru.octol1ttle.flightassistant.indicators.AltitudeIndicator;
 import ru.octol1ttle.flightassistant.indicators.ElytraHealthIndicator;
+import ru.octol1ttle.flightassistant.indicators.FlightDirectorsIndicator;
 import ru.octol1ttle.flightassistant.indicators.FlightModeIndicator;
 import ru.octol1ttle.flightassistant.indicators.FlightPathIndicator;
 import ru.octol1ttle.flightassistant.indicators.HeadingIndicator;
@@ -38,7 +39,8 @@ public class HudRenderer extends HudComponent {
                 new HeadingIndicator(dim, host.data, host.autoflight), new SpeedIndicator(dim, host.data),
                 new AltitudeIndicator(dim, host.data, host.autoflight), new PitchIndicator(dim, host.data, host.stall, host.voidLevel),
                 new ElytraHealthIndicator(dim, host.data), new AlertIndicator(dim, host, host.alert, host.time),
-                new FlightModeIndicator(dim, host.firework, host.time, host.autoflight, host.plan), new StatusIndicator(dim, host.firework)));
+                new FlightModeIndicator(dim, host.firework, host.time, host.autoflight, host.plan), new StatusIndicator(dim, host.firework),
+                new FlightDirectorsIndicator(dim, host.autoflight, host.data)));
         this.faulted = new ArrayList<>(components.size());
     }
 

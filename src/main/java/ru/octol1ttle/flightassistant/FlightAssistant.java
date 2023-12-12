@@ -57,6 +57,8 @@ public class FlightAssistant implements ClientModInitializer {
             config -> FlightAssistant.CONFIG_MIN = config);
 
     private static KeyBinding toggleDisplayMode;
+
+    private static KeyBinding toggleFlightDirectors;
     private static KeyBinding toggleAutoThrust;
 
     private static KeyBinding dismissMasterWarning;
@@ -65,6 +67,9 @@ public class FlightAssistant implements ClientModInitializer {
     private static void setupKeycCode() {
         toggleDisplayMode = new KeyBinding("key.flightassistant.toggle_display_mode", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_GRAVE_ACCENT, "category.flightassistant");
+
+        toggleFlightDirectors = new KeyBinding("key.flightassistant.toggle_flight_directors", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_1, "category.flightassistant");
         toggleAutoThrust = new KeyBinding("key.flightassistant.toggle_auto_thrust", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_KP_2, "category.flightassistant");
 
@@ -74,6 +79,8 @@ public class FlightAssistant implements ClientModInitializer {
                 GLFW.GLFW_KEY_KP_DECIMAL, "category.flightassistant");
 
         KeyBindingHelper.registerKeyBinding(toggleDisplayMode);
+
+        KeyBindingHelper.registerKeyBinding(toggleFlightDirectors);
         KeyBindingHelper.registerKeyBinding(toggleAutoThrust);
 
         KeyBindingHelper.registerKeyBinding(dismissMasterWarning);
@@ -88,6 +95,10 @@ public class FlightAssistant implements ClientModInitializer {
             if (host != null) {
                 while (toggleAutoThrust.wasPressed()) {
                     host.autoflight.autoThrustEnabled = !host.autoflight.autoThrustEnabled;
+                }
+
+                while (toggleFlightDirectors.wasPressed()) {
+                    host.autoflight.flightDirectorsEnabled = !host.autoflight.flightDirectorsEnabled;
                 }
 
                 while (dismissMasterWarning.wasPressed()) {
