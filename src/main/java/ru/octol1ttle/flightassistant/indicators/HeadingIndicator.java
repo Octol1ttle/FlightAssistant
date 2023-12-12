@@ -38,32 +38,46 @@ public class HeadingIndicator extends HudComponent {
 
         if (CONFIG.heading_showScale) {
             drawPointer(context, dim.xMid, top + 10, 0);
-            for (int i = -540; i < 540; i = i + 5) {
-                float x = (i * dim.degreesPerPixel) + xNorth;
-                if (x < left || x > right)
-                    continue;
-                int degrees = wrapHeading(i);
 
-                if (i % 15 == 0) {
+            for (int i = -540; i < 540; i++) {
+                float x = (i * dim.degreesPerPixel) + xNorth;
+                if (x < left) {
+                    continue;
+                }
+                if (x > right) {
+                    break;
+                }
+
+                int degrees = wrapHeading(i);
+                int color = getHeadingColor(degrees);
+                double targetHeading = autoflight.getTargetHeading() != null ? autoflight.getTargetHeading() : Integer.MIN_VALUE + 1;
+
+                boolean forceMark = degrees == Math.round(targetHeading);
+                boolean enoughSpace = Math.abs(targetHeading - degrees) >= 5;
+
+                if (forceMark || i % 15 == 0 && enoughSpace) {
                     if (i % 90 == 0) {
-                        drawFont(textRenderer, context, headingToDirection(degrees), x - 2, yText + 10, CONFIG.color);
-                        drawFont(textRenderer, context, headingToAxis(degrees), x - 8, yText + 20, CONFIG.color);
+                        drawFont(textRenderer, context, headingToDirection(degrees), x - 2, yText + 10, color);
+                        drawFont(textRenderer, context, headingToAxis(degrees), x - 8, yText + 20, color);
                     } else {
-                        drawVerticalLine(context, x, top + 3, top + 10, CONFIG.color);
+                        drawVerticalLine(context, x, top + 3, top + 10, color);
                     }
 
                     if (!CONFIG.heading_showReadout || x <= dim.xMid - 26 || x >= dim.xMid + 26) {
-                        drawFont(textRenderer, context, String.format("%03d", degrees), x - 8, yText, CONFIG.color);
+                        drawFont(textRenderer, context, String.format("%03d", degrees), x - 8, yText, color);
                     }
-                } else {
-                    drawVerticalLine(context, x, top + 6, top + 10, CONFIG.color);
+                    continue;
+                }
+
+                if (i % 5 == 0 && enoughSpace) {
+                    drawVerticalLine(context, x, top + 6, top + 10, color);
                 }
             }
         }
     }
 
     private int getHeadingColor(float heading) {
-        Integer targetHeading = autoflight.getTargetHeading();
+        Double targetHeading = autoflight.getTargetHeading();
         if (targetHeading != null && Math.abs(targetHeading - heading) <= 5.0f) {
             return CONFIG.adviceColor;
         } else {

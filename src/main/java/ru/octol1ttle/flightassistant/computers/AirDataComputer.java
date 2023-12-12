@@ -162,7 +162,7 @@ public class AirDataComputer implements ITickableComputer {
         return (float) velocityPerSecond.length();
     }
 
-    private float toHeading(float yawDegrees) {
+    public static float toHeading(float yawDegrees) {
         return yawDegrees + 180.0f;
     }
 
