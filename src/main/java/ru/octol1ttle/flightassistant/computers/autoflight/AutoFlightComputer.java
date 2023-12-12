@@ -16,6 +16,7 @@ public class AutoFlightComputer implements ITickableComputer {
     private final FlightPlanner plan;
     private final FireworkController firework;
     private final PitchController pitch;
+    private final YawController yaw;
 
     public boolean flightDirectorsEnabled = false;
     public boolean autoThrustEnabled = false;
@@ -25,12 +26,13 @@ public class AutoFlightComputer implements ITickableComputer {
     public Integer selectedAltitude;
     public Integer selectedHeading;
 
-    public AutoFlightComputer(AirDataComputer data, GPWSComputer gpws, FlightPlanner plan, FireworkController firework, PitchController pitch) {
+    public AutoFlightComputer(AirDataComputer data, GPWSComputer gpws, FlightPlanner plan, FireworkController firework, PitchController pitch, YawController yaw) {
         this.data = data;
         this.gpws = gpws;
         this.plan = plan;
         this.firework = firework;
         this.pitch = pitch;
+        this.yaw = yaw;
     }
 
     public void tick() {
@@ -41,6 +43,7 @@ public class AutoFlightComputer implements ITickableComputer {
             }
         }
         pitch.targetPitch = autoPilotEnabled ? getTargetPitch() : null;
+        yaw.targetHeading = autoPilotEnabled ? getTargetHeading() : null;
     }
 
     public @Nullable Integer getTargetSpeed() {

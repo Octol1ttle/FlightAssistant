@@ -36,6 +36,7 @@
   "alerts.flightassistant.fault.computers.gpws": "ОТКАЗ GPWS (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.computers.stall_det": "ОТКАЗ СИСТ. ОБНАРУЖ. СВАЛИВ. (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.computers.void_level": "ОТКАЗ СИСТ. ВЫСОТЫ ПУСТОТЫ (ЗАЩИТЫ ПОТЕР.)",
+  "alerts.flightassistant.fault.computers.yaw_ctl": "ОТКАЗ УПР. РЫСКАНИЕМ",
   "alerts.flightassistant.fault.indicators.alert": "ОТКАЗ ИНДИК. ПРЕДУПР.",
   "alerts.flightassistant.fault.indicators.altitude": "ОТКАЗ ИНДИК. ВЫСОТЫ",
   "alerts.flightassistant.fault.indicators.elytra_health": "ОТКАЗ ИНДИК. ЗДОРОВЬЯ ЭЛИТР",

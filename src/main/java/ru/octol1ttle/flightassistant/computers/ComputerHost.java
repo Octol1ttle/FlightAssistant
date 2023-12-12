@@ -12,6 +12,7 @@ import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
 import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
+import ru.octol1ttle.flightassistant.computers.autoflight.YawController;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
 import ru.octol1ttle.flightassistant.computers.safety.AlertController;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
@@ -28,6 +29,7 @@ public class ComputerHost {
     public final AlertController alert;
     public final TimeComputer time;
     public final PitchController pitch;
+    public final YawController yaw;
     public final FlightPlanner plan;
     public final List<IComputer> faulted;
     private final List<ITickableComputer> tickables;
@@ -44,18 +46,19 @@ public class ComputerHost {
         this.voidLevel = new VoidLevelComputer(data, firework, stall);
         this.gpws = new GPWSComputer(data);
 
+        this.yaw = new YawController(time, data);
         this.pitch = new PitchController(data, stall, time, voidLevel, gpws);
         this.voidLevel.pitch = this.pitch;
         this.gpws.pitch = this.pitch;
 
         this.plan = new FlightPlanner(data);
-        this.autoflight = new AutoFlightComputer(data, gpws, plan, firework, pitch);
+        this.autoflight = new AutoFlightComputer(data, gpws, plan, firework, pitch, yaw);
 
         this.alert = new AlertController(this, mc.getSoundManager(), renderer);
 
         // computers are sorted in the order they should be ticked to avoid errors
         this.tickables = new ArrayList<>(List.of(data, stall, gpws, voidLevel, firework, plan, autoflight, alert));
-        this.renderTickables = new ArrayList<>(List.of(time, pitch));
+        this.renderTickables = new ArrayList<>(List.of(time, pitch, yaw));
         Collections.reverse(this.tickables); // we tick computers in reverse, so reverse the collections so that the order is correct
         Collections.reverse(this.renderTickables);
 
