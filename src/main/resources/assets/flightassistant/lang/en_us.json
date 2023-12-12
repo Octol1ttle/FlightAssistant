@@ -53,6 +53,12 @@
   "flightassistant.toga_lock": "TOGA LK",
   "flightassistant.thrust_mode_speed": "SPD %s",
   "flightassistant.thrust_mode_speed_not_set": "SPD NOT SET",
+  "flightassistant.vert_mode_alt": "ALT %s",
+  "flightassistant.lat_mode_hdg": "HDG %s",
+  "flightassistant.lat_mode_nav": "NAV %s %s",
+  "flightassistant.flight_directors_enabled": "FD ",
+  "flightassistant.auto_thrust_enabled": "A/THR ",
+  "flightassistant.auto_pilot_enabled": "AP",
 
   "flightassistant.north_short": "N",
   "flightassistant.east_short": "E",

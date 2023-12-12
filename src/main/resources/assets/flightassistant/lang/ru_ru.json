@@ -52,6 +52,12 @@
   "flightassistant.toga_lock": "МАКС. ТЯГА",
   "flightassistant.thrust_mode_speed": "СКОР %s",
   "flightassistant.thrust_mode_speed_not_set": "СКОР. НЕ ЗАДАНА",
+  "flightassistant.vert_mode_alt": "ВЫС %s",
+  "flightassistant.lat_mode_hdg": "АЗИ %s",
+  "flightassistant.lat_mode_nav": "НАВ %s %s",
+  "flightassistant.flight_directors_enabled": "УП ",
+  "flightassistant.auto_thrust_enabled": "А/ТЯГ ",
+  "flightassistant.auto_pilot_enabled": "АП",
 
   "flightassistant.north_short": "С",
   "flightassistant.east_short": "В",

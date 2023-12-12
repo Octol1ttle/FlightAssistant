@@ -70,6 +70,14 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return (double) AirDataComputer.toHeading((float) Math.toDegrees(MathHelper.atan2(-(target.x - current.x), target.y - current.z)));
     }
 
+    public @Nullable Vector2d getTargetPosition() {
+        if (currentWaypoint == null) {
+            return null;
+        }
+
+        return currentWaypoint.targetPosition();
+    }
+
     public void execute(int waypointIndex) {
         // TODO: throw exception if waypoint doesn't exist
         if (waypointExistsAt(waypointIndex)) {
