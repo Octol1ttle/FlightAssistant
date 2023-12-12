@@ -21,8 +21,7 @@ public class PitchController implements IRenderTickableComputer {
      * USE MINECRAFT PITCH (minus is up and plus is down)
      **/
     public Float targetPitch = null;
-    public boolean forceLevelOff = false;
-    public boolean forceClimb = false;
+    public boolean upsetRecover = false;
 
     public PitchController(AirDataComputer data, StallComputer stall, TimeComputer time, VoidLevelComputer voidLevel, GPWSComputer gpws) {
         this.data = data;
@@ -44,12 +43,8 @@ public class PitchController implements IRenderTickableComputer {
             smoothSetPitch(-voidLevel.minimumSafePitch, time.deltaTime);
             return;
         }
-        if (forceLevelOff) {
-            smoothSetPitch(0.0f, MathHelper.clamp(time.deltaTime / gpws.descentImpactTime, 0.001f, 1.0f));
-            return;
-        }
-        if (forceClimb) {
-            smoothSetPitch(CLIMB_PITCH, MathHelper.clamp(time.deltaTime / gpws.terrainImpactTime, 0.001f, 1.0f));
+        if (upsetRecover) {
+            smoothSetPitch(CLIMB_PITCH, MathHelper.clamp(time.deltaTime / positiveMin(gpws.descentImpactTime, gpws.terrainImpactTime), 0.001f, 1.0f));
             return;
         }
 
@@ -82,6 +77,20 @@ public class PitchController implements IRenderTickableComputer {
         player.setPitch(newPitch);
     }
 
+    /**
+     * Returns the lesser of the two provided numbers. If one of the numbers is less than zero, the other is returned instead.
+     **/
+    private float positiveMin(float a, float b) {
+        if (a < 0.0f) {
+            return b;
+        }
+        if (b < 0.0f) {
+            return a;
+        }
+
+        return Math.min(a, b);
+    }
+
     @Override
     public String getId() {
         return "pitch_ctl";
@@ -90,7 +99,6 @@ public class PitchController implements IRenderTickableComputer {
     @Override
     public void reset() {
         targetPitch = null;
-        forceLevelOff = false;
-        forceClimb = false;
+        upsetRecover = false;
     }
 }

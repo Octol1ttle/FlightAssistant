@@ -35,8 +35,7 @@ public class GPWSComputer implements ITickableComputer {
         descentImpactTime = this.computeDescentImpactTime();
         terrainImpactTime = this.computeTerrainImpactTime();
 
-        pitch.forceLevelOff = shouldLevelOff();
-        pitch.forceClimb = shouldClimb();
+        pitch.upsetRecover = shouldLevelOff() || shouldClimb();
     }
 
     public boolean shouldLevelOff() {
@@ -121,7 +120,6 @@ public class GPWSComputer implements ITickableComputer {
         descentImpactTime = STATUS_UNKNOWN;
         terrainImpactTime = STATUS_UNKNOWN;
 
-        pitch.forceLevelOff = false;
-        pitch.forceClimb = false;
+        pitch.upsetRecover = false;
     }
 }

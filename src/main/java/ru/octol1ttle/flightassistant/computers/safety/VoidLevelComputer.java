@@ -25,7 +25,7 @@ public class VoidLevelComputer implements ITickableComputer {
     public void tick() {
         status = computeStatus();
         if (aboveVoid() && data.altitude - data.voidLevel < 12) {
-            pitch.forceClimb = firework.activateFirework(true);
+            pitch.upsetRecover = firework.activateFirework(true);
         }
         minimumSafePitch = computeMinimumSafePitch();
     }
