@@ -44,8 +44,8 @@ public class AutoFlightComputer implements ITickableComputer {
         return selectedAltitude != null ? selectedAltitude : plan.getManagedAltitude();
     }
 
-    public @Nullable Integer getTargetHeading() {
-        return selectedHeading != null ? selectedHeading : plan.getManagedHeading();
+    public @Nullable Double getTargetHeading() {
+        return selectedHeading != null ? Double.valueOf(selectedHeading) : plan.getManagedHeading();
     }
 
     public void disconnectAutopilot(boolean force) {

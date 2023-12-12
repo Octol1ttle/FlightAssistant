@@ -1,7 +1,8 @@
 package ru.octol1ttle.flightassistant.computers.navigation;
 
 import java.util.ArrayList;
-import org.apache.commons.lang3.NotImplementedException;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
@@ -59,11 +60,14 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return currentWaypoint.targetAltitude();
     }
 
-    public @Nullable Integer getManagedHeading() {
+    public @Nullable Double getManagedHeading() {
         if (currentWaypoint == null) {
             return null;
         }
-        throw new NotImplementedException();
+
+        Vec3d current = data.position;
+        Vector2d target = currentWaypoint.targetPosition();
+        return (double) AirDataComputer.toHeading((float) Math.toDegrees(MathHelper.atan2(-(target.x - current.x), target.y - current.z)));
     }
 
     public void execute(int waypointIndex) {
