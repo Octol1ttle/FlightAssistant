@@ -54,27 +54,35 @@ public class AltitudeIndicator extends HudComponent {
         }
 
         if (CONFIG.altitude_showScale) {
-            int color = CONFIG.alertColor;
-            for (int i = -150; i < 1000; i += 10) {
+            for (int i = -150; i < 1000; i++) {
                 float y = (dim.hScreen - i * blocksPerPixel) - yFloor;
-                if (y < top || y > (bottom - 5))
+                if (y < top || y > (bottom - 5)) {
                     continue;
+                }
 
-                boolean alwaysMark = color != getAltitudeColor(safeLevel, i);
-                color = getAltitudeColor(safeLevel, i);
-                if (i % 50 == 0 || (color != CONFIG.color && alwaysMark)) {
+                int color = getAltitudeColor(safeLevel, i);
+                int targetAltitude = autoflight.getTargetAltitude() != null ? autoflight.getTargetAltitude() : Integer.MIN_VALUE + 1;
+
+                boolean forceMark = i == data.groundLevel || i == targetAltitude;
+                boolean enoughSpace = Math.abs(data.groundLevel - i) >= 10 && Math.abs(targetAltitude - i) >= 10;
+
+                if (forceMark || i % 50 == 0 && enoughSpace) {
                     drawHorizontalLine(context, left, right + 2, y, color);
                     if (!CONFIG.altitude_showReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
                         drawFont(textRenderer, context, String.format("%d", i), xAltText, y - 3, color);
                     }
+                    continue;
                 }
-                drawHorizontalLine(context, left, right, y, color);
+
+                if (i % 10 == 0 && enoughSpace) {
+                    drawHorizontalLine(context, left, right, y, color);
+                }
             }
         }
     }
 
     private int getAltitudeColor(int safeLevel, float altitude) {
-        if (altitude < safeLevel) {
+        if (altitude <= safeLevel) {
             return CONFIG.alertColor;
         }
 
