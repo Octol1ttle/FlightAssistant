@@ -60,14 +60,14 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return currentWaypoint.targetAltitude();
     }
 
-    public @Nullable Double getManagedHeading() {
+    public @Nullable Float getManagedHeading() {
         if (currentWaypoint == null) {
             return null;
         }
 
         Vec3d current = data.position;
         Vector2d target = currentWaypoint.targetPosition();
-        return (double) AirDataComputer.toHeading((float) Math.toDegrees(MathHelper.atan2(-(target.x - current.x), target.y - current.z)));
+        return AirDataComputer.toHeading((float) Math.toDegrees(MathHelper.atan2(-(target.x - current.x), target.y - current.z)));
     }
 
     public @Nullable Vector2d getTargetPosition() {

@@ -49,7 +49,7 @@ public class ComputerHost {
         this.gpws.pitch = this.pitch;
 
         this.plan = new FlightPlanner(data);
-        this.autoflight = new AutoFlightComputer(data, gpws, plan, firework);
+        this.autoflight = new AutoFlightComputer(data, gpws, plan, firework, pitch);
 
         this.alert = new AlertController(this, mc.getSoundManager(), renderer);
 

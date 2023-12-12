@@ -77,7 +77,7 @@ public class HeadingIndicator extends HudComponent {
     }
 
     private int getHeadingColor(float heading) {
-        Double targetHeading = autoflight.getTargetHeading();
+        Float targetHeading = autoflight.getTargetHeading();
         if (targetHeading != null && Math.abs(targetHeading - heading) <= 5.0f) {
             return CONFIG.adviceColor;
         } else {

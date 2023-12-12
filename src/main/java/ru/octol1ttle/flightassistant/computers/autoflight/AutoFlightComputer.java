@@ -15,6 +15,7 @@ public class AutoFlightComputer implements ITickableComputer {
     private final GPWSComputer gpws;
     private final FlightPlanner plan;
     private final FireworkController firework;
+    private final PitchController pitch;
 
     public boolean flightDirectorsEnabled = false;
     public boolean autoThrustEnabled = false;
@@ -24,11 +25,12 @@ public class AutoFlightComputer implements ITickableComputer {
     public Integer selectedAltitude;
     public Integer selectedHeading;
 
-    public AutoFlightComputer(AirDataComputer data, GPWSComputer gpws, FlightPlanner plan, FireworkController firework) {
+    public AutoFlightComputer(AirDataComputer data, GPWSComputer gpws, FlightPlanner plan, FireworkController firework, PitchController pitch) {
         this.data = data;
         this.gpws = gpws;
         this.plan = plan;
         this.firework = firework;
+        this.pitch = pitch;
     }
 
     public void tick() {
@@ -38,6 +40,7 @@ public class AutoFlightComputer implements ITickableComputer {
                 firework.activateFirework(false);
             }
         }
+        pitch.targetPitch = autoPilotEnabled ? getTargetPitch() : null;
     }
 
     public @Nullable Integer getTargetSpeed() {
@@ -48,7 +51,7 @@ public class AutoFlightComputer implements ITickableComputer {
         return selectedAltitude != null ? selectedAltitude : plan.getManagedAltitude();
     }
 
-    public @Nullable Double getTargetPitch() {
+    public @Nullable Float getTargetPitch() {
         if (getTargetAltitude() == null) {
             return null;
         }
@@ -63,11 +66,11 @@ public class AutoFlightComputer implements ITickableComputer {
             distance = altitudeDelta;
         }
 
-        return -Math.toDegrees(MathHelper.atan2(altitudeDelta, distance));
+        return (float) (-Math.toDegrees(MathHelper.atan2(altitudeDelta, distance)));
     }
 
-    public @Nullable Double getTargetHeading() {
-        return selectedHeading != null ? Double.valueOf(selectedHeading) : plan.getManagedHeading();
+    public @Nullable Float getTargetHeading() {
+        return selectedHeading != null ? Float.valueOf(selectedHeading) : plan.getManagedHeading();
     }
 
     public void disconnectAutopilot(boolean force) {

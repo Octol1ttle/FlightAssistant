@@ -26,13 +26,13 @@ public class FlightDirectorsIndicator extends HudComponent {
         }
 
         if (autoflight.getTargetPitch() != null) {
-            float deltaPitch = (float) (data.pitch + autoflight.getTargetPitch());
+            float deltaPitch = data.pitch + autoflight.getTargetPitch();
             float fdY = Math.max(dim.tFrame, Math.min(dim.bFrame, dim.yMid + i(deltaPitch * dim.degreesPerPixel)));
             drawHorizontalLine(context, dim.xMid - dim.wFrame * 0.1f, dim.xMid + dim.wFrame * 0.1f, fdY, CONFIG.adviceColor);
         }
 
         if (autoflight.getTargetHeading() != null) {
-            float deltaHeading = (float) (autoflight.getTargetHeading() - data.heading);
+            float deltaHeading = autoflight.getTargetHeading() - data.flightHeading;
             if (deltaHeading < -180) {
                 deltaHeading += 360;
             }
