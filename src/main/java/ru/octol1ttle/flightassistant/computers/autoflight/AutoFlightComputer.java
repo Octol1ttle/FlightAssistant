@@ -22,9 +22,14 @@ public class AutoFlightComputer implements ITickableComputer {
     public boolean autoThrustEnabled = false;
     public boolean autoPilotEnabled = false;
 
+    public boolean disconnectionForced = false;
+
     public Integer selectedSpeed;
     public Integer selectedAltitude;
     public Integer selectedHeading;
+
+    private float minPitchDeviation = Float.MAX_VALUE;
+    private float minYawDeviation = Float.MAX_VALUE;
 
     public AutoFlightComputer(AirDataComputer data, GPWSComputer gpws, FlightPlanner plan, FireworkController firework, PitchController pitch, YawController yaw) {
         this.data = data;
@@ -42,8 +47,31 @@ public class AutoFlightComputer implements ITickableComputer {
                 firework.activateFirework(false);
             }
         }
+
         pitch.targetPitch = autoPilotEnabled ? getTargetPitch() : null;
         yaw.targetHeading = autoPilotEnabled ? getTargetHeading() : null;
+
+        if (pitch.targetPitch != null) {
+            float currentDeviation = Math.abs(pitch.targetPitch + data.pitch);
+            minPitchDeviation = Math.min(minPitchDeviation, currentDeviation);
+
+            if (currentDeviation - minPitchDeviation > 5.0f) {
+                disconnectAutopilot(true);
+            }
+        } else {
+            minPitchDeviation = Float.MAX_VALUE;
+        }
+
+        if (yaw.targetHeading != null) {
+            float currentDeviation = Math.abs(yaw.targetHeading - data.heading);
+            minYawDeviation = Math.min(minYawDeviation, currentDeviation);
+
+            if (currentDeviation - minYawDeviation > 10.0f) {
+                disconnectAutopilot(true);
+            }
+        } else {
+            minYawDeviation = Float.MAX_VALUE;
+        }
     }
 
     public @Nullable Integer getTargetSpeed() {
@@ -77,7 +105,8 @@ public class AutoFlightComputer implements ITickableComputer {
     }
 
     public void disconnectAutopilot(boolean force) {
-
+        autoPilotEnabled = false;
+        disconnectionForced = force;
     }
 
     public void disconnectAutoThrust(boolean force) {

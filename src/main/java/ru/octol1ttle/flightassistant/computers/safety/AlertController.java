@@ -10,6 +10,7 @@ import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.autoflight.ATHRNoFireworksInHotbarAlert;
+import ru.octol1ttle.flightassistant.alerts.autoflight.AutopilotOffAlert;
 import ru.octol1ttle.flightassistant.alerts.fault.ComputerFaultAlert;
 import ru.octol1ttle.flightassistant.alerts.fault.IndicatorFaultAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkCountZeroAlert;
@@ -39,6 +40,7 @@ public class AlertController implements ITickableComputer {
         allAlerts = List.of(
                 new StallAlert(this.host.stall, this.host.data),
                 new ExcessiveDescentAlert(this.host.data, this.host.gpws), new ExcessiveTerrainClosureAlert(this.host.gpws),
+                new AutopilotOffAlert(this.host.autoflight),
                 new ComputerFaultAlert(this.host),
                 new IndicatorFaultAlert(renderer),
                 new ApproachingVoidDamageLevelAlert(this.host.voidLevel),

@@ -97,20 +97,26 @@ public class FlightAssistant implements ClientModInitializer {
 
             ComputerHost host = HudRenderer.getHost();
             if (host != null) {
-                while (toggleAutoThrust.wasPressed()) {
-                    host.autoflight.autoThrustEnabled = !host.autoflight.autoThrustEnabled;
-                }
-
                 while (toggleFlightDirectors.wasPressed()) {
                     host.autoflight.flightDirectorsEnabled = !host.autoflight.flightDirectorsEnabled;
                 }
 
+                while (toggleAutoThrust.wasPressed()) {
+                    host.autoflight.autoThrustEnabled = !host.autoflight.autoThrustEnabled;
+                }
+
                 while (toggleAutoPilot.wasPressed()) {
-                    host.autoflight.autoPilotEnabled = !host.autoflight.autoPilotEnabled;
+                    if (!host.autoflight.autoPilotEnabled) {
+                        host.autoflight.autoPilotEnabled = true;
+                    } else {
+                        host.autoflight.disconnectAutopilot(false);
+                    }
                 }
 
                 while (dismissMasterWarning.wasPressed()) {
-                    host.alert.dismiss(AlertSoundData.MASTER_WARNING);
+                    if (!host.alert.dismiss(AlertSoundData.AUTOPILOT_FORCED_OFF) && !host.alert.dismiss(AlertSoundData.AUTOPILOT_DISCONNECTED_BY_PLAYER)) {
+                        host.alert.dismiss(AlertSoundData.MASTER_WARNING);
+                    }
                 }
 
                 while (dismissMasterCaution.wasPressed()) {

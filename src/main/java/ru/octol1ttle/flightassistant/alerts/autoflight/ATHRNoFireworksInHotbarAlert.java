@@ -12,7 +12,6 @@ import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
 public class ATHRNoFireworksInHotbarAlert extends AbstractAlert {
-
     private final FireworkController firework;
 
     public ATHRNoFireworksInHotbarAlert(FireworkController firework) {

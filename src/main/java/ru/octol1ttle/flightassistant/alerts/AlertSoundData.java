@@ -29,22 +29,34 @@ public record AlertSoundData(@Nullable SoundEvent sound, int priority, float vol
             0.75f,
             false
     );
+    public static final AlertSoundData AUTOPILOT_FORCED_OFF = new AlertSoundData(
+            SoundEvent.of(new Identifier("flightassistant:autopilot_disconnect")),
+            3,
+            0.75f,
+            true
+    );
+    public static final AlertSoundData AUTOPILOT_DISCONNECTED_BY_PLAYER = new AlertSoundData(
+            SoundEvent.of(new Identifier("flightassistant:autopilot_disconnect")),
+            3,
+            0.75f,
+            false
+    );
     public static final AlertSoundData MASTER_WARNING = new AlertSoundData(
             SoundEvent.of(new Identifier("flightassistant:warning")),
-            3,
+            4,
             0.5f,
             true
     );
 
     public static final AlertSoundData MASTER_CAUTION = new AlertSoundData(
             SoundEvent.of(new Identifier("flightassistant:caution")),
-            4,
+            5,
             0.5f,
             false
     );
     public static final AlertSoundData ALTITUDE_ALERT = new AlertSoundData(
             SoundEvent.of(new Identifier("flightassistant:altitude_alert")),
-            5,
+            6,
             0.25f,
             true
     );

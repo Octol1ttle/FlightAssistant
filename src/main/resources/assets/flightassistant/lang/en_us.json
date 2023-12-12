@@ -20,7 +20,7 @@
 
   "alerts.flightassistant.approaching_void_damage_level": "APPROACHING VOID DAMAGE LEVEL",
   "alerts.flightassistant.reached_void_damage_level": "REACHED VOID DAMAGE LEVEL",
-
+  "alerts.flightassistant.autoflight.auto_pilot_off": "AUTO PILOT OFF",
   "alerts.flightassistant.firework.delayed_response": "FRWK DELAYED RESPONSE",
   "alerts.flightassistant.firework.no_response": "FRWK NO RESPONSE",
   "alerts.flightassistant.firework.no_fireworks": "NO FRWKS IN HOTBAR",
