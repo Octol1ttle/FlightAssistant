@@ -47,21 +47,14 @@ public class AlertController implements ITickableComputer {
                 new FireworkCountZeroAlert(this.host.firework),
                 new FireworkNoResponseAlert(this.host.firework), new FireworkDelayedResponseAlert(this.host.firework),
                 new FireworkLowCountAlert(this.host.firework),
-                new AltitudeDeviationAlert(this.host.plan),
+                new AltitudeDeviationAlert(this.host.data, this.host.plan),
                 new ATHRNoFireworksInHotbarAlert(this.host.firework));
         activeAlerts = new ArrayList<>(allAlerts.size());
     }
 
     public void tick() {
         if (HudComponent.CONFIG == null) { // HUD hidden
-            for (AbstractAlert alert : activeAlerts) {
-                alert.played = false;
-
-                if (alert.soundInstance != null) {
-                    manager.stop(alert.soundInstance);
-                    alert.soundInstance = null;
-                }
-            }
+            reset();
             return;
         }
 
@@ -161,6 +154,14 @@ public class AlertController implements ITickableComputer {
 
     @Override
     public void reset() {
+        for (AbstractAlert alert : activeAlerts) {
+            alert.played = false;
+
+            if (alert.soundInstance != null) {
+                manager.stop(alert.soundInstance);
+                alert.soundInstance = null;
+            }
+        }
         activeAlerts.clear();
     }
 }
