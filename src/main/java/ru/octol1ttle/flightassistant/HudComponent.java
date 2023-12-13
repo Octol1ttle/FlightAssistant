@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant;
 
+import java.awt.*;
+import java.util.Map;
 import java.util.function.Consumer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.font.TextRenderer;
@@ -11,6 +13,10 @@ import ru.octol1ttle.flightassistant.config.HudConfig;
 
 public abstract class HudComponent {
     public static HudConfig CONFIG;
+    private static final Map<Integer, Integer> colorHighlightMap = Map.of(
+            Color.RED.getRGB(), Color.WHITE.getRGB(),
+            Color.YELLOW.getRGB(), Color.BLACK.getRGB()
+    );
 
     public static void drawFont(TextRenderer textRenderer, DrawContext context, Text text, float x, float y,
                                 int color) {
@@ -34,7 +40,7 @@ public abstract class HudComponent {
         if (highlight) {
             drawUnbatched(context, ctx -> {
                 HudComponent.fill(context, x - 2.0f, y - 1.0f, x + textRenderer.getWidth(text) + 1.0f, y + 8.0f, highlightColor);
-                HudComponent.drawFont(textRenderer, context, text, x, y, CONFIG.white);
+                HudComponent.drawFont(textRenderer, context, text, x, y, colorHighlightMap.get(highlightColor));
             });
             return 1;
         }
