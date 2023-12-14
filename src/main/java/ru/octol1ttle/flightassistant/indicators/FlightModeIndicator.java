@@ -37,10 +37,7 @@ public class FlightModeIndicator extends HudComponent {
                     text,
                     x - textRenderer.getWidth(text) * 0.5f, y,
                     CONFIG.amberColor, time.highlight);
-            return;
-        }
-
-        if (autoflight.autoFireworkEnabled) {
+        } else if (autoflight.autoFireworkEnabled) {
             Integer speed = autoflight.getTargetSpeed();
             if (speed == null) {
                 Text text = Text.translatable("flightassistant.firework_mode_speed_not_set");
