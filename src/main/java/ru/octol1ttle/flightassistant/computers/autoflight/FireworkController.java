@@ -24,6 +24,7 @@ public class FireworkController implements ITickableComputer {
     public Float lastTogaLock;
     public boolean noFireworks;
     public boolean unsafeFireworks;
+    public boolean activationInProgress = false;
 
     public FireworkController(TimeComputer time, AirDataComputer data, ClientPlayerInteractionManager interaction) {
         this.time = time;
@@ -71,7 +72,7 @@ public class FireworkController implements ITickableComputer {
             this.lastTogaLock = time.prevMillis;
         }
 
-        if (isFireworkSafe(data.player.getInventory().getMainHandStack())) {
+        if (isFireworkSafe(data.player.getMainHandStack())) {
             return tryActivateFirework(Hand.MAIN_HAND, togaLock);
         }
         if (isFireworkSafe(data.player.getOffHandStack())) {
@@ -103,7 +104,9 @@ public class FireworkController implements ITickableComputer {
             return false;
         }
 
+        activationInProgress = true;
         if (interaction.interactItem(data.player, hand).shouldSwingHand()) {
+            activationInProgress = false;
             if (fireworkResponded) {
                 if (time.prevMillis != null) {
                     lastUseTime = time.prevMillis;
@@ -112,6 +115,7 @@ public class FireworkController implements ITickableComputer {
             }
             return true;
         }
+        activationInProgress = false;
 
         return false;
     }

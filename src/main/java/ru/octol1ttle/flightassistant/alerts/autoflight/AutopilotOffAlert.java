@@ -25,12 +25,12 @@ public class AutopilotOffAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        return autoflight.disconnectionForced ? AlertSoundData.AUTOPILOT_FORCED_OFF : AlertSoundData.AUTOPILOT_DISCONNECTED_BY_PLAYER;
+        return autoflight.apDisconnectionForced ? AlertSoundData.AUTOPILOT_FORCED_OFF : AlertSoundData.AUTOPILOT_DISCONNECTED_BY_PLAYER;
     }
 
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
-        if (autoflight.disconnectionForced) {
+        if (autoflight.apDisconnectionForced) {
             return HudComponent.drawHighlightedFont(textRenderer, context, Text.translatable("alerts.flightassistant.autoflight.auto_pilot_off"), x, y,
                     CONFIG.alertColor,
                     highlight && !dismissed);
@@ -46,6 +46,6 @@ public class AutopilotOffAlert extends AbstractAlert {
 
     @Override
     public boolean canBeHidden() {
-        return autoflight.disconnectionForced;
+        return autoflight.apDisconnectionForced;
     }
 }

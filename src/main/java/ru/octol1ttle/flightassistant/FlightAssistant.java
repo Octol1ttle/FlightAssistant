@@ -102,7 +102,11 @@ public class FlightAssistant implements ClientModInitializer {
                 }
 
                 while (toggleAutoThrust.wasPressed()) {
-                    host.autoflight.autoThrustEnabled = !host.autoflight.autoThrustEnabled;
+                    if (!host.autoflight.autoThrustEnabled) {
+                        host.autoflight.autoThrustEnabled = true;
+                    } else {
+                        host.autoflight.disconnectAutoThrust(false);
+                    }
                 }
 
                 while (toggleAutoPilot.wasPressed()) {

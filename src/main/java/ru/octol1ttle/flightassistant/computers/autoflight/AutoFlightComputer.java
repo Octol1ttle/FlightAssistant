@@ -22,7 +22,8 @@ public class AutoFlightComputer implements ITickableComputer {
     public boolean autoThrustEnabled = false;
     public boolean autoPilotEnabled = false;
 
-    public boolean disconnectionForced = false;
+    public boolean apDisconnectionForced = false;
+    public boolean afrwkDisconnectionForced = false;
 
     public Integer selectedSpeed;
     public Integer selectedAltitude;
@@ -106,11 +107,12 @@ public class AutoFlightComputer implements ITickableComputer {
 
     public void disconnectAutopilot(boolean force) {
         autoPilotEnabled = false;
-        disconnectionForced = force;
+        apDisconnectionForced = force;
     }
 
     public void disconnectAutoThrust(boolean force) {
-
+        autoThrustEnabled = false;
+        afrwkDisconnectionForced = force;
     }
 
     @Override
