@@ -20,6 +20,10 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
     @Override
     public void tick() {
+        if (!this.contains(currentWaypoint)) {
+            currentWaypoint = null;
+        }
+
         if (currentWaypoint == null) {
             minAltitudeDeviation = null;
             return;
