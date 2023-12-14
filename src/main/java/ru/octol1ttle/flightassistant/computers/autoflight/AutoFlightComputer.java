@@ -19,7 +19,7 @@ public class AutoFlightComputer implements ITickableComputer {
     private final YawController yaw;
 
     public boolean flightDirectorsEnabled = false;
-    public boolean autoThrustEnabled = false;
+    public boolean autoFireworkEnabled = false;
     public boolean autoPilotEnabled = false;
 
     public boolean apDisconnectionForced = false;
@@ -42,7 +42,7 @@ public class AutoFlightComputer implements ITickableComputer {
     }
 
     public void tick() {
-        if (autoThrustEnabled && gpws.getGPWSLampColor() == CONFIG.color) {
+        if (autoFireworkEnabled && gpws.getGPWSLampColor() == CONFIG.color) {
             Integer targetSpeed = getTargetSpeed();
             if (targetSpeed != null && data.speed < targetSpeed) {
                 firework.activateFirework(false);
@@ -110,8 +110,8 @@ public class AutoFlightComputer implements ITickableComputer {
         apDisconnectionForced = force;
     }
 
-    public void disconnectAutoThrust(boolean force) {
-        autoThrustEnabled = false;
+    public void disconnectAutoFirework(boolean force) {
+        autoFireworkEnabled = false;
         afrwkDisconnectionForced = force;
     }
 
@@ -122,7 +122,7 @@ public class AutoFlightComputer implements ITickableComputer {
 
     @Override
     public void reset() {
-        disconnectAutoThrust(true);
+        disconnectAutoFirework(true);
         disconnectAutopilot(true);
     }
 }

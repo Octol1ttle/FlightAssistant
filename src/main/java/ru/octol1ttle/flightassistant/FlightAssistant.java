@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.commands.SwitchDisplayModeCommand;
-import ru.octol1ttle.flightassistant.commands.autoflight.SetAutoThrustSpeedCommand;
+import ru.octol1ttle.flightassistant.commands.autoflight.SetAutoFireworkSpeedCommand;
 import ru.octol1ttle.flightassistant.commands.plan.AddWaypointCommand;
 import ru.octol1ttle.flightassistant.commands.plan.ExecutePlanCommand;
 import ru.octol1ttle.flightassistant.commands.plan.InsertWaypointCommand;
@@ -59,7 +59,7 @@ public class FlightAssistant implements ClientModInitializer {
     private static KeyBinding toggleDisplayMode;
 
     private static KeyBinding toggleFlightDirectors;
-    private static KeyBinding toggleAutoThrust;
+    private static KeyBinding toggleAutoFirework;
     private static KeyBinding toggleAutoPilot;
 
     private static KeyBinding dismissMasterWarning;
@@ -71,7 +71,7 @@ public class FlightAssistant implements ClientModInitializer {
 
         toggleFlightDirectors = new KeyBinding("key.flightassistant.toggle_flight_directors", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_KP_1, "category.flightassistant");
-        toggleAutoThrust = new KeyBinding("key.flightassistant.toggle_auto_thrust", InputUtil.Type.KEYSYM,
+        toggleAutoFirework = new KeyBinding("key.flightassistant.toggle_auto_firework", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_KP_2, "category.flightassistant");
         toggleAutoPilot = new KeyBinding("key.flightassistant.toggle_auto_pilot", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_KP_3, "category.flightassistant");
@@ -84,7 +84,7 @@ public class FlightAssistant implements ClientModInitializer {
         KeyBindingHelper.registerKeyBinding(toggleDisplayMode);
 
         KeyBindingHelper.registerKeyBinding(toggleFlightDirectors);
-        KeyBindingHelper.registerKeyBinding(toggleAutoThrust);
+        KeyBindingHelper.registerKeyBinding(toggleAutoFirework);
         KeyBindingHelper.registerKeyBinding(toggleAutoPilot);
 
         KeyBindingHelper.registerKeyBinding(dismissMasterWarning);
@@ -101,11 +101,11 @@ public class FlightAssistant implements ClientModInitializer {
                     host.autoflight.flightDirectorsEnabled = !host.autoflight.flightDirectorsEnabled;
                 }
 
-                while (toggleAutoThrust.wasPressed()) {
-                    if (!host.autoflight.autoThrustEnabled) {
-                        host.autoflight.autoThrustEnabled = true;
+                while (toggleAutoFirework.wasPressed()) {
+                    if (!host.autoflight.autoFireworkEnabled) {
+                        host.autoflight.autoFireworkEnabled = true;
                     } else {
-                        host.autoflight.disconnectAutoThrust(false);
+                        host.autoflight.disconnectAutoFirework(false);
                     }
                 }
 
@@ -152,7 +152,7 @@ public class FlightAssistant implements ClientModInitializer {
                     )
                     .then(literal("speed")
                             .then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
-                                    .executes(new SetAutoThrustSpeedCommand())))
+                                    .executes(new SetAutoFireworkSpeedCommand())))
                     .then(literal("plan")
                             .then(literal("add")
                                     .then(argument("targetX", IntegerArgumentType.integer()).then(argument("targetZ", IntegerArgumentType.integer()).then(argument("targetAltitude", IntegerArgumentType.integer(-80)).then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))

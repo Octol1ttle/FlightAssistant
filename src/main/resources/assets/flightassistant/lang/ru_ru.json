@@ -2,7 +2,8 @@
   "category.flightassistant": "Flight Assistant",
 
   "key.flightassistant.toggle_display_mode": "Переключить режим интерфейса",
-  "key.flightassistant.toggle_auto_thrust": "Вкл/выкл автомат тяги",
+  "key.flightassistant.toggle_auto_firework": "Вкл/выкл авто-фейерверк",
+  "key.flightassistant.toggle_auto_pilot": "Вкл/выкл автопилот",
   "key.flightassistant.dismiss_master_warning": "Заглушить (скрыть) предупреждение особой важности",
   "key.flightassistant.dismiss_master_caution": "Заглушить (скрыть) обычное предупреждение",
   "commands.flightassistant.no_such_waypoint": "На указанной позиции нет точки назначения",
@@ -52,13 +53,13 @@
   "status.flightassistant.firework_count": "КОЛ-ВО ФРВКОВ: %s",
 
   "flightassistant.toga_lock": "МАКС. ТЯГА",
-  "flightassistant.thrust_mode_speed": "СКОР %s",
-  "flightassistant.thrust_mode_speed_not_set": "СКОР. НЕ ЗАДАНА",
+  "flightassistant.firework_mode_speed": "СКОР %s",
+  "flightassistant.firework_mode_speed_not_set": "СКОР. НЕ ЗАДАНА",
   "flightassistant.vert_mode_alt": "ВЫС %s",
   "flightassistant.lat_mode_hdg": "АЗИ %s",
   "flightassistant.lat_mode_nav": "НАВ %s %s",
   "flightassistant.flight_directors_enabled": "УП ",
-  "flightassistant.auto_thrust_enabled": "А/ТЯГ ",
+  "flightassistant.auto_firework_enabled": "А/ФРВК ",
   "flightassistant.auto_pilot_enabled": "АП",
 
   "flightassistant.north_short": "С",

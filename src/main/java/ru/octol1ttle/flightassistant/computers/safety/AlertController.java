@@ -9,8 +9,8 @@ import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
-import ru.octol1ttle.flightassistant.alerts.autoflight.ATHRNoFireworksInHotbarAlert;
 import ru.octol1ttle.flightassistant.alerts.autoflight.AutopilotOffAlert;
+import ru.octol1ttle.flightassistant.alerts.autoflight.NoFireworksInHotbarAlert;
 import ru.octol1ttle.flightassistant.alerts.fault.ComputerFaultAlert;
 import ru.octol1ttle.flightassistant.alerts.fault.IndicatorFaultAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkCountZeroAlert;
@@ -50,7 +50,7 @@ public class AlertController implements ITickableComputer {
                 new FireworkNoResponseAlert(this.host.firework), new FireworkDelayedResponseAlert(this.host.firework),
                 new FireworkLowCountAlert(this.host.firework),
                 new AltitudeDeviationAlert(this.host.data, this.host.plan),
-                new ATHRNoFireworksInHotbarAlert(this.host.firework));
+                new NoFireworksInHotbarAlert(this.host.firework));
         activeAlerts = new ArrayList<>(allAlerts.size());
     }
 

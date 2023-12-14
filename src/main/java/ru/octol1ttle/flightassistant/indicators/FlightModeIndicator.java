@@ -40,15 +40,15 @@ public class FlightModeIndicator extends HudComponent {
             return;
         }
 
-        if (autoflight.autoThrustEnabled) {
+        if (autoflight.autoFireworkEnabled) {
             Integer speed = autoflight.getTargetSpeed();
             if (speed == null) {
-                Text text = Text.translatable("flightassistant.thrust_mode_speed_not_set");
+                Text text = Text.translatable("flightassistant.firework_mode_speed_not_set");
                 drawHighlightedFont(textRenderer, context, text,
                         x - textRenderer.getWidth(text) * 0.5f, y,
                         CONFIG.amberColor, time.highlight);
             } else {
-                Text text = Text.translatable("flightassistant.thrust_mode_speed", speed);
+                Text text = Text.translatable("flightassistant.firework_mode_speed", speed);
                 drawFont(textRenderer, context, text, x - textRenderer.getWidth(text) * 0.5f, y, CONFIG.white);
             }
         }
@@ -77,8 +77,8 @@ public class FlightModeIndicator extends HudComponent {
         if (autoflight.flightDirectorsEnabled) {
             automationStatus.append(Text.translatable("flightassistant.flight_directors_enabled"));
         }
-        if (autoflight.autoThrustEnabled) {
-            automationStatus.append(Text.translatable("flightassistant.auto_thrust_enabled"));
+        if (autoflight.autoFireworkEnabled) {
+            automationStatus.append(Text.translatable("flightassistant.auto_firework_enabled"));
         }
         if (autoflight.autoPilotEnabled) {
             automationStatus.append(Text.translatable("flightassistant.auto_pilot_enabled"));

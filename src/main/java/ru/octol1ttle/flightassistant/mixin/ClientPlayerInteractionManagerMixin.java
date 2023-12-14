@@ -27,8 +27,8 @@ public class ClientPlayerInteractionManagerMixin {
             return;
         }
 
-        if (host.autoflight.autoThrustEnabled && !host.firework.activationInProgress) {
-            host.autoflight.disconnectAutoThrust(true);
+        if (host.autoflight.autoFireworkEnabled && !host.firework.activationInProgress) {
+            host.autoflight.disconnectAutoFirework(true);
         }
 
         host.firework.unsafeFireworks = !host.firework.isFireworkSafe(stack);

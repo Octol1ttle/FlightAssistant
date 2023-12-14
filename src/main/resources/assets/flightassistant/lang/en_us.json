@@ -2,7 +2,8 @@
   "category.flightassistant": "Flight Assistant",
 
   "key.flightassistant.toggle_display_mode": "Switch Display Mode",
-  "key.flightassistant.toggle_auto_thrust": "Toggle Auto Thrust",
+  "key.flightassistant.toggle_auto_firework": "Toggle Auto Firework",
+  "key.flightassistant.toggle_auto_pilot": "Toggle Auto Pilot",
   "key.flightassistant.dismiss_master_warning": "Silence (dismiss) master warning",
   "key.flightassistant.dismiss_master_caution": "Silence (dismiss) master caution",
   "commands.flightassistant.no_such_waypoint": "There is no waypoint at that index",
@@ -53,13 +54,13 @@
   "status.flightassistant.firework_count": "FRWK CNT: %s",
 
   "flightassistant.toga_lock": "TOGA LK",
-  "flightassistant.thrust_mode_speed": "SPD %s",
-  "flightassistant.thrust_mode_speed_not_set": "SPD NOT SET",
+  "flightassistant.firework_mode_speed": "SPD %s",
+  "flightassistant.firework_mode_speed_not_set": "SPD NOT SET",
   "flightassistant.vert_mode_alt": "ALT %s",
   "flightassistant.lat_mode_hdg": "HDG %s",
   "flightassistant.lat_mode_nav": "NAV %s %s",
   "flightassistant.flight_directors_enabled": "FD ",
-  "flightassistant.auto_thrust_enabled": "A/THR ",
+  "flightassistant.auto_firework_enabled": "A/FRWK ",
   "flightassistant.auto_pilot_enabled": "AP",
 
   "flightassistant.north_short": "N",
