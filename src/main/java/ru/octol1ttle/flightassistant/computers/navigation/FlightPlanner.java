@@ -39,7 +39,8 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         }
 
         Vector2d target = new Vector2d(currentWaypoint.targetPosition());
-        if (target.sub(data.position.x, data.position.z).length() <= 5.0f) {
+        int altitude = currentWaypoint.targetAltitude() != null ? currentWaypoint.targetAltitude() : (int) data.altitude;
+        if (target.sub(data.position.x, data.position.z).length() <= 5.0f && Math.abs(altitude - data.altitude) <= 5.0f) {
             int nextIndex = this.indexOf(currentWaypoint) + 1;
             currentWaypoint = waypointExistsAt(nextIndex) ? this.get(nextIndex) : null;
             minAltitudeDeviation = null;
