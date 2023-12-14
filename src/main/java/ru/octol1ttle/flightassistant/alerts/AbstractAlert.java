@@ -26,6 +26,10 @@ public abstract class AbstractAlert {
         return 0;
     }
 
+    public boolean canBeDismissed(boolean isPlaying) {
+        return true;
+    }
+
     public boolean canBeHidden() {
         return true;
     }

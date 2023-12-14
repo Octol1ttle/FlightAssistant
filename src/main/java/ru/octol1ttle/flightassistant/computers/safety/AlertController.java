@@ -130,7 +130,7 @@ public class AlertController implements ITickableComputer {
     public boolean dismiss(AlertSoundData data) {
         boolean anyDismissed = false;
         for (AbstractAlert alert : activeAlerts) {
-            if (!alert.dismissed && alert.getAlertSoundData().equals(data)) {
+            if (!alert.dismissed && (alert.soundInstance == null || alert.canBeDismissed(manager.isPlaying(alert.soundInstance))) && alert.getAlertSoundData().equals(data)) {
                 alert.dismissed = true;
                 anyDismissed = true;
             }

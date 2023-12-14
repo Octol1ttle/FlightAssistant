@@ -38,4 +38,14 @@ public class AutopilotOffAlert extends AbstractAlert {
 
         return 0;
     }
+
+    @Override
+    public boolean canBeDismissed(boolean isPlaying) {
+        return isPlaying;
+    }
+
+    @Override
+    public boolean canBeHidden() {
+        return autoflight.disconnectionForced;
+    }
 }
