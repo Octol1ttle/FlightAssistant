@@ -88,17 +88,21 @@ public class AutoFlightComputer implements ITickableComputer {
             return null;
         }
 
+        double distanceFallback = data.speed - data.velocity.horizontalLength(); // pitch higher when speed is higher
         double altitudeDelta = getTargetAltitude() - data.altitude;
-        double distance;
 
+        double distance;
         Vector2d planPos = plan.getTargetPosition();
         if (planPos != null) {
             distance = Vector2d.distance(planPos.x, planPos.y, data.position.x, data.position.z);
         } else {
-            distance = altitudeDelta;
+            distance = distanceFallback;
         }
 
-        return (float) (-Math.toDegrees(MathHelper.atan2(altitudeDelta, distance)));
+        return (float) (-Math.max(
+                Math.toDegrees(MathHelper.atan2(data.groundLevel + 10 - data.altitude, distanceFallback)),
+                Math.toDegrees(MathHelper.atan2(altitudeDelta, distance))
+        ));
     }
 
     public @Nullable Float getTargetHeading() {
