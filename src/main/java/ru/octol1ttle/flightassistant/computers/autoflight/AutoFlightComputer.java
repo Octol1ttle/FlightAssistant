@@ -29,9 +29,6 @@ public class AutoFlightComputer implements ITickableComputer {
     public Integer selectedAltitude;
     public Integer selectedHeading;
 
-    private float minPitchDeviation = Float.MAX_VALUE;
-    private float minYawDeviation = Float.MAX_VALUE;
-
     public AutoFlightComputer(AirDataComputer data, GPWSComputer gpws, FlightPlanner plan, FireworkController firework, PitchController pitch, YawController yaw) {
         this.data = data;
         this.gpws = gpws;
@@ -52,27 +49,7 @@ public class AutoFlightComputer implements ITickableComputer {
         pitch.targetPitch = autoPilotEnabled ? getTargetPitch() : null;
         yaw.targetHeading = autoPilotEnabled ? getTargetHeading() : null;
 
-        if (pitch.targetPitch != null) {
-            float currentDeviation = Math.abs(pitch.targetPitch + data.pitch);
-            minPitchDeviation = Math.min(minPitchDeviation, currentDeviation);
-
-            if (currentDeviation - minPitchDeviation > 5.0f) {
-                disconnectAutopilot(true);
-            }
-        } else {
-            minPitchDeviation = Float.MAX_VALUE;
-        }
-
-        if (yaw.targetHeading != null) {
-            float currentDeviation = Math.abs(yaw.targetHeading - data.heading);
-            minYawDeviation = Math.min(minYawDeviation, currentDeviation);
-
-            if (currentDeviation - minYawDeviation > 10.0f) {
-                disconnectAutopilot(true);
-            }
-        } else {
-            minYawDeviation = Float.MAX_VALUE;
-        }
+        // TODO: disconnect A/P on player input
     }
 
     public @Nullable Integer getTargetSpeed() {
