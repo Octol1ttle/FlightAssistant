@@ -10,7 +10,8 @@ import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 
 public class FlightPlanner extends ArrayList<Waypoint> implements ITickableComputer {
     private final AirDataComputer data;
-    private @Nullable Waypoint currentWaypoint;
+    private @Nullable Waypoint startWaypoint;
+    private @Nullable Waypoint targetWaypoint;
     public float altitudeDeviation;
     public @Nullable Float minAltitudeDeviation;
 
@@ -20,17 +21,22 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
     @Override
     public void tick() {
-        if (!this.contains(currentWaypoint)) {
-            currentWaypoint = null;
+        if (!this.contains(targetWaypoint)) {
+            targetWaypoint = null;
         }
 
-        if (currentWaypoint == null) {
+        if (targetWaypoint == null) {
+            startWaypoint = null;
             minAltitudeDeviation = null;
             return;
         }
 
-        if (currentWaypoint.targetAltitude() != null) {
-            altitudeDeviation = Math.abs(data.altitude - currentWaypoint.targetAltitude());
+        if (startWaypoint == null) {
+            startWaypoint = new Waypoint(new Vector2d(data.position.x, data.position.z), (int) data.altitude, null);
+        }
+
+        if (targetWaypoint.targetAltitude() != null) {
+            altitudeDeviation = Math.abs(data.altitude - targetWaypoint.targetAltitude());
             if (minAltitudeDeviation == null) {
                 minAltitudeDeviation = altitudeDeviation;
             } else {
@@ -38,11 +44,12 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             }
         }
 
-        Vector2d target = new Vector2d(currentWaypoint.targetPosition());
-        int altitude = currentWaypoint.targetAltitude() != null ? currentWaypoint.targetAltitude() : (int) data.altitude;
+        Vector2d target = new Vector2d(targetWaypoint.targetPosition());
+        int altitude = targetWaypoint.targetAltitude() != null ? targetWaypoint.targetAltitude() : (int) data.altitude;
         if (target.sub(data.position.x, data.position.z).length() <= 5.0f && Math.abs(altitude - data.altitude) <= 5.0f) {
-            int nextIndex = this.indexOf(currentWaypoint) + 1;
-            currentWaypoint = waypointExistsAt(nextIndex) ? this.get(nextIndex) : null;
+            int nextIndex = this.indexOf(targetWaypoint) + 1;
+            startWaypoint = targetWaypoint;
+            targetWaypoint = waypointExistsAt(nextIndex) ? this.get(nextIndex) : null;
             minAltitudeDeviation = null;
         }
     }
@@ -52,47 +59,66 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     }
 
     public @Nullable Integer getManagedSpeed() {
-        if (currentWaypoint == null) {
+        if (targetWaypoint == null) {
             return null;
         }
-        return currentWaypoint.targetSpeed();
+        return targetWaypoint.targetSpeed();
     }
 
     public @Nullable Integer getManagedAltitude() {
-        if (currentWaypoint == null) {
+        if (targetWaypoint == null) {
             return null;
         }
-        return currentWaypoint.targetAltitude();
+        return targetWaypoint.targetAltitude();
     }
 
     public @Nullable Float getManagedHeading() {
-        if (currentWaypoint == null) {
+        if (targetWaypoint == null) {
             return null;
         }
 
         Vec3d current = data.position;
-        Vector2d target = currentWaypoint.targetPosition();
+        Vector2d target = targetWaypoint.targetPosition();
         return AirDataComputer.toHeading((float) Math.toDegrees(MathHelper.atan2(-(target.x - current.x), target.y - current.z)));
     }
 
+    public @Nullable Float getManagedPitch() {
+        if (targetWaypoint == null || targetWaypoint.targetAltitude() == null) {
+            return null;
+        }
+        if (startWaypoint == null || startWaypoint.targetAltitude() == null) {
+            throw new IllegalStateException();
+        }
+
+
+        Vector2d start = startWaypoint.targetPosition();
+        Vector2d end = targetWaypoint.targetPosition();
+        double currentToEnd = Vector2d.distance(data.position.x, data.position.z, end.x, end.y);
+        double startToEnd = Math.max(currentToEnd, Vector2d.distance(start.x, start.y, end.x, end.y));
+
+        double target = startWaypoint.targetAltitude() + (targetWaypoint.targetAltitude() - startWaypoint.targetAltitude()) * ((startToEnd - currentToEnd) / startToEnd);
+
+        return (float) (-Math.toDegrees(MathHelper.atan2(target - data.altitude, 35.0f)));
+    }
+
     public @Nullable Vector2d getTargetPosition() {
-        if (currentWaypoint == null) {
+        if (targetWaypoint == null) {
             return null;
         }
 
-        return currentWaypoint.targetPosition();
+        return targetWaypoint.targetPosition();
     }
 
     public void execute(int waypointIndex) {
         // TODO: throw exception if waypoint doesn't exist
         if (waypointExistsAt(waypointIndex)) {
-            currentWaypoint = this.get(waypointIndex);
+            targetWaypoint = this.get(waypointIndex);
         }
     }
 
     @Override
     public void reset() {
-        currentWaypoint = null;
+        targetWaypoint = null;
         altitudeDeviation = 0.0f;
         minAltitudeDeviation = null;
     }

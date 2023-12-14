@@ -7,18 +7,15 @@ import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
-import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
 public class StallAlert extends AbstractAlert {
     private final StallComputer stall;
-    private final AirDataComputer data;
 
-    public StallAlert(StallComputer stall, AirDataComputer data) {
+    public StallAlert(StallComputer stall) {
         this.stall = stall;
-        this.data = data;
     }
 
     @Override
