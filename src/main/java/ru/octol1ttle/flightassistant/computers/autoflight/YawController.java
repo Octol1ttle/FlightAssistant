@@ -29,7 +29,16 @@ public class YawController implements IRenderTickableComputer {
             return;
         }
 
-        data.player.setYaw(data.player.getYaw() + (heading - data.heading) * delta);
+        float difference = heading - data.heading;
+
+        float newYaw;
+        if (Math.abs(difference) < 0.05f) {
+            newYaw = heading - 180.0f;
+        } else {
+            newYaw = data.player.getYaw() + difference * delta;
+        }
+
+        data.player.setYaw(newYaw);
     }
 
     @Override

@@ -65,14 +65,19 @@ public class PitchController implements IRenderTickableComputer {
         PlayerEntity player = data.player;
         float difference = pitch - player.getPitch();
 
-        if (difference < 0) { // going UP
-            pitch = MathHelper.clamp(pitch, -stall.maximumSafePitch, 90.0f);
-        }
-        if (difference > 0) { // going DOWN
-            pitch = MathHelper.clamp(pitch, -90.0f, -PitchIndicator.DANGEROUS_DOWN_PITCH);
-        }
+        float newPitch;
+        if (Math.abs(difference) < 0.05f) {
+            newPitch = pitch;
+        } else {
+            if (difference < 0) { // going UP
+                pitch = MathHelper.clamp(pitch, -stall.maximumSafePitch, 90.0f);
+            }
+            if (difference > 0) { // going DOWN
+                pitch = MathHelper.clamp(pitch, -90.0f, -PitchIndicator.DANGEROUS_DOWN_PITCH);
+            }
 
-        float newPitch = player.getPitch() + (pitch - player.getPitch()) * delta;
+            newPitch = player.getPitch() + (pitch - player.getPitch()) * delta;
+        }
 
         player.setPitch(newPitch);
     }
