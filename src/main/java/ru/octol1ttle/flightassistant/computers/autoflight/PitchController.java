@@ -21,7 +21,6 @@ public class PitchController implements IRenderTickableComputer {
      * USE MINECRAFT PITCH (minus is up and plus is down)
      **/
     public Float targetPitch = null;
-    public boolean upsetRecover = false;
 
     public PitchController(AirDataComputer data, StallComputer stall, TimeComputer time, VoidLevelComputer voidLevel, GPWSComputer gpws) {
         this.data = data;
@@ -43,7 +42,7 @@ public class PitchController implements IRenderTickableComputer {
             smoothSetPitch(-voidLevel.minimumSafePitch, time.deltaTime);
             return;
         }
-        if (upsetRecover) {
+        if (gpws.isInDanger()) {
             smoothSetPitch(CLIMB_PITCH, MathHelper.clamp(time.deltaTime / positiveMin(gpws.descentImpactTime, gpws.terrainImpactTime), 0.001f, 1.0f));
             return;
         }
@@ -104,6 +103,5 @@ public class PitchController implements IRenderTickableComputer {
     @Override
     public void reset() {
         targetPitch = null;
-        upsetRecover = false;
     }
 }

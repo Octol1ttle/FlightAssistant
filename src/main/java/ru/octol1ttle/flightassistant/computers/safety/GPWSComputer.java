@@ -7,7 +7,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
-import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
@@ -23,7 +22,6 @@ public class GPWSComputer implements ITickableComputer {
     private static final float BLOCK_PITCH_CONTROL_THRESHOLD = 5.0f;
     private static final float TERRAIN_RAYCAST_AHEAD_SECONDS = 10.0f;
     private final AirDataComputer data;
-    public PitchController pitch;
     public float descentImpactTime = STATUS_UNKNOWN;
     public float terrainImpactTime = STATUS_UNKNOWN;
 
@@ -34,12 +32,11 @@ public class GPWSComputer implements ITickableComputer {
     public void tick() {
         descentImpactTime = this.computeDescentImpactTime();
         terrainImpactTime = this.computeTerrainImpactTime();
-
-        pitch.upsetRecover = shouldLevelOff() || shouldClimb();
     }
 
-    public boolean shouldLevelOff() {
-        return descentImpactTime >= 0.0f && descentImpactTime <= PITCH_CORRECT_THRESHOLD;
+    public boolean isInDanger() {
+        return descentImpactTime >= 0.0f && descentImpactTime <= PITCH_CORRECT_THRESHOLD
+                || terrainImpactTime >= 0.0f && terrainImpactTime <= PITCH_CORRECT_THRESHOLD;
     }
 
     public int getGPWSLampColor() {
@@ -51,10 +48,6 @@ public class GPWSComputer implements ITickableComputer {
         }
 
         return CONFIG.color;
-    }
-
-    private boolean shouldClimb() {
-        return terrainImpactTime >= 0.0f && terrainImpactTime <= PITCH_CORRECT_THRESHOLD;
     }
 
     public boolean shouldBlockPitchChanges() {
@@ -119,7 +112,5 @@ public class GPWSComputer implements ITickableComputer {
     public void reset() {
         descentImpactTime = STATUS_UNKNOWN;
         terrainImpactTime = STATUS_UNKNOWN;
-
-        pitch.upsetRecover = false;
     }
 }

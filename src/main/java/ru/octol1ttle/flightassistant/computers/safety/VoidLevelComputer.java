@@ -3,7 +3,6 @@ package ru.octol1ttle.flightassistant.computers.safety;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
-import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
 import ru.octol1ttle.flightassistant.indicators.PitchIndicator;
 
 public class VoidLevelComputer implements ITickableComputer {
@@ -11,8 +10,6 @@ public class VoidLevelComputer implements ITickableComputer {
     private final AirDataComputer data;
     private final FireworkController firework;
     private final StallComputer stall;
-    public PitchController pitch;
-
     public VoidLevelStatus status = VoidLevelStatus.UNKNOWN;
     public float minimumSafePitch = -90.0f;
 
@@ -25,7 +22,7 @@ public class VoidLevelComputer implements ITickableComputer {
     public void tick() {
         status = computeStatus();
         if (aboveVoid() && data.altitude - data.voidLevel < 12) {
-            pitch.upsetRecover = firework.activateFirework(true);
+            firework.activateFirework(true);
         }
         minimumSafePitch = computeMinimumSafePitch();
     }
@@ -78,8 +75,6 @@ public class VoidLevelComputer implements ITickableComputer {
     public void reset() {
         status = VoidLevelStatus.UNKNOWN;
         minimumSafePitch = -90.0f;
-
-        pitch.upsetRecover = false;
     }
 
     public enum VoidLevelStatus {

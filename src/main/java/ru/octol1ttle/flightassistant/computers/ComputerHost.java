@@ -48,8 +48,6 @@ public class ComputerHost {
 
         this.yaw = new YawController(time, data);
         this.pitch = new PitchController(data, stall, time, voidLevel, gpws);
-        this.voidLevel.pitch = this.pitch;
-        this.gpws.pitch = this.pitch;
 
         this.plan = new FlightPlanner(data);
         this.autoflight = new AutoFlightComputer(data, gpws, plan, firework, pitch, yaw);
