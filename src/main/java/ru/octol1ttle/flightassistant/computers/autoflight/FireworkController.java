@@ -19,7 +19,7 @@ public class FireworkController implements ITickableComputer {
     public int safeFireworkCount = Integer.MAX_VALUE;
     public boolean fireworkResponded = true;
     public float lastUseTime = -1.0f;
-    public float lastDiff = Float.MAX_VALUE;
+    public float lastDiff = Float.MIN_VALUE;
     @Nullable
     public Float lastTogaLock;
     public boolean noFireworks = false;
@@ -129,7 +129,7 @@ public class FireworkController implements ITickableComputer {
         safeFireworkCount = Integer.MAX_VALUE;
         fireworkResponded = true;
         lastUseTime = -1.0f;
-        lastDiff = Float.MAX_VALUE;
+        lastDiff = Float.MIN_VALUE;
         lastTogaLock = null;
         noFireworks = false;
         unsafeFireworks = false;
