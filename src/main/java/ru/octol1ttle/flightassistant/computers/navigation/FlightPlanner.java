@@ -31,10 +31,6 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             return;
         }
 
-        if (startWaypoint == null) {
-            startWaypoint = new Waypoint(new Vector2d(data.position.x, data.position.z), (int) data.altitude, null);
-        }
-
         if (targetWaypoint.targetAltitude() != null) {
             altitudeDeviation = Math.abs(data.altitude - targetWaypoint.targetAltitude());
             if (minAltitudeDeviation == null) {
@@ -112,6 +108,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     public void execute(int waypointIndex) {
         // TODO: throw exception if waypoint doesn't exist
         if (waypointExistsAt(waypointIndex)) {
+            startWaypoint = new Waypoint(new Vector2d(data.position.x, data.position.z), (int) data.altitude, null);
             targetWaypoint = this.get(waypointIndex);
         }
     }
