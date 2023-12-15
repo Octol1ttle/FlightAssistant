@@ -118,6 +118,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
     @Override
     public void reset() {
+        startWaypoint = null;
         targetWaypoint = null;
         altitudeDeviation = 0.0f;
         minAltitudeDeviation = null;

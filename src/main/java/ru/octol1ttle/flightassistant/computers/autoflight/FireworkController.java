@@ -16,14 +16,14 @@ public class FireworkController implements ITickableComputer {
     private final TimeComputer time;
     private final AirDataComputer data;
     private final ClientPlayerInteractionManager interaction;
-    public int safeFireworkCount;
+    public int safeFireworkCount = Integer.MAX_VALUE;
     public boolean fireworkResponded = true;
     public float lastUseTime = -1.0f;
     public float lastDiff = Float.MAX_VALUE;
     @Nullable
     public Float lastTogaLock;
-    public boolean noFireworks;
-    public boolean unsafeFireworks;
+    public boolean noFireworks = false;
+    public boolean unsafeFireworks = false;
     public boolean activationInProgress = false;
 
     public FireworkController(TimeComputer time, AirDataComputer data, ClientPlayerInteractionManager interaction) {
@@ -135,12 +135,13 @@ public class FireworkController implements ITickableComputer {
 
     @Override
     public void reset() {
-        safeFireworkCount = 0;
+        safeFireworkCount = Integer.MAX_VALUE;
         fireworkResponded = true;
         lastUseTime = -1.0f;
         lastDiff = Float.MAX_VALUE;
         lastTogaLock = null;
         noFireworks = false;
         unsafeFireworks = false;
+        activationInProgress = false;
     }
 }

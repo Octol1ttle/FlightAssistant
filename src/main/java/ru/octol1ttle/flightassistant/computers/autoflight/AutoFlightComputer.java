@@ -21,8 +21,8 @@ public class AutoFlightComputer implements ITickableComputer {
     public boolean autoFireworkEnabled = false;
     public boolean autoPilotEnabled = false;
 
-    public boolean apDisconnectionForced = false;
     public boolean afrwkDisconnectionForced = false;
+    public boolean apDisconnectionForced = false;
 
     public Integer selectedSpeed;
     public Integer selectedAltitude;
@@ -88,7 +88,11 @@ public class AutoFlightComputer implements ITickableComputer {
 
     @Override
     public void reset() {
+        flightDirectorsEnabled = false;
         disconnectAutoFirework(true);
         disconnectAutopilot(true);
+
+        pitch.targetPitch = null;
+        yaw.targetHeading = null;
     }
 }

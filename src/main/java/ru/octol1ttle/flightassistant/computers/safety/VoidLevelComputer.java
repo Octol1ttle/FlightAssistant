@@ -78,6 +78,8 @@ public class VoidLevelComputer implements ITickableComputer {
     public void reset() {
         status = VoidLevelStatus.UNKNOWN;
         minimumSafePitch = -90.0f;
+
+        pitch.upsetRecover = false;
     }
 
     public enum VoidLevelStatus {
