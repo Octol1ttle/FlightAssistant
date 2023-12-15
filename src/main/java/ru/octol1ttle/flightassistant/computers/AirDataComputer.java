@@ -19,6 +19,8 @@ import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 public class AirDataComputer implements ITickableComputer {
     private final MinecraftClient mc;
     public PlayerEntity player;
+
+    public boolean isFlying = false;
     public Vec3d position = Vec3d.ZERO;
     public Vec3d velocity = Vec3d.ZERO;
     public Vec3d velocityPerSecond = Vec3d.ZERO;
@@ -46,11 +48,11 @@ public class AirDataComputer implements ITickableComputer {
     }
 
     public boolean canAutomationsActivate() {
-        return player.isFallFlying() && mc.currentScreen == null && mc.getOverlay() == null;
+        return isFlying && mc.currentScreen == null && mc.getOverlay() == null;
     }
 
     public boolean isGround(BlockPos pos) {
-        BlockState block = player.getWorld().getBlockState(pos);
+        BlockState block = world.getBlockState(pos);
         return !block.isAir();
     }
 
@@ -58,6 +60,7 @@ public class AirDataComputer implements ITickableComputer {
         assert mc.player != null;
         player = mc.player;
 
+        isFlying = player.isFallFlying();
         position = player.getPos();
         if (velocity != null) {
             acceleration = player.getVelocity().subtract(velocity);
@@ -142,7 +145,7 @@ public class AirDataComputer implements ITickableComputer {
     }
 
     private int computeVoidLevel() {
-        return player.getWorld().getBottomY() - 64;
+        return world.getBottomY() - 64;
     }
 
     private float computeDistanceFromGround(float altitude,
@@ -151,7 +154,7 @@ public class AirDataComputer implements ITickableComputer {
     }
 
     private float computeAltitude() {
-        return (float) player.getPos().y - 1;
+        return (float) position.y;
     }
 
     private float computeHeading() {
@@ -173,6 +176,7 @@ public class AirDataComputer implements ITickableComputer {
 
     @Override
     public void reset() {
+        isFlying = false;
         position = Vec3d.ZERO;
         velocity = Vec3d.ZERO;
         velocityPerSecond = Vec3d.ZERO;

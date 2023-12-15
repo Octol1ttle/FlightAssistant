@@ -53,7 +53,7 @@ public class HudRenderer extends HudComponent {
 
     private void setupConfig() {
         HudComponent.CONFIG = null;
-        if (host.data.player.isFallFlying()) {
+        if (host.data.isFlying) {
             if (FlightAssistant.CONFIG_SETTINGS.displayModeWhenFlying.equals(FULL)) {
                 HudComponent.CONFIG = FlightAssistant.CONFIG_FULL;
             } else if (FlightAssistant.CONFIG_SETTINGS.displayModeWhenFlying.equals(MIN)) {

@@ -17,7 +17,7 @@ public class AltitudeDeviationAlert extends AbstractAlert {
 
     @Override
     public boolean isTriggered() {
-        return data.player.isFallFlying() && plan.minAltitudeDeviation != null && plan.altitudeDeviation - plan.minAltitudeDeviation > 5.0f;
+        return data.isFlying && plan.minAltitudeDeviation != null && plan.altitudeDeviation - plan.minAltitudeDeviation > 5.0f;
     }
 
     @Override

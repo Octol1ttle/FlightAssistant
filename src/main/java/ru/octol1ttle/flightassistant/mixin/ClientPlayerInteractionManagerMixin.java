@@ -22,7 +22,7 @@ public class ClientPlayerInteractionManagerMixin {
         if (host == null || host.faulted.contains(host.firework)) {
             return;
         }
-        if (!player.isFallFlying() || !(stack.getItem() instanceof FireworkRocketItem)) {
+        if (!host.data.isFlying || !(stack.getItem() instanceof FireworkRocketItem)) {
             host.firework.unsafeFireworks = false;
             return;
         }
