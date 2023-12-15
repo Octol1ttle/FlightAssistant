@@ -34,7 +34,7 @@ public class FireworkController implements ITickableComputer {
 
     public void tick() {
         safeFireworkCount = countSafeFireworks();
-        if (!fireworkResponded && time.prevMillis != null && lastUseTime > 0) {
+        if (time.prevMillis != null && lastUseTime > 0) {
             lastDiff = time.prevMillis - lastUseTime;
         }
 
@@ -64,19 +64,21 @@ public class FireworkController implements ITickableComputer {
         return i;
     }
 
-    public boolean activateFirework(boolean togaLock) {
+    public void activateFirework(boolean togaLock) {
         if (!data.canAutomationsActivate() || lastUseTime > 0 && time.prevMillis != null && time.prevMillis - lastUseTime < 750) {
-            return false;
+            return;
         }
         if (togaLock && time.prevMillis != null) {
             this.lastTogaLock = time.prevMillis;
         }
 
         if (isFireworkSafe(data.player.getMainHandStack())) {
-            return tryActivateFirework(Hand.MAIN_HAND, togaLock);
+            tryActivateFirework(Hand.MAIN_HAND, togaLock);
+            return;
         }
         if (isFireworkSafe(data.player.getOffHandStack())) {
-            return tryActivateFirework(Hand.OFF_HAND, togaLock);
+            tryActivateFirework(Hand.OFF_HAND, togaLock);
+            return;
         }
 
         int i = 0;
@@ -94,30 +96,19 @@ public class FireworkController implements ITickableComputer {
 
         if (!match) {
             noFireworks = true;
-            return false;
+            return;
         }
-        return tryActivateFirework(Hand.MAIN_HAND, togaLock);
+        tryActivateFirework(Hand.MAIN_HAND, togaLock);
     }
 
-    private boolean tryActivateFirework(Hand hand, boolean force) {
+    private void tryActivateFirework(Hand hand, boolean force) {
         if (!force && !fireworkResponded) {
-            return false;
+            return;
         }
 
         activationInProgress = true;
-        if (interaction.interactItem(data.player, hand).shouldSwingHand()) {
-            activationInProgress = false;
-            if (fireworkResponded) {
-                if (time.prevMillis != null) {
-                    lastUseTime = time.prevMillis;
-                }
-                fireworkResponded = false;
-            }
-            return true;
-        }
+        interaction.interactItem(data.player, hand);
         activationInProgress = false;
-
-        return false;
     }
 
     public boolean isFireworkSafe(ItemStack stack) {
