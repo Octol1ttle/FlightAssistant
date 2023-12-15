@@ -32,9 +32,12 @@ public class FlightDirectorsIndicator extends HudComponent {
         }
 
         if (autoflight.getTargetHeading() != null) {
-            float deltaHeading = autoflight.getTargetHeading() - data.flightHeading;
-            if (deltaHeading < -180) {
-                deltaHeading += 360;
+            float deltaHeading = autoflight.getTargetHeading() - data.heading;
+            if (deltaHeading < -180.0f) {
+                deltaHeading += 360.0f;
+            }
+            if (deltaHeading > 180.0f) {
+                deltaHeading -= 360.0f;
             }
 
             float fdX = Math.max(dim.lFrame, Math.min(dim.rFrame, dim.xMid + i(deltaHeading * dim.degreesPerPixel)));

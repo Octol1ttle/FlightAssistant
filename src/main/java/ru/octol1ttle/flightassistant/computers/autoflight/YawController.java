@@ -30,6 +30,12 @@ public class YawController implements IRenderTickableComputer {
         }
 
         float difference = heading - data.heading;
+        if (difference < -180.0f) {
+            difference += 360.0f;
+        }
+        if (difference > 180.0f) {
+            difference -= 360.0f;
+        }
 
         float newYaw;
         if (Math.abs(difference) < 0.05f) {
