@@ -1,6 +1,6 @@
 package ru.octol1ttle.flightassistant;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.Map;
 import java.util.function.Consumer;
 import net.fabricmc.loader.api.FabricLoader;

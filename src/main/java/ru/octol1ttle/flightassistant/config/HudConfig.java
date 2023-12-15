@@ -1,7 +1,7 @@
 package ru.octol1ttle.flightassistant.config;
 
 import com.google.gson.annotations.SerializedName;
-import java.awt.*;
+import java.awt.Color;
 import ru.octol1ttle.flightassistant.config.loader.IConfig;
 
 public class HudConfig implements IConfig {
