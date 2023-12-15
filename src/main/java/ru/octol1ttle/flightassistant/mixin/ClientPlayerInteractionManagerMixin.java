@@ -37,6 +37,14 @@ public class ClientPlayerInteractionManagerMixin {
 
         if (host.firework.unsafeFireworks) {
             cir.setReturnValue(ActionResult.FAIL);
+            return;
+        }
+
+        if (host.firework.fireworkResponded) {
+            if (host.time.prevMillis != null) {
+                host.firework.lastUseTime = host.time.prevMillis;
+            }
+            host.firework.fireworkResponded = false;
         }
     }
 }
