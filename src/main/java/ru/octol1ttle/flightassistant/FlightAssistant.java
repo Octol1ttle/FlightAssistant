@@ -1,6 +1,6 @@
 package ru.octol1ttle.flightassistant;
 
-import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -13,22 +13,15 @@ import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
+import ru.octol1ttle.flightassistant.commands.FlightPlanCommand;
+import ru.octol1ttle.flightassistant.commands.MCPCommand;
+import ru.octol1ttle.flightassistant.commands.ResetCommand;
 import ru.octol1ttle.flightassistant.commands.SwitchDisplayModeCommand;
-import ru.octol1ttle.flightassistant.commands.autoflight.SetAutoFireworkSpeedCommand;
-import ru.octol1ttle.flightassistant.commands.plan.AddWaypointCommand;
-import ru.octol1ttle.flightassistant.commands.plan.ExecutePlanCommand;
-import ru.octol1ttle.flightassistant.commands.plan.InsertWaypointCommand;
-import ru.octol1ttle.flightassistant.commands.plan.RemoveWaypointCommand;
-import ru.octol1ttle.flightassistant.commands.plan.ReplaceWaypointCommand;
-import ru.octol1ttle.flightassistant.commands.reset.ResetAllComputersCommand;
-import ru.octol1ttle.flightassistant.commands.reset.ResetFaultedComputersCommand;
-import ru.octol1ttle.flightassistant.commands.reset.ResetFaultedIndicatorsCommand;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.config.HudConfig;
 import ru.octol1ttle.flightassistant.config.SettingsConfig;
 import ru.octol1ttle.flightassistant.config.loader.ConfigLoader;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class FlightAssistant implements ClientModInitializer {
@@ -133,58 +126,14 @@ public class FlightAssistant implements ClientModInitializer {
     }
 
     private static void setupCommand() {
-        // TODO: registers should be in command classes, not here
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-            LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(literal("flightassistant")
-                    .then(literal("toggle").executes(
-                            new SwitchDisplayModeCommand())
-                    )
-                    .then(literal("reset")
-                            .then(literal("computers")
-                                    .then(literal("all")
-                                            .executes(new ResetAllComputersCommand()))
-                                    .then(literal("faulted")
-                                            .executes(new ResetFaultedComputersCommand()))
-                            )
-                            .then(literal("indicators")
-                                    .executes(new ResetFaultedIndicatorsCommand())
-                            )
-                    )
-                    .then(literal("speed")
-                            .then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
-                                    .executes(new SetAutoFireworkSpeedCommand())))
-                    .then(literal("plan")
-                            .then(literal("add")
-                                    .then(argument("targetX", IntegerArgumentType.integer()).then(argument("targetZ", IntegerArgumentType.integer()).then(argument("targetAltitude", IntegerArgumentType.integer(-80)).then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
-                                            .executes(new AddWaypointCommand())
-                                    ))))
-                            )
-                            .then(literal("remove")
-                                    .then(argument("waypointIndex", IntegerArgumentType.integer(0))
-                                            .executes(new RemoveWaypointCommand())
-                                    )
-                            )
-                            .then(literal("insert")
-                                    .then(argument("insertAt", IntegerArgumentType.integer(0))
-                                            .then(argument("targetX", IntegerArgumentType.integer()).then(argument("targetZ", IntegerArgumentType.integer()).then(argument("targetAltitude", IntegerArgumentType.integer(-80)).then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
-                                                            .executes(new InsertWaypointCommand())
-                                                    )))
-                                            )
-                                    )
-                            )
-                            .then(literal("replace")
-                                    .then(argument("replaceAt", IntegerArgumentType.integer(0))
-                                            .then(argument("targetX", IntegerArgumentType.integer()).then(argument("targetZ", IntegerArgumentType.integer()).then(argument("targetAltitude", IntegerArgumentType.integer(-80)).then(argument("targetSpeed", IntegerArgumentType.integer(10, 30))
-                                                            .executes(new ReplaceWaypointCommand())
-                                                    )))
-                                            )
-                                    )
-                            )
-                            .then(literal("execute")
-                                    .executes(new ExecutePlanCommand())
-                            )
-                    )
-            );
+            LiteralArgumentBuilder<FabricClientCommandSource> builder = literal("flightassistant");
+            SwitchDisplayModeCommand.register(builder);
+            ResetCommand.register(builder);
+            MCPCommand.register(builder);
+            FlightPlanCommand.register(builder);
+
+            LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(builder);
             dispatcher.register(literal("flas").redirect(node));
             dispatcher.register(literal("fhud").redirect(node));
             dispatcher.register(literal("fh").redirect(node));

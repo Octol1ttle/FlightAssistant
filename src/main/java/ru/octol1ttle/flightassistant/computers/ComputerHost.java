@@ -99,21 +99,22 @@ public class ComputerHost {
         }
     }
 
-    public void resetAll() {
-        for (ITickableComputer tickable : tickables) {
-            tickable.reset();
+    public void resetComputers(boolean resetWorking) {
+        if (resetWorking) {
+            for (ITickableComputer tickable : tickables) {
+                tickable.reset();
+            }
+            for (IRenderTickableComputer renderTickable : renderTickables) {
+                renderTickable.reset();
+            }
         }
-        for (IRenderTickableComputer renderTickable : renderTickables) {
-            renderTickable.reset();
-        }
-        resetFaulted();
-    }
 
-    public void resetFaulted() {
         for (int i = faulted.size() - 1; i >= 0; i--) {
             IComputer computer = faulted.get(i);
             faulted.remove(computer);
+
             computer.reset();
+
             if (computer instanceof ITickableComputer tickable) {
                 tickables.add(tickable);
                 continue;

@@ -3,10 +3,10 @@ package ru.octol1ttle.flightassistant.computers.safety;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
-import ru.octol1ttle.flightassistant.indicators.PitchIndicator;
+import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
 
 public class VoidLevelComputer implements ITickableComputer {
-    private static final int OPTIMUM_ALTITUDE_PRESERVATION_PITCH = 10;
+    private static final int OPTIMUM_ALTITUDE_PRESERVATION_PITCH = 15;
     private final AirDataComputer data;
     private final FireworkController firework;
     private final StallComputer stall;
@@ -55,7 +55,7 @@ public class VoidLevelComputer implements ITickableComputer {
             return Math.min(OPTIMUM_ALTITUDE_PRESERVATION_PITCH, stall.maximumSafePitch);
         }
 
-        return PitchIndicator.DANGEROUS_DOWN_PITCH + 10;
+        return -PitchController.DESCEND_PITCH + 10;
     }
 
     public boolean aboveVoid() {
