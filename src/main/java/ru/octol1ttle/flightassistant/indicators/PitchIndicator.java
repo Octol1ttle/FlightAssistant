@@ -7,11 +7,11 @@ import net.minecraft.util.math.RotationAxis;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
+import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
 
 public class PitchIndicator extends HudComponent {
-    public static final int DANGEROUS_DOWN_PITCH = -40;
     private final Dimensions dim;
     private final AirDataComputer data;
     private final StallComputer stall;
@@ -48,9 +48,12 @@ public class PitchIndicator extends HudComponent {
             drawLadder(textRenderer, context, yHorizon);
         }
 
-        drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumClimbAngle, CONFIG.color);
-        drawReferenceMark(context, yHorizon, CONFIG.pitchLadder_optimumGlideAngle, CONFIG.color);
+        float climbAngle = CONFIG.pitchLadder_optimumClimbAngle;
+        float glideAngle = CONFIG.pitchLadder_optimumGlideAngle;
+
         drawReferenceMark(context, yHorizon, stall.maximumSafePitch, CONFIG.alertColor);
+        drawReferenceMark(context, yHorizon, climbAngle, getPitchColor(climbAngle));
+        drawReferenceMark(context, yHorizon, glideAngle, getPitchColor(glideAngle));
         drawReferenceMark(context, yHorizon, voidLevel.minimumSafePitch, CONFIG.alertColor);
 
         if (CONFIG.pitchLadder_showHorizon) {
@@ -62,6 +65,11 @@ public class PitchIndicator extends HudComponent {
         if (CONFIG.pitchLadder_showRoll) {
             context.getMatrices().pop();
         }
+    }
+
+    private int getPitchColor(float degree) {
+        return degree < Math.max(-PitchController.DESCEND_PITCH, voidLevel.minimumSafePitch) || degree > stall.maximumSafePitch
+                ? CONFIG.alertColor : CONFIG.color;
     }
 
     @Override
@@ -117,7 +125,7 @@ public class PitchIndicator extends HudComponent {
             return;
         }
 
-        int color = degree <= DANGEROUS_DOWN_PITCH ? CONFIG.alertColor : CONFIG.color;
+        int color = getPitchColor(degree);
         int dashes = degree < 0 ? 4 : 1;
 
         drawHorizontalLineDashed(context, pitchData.l1, pitchData.l2, y, dashes, color);
