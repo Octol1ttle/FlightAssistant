@@ -2,10 +2,12 @@ package ru.octol1ttle.flightassistant.config.loader;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.FlightAssistant;
 
 public class ConfigLoader<T extends IConfig> {
@@ -41,9 +43,13 @@ public class ConfigLoader<T extends IConfig> {
     }
 
     @SuppressWarnings("unchecked")
-    public T read() {
+    public @NotNull T read() {
         try (FileReader reader = new FileReader(file)) {
-            return (T) GSON.fromJson(reader, defaultConfig.getClass());
+            T config = (T) GSON.fromJson(reader, defaultConfig.getClass());
+            if (config == null) {
+                throw new EOFException();
+            }
+            return config;
         } catch (Exception e) {
             FlightAssistant.LOGGER.error("Exception reading config", e);
             return defaultConfig;
