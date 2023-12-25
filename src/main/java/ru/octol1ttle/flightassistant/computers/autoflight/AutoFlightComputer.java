@@ -40,6 +40,7 @@ public class AutoFlightComputer implements ITickableComputer {
     public void tick() {
         if (autoFireworkEnabled && gpws.getGPWSLampColor() == CONFIG.color) {
             Integer targetSpeed = getTargetSpeed();
+            // TODO: support A/FRWK when targetSpeed is null
             if (targetSpeed != null && data.speed < targetSpeed) {
                 firework.activateFirework(false);
             }
@@ -64,7 +65,7 @@ public class AutoFlightComputer implements ITickableComputer {
             return plan.getManagedPitch();
         }
 
-        return (float) (-Math.toDegrees(MathHelper.atan2(selectedAltitude - data.altitude, 35.0f)));
+        return (float) (-Math.toDegrees(MathHelper.atan2(selectedAltitude - data.altitude, 35.0f * 3.0f)));
     }
 
     public @Nullable Float getTargetHeading() {
