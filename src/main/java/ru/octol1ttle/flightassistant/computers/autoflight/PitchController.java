@@ -8,10 +8,10 @@ import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
-import ru.octol1ttle.flightassistant.indicators.PitchIndicator;
 
 public class PitchController implements IRenderTickableComputer {
     public static final float CLIMB_PITCH = -55.0f;
+    public static final float DESCEND_PITCH = 35.0f;
     private final AirDataComputer data;
     private final StallComputer stall;
     private final TimeComputer time;
@@ -69,10 +69,10 @@ public class PitchController implements IRenderTickableComputer {
             newPitch = pitch;
         } else {
             if (difference < 0) { // going UP
-                pitch = MathHelper.clamp(pitch, -stall.maximumSafePitch, 90.0f);
+                pitch = MathHelper.clamp(pitch, Math.max(CLIMB_PITCH, -stall.maximumSafePitch), 90.0f);
             }
             if (difference > 0) { // going DOWN
-                pitch = MathHelper.clamp(pitch, -90.0f, -PitchIndicator.DANGEROUS_DOWN_PITCH);
+                pitch = MathHelper.clamp(pitch, -90.0f, Math.min(DESCEND_PITCH, -voidLevel.minimumSafePitch));
             }
 
             newPitch = player.getPitch() + (pitch - player.getPitch()) * delta;
