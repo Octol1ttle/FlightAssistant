@@ -58,9 +58,9 @@
   "flightassistant.vert_mode_alt": "ВЫС %s",
   "flightassistant.lat_mode_hdg": "АЗИ %s",
   "flightassistant.lat_mode_nav": "НАВ %s %s",
-  "flightassistant.flight_directors_enabled": "УП ",
+  "flightassistant.flight_directors_enabled": "УК ",
   "flightassistant.auto_firework_enabled": "А/ФРВК ",
-  "flightassistant.auto_pilot_enabled": "АП",
+  "flightassistant.auto_pilot_enabled": "АП ",
 
   "flightassistant.north_short": "С",
   "flightassistant.east_short": "В",

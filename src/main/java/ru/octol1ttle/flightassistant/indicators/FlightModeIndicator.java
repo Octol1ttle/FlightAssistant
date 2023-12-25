@@ -29,6 +29,8 @@ public class FlightModeIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
+        // TODO: differentiate between selected and managed modes
+
         float x = dim.lFrame + dim.wFrame * (1 / 5.0f);
         float y = dim.bFrame + 10;
         if (firework.lastTogaLock != null && time.prevMillis - firework.lastTogaLock < 2000) {
@@ -59,7 +61,7 @@ public class FlightModeIndicator extends HudComponent {
 
         x = dim.lFrame + dim.wFrame * (3 / 5.0f);
         if (autoflight.selectedHeading != null) {
-            Text text = Text.translatable("flightassistant.lat_mode_hdg", targetAltitude);
+            Text text = Text.translatable("flightassistant.lat_mode_hdg", autoflight.selectedHeading);
             drawFont(textRenderer, context, text, x - textRenderer.getWidth(text) * 0.5f, y, CONFIG.white);
         } else if (plan.getTargetPosition() != null) {
             Vector2d target = plan.getTargetPosition();

@@ -61,7 +61,7 @@
   "flightassistant.lat_mode_nav": "NAV %s %s",
   "flightassistant.flight_directors_enabled": "FD ",
   "flightassistant.auto_firework_enabled": "A/FRWK ",
-  "flightassistant.auto_pilot_enabled": "AP",
+  "flightassistant.auto_pilot_enabled": "AP ",
 
   "flightassistant.north_short": "N",
   "flightassistant.east_short": "E",
