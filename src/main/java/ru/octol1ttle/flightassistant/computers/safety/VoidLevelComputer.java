@@ -51,7 +51,7 @@ public class VoidLevelComputer implements ITickableComputer {
         if (status == VoidLevelStatus.NOT_ABOVE_VOID || status == VoidLevelStatus.PLAYER_INVULNERABLE) {
             return -90.0f;
         }
-        if (data.altitude - data.voidLevel < 20) {
+        if (data.altitude - data.voidLevel < 16) {
             return Math.min(OPTIMUM_ALTITUDE_PRESERVATION_PITCH, stall.maximumSafePitch);
         }
 
