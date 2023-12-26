@@ -18,7 +18,7 @@ public class StallComputer implements ITickableComputer {
 
     public void tick() {
         status = computeStalling();
-        if (status == StallStatus.FULL_STALL) {
+        if (status == StallStatus.STALL) {
             firework.activateFirework(true);
         }
         maximumSafePitch = computeMaximumSafePitch();
@@ -34,19 +34,11 @@ public class StallComputer implements ITickableComputer {
         if (data.velocity.horizontalLength() >= -data.velocity.y) {
             return StallStatus.AIRSPEED_SAFE;
         }
-        if (-data.velocityPerSecond.y < GPWSComputer.MAX_SAFE_SINK_RATE) {
-            return StallStatus.APPROACHING_STALL;
-        }
-        return StallStatus.FULL_STALL;
+        return StallStatus.STALL;
     }
 
     private float computeMaximumSafePitch() {
-        return status == StallStatus.FULL_STALL ? 0.0f : MathHelper.clamp(data.speed * 3, 0.0f, 90.0f);
-    }
-
-    public boolean anyStall() {
-        return status == StallComputer.StallStatus.APPROACHING_STALL
-                || status == StallComputer.StallStatus.FULL_STALL;
+        return status == StallStatus.STALL ? 0.0f : MathHelper.clamp(data.speed * 3, 0.0f, 90.0f);
     }
 
     @Override
@@ -61,8 +53,7 @@ public class StallComputer implements ITickableComputer {
     }
 
     public enum StallStatus {
-        FULL_STALL,
-        APPROACHING_STALL,
+        STALL,
         PITCH_SAFE,
         AIRSPEED_SAFE,
         FALL_DISTANCE_TOO_LOW,

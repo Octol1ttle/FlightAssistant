@@ -33,7 +33,7 @@ public class StallAlert extends AbstractAlert {
         Text text = Text.translatable("alerts.flightassistant.stall");
         float startX = (width - textRenderer.getWidth(text)) * 0.5f;
         HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
-                stall.status == StallComputer.StallStatus.FULL_STALL ? CONFIG.alertColor : CONFIG.amberColor,
+                stall.status == StallComputer.StallStatus.STALL ? CONFIG.alertColor : CONFIG.amberColor,
                 highlight);
 
         return true;
