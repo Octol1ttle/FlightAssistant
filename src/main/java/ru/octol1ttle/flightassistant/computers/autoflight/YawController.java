@@ -21,7 +21,7 @@ public class YawController implements IRenderTickableComputer {
             return;
         }
 
-        smoothSetHeading(targetHeading, time.deltaTime);
+        smoothSetHeading(targetHeading, time.deltaTime * 2.0f);
     }
 
     private void smoothSetHeading(Float heading, float delta) {
