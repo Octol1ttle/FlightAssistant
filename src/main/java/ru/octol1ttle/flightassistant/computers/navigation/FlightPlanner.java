@@ -86,7 +86,6 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             throw new IllegalStateException();
         }
 
-
         Vector2d start = startWaypoint.targetPosition();
         Vector2d end = targetWaypoint.targetPosition();
         double currentToEnd = Vector2d.distance(data.position.x, data.position.z, end.x, end.y);

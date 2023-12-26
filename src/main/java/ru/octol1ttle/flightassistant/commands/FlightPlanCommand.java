@@ -40,10 +40,10 @@ public class FlightPlanCommand {
         var list = literal("list").executes(ListWaypointsCommand::execute);
 
         var execute = literal("execute")
-                .executes(context -> ExecutePlanCommand.execute(0))
+                .executes(context -> ExecutePlanCommand.execute(context, 0))
                 .then(argument("fromWaypoint", IntegerArgumentType.integer(0))
-                        .executes(context -> ExecutePlanCommand.execute(IntegerArgumentType.getInteger(context, "fromWaypoint")
-                                )
+                        .executes(
+                                context -> ExecutePlanCommand.execute(context, IntegerArgumentType.getInteger(context, "fromWaypoint"))
                         )
                 );
 

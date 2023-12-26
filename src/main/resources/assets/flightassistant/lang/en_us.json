@@ -11,6 +11,10 @@
   "commands.flightassistant.waypoint_removed": "Removed waypoint at index %s (now %s waypoints in total)",
   "commands.flightassistant.waypoint_inserted": "Inserted waypoint at index %s (now %s waypoints in total)",
   "commands.flightassistant.waypoint_replaced": "Replaced waypoint at index %s (now %s waypoints in total)",
+  "commands.flightassistant.flight_plan_executed": "Executed flight plan starting from waypoint at index %s (%s waypoints in total)",
+  "commands.flightassistant.total_waypoints": "There are %s waypoints in total",
+  "commands.flightassistant.waypoint_info": "Index %s: X: %s Z: %s Altitude: %s Speed %s",
+  "commands.flightassistant.waypoint_info_not_set": "<not set>",
 
   "alerts.flightassistant.pull_up": "PULL UP",
   "alerts.flightassistant.sink_rate": "SINK RATE",
