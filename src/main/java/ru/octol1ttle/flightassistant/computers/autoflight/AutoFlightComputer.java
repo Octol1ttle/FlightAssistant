@@ -73,13 +73,17 @@ public class AutoFlightComputer implements ITickableComputer {
     }
 
     public void disconnectAutopilot(boolean force) {
-        autoPilotEnabled = false;
-        apDisconnectionForced = force;
+        if (autoPilotEnabled) {
+            autoPilotEnabled = false;
+            apDisconnectionForced = force;
+        }
     }
 
     public void disconnectAutoFirework(boolean force) {
-        autoFireworkEnabled = false;
-        afrwkDisconnectionForced = force;
+        if (autoFireworkEnabled) {
+            autoFireworkEnabled = false;
+            afrwkDisconnectionForced = force;
+        }
     }
 
     @Override
