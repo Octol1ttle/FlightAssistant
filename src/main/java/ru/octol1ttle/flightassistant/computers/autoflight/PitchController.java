@@ -34,6 +34,9 @@ public class PitchController implements IRenderTickableComputer {
         if (!data.canAutomationsActivate()) {
             return;
         }
+
+        smoothSetPitch(targetPitch, time.deltaTime);
+
         if (data.pitch > stall.maximumSafePitch) {
             smoothSetPitch(-stall.maximumSafePitch, time.deltaTime);
             return;
@@ -44,10 +47,7 @@ public class PitchController implements IRenderTickableComputer {
         }
         if (gpws.isInDanger()) {
             smoothSetPitch(-90.0f, MathHelper.clamp(time.deltaTime / positiveMin(gpws.descentImpactTime, gpws.terrainImpactTime), 0.001f, 1.0f));
-            return;
         }
-
-        smoothSetPitch(targetPitch, time.deltaTime);
     }
 
     /**
