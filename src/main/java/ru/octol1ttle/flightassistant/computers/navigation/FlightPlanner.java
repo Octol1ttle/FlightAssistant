@@ -41,8 +41,8 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         }
 
         Vector2d target = new Vector2d(targetWaypoint.targetPosition());
-        int altitude = targetWaypoint.targetAltitude() != null ? targetWaypoint.targetAltitude() : (int) data.altitude;
-        if (target.sub(data.position.x, data.position.z).length() <= 5.0f && Math.abs(altitude - data.altitude) <= 5.0f) {
+        float altitude = targetWaypoint.targetAltitude() != null ? targetWaypoint.targetAltitude() : data.altitude;
+        if (target.sub(data.position.x, data.position.z).length() <= 10.0f && Math.abs(altitude - data.altitude) <= 5.0f) {
             int nextIndex = this.indexOf(targetWaypoint) + 1;
             startWaypoint = targetWaypoint;
             targetWaypoint = waypointExistsAt(nextIndex) ? this.get(nextIndex) : null;
@@ -86,6 +86,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             throw new IllegalStateException();
         }
 
+        // TODO: this kinda sucks and also applies to flight directors which is bad
         Vector2d start = startWaypoint.targetPosition();
         Vector2d end = targetWaypoint.targetPosition();
         double currentToEnd = Vector2d.distance(data.position.x, data.position.z, end.x, end.y);
