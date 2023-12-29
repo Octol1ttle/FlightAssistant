@@ -33,6 +33,9 @@ public class FireworkController implements ITickableComputer {
     }
 
     public void tick() {
+        if (!data.isFlying) {
+            fireworkResponded = true;
+        }
         safeFireworkCount = countSafeFireworks();
         if (time.prevMillis != null && lastUseTime > 0) {
             lastDiff = time.prevMillis - lastUseTime;
