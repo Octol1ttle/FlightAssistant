@@ -2,6 +2,7 @@
   "category.flightassistant": "Flight Assistant",
 
   "key.flightassistant.toggle_display_mode": "Переключить режим интерфейса",
+  "key.flightassistant.toggle_flight_directors": "Вкл/выкл указатели полёта",
   "key.flightassistant.toggle_auto_firework": "Вкл/выкл авто-фейерверк",
   "key.flightassistant.toggle_auto_pilot": "Вкл/выкл автопилот",
   "key.flightassistant.dismiss_master_warning": "Заглушить (скрыть) предупреждение особой важности",

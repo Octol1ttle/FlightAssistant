@@ -2,6 +2,7 @@
   "category.flightassistant": "Flight Assistant",
 
   "key.flightassistant.toggle_display_mode": "Switch Display Mode",
+  "key.flightassistant.toggle_flight_directors": "Toggle Flight Directors",
   "key.flightassistant.toggle_auto_firework": "Toggle Auto Firework",
   "key.flightassistant.toggle_auto_pilot": "Toggle Auto Pilot",
   "key.flightassistant.dismiss_master_warning": "Silence (dismiss) master warning",
