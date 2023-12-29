@@ -18,7 +18,6 @@ import ru.octol1ttle.flightassistant.alerts.firework.FireworkDelayedResponseAler
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkLowCountAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkNoResponseAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkUnsafeAlert;
-import ru.octol1ttle.flightassistant.alerts.nav.AltitudeDeviationAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.ApproachingVoidDamageLevelAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveDescentAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveTerrainClosureAlert;
@@ -49,7 +48,6 @@ public class AlertController implements ITickableComputer {
                 new FireworkCountZeroAlert(this.host.firework),
                 new FireworkNoResponseAlert(this.host.firework), new FireworkDelayedResponseAlert(this.host.firework),
                 new FireworkLowCountAlert(this.host.firework),
-                new AltitudeDeviationAlert(this.host.data, this.host.plan),
                 new NoFireworksInHotbarAlert(this.host.firework));
         activeAlerts = new ArrayList<>(allAlerts.size());
     }

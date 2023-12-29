@@ -12,8 +12,6 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     private final AirDataComputer data;
     private @Nullable Waypoint startWaypoint;
     private @Nullable Waypoint targetWaypoint;
-    public float altitudeDeviation;
-    public @Nullable Float minAltitudeDeviation;
 
     public FlightPlanner(AirDataComputer data) {
         this.data = data;
@@ -27,17 +25,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
         if (targetWaypoint == null) {
             startWaypoint = null;
-            minAltitudeDeviation = null;
             return;
-        }
-
-        if (targetWaypoint.targetAltitude() != null) {
-            altitudeDeviation = Math.abs(data.altitude - targetWaypoint.targetAltitude());
-            if (minAltitudeDeviation == null) {
-                minAltitudeDeviation = altitudeDeviation;
-            } else {
-                minAltitudeDeviation = Math.min(minAltitudeDeviation, altitudeDeviation);
-            }
         }
 
         Vector2d target = new Vector2d(targetWaypoint.targetPosition());
@@ -46,7 +34,6 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             int nextIndex = this.indexOf(targetWaypoint) + 1;
             startWaypoint = targetWaypoint;
             targetWaypoint = waypointExistsAt(nextIndex) ? this.get(nextIndex) : null;
-            minAltitudeDeviation = null;
         }
     }
 
@@ -117,8 +104,6 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     public void reset() {
         startWaypoint = null;
         targetWaypoint = null;
-        altitudeDeviation = 0.0f;
-        minAltitudeDeviation = null;
     }
 
     @Override

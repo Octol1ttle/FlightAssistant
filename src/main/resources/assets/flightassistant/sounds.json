@@ -1,9 +1,4 @@
 {
-  "altitude_alert": {
-    "sounds": [
-      "flightassistant:altitude_alert"
-    ]
-  },
   "autopilot_disconnect": {
     "sounds": [
       "flightassistant:autopilot_disconnect"
