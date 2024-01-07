@@ -35,6 +35,10 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     public boolean isInDanger() {
+        return getGPWSLampColor() == CONFIG.alertColor;
+    }
+
+    public boolean shouldRecover() {
         return descentImpactTime >= 0.0f && descentImpactTime <= PITCH_CORRECT_THRESHOLD
                 || terrainImpactTime >= 0.0f && terrainImpactTime <= PITCH_CORRECT_THRESHOLD;
     }

@@ -27,7 +27,7 @@ public class ClientPlayerInteractionManagerMixin {
             return;
         }
 
-        if (host.autoflight.autoFireworkEnabled && !host.firework.activationInProgress) {
+        if (!host.faulted.contains(host.autoflight) && host.autoflight.autoFireworkEnabled && !host.firework.activationInProgress) {
             host.autoflight.disconnectAutoFirework(true);
             // TODO: announce the switch to "MAN FRWK" in F/MODE
             // TODO: announce "MAN FRWK" in F/MODE on initial firework usage
@@ -41,7 +41,7 @@ public class ClientPlayerInteractionManagerMixin {
         }
 
         if (host.firework.fireworkResponded) {
-            if (host.time.prevMillis != null) {
+            if (!host.faulted.contains(host.time) && host.time.prevMillis != null) {
                 host.firework.lastUseTime = host.time.prevMillis;
             }
             host.firework.fireworkResponded = false;

@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.octol1ttle.flightassistant.HudRenderer;
+import ru.octol1ttle.flightassistant.computers.ComputerHost;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
@@ -25,9 +26,10 @@ public class GameRendererMixin {
                              MatrixStack matrices,
                              CallbackInfo ci
     ) {
-        if (HudRenderer.getHost() != null) {
+        ComputerHost host = HudRenderer.getHost();
+        if (host != null && !host.faulted.contains(host.data)) {
             Matrix3f inverseViewRotationMatrix = RenderSystem.getInverseViewRotationMatrix();
-            HudRenderer.getHost().data.updateRoll(inverseViewRotationMatrix.invert());
+            host.data.updateRoll(inverseViewRotationMatrix.invert());
         }
     }
 }

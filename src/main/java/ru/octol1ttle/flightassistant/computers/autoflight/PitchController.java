@@ -45,7 +45,7 @@ public class PitchController implements IRenderTickableComputer {
             smoothSetPitch(-voidLevel.minimumSafePitch, time.deltaTime);
             return;
         }
-        if (gpws.isInDanger()) {
+        if (gpws.shouldRecover()) {
             smoothSetPitch(-90.0f, MathHelper.clamp(time.deltaTime / positiveMin(gpws.descentImpactTime, gpws.terrainImpactTime), 0.001f, 1.0f));
         }
     }
