@@ -21,7 +21,7 @@ public class FireworkLowCountAlert extends AbstractAlert {
 
     @Override
     public boolean isTriggered() {
-        return firework.safeFireworkCount > 0 && firework.safeFireworkCount <= 24;
+        return firework.safeFireworkCount > 0 && firework.safeFireworkCount < 24;
     }
 
     @Override
