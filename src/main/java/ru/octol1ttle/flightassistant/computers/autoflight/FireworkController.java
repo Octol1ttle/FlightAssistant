@@ -118,6 +118,9 @@ public class FireworkController implements ITickableComputer {
         if (!(stack.getItem() instanceof FireworkRocketItem)) {
             return false;
         }
+        if (data.player.isInvulnerable()) {
+            return true;
+        }
         NbtCompound nbtCompound = stack.getSubNbt("Fireworks");
         return nbtCompound == null || nbtCompound.getList("Explosions", NbtElement.COMPOUND_TYPE).isEmpty();
     }

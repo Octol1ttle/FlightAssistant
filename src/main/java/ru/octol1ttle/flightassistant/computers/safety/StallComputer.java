@@ -25,6 +25,9 @@ public class StallComputer implements ITickableComputer {
     }
 
     private StallStatus computeStalling() {
+        if (data.player.isInvulnerableTo(data.player.getDamageSources().fall())) {
+            return StallStatus.PLAYER_INVULNERABLE;
+        }
         if (data.pitch <= 0) {
             return StallStatus.PITCH_SAFE;
         }
@@ -54,9 +57,10 @@ public class StallComputer implements ITickableComputer {
 
     public enum StallStatus {
         STALL,
-        PITCH_SAFE,
         AIRSPEED_SAFE,
+        PITCH_SAFE,
         FALL_DISTANCE_TOO_LOW,
+        PLAYER_INVULNERABLE,
         UNKNOWN
     }
 }

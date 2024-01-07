@@ -15,10 +15,11 @@ public class GPWSComputer implements ITickableComputer {
     public static final int MAX_SAFE_SINK_RATE = 10;
     public static final float PITCH_CORRECT_THRESHOLD = 2.5f;
     private static final int MAX_SAFE_GROUND_SPEED = 15;
-    private static final int STATUS_FALL_DISTANCE_TOO_LOW = -1;
-    private static final int STATUS_SPEED_SAFE = -2;
-    private static final int STATUS_NO_TERRAIN_AHEAD = -3;
-    private static final int STATUS_UNKNOWN = -4;
+    private static final int STATUS_PLAYER_INVULNERABLE = -1;
+    private static final int STATUS_FALL_DISTANCE_TOO_LOW = -2;
+    private static final int STATUS_SPEED_SAFE = -3;
+    private static final int STATUS_NO_TERRAIN_AHEAD = -4;
+    private static final int STATUS_UNKNOWN = -5;
     private static final float BLOCK_PITCH_CONTROL_THRESHOLD = 5.0f;
     private static final float TERRAIN_RAYCAST_AHEAD_SECONDS = 10.0f;
     private final AirDataComputer data;
@@ -59,6 +60,9 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     private float computeDescentImpactTime() {
+        if (data.player.isInvulnerableTo(data.player.getDamageSources().fall())) {
+            return STATUS_PLAYER_INVULNERABLE;
+        }
         if (data.fallDistance <= 3) {
             return STATUS_FALL_DISTANCE_TOO_LOW;
         }
@@ -74,6 +78,9 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     private float computeTerrainImpactTime() {
+        if (data.player.isInvulnerableTo(data.player.getDamageSources().flyIntoWall())) {
+            return STATUS_PLAYER_INVULNERABLE;
+        }
         Vec3d accelerationVector = data.acceleration.multiply(TICKS_PER_SECOND);
         Vec3d end = data.position.add(data.velocityPerSecond.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS).add(accelerationVector.multiply(Math.pow(TERRAIN_RAYCAST_AHEAD_SECONDS, 2)).multiply(0.5f)));
 
