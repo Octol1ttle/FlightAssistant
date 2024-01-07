@@ -35,7 +35,7 @@ public class ClientPlayerInteractionManagerMixin {
 
         host.firework.unsafeFireworks = !host.firework.isFireworkSafe(stack);
 
-        if (host.firework.unsafeFireworks) {
+        if (host.firework.unsafeFireworks || !host.faulted.contains(host.gpws) && host.gpws.isInDanger()) {
             cir.setReturnValue(ActionResult.FAIL);
             return;
         }
