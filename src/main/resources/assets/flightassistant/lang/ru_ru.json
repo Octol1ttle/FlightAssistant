@@ -21,6 +21,7 @@
   "alerts.flightassistant.sink_rate": "СКОР. СНИЖЕНИЯ",
   "alerts.flightassistant.stall": "СВАЛИВАНИЕ",
   "alerts.flightassistant.terrain_ahead": "ЗЕМЛЯ ВПЕРЕДИ",
+
   "alerts.flightassistant.elytra_health_low": "ЗДОРОВЬЕ ЭЛИТР НИЗК.",
 
   "alerts.flightassistant.approaching_void_damage_level": "ПРИБЛИЖЕНИЕ К ВЫСОТЕ УРОНА ПУСТОТЫ",
@@ -31,6 +32,7 @@
   "alerts.flightassistant.firework.low_count": "КОЛ-ВО ФРВКОВ НИЖЕ 24",
   "alerts.flightassistant.firework.count_zero": "КОЛ-ВО ФРВКОВ НА НУЛЕ",
   "alerts.flightassistant.firework.unsafe": "ФРВК ВЗРЫВООПАСЕН",
+  "alerts.flightassistant.firework.locked": "ФРВК ЗАБЛОКИРОВАН (ОБНАРУЖ. КОЛЛИЗ.)",
   "alerts.flightassistant.fault.computers.air_data": "ОТКАЗ КДП (ИНСТР. ПОТЕР.)",
   "alerts.flightassistant.fault.computers.time_prvd": "ОТКАЗ КОМП. ВРЕМЕНИ",
   "alerts.flightassistant.fault.computers.auto_flt": "ОТКАЗ АВТО ПОЛЁТА",
@@ -42,6 +44,7 @@
   "alerts.flightassistant.fault.computers.stall_det": "ОТКАЗ СИСТ. ОБНАРУЖ. СВАЛИВ. (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.computers.void_level": "ОТКАЗ СИСТ. ВЫСОТЫ ПУСТОТЫ (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.computers.yaw_ctl": "ОТКАЗ УПР. РЫСКАНИЕМ",
+  "alerts.flightassistant.fault.computers.collision_det": "ОТКАЗ СИСТ. ОБНАРУЖ. КОЛЛИЗ. (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.indicators.alert": "ОТКАЗ ИНДИК. ПРЕДУПР.",
   "alerts.flightassistant.fault.indicators.altitude": "ОТКАЗ ИНДИК. ВЫСОТЫ",
   "alerts.flightassistant.fault.indicators.elytra_health": "ОТКАЗ ИНДИК. ЗДОРОВЬЯ ЭЛИТР",

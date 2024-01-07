@@ -6,6 +6,7 @@ import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
+import ru.octol1ttle.flightassistant.computers.safety.WallCollisionComputer;
 
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
@@ -14,6 +15,7 @@ public class AutoFlightComputer implements ITickableComputer {
     private final GPWSComputer gpws;
     private final FlightPlanner plan;
     private final FireworkController firework;
+    private final WallCollisionComputer collision;
     private final PitchController pitch;
     private final YawController yaw;
 
@@ -28,11 +30,12 @@ public class AutoFlightComputer implements ITickableComputer {
     public Integer selectedAltitude;
     public Integer selectedHeading;
 
-    public AutoFlightComputer(AirDataComputer data, GPWSComputer gpws, FlightPlanner plan, FireworkController firework, PitchController pitch, YawController yaw) {
+    public AutoFlightComputer(AirDataComputer data, GPWSComputer gpws, FlightPlanner plan, FireworkController firework, WallCollisionComputer collision, PitchController pitch, YawController yaw) {
         this.data = data;
         this.gpws = gpws;
         this.plan = plan;
         this.firework = firework;
+        this.collision = collision;
         this.pitch = pitch;
         this.yaw = yaw;
     }
@@ -83,6 +86,7 @@ public class AutoFlightComputer implements ITickableComputer {
         if (autoFireworkEnabled) {
             autoFireworkEnabled = false;
             afrwkDisconnectionForced = force;
+            collision.collided = false;
         }
     }
 
