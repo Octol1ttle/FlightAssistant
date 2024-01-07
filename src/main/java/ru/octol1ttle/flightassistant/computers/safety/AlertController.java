@@ -14,7 +14,6 @@ import ru.octol1ttle.flightassistant.alerts.autoflight.NoFireworksInHotbarAlert;
 import ru.octol1ttle.flightassistant.alerts.fault.ComputerFaultAlert;
 import ru.octol1ttle.flightassistant.alerts.fault.IndicatorFaultAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkCountZeroAlert;
-import ru.octol1ttle.flightassistant.alerts.firework.FireworkDelayedResponseAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkLowCountAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkNoResponseAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkUnsafeAlert;
@@ -46,7 +45,7 @@ public class AlertController implements ITickableComputer {
                 new ElytraHealthLowAlert(this.host.data),
                 new FireworkUnsafeAlert(this.host.firework),
                 new FireworkCountZeroAlert(this.host.firework),
-                new FireworkNoResponseAlert(this.host.firework), new FireworkDelayedResponseAlert(this.host.firework),
+                new FireworkNoResponseAlert(this.host.firework),
                 new FireworkLowCountAlert(this.host.firework),
                 new NoFireworksInHotbarAlert(this.host.firework));
         activeAlerts = new ArrayList<>(allAlerts.size());

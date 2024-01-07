@@ -26,7 +26,6 @@
   "alerts.flightassistant.approaching_void_damage_level": "ПРИБЛИЖЕНИЕ К ВЫСОТЕ УРОНА ПУСТОТЫ",
   "alerts.flightassistant.reached_void_damage_level": "ДОСТИГНУТА ВЫСОТА УРОНА ПУСТОТЫ",
   "alerts.flightassistant.autoflight.auto_pilot_off": "АВТОПИЛОТ ВЫКЛЮЧЕН",
-  "alerts.flightassistant.firework.delayed_response": "ФРВК ПОЗДНЯЯ АКТИВАЦИЯ",
   "alerts.flightassistant.firework.no_response": "ФРВК ОТКАЗ",
   "alerts.flightassistant.firework.no_fireworks": "НЕТ ФРВКОВ НА ПАНЕЛИ БЫСТР. ДОСТУПА",
   "alerts.flightassistant.firework.low_count": "КОЛ-ВО ФРВКОВ НИЖЕ 24",

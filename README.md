@@ -31,12 +31,12 @@
 - Autopilot systems:
   - Flight Planner
   - Flight Directors
-  - Auto thrust (fireworks)
+  - Auto-firework
   - Auto pilot
 - Alerts for unsafe flight conditions:
-  - Approaching void damage altitude
-  - Firework delayed response/no response
   - Low elytra durability
+  - Approaching void damage altitude
+  - No response from fireworks
   - Unsafe (explosive) fireworks
   - Low firework count/no fireworks in inventory
 
