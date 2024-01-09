@@ -15,11 +15,11 @@ import ru.octol1ttle.flightassistant.computers.ComputerHost;
 
 @Mixin(ClientPlayerInteractionManager.class)
 public class ClientPlayerInteractionManagerMixin {
-    @Inject(method = "interactItem", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "interactItem", at = @At("HEAD"), cancellable = true)
     public void disallowUnsafeFireworks(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack stack = player.getStackInHand(hand);
         ComputerHost host = HudRenderer.getHost();
-        if (!cir.getReturnValue().shouldIncrementStat() || host == null || host.faulted.contains(host.firework)) {
+        if (host == null || host.faulted.contains(host.firework)) {
             return;
         }
         if (!host.data.isFlying || !(stack.getItem() instanceof FireworkRocketItem)) {
