@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Hand;
-import org.jetbrains.annotations.Nullable;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
@@ -20,8 +19,7 @@ public class FireworkController implements ITickableComputer {
     public boolean fireworkResponded = true;
     public float lastUseTime = -1.0f;
     public float lastDiff = Float.MIN_VALUE;
-    @Nullable
-    public Float lastTogaLock;
+    public Float lastProtTrigger;
     public boolean noFireworks = false;
     public boolean unsafeFireworks = false;
     public boolean activationInProgress = false;
@@ -41,6 +39,7 @@ public class FireworkController implements ITickableComputer {
             lastDiff = time.prevMillis - lastUseTime;
         }
 
+        noFireworks = true;
         PlayerInventory inventory = data.player.getInventory();
         int i = 0;
         while (PlayerInventory.isValidHotbarIndex(i)) {
@@ -67,20 +66,20 @@ public class FireworkController implements ITickableComputer {
         return i;
     }
 
-    public void activateFirework(boolean togaLock) {
+    public void activateFirework(boolean force) {
         if (!data.canAutomationsActivate() || lastUseTime > 0 && time.prevMillis != null && time.prevMillis - lastUseTime < 750) {
             return;
         }
-        if (togaLock && time.prevMillis != null) {
-            this.lastTogaLock = time.prevMillis;
+        if (force && time.prevMillis != null) {
+            this.lastProtTrigger = time.prevMillis;
         }
 
         if (isFireworkSafe(data.player.getMainHandStack())) {
-            tryActivateFirework(Hand.MAIN_HAND, togaLock);
+            tryActivateFirework(Hand.MAIN_HAND, force);
             return;
         }
         if (isFireworkSafe(data.player.getOffHandStack())) {
-            tryActivateFirework(Hand.OFF_HAND, togaLock);
+            tryActivateFirework(Hand.OFF_HAND, force);
             return;
         }
 
@@ -101,7 +100,7 @@ public class FireworkController implements ITickableComputer {
             noFireworks = true;
             return;
         }
-        tryActivateFirework(Hand.MAIN_HAND, togaLock);
+        tryActivateFirework(Hand.MAIN_HAND, force);
     }
 
     private void tryActivateFirework(Hand hand, boolean force) {
@@ -136,7 +135,6 @@ public class FireworkController implements ITickableComputer {
         fireworkResponded = true;
         lastUseTime = -1.0f;
         lastDiff = Float.MIN_VALUE;
-        lastTogaLock = null;
         noFireworks = false;
         unsafeFireworks = false;
         activationInProgress = false;

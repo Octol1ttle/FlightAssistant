@@ -29,8 +29,6 @@ public class ClientPlayerInteractionManagerMixin {
 
         if (!host.faulted.contains(host.autoflight) && host.autoflight.autoFireworkEnabled && !host.firework.activationInProgress) {
             host.autoflight.disconnectAutoFirework(true);
-            // TODO: announce the switch to "MAN FRWK" in F/MODE
-            // TODO: announce "MAN FRWK" in F/MODE on initial firework usage
         }
 
         host.firework.unsafeFireworks = !host.firework.isFireworkSafe(stack);
