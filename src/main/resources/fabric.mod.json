@@ -3,7 +3,7 @@
   "id": "flightassistant",
   "version": "${version}",
   "name": "Flight Assistant",
-  "description": "TODO",
+  "description": "FlightAssistant is an assistant that will assist you in your flights.",
   "authors": [
     "Octol1ttle",
     "ToroCraft"
