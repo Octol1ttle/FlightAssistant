@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.indicators;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
@@ -27,7 +28,7 @@ public class FlightDirectorsIndicator extends HudComponent {
 
         if (autoflight.getTargetPitch() != null) {
             float deltaPitch = data.pitch + autoflight.getTargetPitch();
-            float fdY = Math.max(dim.tFrame, Math.min(dim.bFrame, dim.yMid + i(deltaPitch * dim.degreesPerPixel)));
+            float fdY = MathHelper.clamp(dim.yMid + i(deltaPitch * dim.degreesPerPixel), dim.bFrame + 10, dim.tFrame - 10);
             drawHorizontalLine(context, dim.xMid - dim.wFrame * 0.1f, dim.xMid + dim.wFrame * 0.1f, fdY, CONFIG.adviceColor);
         }
 
@@ -40,7 +41,7 @@ public class FlightDirectorsIndicator extends HudComponent {
                 deltaHeading -= 360.0f;
             }
 
-            float fdX = Math.max(dim.lFrame, Math.min(dim.rFrame, dim.xMid + i(deltaHeading * dim.degreesPerPixel)));
+            float fdX = MathHelper.clamp(dim.xMid + i(deltaHeading * dim.degreesPerPixel), dim.lFrame + 10, dim.rFrame - 10);
             drawVerticalLine(context, fdX, dim.yMid - dim.hFrame * 0.15f, dim.yMid + dim.hFrame * 0.15f, CONFIG.adviceColor);
         }
     }

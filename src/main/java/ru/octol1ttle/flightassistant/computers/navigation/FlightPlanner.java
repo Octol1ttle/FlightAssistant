@@ -62,6 +62,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
         Vec3d current = data.position;
         Vector2d target = targetWaypoint.targetPosition();
+        // this is SO FUCKING STUPID, I have ZERO IDEA how to do it PROPERLY without everything breaking. why couldn't Mojang FOLLOW THE GOD DAMN STANDARDS
         return AirDataComputer.toHeading((float) Math.toDegrees(MathHelper.atan2(-(target.x - current.x), target.y - current.z)));
     }
 

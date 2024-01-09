@@ -59,13 +59,13 @@ public class FlightModeIndicator extends HudComponent {
     private void renderFireworkMode(DrawContext context, TextRenderer textRenderer) {
         Integer targetSpeed = autoflight.getTargetSpeed();
         if (firework.noFireworks) {
-            fireworkMode.update(Text.translatable("flightassistant.mode.firework.none_in_hotbar"));
+            fireworkMode.update(Text.translatable("flightassistant.mode.firework.none_in_hotbar"), autoflight.autoFireworkEnabled);
         } else if (collision.collided) {
-            fireworkMode.update(Text.translatable("flightassistant.mode.firework.locked"));
+            fireworkMode.update(Text.translatable("flightassistant.mode.firework.locked"), true);
         } else if (firework.lastProtTrigger != null && time.prevMillis - firework.lastProtTrigger < 2000) {
             fireworkMode.update(Text.translatable("flightassistant.mode.firework.protection"));
         } else if (autoflight.autoFireworkEnabled && targetSpeed != null) {
-            String type = autoflight.selectedSpeed != null ? "_selected" : "_managed";
+            String type = autoflight.selectedSpeed != null ? ".selected" : ".managed";
             fireworkMode.update(Text.translatable("flightassistant.mode.firework.speed" + type, targetSpeed));
         } else {
             fireworkMode.update(Text.translatable("flightassistant.mode.firework.manual"));
@@ -83,16 +83,16 @@ public class FlightModeIndicator extends HudComponent {
         }
 
         float diff = Math.abs(targetAltitude - data.altitude);
-        String type = autoflight.selectedAltitude != null ? "_selected" : "_managed";
+        String type = autoflight.selectedAltitude != null ? ".selected" : ".managed";
 
         if (!autoflight.autoPilotEnabled || diff <= 5) {
-            verticalMode.update(Text.translatable("flightassistant.mode.vert.alt_hold" + type));
+            verticalMode.update(Text.translatable("flightassistant.mode.vert.alt_hold" + type, targetAltitude));
         } else if (diff <= 10) {
-            verticalMode.update(Text.translatable("flightassistant.mode.vert.alt_approaching" + type));
+            verticalMode.update(Text.translatable("flightassistant.mode.vert.alt_approaching" + type, targetAltitude));
         } else if (targetAltitude > data.altitude) {
-            verticalMode.update(Text.translatable("flightassistant.mode.vert.climb" + type));
+            verticalMode.update(Text.translatable("flightassistant.mode.vert.climb" + type, targetAltitude));
         } else {
-            verticalMode.update(Text.translatable("flightassistant.mode.vert.descend" + type));
+            verticalMode.update(Text.translatable("flightassistant.mode.vert.descend" + type, targetAltitude));
         }
 
         float x = dim.lFrame + dim.wFrame * (2 / 5.0f);

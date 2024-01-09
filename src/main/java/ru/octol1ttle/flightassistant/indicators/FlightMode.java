@@ -22,7 +22,11 @@ public class FlightMode {
     }
 
     public void update(Text newText) {
-        if (newText.equals(lastText)) {
+        update(newText, false);
+    }
+
+    public void update(Text newText, boolean forceFlash) {
+        if (!forceFlash && newText.equals(lastText)) {
             return;
         }
 

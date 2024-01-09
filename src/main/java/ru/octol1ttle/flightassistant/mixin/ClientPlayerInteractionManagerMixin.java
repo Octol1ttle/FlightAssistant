@@ -35,7 +35,7 @@ public class ClientPlayerInteractionManagerMixin {
 
         boolean gpwsDanger = !host.faulted.contains(host.gpws) && host.gpws.isInDanger();
         boolean wallCollision = !host.faulted.contains(host.collision) && host.collision.collided;
-        if (host.firework.unsafeFireworks || gpwsDanger || wallCollision) {
+        if (!host.firework.activationInProgress && (host.firework.unsafeFireworks || gpwsDanger || wallCollision)) {
             cir.setReturnValue(ActionResult.FAIL);
             return;
         }
