@@ -54,12 +54,6 @@ public record AlertSoundData(@Nullable SoundEvent sound, int priority, float vol
             0.5f,
             false
     );
-    public static final AlertSoundData ALTITUDE_ALERT = new AlertSoundData(
-            SoundEvent.of(new Identifier("flightassistant:altitude_alert")),
-            6,
-            0.25f,
-            true
-    );
     public static final AlertSoundData EMPTY = new AlertSoundData(
             null,
             Integer.MAX_VALUE,
