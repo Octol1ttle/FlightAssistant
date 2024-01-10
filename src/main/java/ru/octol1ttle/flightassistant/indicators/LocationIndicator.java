@@ -29,12 +29,12 @@ public class LocationIndicator extends HudComponent {
         int xLoc = i((float) data.position.x);
         int zLoc = i((float) data.position.z);
 
-        drawFont(textRenderer, context, String.format("%d / %d", xLoc, zLoc), x, y, CONFIG.color);
+        drawString(textRenderer, context, String.format("%d / %d", xLoc, zLoc), x, y, CONFIG.color);
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawFont(textRenderer, context, Text.translatable("flightassistant.location_short"),
+        drawText(textRenderer, context, Text.translatable("flightassistant.location_short"),
                 dim.wScreen * CONFIG.location_x, dim.hScreen * CONFIG.location_y, CONFIG.alertColor);
     }
 

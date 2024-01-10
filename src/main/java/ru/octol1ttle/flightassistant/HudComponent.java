@@ -7,21 +7,16 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.RotationAxis;
 import ru.octol1ttle.flightassistant.compatibility.ImmediatelyFastBatchingAccessor;
 import ru.octol1ttle.flightassistant.config.HudConfig;
 
 public abstract class HudComponent {
     public static HudConfig CONFIG;
+    private static final int SINGLE_LINE_DRAWN = 1;
     private static final Map<Integer, Integer> colorHighlightMap = Map.of(
             Color.RED.getRGB(), Color.WHITE.getRGB(),
             Color.YELLOW.getRGB(), Color.BLACK.getRGB()
     );
-
-    public static void drawFont(TextRenderer textRenderer, DrawContext context, Text text, float x, float y,
-                                int color) {
-        context.drawText(textRenderer, text, i(x), i(y), color, false);
-    }
 
     public static void fill(DrawContext context, float x1, float y1, float x2, float y2, int color) {
         context.fill(i(x1), i(y1), i(x2), i(y2), color);
@@ -31,22 +26,44 @@ public abstract class HudComponent {
         return Math.round(f);
     }
 
-    public static void drawFont(TextRenderer textRenderer, DrawContext context, String text, float x, float y,
-                                int color) {
+    // TODO: try to remove the String "overloads"
+    public static void drawString(TextRenderer textRenderer, DrawContext context, String text, float x, float y,
+                                  int color) {
         context.drawText(textRenderer, text, i(x), i(y), color, false);
     }
 
-    public static int drawHighlightedFont(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int highlightColor, boolean highlight) {
+    public static void drawMiddleAlignedString(TextRenderer textRenderer, DrawContext context, String text, float x, float y, int color) {
+        drawString(textRenderer, context, text, x - textRenderer.getWidth(text) * 0.5f, y, color);
+    }
+
+    protected static void drawRightAlignedString(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int color) {
+        drawText(textRenderer, context, text, x - textRenderer.getWidth(text), y, color);
+    }
+
+    public static void drawText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int color) {
+        context.drawText(textRenderer, text, i(x), i(y), color, false);
+    }
+
+    public static void drawMiddleAlignedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int color) {
+        drawText(textRenderer, context, text, x - textRenderer.getWidth(text) * 0.5f, y, color);
+    }
+
+    public static int drawHighlightedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int highlightColor, boolean highlight) {
         if (highlight) {
             drawUnbatched(context, ctx -> {
                 HudComponent.fill(context, x - 2.0f, y - 1.0f, x + textRenderer.getWidth(text) + 1.0f, y + 8.0f, highlightColor);
-                HudComponent.drawFont(textRenderer, context, text, x, y, colorHighlightMap.get(highlightColor));
+                HudComponent.drawText(textRenderer, context, text, x, y, colorHighlightMap.get(highlightColor));
             });
-            return 1;
+            return SINGLE_LINE_DRAWN;
         }
-        HudComponent.drawFont(textRenderer, context, text, x, y, highlightColor);
+        HudComponent.drawText(textRenderer, context, text, x, y, highlightColor);
 
         return 1;
+    }
+
+    // that name doe
+    public static void drawHighlightedMiddleAlignedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int highlightColor, boolean highlight) {
+        drawHighlightedText(textRenderer, context, text, x - textRenderer.getWidth(text) * 0.5f, y, highlightColor, highlight);
     }
 
     public static void drawUnbatched(DrawContext context, Consumer<DrawContext> c) {
@@ -85,33 +102,6 @@ public abstract class HudComponent {
         drawHorizontalLine(context, x, x + w, y + 10, color);
         drawVerticalLine(context, x, y, y + 10, color);
         drawVerticalLine(context, x + w, y, y + 10, color);
-    }
-
-    protected static void drawPointer(DrawContext context, float x, float y, float rot) {
-        context.getMatrices().push();
-        context.getMatrices().translate(x, y, 0);
-        context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rot + 45));
-        drawVerticalLine(context, 0, 0, 5, CONFIG.color);
-        drawHorizontalLine(context, 0, 5, 0, CONFIG.color);
-        context.getMatrices().pop();
-    }
-
-    protected static void drawRightAlignedFont(TextRenderer textRenderer, DrawContext context, Text text, float x,
-                                        float y, int color) {
-        int w = textRenderer.getWidth(text);
-        drawFont(textRenderer, context, text, x - w, y, color);
-    }
-
-    public static void drawRightAlignedHighlightedFont(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int highlightColor, boolean highlight) {
-        int w = textRenderer.getWidth(text);
-        if (highlight) {
-            drawUnbatched(context, ctx -> {
-                HudComponent.fill(context, x - w - 2.0f, y - 1.0f, x + 1.5f, y + 8.0f, highlightColor);
-                HudComponent.drawFont(textRenderer, context, text, x - w, y, CONFIG.white);
-            });
-            return;
-        }
-        HudComponent.drawFont(textRenderer, context, text, x - w, y, highlightColor);
     }
 
     protected static void drawHorizontalLineDashed(DrawContext context, float x1, float x2, float y,

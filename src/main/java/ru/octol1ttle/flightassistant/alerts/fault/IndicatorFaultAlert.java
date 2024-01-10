@@ -33,7 +33,7 @@ public class IndicatorFaultAlert extends AbstractAlert {
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         int i = 0;
         for (HudComponent component : renderer.faulted) {
-            i += HudComponent.drawHighlightedFont(textRenderer, context, Text.translatable("alerts.flightassistant.fault.indicators." + component.getId()), x, y,
+            i += HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.fault.indicators." + component.getId()), x, y,
                     CONFIG.amberColor,
                     !dismissed);
             y += 10;

@@ -74,10 +74,7 @@ public class PitchIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        Text text = Text.translatable("flightassistant.pitch_short");
-        drawFont(textRenderer, context, text,
-                (dim.wScreen - textRenderer.getWidth(text)) * 0.5f, dim.yMid - 10,
-                CONFIG.alertColor);
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.pitch_short"), dim.xMid, dim.yMid - 10, CONFIG.alertColor);
     }
 
     @Override
@@ -137,10 +134,10 @@ public class PitchIndicator extends HudComponent {
 
         int fontVerticalOffset = degree >= 0 ? 0 : 6;
 
-        drawFont(textRenderer, context, String.format("%d", i(Math.abs(degree))), pitchData.r2 + 6,
+        drawString(textRenderer, context, String.format("%d", i(Math.abs(degree))), pitchData.r2 + 6,
                 y - fontVerticalOffset, color);
 
-        drawFont(textRenderer, context, String.format("%d", i(Math.abs(degree))), pitchData.l1 - 17,
+        drawString(textRenderer, context, String.format("%d", i(Math.abs(degree))), pitchData.l1 - 17,
                 y - fontVerticalOffset, color);
     }
 

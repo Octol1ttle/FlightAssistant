@@ -11,6 +11,7 @@ import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
+import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
 public class ExcessiveTerrainClosureAlert extends AbstractAlert {
     private static final float TERRAIN_THRESHOLD = 7.5f;
@@ -46,21 +47,17 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
     }
 
     @Override
-    public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight) {
+    public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         if (gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
-            Text text = Text.translatable("alerts.flightassistant.pull_up");
-            float startX = (width - textRenderer.getWidth(text)) * 0.5f;
-            HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
-                    HudComponent.CONFIG.alertColor, highlight);
+            HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.pull_up"), x, y,
+                    CONFIG.alertColor, highlight);
 
             return true;
         }
 
         if (gpws.terrainImpactTime <= TERRAIN_THRESHOLD) {
-            Text text = Text.translatable("alerts.flightassistant.terrain_ahead");
-            float startX = (width - textRenderer.getWidth(text)) * 0.5f;
-            HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
-                    HudComponent.CONFIG.amberColor, highlight);
+            HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.terrain_ahead"), x, y,
+                    CONFIG.amberColor, highlight);
 
             return true;
         }

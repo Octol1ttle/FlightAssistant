@@ -32,12 +32,12 @@ public class HeadingIndicator extends HudComponent {
 
         if (CONFIG.heading_showReadout) {
             int color = getHeadingColor(data.heading);
-            drawFont(textRenderer, context, String.format("%03d", i(data.heading)), dim.xMid - 8, yText, color);
+            drawString(textRenderer, context, String.format("%03d", i(data.heading)), dim.xMid - 8, yText, color);
             drawBox(context, dim.xMid - 15, yText - 1.5f, 30, color);
         }
 
         if (CONFIG.heading_showScale) {
-            drawPointer(context, dim.xMid, top + 10, 0);
+            drawMiddleAlignedString(textRenderer, context, "^", dim.xMid, top + 10, CONFIG.color);
 
             for (int i = -540; i < 540; i++) {
                 float x = (i * dim.degreesPerPixel) + xNorth;
@@ -57,14 +57,14 @@ public class HeadingIndicator extends HudComponent {
 
                 if (forceMark || i % 15 == 0 && enoughSpace) {
                     if (i % 90 == 0) {
-                        drawFont(textRenderer, context, headingToDirection(degrees), x - 2, yText + 10, color);
-                        drawFont(textRenderer, context, headingToAxis(degrees), x - 8, yText + 20, color);
+                        drawText(textRenderer, context, headingToDirection(degrees), x - 2, yText + 10, color);
+                        drawString(textRenderer, context, headingToAxis(degrees), x - 8, yText + 20, color);
                     } else {
                         drawVerticalLine(context, x, top + 3, top + 10, color);
                     }
 
                     if (!CONFIG.heading_showReadout || x <= dim.xMid - 26 || x >= dim.xMid + 26) {
-                        drawFont(textRenderer, context, String.format("%03d", degrees), x - 8, yText, color);
+                        drawString(textRenderer, context, String.format("%03d", degrees), x - 8, yText, color);
                     }
                     continue;
                 }
@@ -87,7 +87,7 @@ public class HeadingIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawFont(textRenderer, context, Text.translatable("flightassistant.heading_short"), dim.xMid - 8, dim.tFrame - 17, CONFIG.alertColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.heading_short"), dim.xMid - 8, dim.tFrame - 17, CONFIG.alertColor);
     }
 
     @Override

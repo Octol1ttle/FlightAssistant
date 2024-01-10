@@ -29,20 +29,16 @@ public class ExcessiveDescentAlert extends AbstractAlert {
     }
 
     @Override
-    public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight) {
+    public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         if (gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
-            Text text = Text.translatable("alerts.flightassistant.pull_up");
-            float startX = (width - textRenderer.getWidth(text)) * 0.5f;
-            HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
+            HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.pull_up"), x, y,
                     CONFIG.alertColor, highlight);
 
             return true;
         }
 
         if (gpws.descentImpactTime <= SINK_RATE_THRESHOLD) {
-            Text text = Text.translatable("alerts.flightassistant.sink_rate");
-            float startX = (width - textRenderer.getWidth(text)) * 0.5f;
-            HudComponent.drawHighlightedFont(textRenderer, context, text, startX, y,
+            HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.sink_rate"), x, y,
                     CONFIG.amberColor, highlight);
 
             return true;

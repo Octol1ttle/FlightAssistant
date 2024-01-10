@@ -1,6 +1,5 @@
 package ru.octol1ttle.flightassistant.config;
 
-import com.google.gson.annotations.SerializedName;
 import java.awt.Color;
 import ru.octol1ttle.flightassistant.config.loader.IConfig;
 
@@ -49,8 +48,6 @@ public class HudConfig implements IConfig {
     public boolean altitude_showScale = true;
     public boolean altitude_showReadout = true;
     public boolean altitude_showHeight = true;
-    @SerializedName("altitude_showGroundInfo_v2")
-    public boolean altitude_showGroundInfo = false;
 
     public boolean heading_showScale = true;
     public boolean heading_showReadout = true;
@@ -60,7 +57,6 @@ public class HudConfig implements IConfig {
         config.altitude_showScale = false;
         config.speed_showScale = false;
         config.heading_showScale = false;
-        config.altitude_showGroundInfo = false;
         config.pitchLadder_showLadder = false;
         config.pitchLadder_optimumClimbAngle = 0;
         config.pitchLadder_optimumGlideAngle = 0;

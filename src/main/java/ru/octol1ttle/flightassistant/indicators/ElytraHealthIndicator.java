@@ -30,14 +30,14 @@ public class ElytraHealthIndicator extends HudComponent {
                 color = data.elytraHealth <= 10.0f ? CONFIG.amberColor : CONFIG.color;
             }
             drawBox(context, x - 3.5f, y - 1.5f, 30, color);
-            drawFont(textRenderer, context, Text.translatable("flightassistant.elytra_short"), x - 10, y, color);
-            drawFont(textRenderer, context, String.format("%d", i(data.elytraHealth)) + "%", x, y, color);
+            drawText(textRenderer, context, Text.translatable("flightassistant.elytra_short"), x - 10, y, color);
+            drawString(textRenderer, context, String.format("%d", i(data.elytraHealth)) + "%", x, y, color);
         }
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawFont(textRenderer, context, Text.translatable("flightassistant.elytra_health_short"),
+        drawText(textRenderer, context, Text.translatable("flightassistant.elytra_health_short"),
                 dim.wScreen * CONFIG.elytra_x, dim.hScreen * CONFIG.elytra_y,
                 CONFIG.alertColor);
     }

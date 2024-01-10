@@ -35,21 +35,17 @@ public class AltitudeIndicator extends HudComponent {
 
         int safeLevel = data.groundLevel == data.voidLevel ? data.voidLevel + 16 : data.groundLevel;
 
-        if (CONFIG.altitude_showGroundInfo) {
-            drawHeightIndicator(context, left - 1, dim.yMid, bottom - dim.yMid, CONFIG.color);
-        }
-
         if (CONFIG.altitude_showReadout) {
             int color = getAltitudeColor(safeLevel, data.altitude);
-            drawFont(textRenderer, context, String.format("%.0f", data.altitude), xAltText, dim.yMid - 3, color);
+            drawString(textRenderer, context, String.format("%.0f", data.altitude), xAltText, dim.yMid - 3, color);
             drawBox(context, xAltText - 2, dim.yMid - 4.5f, 28, color);
         }
 
         if (CONFIG.altitude_showHeight) {
             int color = data.altitude < safeLevel ? CONFIG.alertColor : CONFIG.color;
-            drawFont(textRenderer, context, Text.translatable(data.groundLevel == data.voidLevel ? "flightassistant.void_level" : "flightassistant.ground_level"), xAltText - 10, bottom + 3, color);
+            drawText(textRenderer, context, Text.translatable(data.groundLevel == data.voidLevel ? "flightassistant.void_level" : "flightassistant.ground_level"), xAltText - 10, bottom + 3, color);
             String heightText = String.format("%d", i(data.distanceFromGround));
-            drawFont(textRenderer, context, heightText, xAltText, bottom + 3, color);
+            drawString(textRenderer, context, heightText, xAltText, bottom + 3, color);
             drawBox(context, xAltText - 2, bottom + 1.5f, 28, color);
         }
 
@@ -72,7 +68,7 @@ public class AltitudeIndicator extends HudComponent {
                 if (forceMark || i % 50 == 0 && enoughSpace) {
                     drawHorizontalLine(context, left, right + 2, y, color);
                     if (!CONFIG.altitude_showReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
-                        drawFont(textRenderer, context, String.format("%d", i), xAltText, y - 3, color);
+                        drawString(textRenderer, context, String.format("%d", i), xAltText, y - 3, color);
                     }
                     continue;
                 }
@@ -99,30 +95,11 @@ public class AltitudeIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawFont(textRenderer, context, Text.translatable("flightassistant.altitude_short"), dim.rFrame + 7, dim.yMid - 3, CONFIG.alertColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.altitude_short"), dim.rFrame + 7, dim.yMid - 3, CONFIG.alertColor);
     }
 
     @Override
     public String getId() {
         return "altitude";
     }
-
-    private void drawHeightIndicator(DrawContext context, float x, float top, float h, int color) {
-        float bottom = top + h;
-        float blocksPerPixel = h / (data.world.getHeight() + 64.0f);
-        float yAlt = bottom - i((data.altitude + 64) * blocksPerPixel);
-        float yFloor = bottom - i(64 * blocksPerPixel);
-
-        drawVerticalLine(context, x, top - 1, bottom + 1, color);
-
-        float yGroundLevel = bottom - (data.groundLevel + 64f) * blocksPerPixel;
-        fill(context, x - 3, yGroundLevel + 2, x, yFloor, color);
-
-        drawHorizontalLine(context, x - 6, x - 1, top, color);
-        drawHorizontalLine(context, x - 6, x - 1, yFloor, color);
-        drawHorizontalLine(context, x - 6, x - 1, bottom, color);
-
-        drawPointer(context, x, yAlt, 90);
-    }
-
 }

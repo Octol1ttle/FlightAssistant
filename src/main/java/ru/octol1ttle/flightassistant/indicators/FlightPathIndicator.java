@@ -61,10 +61,7 @@ public class FlightPathIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        Text text = Text.translatable("flightassistant.flight_path_short");
-        drawFont(textRenderer, context, text,
-                (dim.wScreen - textRenderer.getWidth(text)) * 0.5f, dim.yMid + 10,
-                CONFIG.alertColor);
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.flight_path_short"), dim.xMid, dim.yMid + 10, CONFIG.alertColor);
     }
 
     @Override
