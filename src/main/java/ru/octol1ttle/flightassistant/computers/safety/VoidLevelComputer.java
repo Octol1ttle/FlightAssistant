@@ -28,6 +28,9 @@ public class VoidLevelComputer implements ITickableComputer {
     }
 
     private VoidLevelStatus computeStatus() {
+        if (!data.isFlying) {
+            return VoidLevelStatus.UNKNOWN;
+        }
         if (data.player.isInvulnerableTo(data.player.getDamageSources().outOfWorld())) {
             return VoidLevelStatus.PLAYER_INVULNERABLE;
         }
@@ -48,7 +51,7 @@ public class VoidLevelComputer implements ITickableComputer {
     }
 
     private float computeMinimumSafePitch() {
-        if (status == VoidLevelStatus.NOT_ABOVE_VOID || status == VoidLevelStatus.PLAYER_INVULNERABLE) {
+        if (status == VoidLevelStatus.UNKNOWN || status == VoidLevelStatus.PLAYER_INVULNERABLE || status == VoidLevelStatus.NOT_ABOVE_VOID) {
             return -90.0f;
         }
         if (data.altitude - data.voidLevel < 16) {

@@ -60,6 +60,9 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     private float computeDescentImpactTime() {
+        if (!data.isFlying) {
+            return STATUS_UNKNOWN;
+        }
         if (data.player.isInvulnerableTo(data.player.getDamageSources().fall())) {
             return STATUS_PLAYER_INVULNERABLE;
         }
@@ -78,6 +81,9 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     private float computeTerrainImpactTime() {
+        if (!data.isFlying) {
+            return STATUS_UNKNOWN;
+        }
         if (data.player.isInvulnerableTo(data.player.getDamageSources().flyIntoWall())) {
             return STATUS_PLAYER_INVULNERABLE;
         }
