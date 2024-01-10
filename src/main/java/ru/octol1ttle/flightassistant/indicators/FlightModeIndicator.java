@@ -63,12 +63,12 @@ public class FlightModeIndicator extends HudComponent {
         } else if (collision.collided) {
             fireworkMode.update(Text.translatable("flightassistant.mode.firework.locked"), true);
         } else if (firework.lastProtTrigger != null && time.prevMillis - firework.lastProtTrigger < 2000) {
-            fireworkMode.update(Text.translatable("flightassistant.mode.firework.protection"));
+            fireworkMode.update(Text.translatable("flightassistant.mode.firework.protection"), true);
         } else if (autoflight.autoFireworkEnabled && targetSpeed != null) {
             String type = autoflight.selectedSpeed != null ? ".selected" : ".managed";
             fireworkMode.update(Text.translatable("flightassistant.mode.firework.speed" + type, targetSpeed));
         } else {
-            fireworkMode.update(Text.translatable("flightassistant.mode.firework.manual"));
+            fireworkMode.update(Text.translatable("flightassistant.mode.firework.manual"), autoflight.autoPilotEnabled);
         }
 
         float x = dim.lFrame + dim.wFrame * (1 / 5.0f);
