@@ -89,12 +89,11 @@ public class PitchIndicator extends HudComponent {
             degreesPerBar = 20;
         }
 
-        for (int i = degreesPerBar; i <= 90; i = i + degreesPerBar) {
+        for (int i = degreesPerBar; i <= 90; i += degreesPerBar) {
             float offset = dim.degreesPerPixel * i;
             drawDegreeBar(textRenderer, context, -i, yHorizon + offset);
             drawDegreeBar(textRenderer, context, i, yHorizon - offset);
         }
-
     }
 
     private void drawReferenceMark(DrawContext context, float yHorizon, float degrees, int color) {
@@ -141,6 +140,7 @@ public class PitchIndicator extends HudComponent {
                 y - fontVerticalOffset, color);
     }
 
+    // TODO: this is absolutely terrible. the amount of imprecision this causes is absurd. (but that can be said about all rendering code here)
     private static class PitchIndicatorData {
         public float width;
         public float mid;
