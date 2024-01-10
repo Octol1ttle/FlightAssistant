@@ -56,7 +56,7 @@ public class AltitudeIndicator extends HudComponent {
         if (CONFIG.altitude_showScale) {
             for (int i = -150; i < 1000; i++) {
                 float y = (dim.hScreen - i * blocksPerPixel) - yFloor;
-                if (y > (bottom - 5)) {
+                if (y > (bottom - 5) || i < data.groundLevel) {
                     continue;
                 }
                 if (y < top) {
