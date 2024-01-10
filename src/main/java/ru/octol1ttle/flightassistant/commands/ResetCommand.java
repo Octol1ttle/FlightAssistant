@@ -25,15 +25,15 @@ public class ResetCommand {
                                             }
                                             return 0;
                                         })
-                                )
-                                .then(literal("indicators")
-                                        .executes(context -> {
-                                            if (HudRenderer.INSTANCE != null) {
-                                                HudRenderer.INSTANCE.resetFaulted();
-                                            }
-                                            return 0;
-                                        })
-                                )
-                        ));
+                                ))
+                        .then(literal("indicators")
+                                .executes(context -> {
+                                    if (HudRenderer.INSTANCE != null) {
+                                        HudRenderer.INSTANCE.resetFaulted();
+                                    }
+                                    return 0;
+                                })
+                        )
+                );
     }
 }
