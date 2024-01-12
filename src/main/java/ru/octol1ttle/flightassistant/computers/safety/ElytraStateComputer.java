@@ -6,6 +6,8 @@ import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 
 public class ElytraStateComputer implements ITickableComputer {
     private final AirDataComputer data;
+    private boolean syncedState;
+    private boolean changesPending;
 
     public ElytraStateComputer(AirDataComputer data) {
         this.data = data;
@@ -13,6 +15,13 @@ public class ElytraStateComputer implements ITickableComputer {
 
     @Override
     public void tick() {
+        if (syncedState != data.isFlying) {
+            changesPending = false;
+        }
+        if (changesPending) {
+            return;
+        }
+
         if (data.isFlying && data.player.isTouchingWater()) {
             // Retract the wings
             sendSwitchState();
@@ -27,7 +36,9 @@ public class ElytraStateComputer implements ITickableComputer {
     }
 
     private void sendSwitchState() {
+        syncedState = data.isFlying;
         data.player.networkHandler.sendPacket(new ClientCommandC2SPacket(data.player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
+        changesPending = true;
     }
 
     @Override
@@ -37,5 +48,7 @@ public class ElytraStateComputer implements ITickableComputer {
 
     @Override
     public void reset() {
+        syncedState = false;
+        changesPending = false;
     }
 }
