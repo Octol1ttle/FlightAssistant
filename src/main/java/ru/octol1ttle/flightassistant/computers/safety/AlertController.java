@@ -49,6 +49,7 @@ public class AlertController implements ITickableComputer {
         activeAlerts = new ArrayList<>(allAlerts.size());
     }
 
+    @Override
     public void tick() {
         if (HudComponent.CONFIG == null) { // HUD hidden
             reset();

@@ -30,6 +30,7 @@ public class PitchController implements IRenderTickableComputer {
         this.gpws = gpws;
     }
 
+    @Override
     public void tick() {
         if (!data.canAutomationsActivate()) {
             return;

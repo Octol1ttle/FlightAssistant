@@ -56,6 +56,7 @@ public class AirDataComputer implements ITickableComputer {
         return !block.isAir();
     }
 
+    @Override
     public void tick() {
         assert mc.player != null;
         player = mc.player;

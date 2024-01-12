@@ -30,6 +30,7 @@ public class FireworkController implements ITickableComputer {
         this.interaction = interaction;
     }
 
+    @Override
     public void tick() {
         if (!data.isFlying) {
             fireworkResponded = true;

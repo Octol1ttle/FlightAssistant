@@ -13,6 +13,7 @@ public class TimeComputer implements IRenderTickableComputer {
     public Float prevMillis;
     private float highlightMillis;
 
+    @Override
     public void tick() {
         float millis = Util.getMeasuringTimeNano() / 1000000.0f;
         if (prevMillis == null) {

@@ -13,6 +13,7 @@ public class WallCollisionComputer implements ITickableComputer {
         this.data = data;
     }
 
+    @Override
     public void tick() {
         DamageSource recent = data.player.getRecentDamageSource();
         if (recent != null) {

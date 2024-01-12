@@ -19,6 +19,7 @@ public class VoidLevelComputer implements ITickableComputer {
         this.stall = stall;
     }
 
+    @Override
     public void tick() {
         status = computeStatus();
         if (aboveVoid() && data.altitude - data.voidLevel < 12) {

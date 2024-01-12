@@ -40,6 +40,7 @@ public class AutoFlightComputer implements ITickableComputer {
         this.yaw = yaw;
     }
 
+    @Override
     public void tick() {
         if (autoFireworkEnabled && gpws.getGPWSLampColor() == CONFIG.color) {
             Integer targetSpeed = getTargetSpeed();

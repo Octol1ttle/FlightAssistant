@@ -30,6 +30,7 @@ public class GPWSComputer implements ITickableComputer {
         this.data = data;
     }
 
+    @Override
     public void tick() {
         descentImpactTime = this.computeDescentImpactTime();
         terrainImpactTime = this.computeTerrainImpactTime();

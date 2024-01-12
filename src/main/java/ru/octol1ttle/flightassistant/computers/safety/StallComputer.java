@@ -16,6 +16,7 @@ public class StallComputer implements ITickableComputer {
         this.data = data;
     }
 
+    @Override
     public void tick() {
         status = computeStalling();
         if (status == StallStatus.STALL) {
