@@ -44,7 +44,7 @@ public class AltitudeIndicator extends HudComponent {
         if (CONFIG.altitude_showHeight) {
             int color = data.altitude < safeLevel ? CONFIG.alertColor : CONFIG.color;
             drawText(textRenderer, context, Text.translatable(data.groundLevel == data.voidLevel ? "flightassistant.void_level" : "flightassistant.ground_level"), xAltText - 10, bottom + 3, color);
-            String heightText = String.format("%d", i(data.distanceFromGround));
+            String heightText = String.format("%d", i(data.heightAboveGround));
             drawString(textRenderer, context, heightText, xAltText, bottom + 3, color);
             drawBox(context, xAltText - 2, bottom + 1.5f, 28, color);
         }

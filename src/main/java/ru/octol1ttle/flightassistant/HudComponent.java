@@ -22,6 +22,7 @@ public abstract class HudComponent {
         context.fill(i(x1), i(y1), i(x2), i(y2), color);
     }
 
+    // TODO: get rid of this nonsense
     protected static int i(float f) {
         return Math.round(f);
     }

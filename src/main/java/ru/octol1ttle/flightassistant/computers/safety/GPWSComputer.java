@@ -73,7 +73,7 @@ public class GPWSComputer implements ITickableComputer {
 
         double initialSpeed = -data.velocityPerSecond.y;
         double acceleration = -data.acceleration.y * TICKS_PER_SECOND;
-        float time = getTimeWithAcceleration(initialSpeed, acceleration, data.distanceFromGround);
+        float time = getTimeWithAcceleration(initialSpeed, acceleration, data.heightAboveGround);
 
         if (getSpeedWithAcceleration(initialSpeed, acceleration, time) < MAX_SAFE_SINK_RATE) {
             return STATUS_SPEED_SAFE;

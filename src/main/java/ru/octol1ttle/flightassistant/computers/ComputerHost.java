@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.network.ClientPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.FlightAssistant;
 import ru.octol1ttle.flightassistant.HudComponent;
@@ -15,6 +15,7 @@ import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
 import ru.octol1ttle.flightassistant.computers.autoflight.YawController;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
 import ru.octol1ttle.flightassistant.computers.safety.AlertController;
+import ru.octol1ttle.flightassistant.computers.safety.ElytraStateComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
@@ -33,13 +34,14 @@ public class ComputerHost {
     public final YawController yaw;
     public final FlightPlanner plan;
     public final WallCollisionComputer collision;
+    public final ElytraStateComputer elytra;
     public final List<IComputer> faulted;
     private final List<ITickableComputer> tickables;
     private final List<IRenderTickableComputer> renderTickables;
 
     public ComputerHost(@NotNull MinecraftClient mc, HudRenderer renderer) {
         assert mc.player != null;
-        PlayerEntity player = mc.player;
+        ClientPlayerEntity player = mc.player;
 
         this.data = new AirDataComputer(mc, player);
         this.time = new TimeComputer();
@@ -48,6 +50,7 @@ public class ComputerHost {
         this.voidLevel = new VoidLevelComputer(data, firework, stall);
         this.gpws = new GPWSComputer(data);
         this.collision = new WallCollisionComputer(data);
+        this.elytra = new ElytraStateComputer(data);
 
         this.yaw = new YawController(time, data);
         this.pitch = new PitchController(data, stall, time, voidLevel, gpws);
@@ -58,7 +61,7 @@ public class ComputerHost {
         this.alert = new AlertController(this, mc.getSoundManager(), renderer);
 
         // computers are sorted in the order they should be ticked to avoid errors
-        this.tickables = new ArrayList<>(List.of(data, stall, gpws, voidLevel, collision, plan, autoflight, firework, alert));
+        this.tickables = new ArrayList<>(List.of(data, stall, gpws, voidLevel, collision, elytra, plan, autoflight, firework, alert));
         this.renderTickables = new ArrayList<>(List.of(time, pitch, yaw));
         Collections.reverse(this.tickables); // we tick computers in reverse, so reverse the collections so that the order is correct
         Collections.reverse(this.renderTickables);

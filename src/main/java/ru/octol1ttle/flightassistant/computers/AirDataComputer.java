@@ -2,8 +2,8 @@ package ru.octol1ttle.flightassistant.computers;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
@@ -18,7 +18,7 @@ import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 public class AirDataComputer implements ITickableComputer {
     private final MinecraftClient mc;
-    public PlayerEntity player;
+    public ClientPlayerEntity player;
 
     public boolean isFlying = false;
     public Vec3d position = Vec3d.ZERO;
@@ -36,12 +36,12 @@ public class AirDataComputer implements ITickableComputer {
     public float altitude;
     public int voidLevel = Integer.MIN_VALUE;
     public int groundLevel;
-    public float distanceFromGround;
+    public float heightAboveGround;
     public Float elytraHealth;
     public float fallDistance;
     public World world;
 
-    public AirDataComputer(MinecraftClient mc, PlayerEntity player) {
+    public AirDataComputer(MinecraftClient mc, ClientPlayerEntity player) {
         this.mc = mc;
         this.player = player;
         this.world = this.player.getWorld();
@@ -75,7 +75,7 @@ public class AirDataComputer implements ITickableComputer {
         altitude = computeAltitude();
         voidLevel = computeVoidLevel();
         groundLevel = computeGroundLevel();
-        distanceFromGround = computeDistanceFromGround(altitude, groundLevel);
+        heightAboveGround = computeDistanceFromGround(altitude, groundLevel);
         flightPitch = computeFlightPitch(velocity, pitch);
         flightYaw = computeFlightYaw(velocity, yaw);
         flightHeading = toHeading(flightYaw);
@@ -91,8 +91,8 @@ public class AirDataComputer implements ITickableComputer {
     private Float computeElytraHealth() {
         ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
         if (stack != null && stack.getItem().equals(Items.ELYTRA)) {
-            float remain = ((float) stack.getMaxDamage() - (float) stack.getDamage()) / (float) stack.getMaxDamage();
-            return remain * 100f;
+            float remain = (float) (stack.getMaxDamage() - 1 - stack.getDamage()) / stack.getMaxDamage();
+            return remain * 100.0f;
         }
         return null;
     }
@@ -193,7 +193,7 @@ public class AirDataComputer implements ITickableComputer {
         altitude = 0.0f;
         voidLevel = Integer.MIN_VALUE;
         groundLevel = 0;
-        distanceFromGround = 0.0f;
+        heightAboveGround = 0.0f;
         elytraHealth = null;
         fallDistance = 0.0f;
         world = player.getWorld();
