@@ -42,7 +42,7 @@ public class AutoFlightComputer implements ITickableComputer {
 
     @Override
     public void tick() {
-        if (autoFireworkEnabled && gpws.getGPWSLampColor() == CONFIG.color) {
+        if (autoFireworkEnabled && !collision.collided && gpws.getGPWSLampColor() == CONFIG.color) {
             Integer targetSpeed = getTargetSpeed();
             // TODO: support A/FRWK when targetSpeed is null
             if (targetSpeed != null && data.speed < targetSpeed) {
