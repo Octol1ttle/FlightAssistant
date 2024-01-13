@@ -10,7 +10,7 @@ import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
 public class FlightMode {
-    private static final int UPDATE_FLASH_TIME = 2000;
+    private static final int UPDATE_FLASH_TIME = 3000;
     private final TimeComputer time;
     @Nullable
     private Float lastUpdateTime;
@@ -38,7 +38,7 @@ public class FlightMode {
         if (lastUpdateTime == null) {
             throw new IllegalStateException("Called render before updating");
         }
-        if (time.prevMillis - lastUpdateTime < UPDATE_FLASH_TIME) {
+        if (time.prevMillis != null && time.prevMillis - lastUpdateTime <= UPDATE_FLASH_TIME) {
             HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, lastText, x, y, CONFIG.amberColor, time.highlight);
             return;
         }
