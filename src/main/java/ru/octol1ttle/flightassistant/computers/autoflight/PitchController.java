@@ -17,6 +17,7 @@ public class PitchController implements IRenderTickableComputer {
     private final TimeComputer time;
     private final VoidLevelComputer voidLevel;
     private final GPWSComputer gpws;
+    // TODO: always use real pitch (plus is up)
     /**
      * USE MINECRAFT PITCH (minus is up and plus is down)
      **/
