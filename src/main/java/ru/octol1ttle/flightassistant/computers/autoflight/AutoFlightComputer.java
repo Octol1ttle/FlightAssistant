@@ -50,6 +50,10 @@ public class AutoFlightComputer implements ITickableComputer {
             }
         }
 
+        if (autoPilotEnabled && gpws.isInDanger()) {
+            disconnectAutopilot(true);
+        }
+
         pitch.targetPitch = autoPilotEnabled ? getTargetPitch() : null;
         yaw.targetHeading = autoPilotEnabled ? getTargetHeading() : null;
 
