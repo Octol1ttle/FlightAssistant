@@ -51,7 +51,7 @@ public class ConfigLoader<T extends IConfig> {
             }
             return config;
         } catch (Exception e) {
-            FlightAssistant.LOGGER.error("Exception reading config", e);
+            FlightAssistant.LOGGER.error("Exception reading config: " + file.getAbsolutePath(), e);
             return defaultConfig;
         }
     }
@@ -60,7 +60,7 @@ public class ConfigLoader<T extends IConfig> {
         try (FileWriter writer = new FileWriter(file)) {
             writer.write(GSON.toJson(config));
         } catch (Exception e) {
-            FlightAssistant.LOGGER.error("Exception saving config", e);
+            FlightAssistant.LOGGER.error("Exception saving config: " + file.getAbsolutePath(), e);
         }
     }
 
