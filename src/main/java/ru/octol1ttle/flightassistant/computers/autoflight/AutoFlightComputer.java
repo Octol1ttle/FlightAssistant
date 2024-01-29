@@ -54,6 +54,12 @@ public class AutoFlightComputer implements ITickableComputer {
             disconnectAutopilot(true);
         }
 
+        // TODO: the only question I want to ask is what the FUCK is wrong with this
+        // TODO: passing a waypoint with A/P is like rolling a dice because this fucker can't actually follow the needed path
+        // TODO: if you aren't lucky enough, it won't meet the requirements for passing a waypoint and it will NEVER recover itself
+        // TODO: if an autopilot requires constant monitoring and intervention, who is gonna use it?
+        // TODO: well tbf who would even use an autopilot in a block game where there are objectively better ways of travelling...
+        // TODO: can't believe some people actually want to use this fork.
         pitch.targetPitch = autoPilotEnabled ? getTargetPitch() : null;
         yaw.targetHeading = autoPilotEnabled ? getTargetHeading() : null;
 

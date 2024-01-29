@@ -45,6 +45,14 @@ public class ConfigLoader<T extends IConfig> {
     @SuppressWarnings("unchecked")
     public @NotNull T read() {
         try (FileReader reader = new FileReader(file)) {
+            // TODO: what the FUCK is wrong with this
+            // TODO: it always decides "i no worky" because "fuck you" I guess
+            // TODO: there are ZERO REASONS this should be broken BUT IT IS
+            // TODO: call "fromJson(new FileReader()) yourself? boom it works
+            // TODO: actually use this in production? OH NO IT FUCKING BROKE AND THE DEFAULT CONFIG DOESNT EVEN LOAD
+            // TODO: this config system is insanely stupid anyway BECAUSE THERE IS NO DEFINITIVE CONFIG LIBRARY
+            // TODO: EVERYONE JUST ROLLS THEIR OWN AND PRAYS ITS GOOD ENOUGH
+            // TODO: LIKE WHAT THE ACTUAL HELL
             T config = (T) GSON.fromJson(reader, defaultConfig.getClass());
             if (config == null) {
                 throw new EOFException();

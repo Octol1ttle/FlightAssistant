@@ -81,6 +81,10 @@ public class GPWSComputer implements ITickableComputer {
         return time;
     }
 
+    // TODO: this is terrible and always has been.
+    // TODO: I don't think anyone knows how to make a proper system that doesn't spuriously trigger in one tick and shuts up the next
+    // TODO: fixing terrain detection should be a high priority, but I have zero idea what to do about this
+    // TODO: I mean, I'm coding this completely solo, writing these comments just helps me let off some frustration caused by code that gets reworked numerous times and still barely works
     private float computeTerrainImpactTime() {
         if (!data.isFlying) {
             return STATUS_UNKNOWN;
@@ -88,6 +92,12 @@ public class GPWSComputer implements ITickableComputer {
         if (data.player.isInvulnerableTo(data.player.getDamageSources().flyIntoWall())) {
             return STATUS_PLAYER_INVULNERABLE;
         }
+        // TODO: acceleration is a meaningless concept in a situation where you can do a 180* turn in less than half a second
+        // TODO: well, by this logic, velocity is meaningless too (it is), but you can't do shit without velocity
+        // TODO: I'm thinking of just removing terrain detection entirely (be honest, when did it ever help someone?)
+        // TODO: I really shouldn't have added any of these "safety" features in the first place because they make no sense.
+        // TODO: but there'll always be this one person who says they like it/they need it:
+        // TODO: "ah yes I need this feature as I cannot see giant mountains in front of me in a game that has perfect visibility 100% of the time"
         Vec3d accelerationVector = data.acceleration.multiply(TICKS_PER_SECOND);
         Vec3d end = data.position.add(data.velocityPerSecond.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS).add(accelerationVector.multiply(Math.pow(TERRAIN_RAYCAST_AHEAD_SECONDS, 2)).multiply(0.5f)));
 
