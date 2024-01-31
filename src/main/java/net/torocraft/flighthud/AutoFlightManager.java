@@ -52,7 +52,7 @@ public class AutoFlightManager {
 
         if (autoThrustEnabled && usableFireworkHand != null) {
             if (!thrustLocked && gpwsLampColor == CONFIG.color && computer.velocityPerSecond.horizontalLength() > 0.01 && computer.pitch > (autoPilotEnabled ? 0 : 10) && !approachingDestination) {
-                if (thrustSet && (computer.speed < 28 || computer.velocityPerSecond.y < -8)) {
+                if (thrustSet && (computer.speed < 28 || computer.velocityPerSecond.y < -8) && canAutomationsActivate(mc, mc.player)) {
                     mc.interactionManager.interactItem(mc.player, usableFireworkHand);
                     lastFireworkActivationTimeMs = lastUpdateTimeMs;
                 }
@@ -91,16 +91,23 @@ public class AutoFlightManager {
                 deltaHeading += 360;
             }
 
-            changeLookDirection(mc.player, targetPitch != null ? (targetPitch + computer.pitch) * deltaTime : 0.0f,
+            changeLookDirection(mc, mc.player, targetPitch != null ? (targetPitch + computer.pitch) * deltaTime : 0.0f,
                     deltaHeading * deltaTime * 1.25f);
             statusString += "".equals(statusString) ? "A/P" : " | A/P";
         }
     }
 
-    public static void changeLookDirection(PlayerEntity player, float pitch, float yaw) {
+    public static void changeLookDirection(MinecraftClient mc, PlayerEntity player, float pitch, float yaw) {
+        if (!canAutomationsActivate(mc, player)) {
+            return;
+        }
         player.setPitch(MathHelper.clamp(player.getPitch() + pitch, -90.0F, 90.0F));
         player.setYaw(player.getYaw() + yaw);
         player.prevPitch = MathHelper.clamp(player.prevPitch + pitch, -90.0F, 90.0F);
         player.prevYaw += yaw;
+    }
+
+    private static boolean canAutomationsActivate(MinecraftClient mc, PlayerEntity player) {
+        return player.isFallFlying() && mc.currentScreen == null && mc.getOverlay() == null;
     }
 }

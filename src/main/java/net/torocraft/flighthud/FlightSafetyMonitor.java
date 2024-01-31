@@ -79,20 +79,20 @@ public class FlightSafetyMonitor {
         updateUnsafeFireworks(mc.player);
         fireworkCount = countSafeFireworks(mc.player);
 
-        havePassengersDismounted = updatePassengersDismounted(mc);
+        havePassengersDismounted = updatePassengersDismounted(mc.player);
 
         if (flightProtectionsEnabled) { // Make corrections to flight path to ensure safety
             float delta = deltaTime / Math.min(1, secondsUntilGroundImpact);
-            if (computer.distanceFromGround > 3 && computer.pitch > maximumSafePitch)
-                changeLookDirection(mc.player, Math.max(0, computer.pitch - maximumSafePitch) * delta, 0);
-
-            else if (secondsUntilGroundImpact <= correctThreshold)
-                changeLookDirection(mc.player, Math.min(0, computer.pitch) * delta, 0);
+            if (computer.distanceFromGround > 3 && computer.pitch > maximumSafePitch) {
+                changeLookDirection(mc, mc.player, Math.max(0, computer.pitch - maximumSafePitch) * delta, 0);
+            } else if (secondsUntilGroundImpact <= correctThreshold) {
+                changeLookDirection(mc, mc.player, Math.min(0, computer.pitch) * delta, 0);
+            }
         }
     }
 
-    private static boolean updatePassengersDismounted(MinecraftClient mc) {
-        int currentPassengers = (int) mc.player.getPassengerList().stream().flatMap(Entity::streamSelfAndPassengers).count();
+    private static boolean updatePassengersDismounted(PlayerEntity player) {
+        int currentPassengers = (int) player.getPassengerList().stream().flatMap(Entity::streamSelfAndPassengers).count();
         boolean b = currentPassengers < lastPassengers;
         lastPassengers = currentPassengers;
         return b;
