@@ -9,8 +9,8 @@
     "Octol1ttle"
   ],
   "contact": {
-    "issues": "https://github.com/Octol1ttle/FlightHud/issues",
-    "sources": "https://github.com/Octol1ttle/FlightHud"
+    "issues": "https://github.com/Octol1ttle/FlightAssistant/issues",
+    "sources": "https://github.com/Octol1ttle/FlightAssistant"
   },
   "license": "GPL3",
   "icon": "assets/flighthud/icon.png",
@@ -26,7 +26,7 @@
   "depends": {
     "fabricloader": ">=0.14.7",
     "fabric-api": "*",
-    "minecraft": "1.20.1",
+    "minecraft": "1.20.*",
     "java": ">=17"
   },
   "recommends": {
