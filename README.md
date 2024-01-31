@@ -4,16 +4,19 @@
 
 <p align=center>
     <a href="https://modrinth.com/mod/flightassistant">
-        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/available/modrinth_vector.svg"
+        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/cozy/available/modrinth_vector.svg"
             alt="Available on Modrinth"></a>
     <a href="https://modrinth.com/mod/fabric-api/">
-        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/requires/fabric-api_vector.svg"
+        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/cozy/requires/fabric-api_vector.svg"
             alt="Requires Fabric API"></a>
     <!-- uncomment if Forge version is released (https://github.com/Octol1ttle/FlightAssistant/pull/2#discussion_r1370700775)
     <a href="https://modrinth.com/mod/flightassistant/versions?l=forge">
-        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.1.2/assets/cozy/supported/forge_vector.svg"
+        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/cozy/supported/forge_vector.svg"
             alt="Available for Forge"></img></a>
     -->
+    <a href="[https://modrinth.com/mod/fabric-api/](https://discord.gg/5kcBCvnbTp)">
+        <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/cozy/social/discord-plural_vector.svg"
+            alt="Chat with us on Discord"></a>
 </p>
 
 ---
