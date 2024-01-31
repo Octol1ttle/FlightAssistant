@@ -1,37 +1,37 @@
 {
   "alert": {
     "sounds": [
-      "flighthud:alert"
+      "flightassistant:alert"
     ]
   },
   "stick_shaker": {
     "sounds": [
-      "flighthud:stick_shaker"
+      "flightassistant:stick_shaker"
     ]
   },
   "stall_warning": {
     "sounds": [
-      "flighthud:stall_warning"
+      "flightassistant:stall_warning"
     ]
   },
   "sinkrate": {
     "sounds": [
-      "flighthud:sinkrate"
+      "flightassistant:sinkrate"
     ]
   },
   "terrain": {
     "sounds": [
-      "flighthud:terrain"
+      "flightassistant:terrain"
     ]
   },
   "pull_up": {
     "sounds": [
-      "flighthud:pull_up"
+      "flightassistant:pull_up"
     ]
   },
   "autopilot_disconnect": {
     "sounds": [
-      "flighthud:autopilot_disconnect"
+      "flightassistant:autopilot_disconnect"
     ]
   }
 }

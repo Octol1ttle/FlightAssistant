@@ -1,0 +1,11 @@
+{
+  "key.flightassistant.toggleDisplayMode": "Switch Display Mode",
+  "key.flightassistant.hideAlertSwitch": "Hide Oldest Alert",
+  "key.flightassistant.showAlertSwitch": "Show Recently Hidden Alert",
+  "key.flightassistant.flightLawSwitch": "Turn On/Off Flight Protections",
+  "key.flightassistant.gpwsSwitch": "Turn On/Off GPWS",
+  "key.flightassistant.fdSwitch": "Turn On/Off Flight Directors",
+  "key.flightassistant.aThrSwitch": "Turn On/Off Auto Thrust",
+  "key.flightassistant.apSwitch": "Turn On/Off Auto Pilot",
+  "category.flightassistant.toggleDisplayMode": "Flight Assistant"
+}

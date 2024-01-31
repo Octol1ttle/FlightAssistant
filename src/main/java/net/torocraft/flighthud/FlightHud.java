@@ -27,8 +27,8 @@ import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.arg
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class FlightHud implements ClientModInitializer {
-    public static final String MODID = "flighthud";
-    public static final Logger LOGGER = LoggerFactory.getLogger("FlightHud");
+    public static final String MODID = "flightassistant";
+    public static final Logger LOGGER = LoggerFactory.getLogger("FlightAssistant");
 
     public static SettingsConfig CONFIG_SETTINGS = new SettingsConfig();
     public static HudConfig CONFIG_MIN = new HudConfig();
@@ -61,29 +61,29 @@ public class FlightHud implements ClientModInitializer {
     private static KeyBinding apSwitch;
 
     private static void setupKeycCode() {
-        keyBinding = new KeyBinding("key.flighthud.toggleDisplayMode", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_GRAVE_ACCENT, "category.flighthud.toggleDisplayMode");
+        keyBinding = new KeyBinding("key.flightassistant.toggleDisplayMode", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_GRAVE_ACCENT, "category.flightassistant.toggleDisplayMode");
 
-        hideAlertSwitch = new KeyBinding("key.flighthud.hideAlertSwitch", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_0, "category.flighthud.toggleDisplayMode");
+        hideAlertSwitch = new KeyBinding("key.flightassistant.hideAlertSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_0, "category.flightassistant.toggleDisplayMode");
 
-        showAlertSwitch = new KeyBinding("key.flighthud.showAlertSwitch", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_DECIMAL, "category.flighthud.toggleDisplayMode");
+        showAlertSwitch = new KeyBinding("key.flightassistant.showAlertSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_DECIMAL, "category.flightassistant.toggleDisplayMode");
 
-        flightLawSwitch = new KeyBinding("key.flighthud.flightLawSwitch", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_ENTER, "category.flighthud.toggleDisplayMode");
+        flightLawSwitch = new KeyBinding("key.flightassistant.flightLawSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_ENTER, "category.flightassistant.toggleDisplayMode");
 
-        gpwsSwitch = new KeyBinding("key.flighthud.gpwsSwitch", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_ADD, "category.flighthud.toggleDisplayMode");
+        gpwsSwitch = new KeyBinding("key.flightassistant.gpwsSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_ADD, "category.flightassistant.toggleDisplayMode");
 
-        fdSwitch = new KeyBinding("key.flighthud.fdSwitch", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_1, "category.flighthud.toggleDisplayMode");
+        fdSwitch = new KeyBinding("key.flightassistant.fdSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_1, "category.flightassistant.toggleDisplayMode");
 
-        aThrSwitch = new KeyBinding("key.flighthud.aThrSwitch", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_2, "category.flighthud.toggleDisplayMode");
+        aThrSwitch = new KeyBinding("key.flightassistant.aThrSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_2, "category.flightassistant.toggleDisplayMode");
 
-        apSwitch = new KeyBinding("key.flighthud.apSwitch", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_3, "category.flighthud.toggleDisplayMode");
+        apSwitch = new KeyBinding("key.flightassistant.apSwitch", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_3, "category.flightassistant.toggleDisplayMode");
 
         KeyBindingHelper.registerKeyBinding(keyBinding);
         KeyBindingHelper.registerKeyBinding(hideAlertSwitch);
@@ -143,7 +143,7 @@ public class FlightHud implements ClientModInitializer {
     private static void setupCommand() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 
-            LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(literal("flighthud")
+            LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(literal("flightassistant")
                     .then(literal("toggle").executes(new SwitchDisplayModeCommand()))
                     .then(literal("nav")
                             .then(argument("destinationX", IntegerArgumentType.integer(-30_000_000, 30_000_000))
