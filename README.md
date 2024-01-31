@@ -14,7 +14,7 @@
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/cozy/supported/forge_vector.svg"
             alt="Available for Forge"></img></a>
     -->
-    <a href="[https://modrinth.com/mod/fabric-api/](https://discord.gg/5kcBCvnbTp)">
+    <a href="https://discord.gg/5kcBCvnbTp">
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/cozy/social/discord-plural_vector.svg"
             alt="Chat with us on Discord"></a>
 </p>
