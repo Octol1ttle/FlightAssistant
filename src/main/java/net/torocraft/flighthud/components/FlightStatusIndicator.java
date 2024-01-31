@@ -106,8 +106,11 @@ public class FlightStatusIndicator extends HudComponent {
 
             if (AutoFlightManager.targetHeading != null) {
                 float deltaHeading = wrapHeading(AutoFlightManager.targetHeading) - wrapHeading(computer.heading);
-                if (deltaHeading < -180) {
-                    deltaHeading += 360;
+                if (deltaHeading < -180.0f) {
+                    deltaHeading += 360.0f;
+                }
+                if (deltaHeading > 180.0f) {
+                    deltaHeading -= 360.0f;
                 }
 
                 float fdX = Math.max(dim.lFrame, Math.min(dim.rFrame, dim.xMid + i(deltaHeading * dim.degreesPerPixel)));

@@ -87,8 +87,11 @@ public class AutoFlightManager {
 
         if (autoPilotEnabled) {
             float deltaHeading = targetHeading != null ? wrapHeading(targetHeading) - wrapHeading(computer.heading) : 0.0f;
-            if (deltaHeading < -180) {
-                deltaHeading += 360;
+            if (deltaHeading < -180.0f) {
+                deltaHeading += 360.0f;
+            }
+            if (deltaHeading > 180.0f) {
+                deltaHeading -= 360.0f;
             }
 
             changeLookDirection(mc, mc.player, targetPitch != null ? (targetPitch + computer.pitch) * deltaTime : 0.0f,
