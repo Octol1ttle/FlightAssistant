@@ -10,7 +10,6 @@ import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 
 public class FlightPlanner extends ArrayList<Waypoint> implements ITickableComputer {
     private final AirDataComputer data;
-    private @Nullable Waypoint startWaypoint;
     private @Nullable Waypoint targetWaypoint;
 
     public FlightPlanner(AirDataComputer data) {
@@ -24,15 +23,13 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         }
 
         if (targetWaypoint == null) {
-            startWaypoint = null;
             return;
         }
 
         Vector2d target = new Vector2d(targetWaypoint.targetPosition());
         float altitude = targetWaypoint.targetAltitude() != null ? targetWaypoint.targetAltitude() : data.altitude;
-        if (target.sub(data.position.x, data.position.z).length() <= 10.0f && Math.abs(altitude - data.altitude) <= 5.0f) {
+        if (target.sub(data.position.x, data.position.z).length() <= 20.0f && Math.abs(altitude - data.altitude) <= 10.0f) {
             int nextIndex = this.indexOf(targetWaypoint) + 1;
-            startWaypoint = targetWaypoint;
             targetWaypoint = waypointExistsAt(nextIndex) ? this.get(nextIndex) : null;
         }
     }
@@ -66,25 +63,6 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return AirDataComputer.toHeading((float) Math.toDegrees(MathHelper.atan2(-(target.x - current.x), target.y - current.z)));
     }
 
-    public @Nullable Float getManagedPitch() {
-        if (targetWaypoint == null || targetWaypoint.targetAltitude() == null) {
-            return null;
-        }
-        if (startWaypoint == null || startWaypoint.targetAltitude() == null) {
-            throw new IllegalStateException();
-        }
-
-        // TODO: this kinda sucks and also applies to flight directors which is bad
-        Vector2d start = startWaypoint.targetPosition();
-        Vector2d end = targetWaypoint.targetPosition();
-        double currentToEnd = Vector2d.distance(data.position.x, data.position.z, end.x, end.y);
-        double startToEnd = Math.max(currentToEnd, Vector2d.distance(start.x, start.y, end.x, end.y));
-
-        double target = startWaypoint.targetAltitude() + (targetWaypoint.targetAltitude() - startWaypoint.targetAltitude()) * ((startToEnd - currentToEnd) / startToEnd);
-
-        return (float) (-Math.toDegrees(MathHelper.atan2(target - data.altitude, 35.0f)));
-    }
-
     public @Nullable Vector2d getTargetPosition() {
         if (targetWaypoint == null) {
             return null;
@@ -96,14 +74,12 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     public void execute(int waypointIndex) {
         // TODO: throw exception if waypoint doesn't exist
         if (waypointExistsAt(waypointIndex)) {
-            startWaypoint = new Waypoint(new Vector2d(data.position.x, data.position.z), (int) data.altitude, null);
             targetWaypoint = this.get(waypointIndex);
         }
     }
 
     @Override
     public void reset() {
-        startWaypoint = null;
         targetWaypoint = null;
     }
 
