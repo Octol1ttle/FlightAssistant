@@ -27,7 +27,6 @@ public class AirDataComputer implements ITickableComputer {
     public Vec3d position = Vec3d.ZERO;
     public Vec3d velocity = Vec3d.ZERO;
     public Vec3d velocityPerSecond = Vec3d.ZERO;
-    public Vec3d acceleration = Vec3d.ZERO;
     public float speed;
     public float pitch;
     public float yaw;
@@ -66,9 +65,6 @@ public class AirDataComputer implements ITickableComputer {
 
         isFlying = player.isFallFlying();
         position = player.getPos();
-        if (velocity != null) {
-            acceleration = player.getVelocity().subtract(velocity);
-        }
         velocity = player.getVelocity();
         velocityPerSecond = velocity.multiply(TICKS_PER_SECOND);
         pitch = computePitch();
@@ -184,7 +180,6 @@ public class AirDataComputer implements ITickableComputer {
         position = Vec3d.ZERO;
         velocity = Vec3d.ZERO;
         velocityPerSecond = Vec3d.ZERO;
-        acceleration = Vec3d.ZERO;
         speed = 0.0f;
         pitch = 0.0f;
         yaw = 0.0f;
