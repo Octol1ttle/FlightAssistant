@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.compatibility.ImmediatelyFastBatchingAccessor;
 import ru.octol1ttle.flightassistant.config.HudConfig;
@@ -18,26 +19,19 @@ public abstract class HudComponent {
             Color.YELLOW.getRGB(), Color.BLACK.getRGB()
     );
 
+    public static MutableText asText(String format, Object... args) {
+        return Text.literal(String.format(format, args));
+    }
+
     public static void fill(DrawContext context, float x1, float y1, float x2, float y2, int color) {
         context.fill(i(x1), i(y1), i(x2), i(y2), color);
     }
 
-    // TODO: get rid of this nonsense
     protected static int i(float f) {
-        return Math.round(f);
+        return (int) f;
     }
 
-    // TODO: try to remove the String "overloads"
-    public static void drawString(TextRenderer textRenderer, DrawContext context, String text, float x, float y,
-                                  int color) {
-        context.drawText(textRenderer, text, i(x), i(y), color, false);
-    }
-
-    public static void drawMiddleAlignedString(TextRenderer textRenderer, DrawContext context, String text, float x, float y, int color) {
-        drawString(textRenderer, context, text, x - textRenderer.getWidth(text) * 0.5f, y, color);
-    }
-
-    protected static void drawRightAlignedString(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int color) {
+    protected static void drawRightAlignedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, int color) {
         drawText(textRenderer, context, text, x - textRenderer.getWidth(text), y, color);
     }
 

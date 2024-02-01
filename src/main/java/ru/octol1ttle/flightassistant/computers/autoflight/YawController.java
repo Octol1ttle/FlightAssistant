@@ -1,11 +1,10 @@
 package ru.octol1ttle.flightassistant.computers.autoflight;
 
-import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
-import ru.octol1ttle.flightassistant.computers.IRenderTickableComputer;
+import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
 
-public class YawController implements IRenderTickableComputer {
+public class YawController implements ITickableComputer {
     private final TimeComputer time;
     private final AirDataComputer data;
 
@@ -30,9 +29,7 @@ public class YawController implements IRenderTickableComputer {
             return;
         }
 
-        float playerYaw = MathHelper.wrapDegrees(data.player.getYaw());
-
-        float difference = heading - AirDataComputer.toHeading(playerYaw);
+        float difference = heading - data.heading;
         if (difference < -180.0f) {
             difference += 360.0f;
         }
@@ -40,14 +37,14 @@ public class YawController implements IRenderTickableComputer {
             difference -= 360.0f;
         }
 
-        float newYaw;
+        float newHeading;
         if (Math.abs(difference) < 0.05f) {
-            newYaw = heading - 180.0f;
+            newHeading = heading;
         } else {
-            newYaw = playerYaw + difference * delta;
+            newHeading = data.heading + difference * delta;
         }
 
-        data.player.setYaw(newYaw);
+        data.player.setYaw(newHeading - 180.0f);
     }
 
     @Override

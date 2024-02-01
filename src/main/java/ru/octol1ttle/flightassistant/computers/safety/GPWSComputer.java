@@ -40,8 +40,8 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     public boolean shouldRecover() {
-        return descentImpactTime >= 0.0f && descentImpactTime <= PITCH_CORRECT_THRESHOLD
-                || terrainImpactTime >= 0.0f && terrainImpactTime <= PITCH_CORRECT_THRESHOLD;
+        return descentImpactTime > 0.0f && descentImpactTime <= PITCH_CORRECT_THRESHOLD
+                || terrainImpactTime > 0.0f && terrainImpactTime <= PITCH_CORRECT_THRESHOLD;
     }
 
     public int getGPWSLampColor() {
@@ -56,10 +56,10 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     public boolean shouldBlockPitchChanges() {
-        return descentImpactTime >= 0.0f && descentImpactTime <= BLOCK_PITCH_CONTROL_THRESHOLD;
+        return descentImpactTime > 0.0f && descentImpactTime <= BLOCK_PITCH_CONTROL_THRESHOLD
+                || terrainImpactTime > 0.0f && terrainImpactTime <= BLOCK_PITCH_CONTROL_THRESHOLD;
     }
 
-    // TODO: use raycasts to determine which block we might crash into
     private float computeDescentImpactTime() {
         if (!data.isFlying) {
             return STATUS_UNKNOWN;
@@ -89,7 +89,7 @@ public class GPWSComputer implements ITickableComputer {
         Vec3d end = data.position.add(data.velocityPerSecond.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS));
 
         BlockHitResult result = data.world.raycast(new RaycastContext(data.position, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player));
-        if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP || result.getSide() == Direction.DOWN) {
+        if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP) {
             return STATUS_NO_TERRAIN_AHEAD;
         }
 
@@ -98,7 +98,7 @@ public class GPWSComputer implements ITickableComputer {
         if (speed < MAX_SAFE_GROUND_SPEED) {
             return STATUS_SPEED_SAFE;
         }
-        return (float) (result.getPos().subtract(data.position).horizontalLength() / speed);
+        return (float) (result.getPos().subtract(data.position).length() / speed);
     }
 
     @Override

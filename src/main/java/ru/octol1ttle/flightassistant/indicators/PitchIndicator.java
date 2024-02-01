@@ -68,7 +68,7 @@ public class PitchIndicator extends HudComponent {
     }
 
     private int getPitchColor(float degree) {
-        return degree < Math.max(-PitchController.DESCEND_PITCH, voidLevel.minimumSafePitch) || degree > stall.maximumSafePitch
+        return degree < Math.max(PitchController.DESCEND_PITCH, voidLevel.minimumSafePitch) || degree > stall.maximumSafePitch
                 ? CONFIG.alertColor : CONFIG.color;
     }
 
@@ -133,10 +133,10 @@ public class PitchIndicator extends HudComponent {
 
         int fontVerticalOffset = degree >= 0 ? 0 : 6;
 
-        drawString(textRenderer, context, String.format("%d", i(Math.abs(degree))), pitchData.r2 + 6,
+        drawText(textRenderer, context, asText("%d", i(Math.abs(degree))), pitchData.r2 + 6,
                 y - fontVerticalOffset, color);
 
-        drawString(textRenderer, context, String.format("%d", i(Math.abs(degree))), pitchData.l1 - 17,
+        drawText(textRenderer, context, asText("%d", i(Math.abs(degree))), pitchData.l1 - 17,
                 y - fontVerticalOffset, color);
     }
 

@@ -29,14 +29,14 @@ public class StatusIndicator extends HudComponent {
         } else {
             fireworkColor = CONFIG.alertColor;
         }
-        drawRightAlignedString(textRenderer, context,
+        drawRightAlignedText(textRenderer, context,
                 Text.translatable("status.flightassistant.firework_count", firework.safeFireworkCount),
                 x, y += 10, fireworkColor);
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawRightAlignedString(textRenderer, context,
+        drawRightAlignedText(textRenderer, context,
                 Text.translatable("flightassistant.status_short"),
                 dim.rFrame - 5, dim.tFrame + 15, CONFIG.alertColor);
     }

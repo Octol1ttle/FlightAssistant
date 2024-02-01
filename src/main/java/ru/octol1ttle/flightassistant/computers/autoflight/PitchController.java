@@ -1,26 +1,21 @@
 package ru.octol1ttle.flightassistant.computers.autoflight;
 
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
-import ru.octol1ttle.flightassistant.computers.IRenderTickableComputer;
+import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
 
-public class PitchController implements IRenderTickableComputer {
-    public static final float CLIMB_PITCH = -55.0f;
-    public static final float DESCEND_PITCH = 35.0f;
+public class PitchController implements ITickableComputer {
+    public static final float CLIMB_PITCH = 55.0f;
+    public static final float DESCEND_PITCH = -35.0f;
     private final AirDataComputer data;
     private final StallComputer stall;
     private final TimeComputer time;
     private final VoidLevelComputer voidLevel;
     private final GPWSComputer gpws;
-    // TODO: always use real pitch (plus is up)
-    /**
-     * USE MINECRAFT PITCH (minus is up and plus is down)
-     **/
     public Float targetPitch = null;
 
     public PitchController(AirDataComputer data, StallComputer stall, TimeComputer time, VoidLevelComputer voidLevel, GPWSComputer gpws) {
@@ -40,22 +35,22 @@ public class PitchController implements IRenderTickableComputer {
         smoothSetPitch(targetPitch, time.deltaTime);
 
         if (data.pitch > stall.maximumSafePitch) {
-            smoothSetPitch(-stall.maximumSafePitch, time.deltaTime);
+            smoothSetPitch(stall.maximumSafePitch, time.deltaTime);
             return;
         }
         if (data.pitch < voidLevel.minimumSafePitch) {
-            smoothSetPitch(-voidLevel.minimumSafePitch, time.deltaTime);
+            smoothSetPitch(voidLevel.minimumSafePitch, time.deltaTime);
             return;
         }
         if (gpws.shouldRecover()) {
-            smoothSetPitch(-90.0f, MathHelper.clamp(time.deltaTime / positiveMin(gpws.descentImpactTime, gpws.terrainImpactTime), 0.001f, 1.0f));
+            smoothSetPitch(90.0f, MathHelper.clamp(time.deltaTime / positiveMin(gpws.descentImpactTime, gpws.terrainImpactTime), 0.001f, 1.0f));
         }
     }
 
     /**
      * Smoothly changes the player's pitch to the specified pitch using the delta
      *
-     * @param pitch Target MINECRAFT pitch (- is up, + is down)
+     * @param pitch Target pitch
      * @param delta Delta time, in seconds
      */
     public void smoothSetPitch(Float pitch, float delta) {
@@ -63,24 +58,23 @@ public class PitchController implements IRenderTickableComputer {
             return;
         }
 
-        PlayerEntity player = data.player;
-        float difference = pitch - player.getPitch();
+        float difference = pitch - data.pitch;
 
         float newPitch;
         if (Math.abs(difference) < 0.05f) {
             newPitch = pitch;
         } else {
-            if (difference < 0) { // going UP
-                pitch = MathHelper.clamp(pitch, Math.max(CLIMB_PITCH, -stall.maximumSafePitch), 90.0f);
+            if (difference > 0) { // going UP
+                pitch = MathHelper.clamp(pitch, -90.0f, Math.min(CLIMB_PITCH, stall.maximumSafePitch));
             }
-            if (difference > 0) { // going DOWN
-                pitch = MathHelper.clamp(pitch, -90.0f, Math.min(DESCEND_PITCH, -voidLevel.minimumSafePitch));
+            if (difference < 0) { // going DOWN
+                pitch = MathHelper.clamp(pitch, Math.max(DESCEND_PITCH, voidLevel.minimumSafePitch), 90.0f);
             }
 
-            newPitch = player.getPitch() + (pitch - player.getPitch()) * delta;
+            newPitch = data.pitch + (pitch - data.pitch) * delta;
         }
 
-        player.setPitch(newPitch);
+        data.player.setPitch(-newPitch);
     }
 
     /**

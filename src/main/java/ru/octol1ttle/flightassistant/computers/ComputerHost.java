@@ -37,7 +37,6 @@ public class ComputerHost {
     public final ElytraStateComputer elytra;
     public final List<IComputer> faulted;
     private final List<ITickableComputer> tickables;
-    private final List<IRenderTickableComputer> renderTickables;
 
     public ComputerHost(@NotNull MinecraftClient mc, HudRenderer renderer) {
         assert mc.player != null;
@@ -61,12 +60,12 @@ public class ComputerHost {
         this.alert = new AlertController(this, mc.getSoundManager(), renderer);
 
         // computers are sorted in the order they should be ticked to avoid errors
-        this.tickables = new ArrayList<>(List.of(data, stall, gpws, voidLevel, collision, elytra, plan, autoflight, firework, alert));
-        this.renderTickables = new ArrayList<>(List.of(time, pitch, yaw));
+        this.tickables = new ArrayList<>(List.of(
+                data, time, stall, gpws, voidLevel, collision, elytra, plan, autoflight, firework, alert, pitch, yaw
+        ));
         Collections.reverse(this.tickables); // we tick computers in reverse, so reverse the collections so that the order is correct
-        Collections.reverse(this.renderTickables);
 
-        this.faulted = new ArrayList<>(tickables.size() + renderTickables.size());
+        this.faulted = new ArrayList<>(tickables.size());
     }
 
     public void tick() {
@@ -87,31 +86,10 @@ public class ComputerHost {
         }
     }
 
-    public void render() {
-        if (HudComponent.CONFIG == null) {
-            return;
-        }
-
-        for (int i = renderTickables.size() - 1; i >= 0; i--) {
-            IRenderTickableComputer computer = renderTickables.get(i);
-            try {
-                computer.tick();
-            } catch (Exception e) {
-                FlightAssistant.LOGGER.error("Exception ticking computer (on render)", e);
-                computer.reset();
-                faulted.add(computer);
-                renderTickables.remove(computer);
-            }
-        }
-    }
-
     public void resetComputers(boolean resetWorking) {
         if (resetWorking) {
             for (ITickableComputer tickable : tickables) {
                 tickable.reset();
-            }
-            for (IRenderTickableComputer renderTickable : renderTickables) {
-                renderTickable.reset();
             }
         }
 
@@ -123,14 +101,7 @@ public class ComputerHost {
 
             if (computer instanceof ITickableComputer tickable) {
                 tickables.add(tickable);
-                continue;
             }
-            if (computer instanceof IRenderTickableComputer renderTickable) {
-                renderTickables.add(renderTickable);
-                continue;
-            }
-
-            throw new RuntimeException("Unknown computer type for " + computer);
         }
     }
 }

@@ -64,9 +64,19 @@ public class FlightModeIndicator extends HudComponent {
             fireworkMode.update(Text.translatable("flightassistant.mode.firework.locked"), true);
         } else if (firework.lastProtTrigger != null && time.prevMillis - firework.lastProtTrigger < 2000) {
             fireworkMode.update(Text.translatable("flightassistant.mode.firework.protection"), true);
-        } else if (autoflight.autoFireworkEnabled && targetSpeed != null) {
-            String type = autoflight.selectedSpeed != null ? ".selected" : ".managed";
-            fireworkMode.update(Text.translatable("flightassistant.mode.firework.speed" + type, targetSpeed));
+        } else if (autoflight.autoFireworkEnabled) {
+            if (targetSpeed != null) {
+                String type = autoflight.selectedSpeed != null ? ".selected" : ".managed";
+                fireworkMode.update(Text.translatable("flightassistant.mode.firework.speed" + type, targetSpeed));
+            } else if (autoflight.getTargetPitch() != null) {
+                if (autoflight.getTargetPitch() >= 5.0f) {
+                    fireworkMode.update(Text.translatable("flightassistant.mode.firework.climb"));
+                } else {
+                    fireworkMode.update(Text.translatable("flightassistant.mode.firework.idle"));
+                }
+            } else {
+                fireworkMode.update(Text.translatable("flightassistant.mode.firework.manual"), true);
+            }
         } else {
             fireworkMode.update(Text.translatable("flightassistant.mode.firework.manual"), autoflight.autoPilotEnabled);
         }
@@ -78,7 +88,7 @@ public class FlightModeIndicator extends HudComponent {
 
     private void renderVerticalMode(DrawContext context, TextRenderer textRenderer) {
         Integer targetAltitude = autoflight.getTargetAltitude();
-        if (targetAltitude == null) {
+        if (targetAltitude == null || !autoflight.flightDirectorsEnabled && !autoflight.autoPilotEnabled) {
             return;
         }
 
@@ -101,7 +111,7 @@ public class FlightModeIndicator extends HudComponent {
     }
 
     private void renderLateralMode(DrawContext context, TextRenderer textRenderer) {
-        if (autoflight.getTargetHeading() == null) {
+        if (autoflight.getTargetHeading() == null || !autoflight.flightDirectorsEnabled && !autoflight.autoPilotEnabled) {
             return;
         }
 

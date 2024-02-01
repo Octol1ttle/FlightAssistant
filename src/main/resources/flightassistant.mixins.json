@@ -4,11 +4,8 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [],
   "client": [
-    "ClientPlayerInteractionManagerMixin",
     "EntityMixin",
-    "FireworkRocketEntityMixin",
-    "GameRendererMixin",
-    "InGameHudMixin"
+    "FireworkRocketEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

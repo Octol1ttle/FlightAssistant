@@ -29,7 +29,7 @@ public class LocationIndicator extends HudComponent {
         int xLoc = i((float) data.position.x);
         int zLoc = i((float) data.position.z);
 
-        drawString(textRenderer, context, String.format("%d / %d", xLoc, zLoc), x, y, CONFIG.color);
+        drawText(textRenderer, context, asText("%d / %d", xLoc, zLoc), x, y, CONFIG.color);
     }
 
     @Override

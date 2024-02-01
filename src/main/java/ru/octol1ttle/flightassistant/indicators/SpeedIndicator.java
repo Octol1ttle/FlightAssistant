@@ -31,7 +31,7 @@ public class SpeedIndicator extends HudComponent {
         float xSpeedText = left - 5;
 
         if (CONFIG.speed_showReadout) {
-            drawRightAlignedString(textRenderer, context, Text.literal(String.format("%.2f", data.speed)), xSpeedText, dim.yMid - 3, CONFIG.color);
+            drawRightAlignedText(textRenderer, context, asText("%.2f", data.speed), xSpeedText, dim.yMid - 3, CONFIG.color);
             drawBox(context, xSpeedText - 29.5f, dim.yMid - 4.5f, 30, CONFIG.color);
 
             float frameWidth = dim.rFrame - dim.lFrame;
@@ -49,7 +49,7 @@ public class SpeedIndicator extends HudComponent {
                 if (i % 1 == 0) {
                     drawHorizontalLine(context, left - 2, right, y, CONFIG.color);
                     if (!CONFIG.speed_showReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
-                        drawRightAlignedString(textRenderer, context, Text.literal(String.format("%.0f", i)), xSpeedText, y - 3, CONFIG.color);
+                        drawRightAlignedText(textRenderer, context, asText("%.0f", i), xSpeedText, y - 3, CONFIG.color);
                     }
                 }
                 drawHorizontalLine(context, left, right, y, CONFIG.color);
@@ -59,7 +59,7 @@ public class SpeedIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawRightAlignedString(textRenderer, context, Text.translatable("flightassistant.speed_short"), dim.lFrame - 7, dim.yMid - 3, CONFIG.alertColor);
+        drawRightAlignedText(textRenderer, context, Text.translatable("flightassistant.speed_short"), dim.lFrame - 7, dim.yMid - 3, CONFIG.alertColor);
     }
 
     @Override

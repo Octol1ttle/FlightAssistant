@@ -62,6 +62,8 @@
   "flightassistant.mode.firework.locked": "FRWK LOCKED",
   "flightassistant.mode.firework.manual": "MAN FRWK",
   "flightassistant.mode.firework.protection": "FRWK PROT",
+  "flightassistant.mode.firework.idle": "FRWK IDLE",
+  "flightassistant.mode.firework.climb": "FRWK CLB",
   "flightassistant.mode.firework.speed.selected": "SPD %s",
   "flightassistant.mode.firework.speed.managed": "P. SPD %s",
   "flightassistant.mode.vert.climb.selected": "CLB %s",

@@ -59,7 +59,7 @@ public class VoidLevelComputer implements ITickableComputer {
             return Math.min(OPTIMUM_ALTITUDE_PRESERVATION_PITCH, stall.maximumSafePitch);
         }
 
-        return -PitchController.DESCEND_PITCH + 10;
+        return PitchController.DESCEND_PITCH + 10;
     }
 
     public boolean aboveVoid() {

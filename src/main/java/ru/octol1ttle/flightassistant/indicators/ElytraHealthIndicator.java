@@ -31,7 +31,8 @@ public class ElytraHealthIndicator extends HudComponent {
             }
             drawBox(context, x - 3.5f, y - 1.5f, 30, color);
             drawText(textRenderer, context, Text.translatable("flightassistant.elytra_short"), x - 10, y, color);
-            drawString(textRenderer, context, String.format("%d", i(data.elytraHealth)) + "%", x, y, color);
+
+            drawText(textRenderer, context, asText("%d", i(data.elytraHealth)).append("%"), x, y, color);
         }
     }
 

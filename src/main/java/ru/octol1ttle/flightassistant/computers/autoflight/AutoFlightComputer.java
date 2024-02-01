@@ -45,8 +45,9 @@ public class AutoFlightComputer implements ITickableComputer {
     public void tick() {
         if (autoFireworkEnabled && !collision.collided && gpws.getGPWSLampColor() == CONFIG.color) {
             Integer targetSpeed = getTargetSpeed();
-            // TODO: support A/FRWK when targetSpeed is null
-            if (targetSpeed != null && data.speed < targetSpeed) {
+            Float targetPitch = getTargetPitch();
+            if (targetSpeed != null && data.speed < targetSpeed
+                    || data.speed < 25.0f && targetPitch != null && targetPitch >= 5.0f) {
                 firework.activateFirework(false);
             }
         }
@@ -55,12 +56,6 @@ public class AutoFlightComputer implements ITickableComputer {
             disconnectAutopilot(true);
         }
 
-        // TODO: the only question I want to ask is what the FUCK is wrong with this
-        // TODO: passing a waypoint with A/P is like rolling a dice because this fucker can't actually follow the needed path
-        // TODO: if you aren't lucky enough, it won't meet the requirements for passing a waypoint and it will NEVER recover itself
-        // TODO: if an autopilot requires constant monitoring and intervention, who is gonna use it?
-        // TODO: well tbf who would even use an autopilot in a block game where there are objectively better ways of travelling...
-        // TODO: can't believe some people actually want to use this fork.
         pitch.targetPitch = autoPilotEnabled ? getTargetPitch() : null;
         yaw.targetHeading = autoPilotEnabled ? getTargetHeading() : null;
 
@@ -90,10 +85,10 @@ public class AutoFlightComputer implements ITickableComputer {
             distance = altitudeDelta;
         }
 
-        return (float) (-Math.max(
+        return (float) Math.max(
                 distance > 20.0f ? Math.toDegrees(MathHelper.atan2(data.groundLevel + 10 - data.altitude, distance)) : -90.0f,
                 Math.toDegrees(MathHelper.atan2(altitudeDelta, distance))
-        ));
+        );
     }
 
     public @Nullable Float getTargetHeading() {

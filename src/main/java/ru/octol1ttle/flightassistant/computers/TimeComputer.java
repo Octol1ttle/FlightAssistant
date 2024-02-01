@@ -3,7 +3,7 @@ package ru.octol1ttle.flightassistant.computers;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 
-public class TimeComputer implements IRenderTickableComputer {
+public class TimeComputer implements ITickableComputer {
     private static final int HIGHLIGHT_SWITCH_THRESHOLD = 500;
     /**
      * The time between computer ticks *in seconds*
