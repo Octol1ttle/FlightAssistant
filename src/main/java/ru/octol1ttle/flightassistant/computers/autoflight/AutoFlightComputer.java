@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.computers.autoflight;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
+import ru.octol1ttle.flightassistant.FAMathHelper;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
@@ -52,10 +53,6 @@ public class AutoFlightComputer implements ITickableComputer {
             }
         }
 
-        if (autoPilotEnabled && gpws.isInDanger()) {
-            disconnectAutopilot(true);
-        }
-
         pitch.targetPitch = autoPilotEnabled ? getTargetPitch() : null;
         yaw.targetHeading = autoPilotEnabled ? getTargetHeading() : null;
 
@@ -85,10 +82,7 @@ public class AutoFlightComputer implements ITickableComputer {
             distance = altitudeDelta;
         }
 
-        return (float) Math.max(
-                distance > 20.0f ? Math.toDegrees(MathHelper.atan2(data.groundLevel + 10 - data.altitude, distance)) : -90.0f,
-                Math.toDegrees(MathHelper.atan2(altitudeDelta, distance))
-        );
+        return FAMathHelper.toDegrees(MathHelper.atan2(altitudeDelta, distance));
     }
 
     public @Nullable Float getTargetHeading() {

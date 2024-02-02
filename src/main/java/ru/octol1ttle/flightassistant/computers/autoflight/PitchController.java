@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.computers.autoflight;
 
 import net.minecraft.util.math.MathHelper;
+import ru.octol1ttle.flightassistant.FAMathHelper;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
@@ -42,8 +43,12 @@ public class PitchController implements ITickableComputer {
             smoothSetPitch(voidLevel.minimumSafePitch, time.deltaTime);
             return;
         }
-        if (gpws.shouldRecover()) {
-            smoothSetPitch(90.0f, MathHelper.clamp(time.deltaTime / positiveMin(gpws.descentImpactTime, gpws.terrainImpactTime), 0.001f, 1.0f));
+        if (gpws.shouldCorrectSinkrate()) {
+            smoothSetPitch(0.0f, MathHelper.clamp(time.deltaTime / gpws.descentImpactTime, 0.001f, 1.0f));
+        } else if (gpws.shouldCorrectTerrain()) {
+            smoothSetPitch(FAMathHelper.toDegrees(MathHelper.atan2(gpws.terrainAvoidVector.y, gpws.terrainAvoidVector.x)), MathHelper.clamp(time.deltaTime / gpws.terrainImpactTime, 0.001f, 1.0f));
+        } else {
+            smoothSetPitch(targetPitch, time.deltaTime);
         }
     }
 
@@ -75,20 +80,6 @@ public class PitchController implements ITickableComputer {
         }
 
         data.player.setPitch(-newPitch);
-    }
-
-    /**
-     * Returns the lesser of the two provided numbers. If one of the numbers is less than zero, the other is returned instead.
-     **/
-    private float positiveMin(float a, float b) {
-        if (a < 0.0f) {
-            return b;
-        }
-        if (b < 0.0f) {
-            return a;
-        }
-
-        return Math.min(a, b);
     }
 
     @Override

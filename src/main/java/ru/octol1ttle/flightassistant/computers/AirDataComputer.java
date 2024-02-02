@@ -12,6 +12,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Matrix3f;
+import ru.octol1ttle.flightassistant.FAMathHelper;
 import ru.octol1ttle.flightassistant.FlightAssistant;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
@@ -99,14 +100,14 @@ public class AirDataComputer implements ITickableComputer {
             return pitch;
         }
         Vec3d n = velocity.normalize();
-        return (float) (90 - Math.toDegrees(Math.acos(n.y)));
+        return 90 - FAMathHelper.toDegrees(Math.acos(n.y));
     }
 
     private float computeFlightYaw(Vec3d velocity, float yaw) {
         if (velocity.horizontalLength() < 0.01) {
             return yaw;
         }
-        return (float) Math.toDegrees(Math.atan2(-velocity.x, velocity.z));
+        return FAMathHelper.toDegrees(Math.atan2(-velocity.x, velocity.z));
     }
 
     private float computeRoll(Matrix3f normalMatrix) {
@@ -116,7 +117,7 @@ public class AirDataComputer implements ITickableComputer {
 
         float y = normalMatrix.getRowColumn(0, 1);
         float x = normalMatrix.getRowColumn(1, 1);
-        return (float) Math.toDegrees(Math.atan2(y, x));
+        return FAMathHelper.toDegrees(Math.atan2(y, x));
     }
 
     private float computePitch() {

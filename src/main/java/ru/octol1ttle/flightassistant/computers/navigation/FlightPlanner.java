@@ -5,6 +5,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
+import ru.octol1ttle.flightassistant.FAMathHelper;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 
@@ -59,8 +60,8 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
         Vec3d current = data.position;
         Vector2d target = targetWaypoint.targetPosition();
-        // this is SO FUCKING STUPID, I have ZERO IDEA how to do it PROPERLY without everything breaking. why couldn't Mojang FOLLOW THE GOD DAMN STANDARDS
-        return AirDataComputer.toHeading((float) Math.toDegrees(MathHelper.atan2(-(target.x - current.x), target.y - current.z)));
+
+        return AirDataComputer.toHeading(FAMathHelper.toDegrees(MathHelper.atan2(-(target.x - current.x), target.y - current.z)));
     }
 
     public @Nullable Vector2d getTargetPosition() {

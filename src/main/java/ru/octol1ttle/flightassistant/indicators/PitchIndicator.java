@@ -165,7 +165,7 @@ public class PitchIndicator extends HudComponent {
         }
 
         private int i(double d) {
-            return (int) Math.round(d);
+            return (int) d;
         }
     }
 }
