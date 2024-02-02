@@ -44,7 +44,7 @@ public class PitchController implements ITickableComputer {
             return;
         }
         if (gpws.shouldCorrectSinkrate()) {
-            smoothSetPitch(0.0f, MathHelper.clamp(time.deltaTime / gpws.descentImpactTime, 0.001f, 1.0f));
+            smoothSetPitch(90.0f, MathHelper.clamp(time.deltaTime / gpws.descentImpactTime, 0.001f, 1.0f));
         } else if (gpws.shouldCorrectTerrain()) {
             smoothSetPitch(FAMathHelper.toDegrees(MathHelper.atan2(gpws.terrainAvoidVector.y, gpws.terrainAvoidVector.x)), MathHelper.clamp(time.deltaTime / gpws.terrainImpactTime, 0.001f, 1.0f));
         } else {

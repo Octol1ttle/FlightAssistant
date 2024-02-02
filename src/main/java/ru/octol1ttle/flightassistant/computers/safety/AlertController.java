@@ -36,7 +36,7 @@ public class AlertController implements ITickableComputer {
         // TODO: ECAM actions
         allAlerts = List.of(
                 new StallAlert(this.host.stall),
-                new ExcessiveDescentAlert(this.host.data, this.host.gpws), new ExcessiveTerrainClosureAlert(this.host.gpws),
+                new ExcessiveDescentAlert(this.host.data, this.host.gpws), new ExcessiveTerrainClosureAlert(this.host.gpws, this.host.time),
                 new AutopilotOffAlert(this.host.autoflight),
                 new ComputerFaultAlert(this.host),
                 new IndicatorFaultAlert(renderer),

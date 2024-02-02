@@ -82,7 +82,7 @@ public class FlightModeIndicator extends HudComponent {
         }
 
         float x = dim.lFrame + dim.wFrame * (1 / 5.0f);
-        float y = dim.bFrame + 10;
+        float y = dim.bFrame - 10;
         fireworkMode.render(context, textRenderer, x, y);
     }
 
@@ -106,7 +106,7 @@ public class FlightModeIndicator extends HudComponent {
         }
 
         float x = dim.lFrame + dim.wFrame * (2 / 5.0f);
-        float y = dim.bFrame + 10;
+        float y = dim.bFrame - 10;
         verticalMode.render(context, textRenderer, x, y);
     }
 
@@ -123,7 +123,7 @@ public class FlightModeIndicator extends HudComponent {
         }
 
         float x = dim.lFrame + dim.wFrame * (3 / 5.0f);
-        float y = dim.bFrame + 10;
+        float y = dim.bFrame - 10;
         lateralMode.render(context, textRenderer, x, y);
     }
 
@@ -145,7 +145,7 @@ public class FlightModeIndicator extends HudComponent {
         automationMode.update(automationStatus);
 
         float x = dim.lFrame + dim.wFrame * (4 / 5.0f);
-        float y = dim.bFrame + 10;
+        float y = dim.bFrame - 10;
         automationMode.render(context, textRenderer, x, y);
     }
 

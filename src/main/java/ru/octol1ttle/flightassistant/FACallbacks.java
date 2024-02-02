@@ -62,7 +62,7 @@ public class FACallbacks {
 
             host.firework.unsafeFireworks = !host.firework.isFireworkSafe(stack);
 
-            boolean gpwsDanger = !host.faulted.contains(host.gpws) && host.gpws.isInDanger();
+            boolean gpwsDanger = !host.faulted.contains(host.gpws) && (host.gpws.isInDanger() || !host.gpws.fireworkUseSafe);
             boolean wallCollision = !host.faulted.contains(host.collision) && host.collision.collided;
             if (!host.firework.activationInProgress && (host.firework.unsafeFireworks || gpwsDanger || wallCollision)) {
                 return TypedActionResult.fail(stack);

@@ -8,32 +8,37 @@ import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
+import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 
-import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
 public class ExcessiveTerrainClosureAlert extends AbstractAlert {
     private static final float TERRAIN_THRESHOLD = 7.5f;
 
     private static final float PULL_UP_THRESHOLD = 5.0f;
-    private static final float SECONDS_PER_TICK = 1.0f / TICKS_PER_SECOND;
     private static final float DELAY_ALERT_FOR = 0.5f;
     private final GPWSComputer gpws;
+    private final TimeComputer time;
     private boolean delayFull = false;
     private float delay = 0.0f;
 
-    public ExcessiveTerrainClosureAlert(GPWSComputer gpws) {
+    public ExcessiveTerrainClosureAlert(GPWSComputer gpws, TimeComputer time) {
         this.gpws = gpws;
+        this.time = time;
     }
 
     @Override
     public boolean isTriggered() {
-        boolean triggered = gpws.descentImpactTime < 0.0f && gpws.terrainImpactTime >= 0.0f;
+        if (gpws.descentImpactTime >= 0.0f) {
+            return false;
+        }
+
+        boolean triggered = gpws.terrainImpactTime >= 0.0f;
         if (triggered) {
-            delay = MathHelper.clamp(delay + SECONDS_PER_TICK, 0.0f, DELAY_ALERT_FOR);
+            delay = MathHelper.clamp(delay + time.deltaTime, 0.0f, DELAY_ALERT_FOR);
         } else {
-            delay = MathHelper.clamp(delay - SECONDS_PER_TICK, 0.0f, DELAY_ALERT_FOR);
+            delay = MathHelper.clamp(delay - time.deltaTime, 0.0f, DELAY_ALERT_FOR);
         }
 
         if (delay >= DELAY_ALERT_FOR) {

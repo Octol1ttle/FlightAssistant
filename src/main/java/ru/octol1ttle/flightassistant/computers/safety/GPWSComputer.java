@@ -18,6 +18,7 @@ public class GPWSComputer implements ITickableComputer {
     private static final int STATUS_SPEED_SAFE = -3;
     private static final int STATUS_NO_TERRAIN_AHEAD = -4;
     private static final int STATUS_UNKNOWN = -5;
+    private static final float FIREWORK_SPEED = 33.62f;
     private static final float TERRAIN_RAYCAST_AHEAD_SECONDS = 10.0f;
     private static final float MAX_SAFE_GROUND_SPEED = 17.5f;
     private static final float MAX_SAFE_SINK_RATE = 10.0f;
@@ -28,6 +29,7 @@ public class GPWSComputer implements ITickableComputer {
     public float descentImpactTime = STATUS_UNKNOWN;
     public float terrainImpactTime = STATUS_UNKNOWN;
     public Vector2d terrainAvoidVector = new Vector2d();
+    public boolean fireworkUseSafe = true;
 
     public GPWSComputer(AirDataComputer data) {
         this.data = data;
@@ -37,6 +39,7 @@ public class GPWSComputer implements ITickableComputer {
     public void tick() {
         descentImpactTime = this.computeDescentImpactTime();
         terrainImpactTime = this.computeTerrainImpactTime();
+        fireworkUseSafe = this.computeFireworkUseSafe();
     }
 
     public boolean isInDanger() {
@@ -107,9 +110,28 @@ public class GPWSComputer implements ITickableComputer {
         }
 
         double distance = result.getPos().subtract(data.position).length();
-        terrainAvoidVector = new Vector2d(distance, findHighest(result.getBlockPos().mutableCopy()).getY() + 10.0f - data.altitude);
+        terrainAvoidVector = new Vector2d(distance * 0.75f, findHighest(result.getBlockPos().mutableCopy()).getY() + 10.0f - data.altitude);
 
         return (float) (distance / speed);
+    }
+
+    private boolean computeFireworkUseSafe() {
+        if (!data.isFlying) {
+            return true;
+        }
+        if (data.player.isInvulnerableTo(data.player.getDamageSources().flyIntoWall())) {
+            return true;
+        }
+        Vec3d end = data.position.add(Vec3d.fromPolar(data.pitch, data.yaw).multiply(FIREWORK_SPEED * TERRAIN_RAYCAST_AHEAD_SECONDS));
+
+        BlockHitResult result = data.world.raycast(new RaycastContext(data.position, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player));
+        if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP) {
+            return true;
+        }
+
+        double distance = result.getPos().subtract(data.position).length();
+
+        return distance / FIREWORK_SPEED > PULL_UP_THRESHOLD;
     }
 
     private boolean positiveLessOrEquals(float time, float lessOrEquals) {
@@ -139,5 +161,6 @@ public class GPWSComputer implements ITickableComputer {
         descentImpactTime = STATUS_UNKNOWN;
         terrainImpactTime = STATUS_UNKNOWN;
         terrainAvoidVector = new Vector2d();
+        fireworkUseSafe = true;
     }
 }
