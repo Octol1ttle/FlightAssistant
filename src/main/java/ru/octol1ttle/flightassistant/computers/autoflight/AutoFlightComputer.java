@@ -46,9 +46,12 @@ public class AutoFlightComputer implements ITickableComputer {
     public void tick() {
         if (autoFireworkEnabled && !collision.collided && gpws.getGPWSLampColor() == CONFIG.color) {
             Integer targetSpeed = getTargetSpeed();
-            Float targetPitch = getTargetPitch();
-            if (targetSpeed != null && data.speed < targetSpeed
-                    || data.speed < 25.0f && targetPitch != null && targetPitch >= 5.0f) {
+            Integer targetAltitude = getTargetAltitude();
+            if (targetSpeed != null) {
+                if (data.speed < targetSpeed) {
+                    firework.activateFirework(false);
+                }
+            } else if (targetAltitude != null && targetAltitude > data.altitude && data.velocity.y < 0.0f) {
                 firework.activateFirework(false);
             }
         }
@@ -79,7 +82,7 @@ public class AutoFlightComputer implements ITickableComputer {
         if (planPos != null) {
             distance = Vector2d.distance(planPos.x, planPos.y, data.position.x, data.position.z);
         } else {
-            distance = altitudeDelta;
+            distance = Math.max(10.0f, data.speed);
         }
 
         return FAMathHelper.toDegrees(MathHelper.atan2(altitudeDelta, distance));

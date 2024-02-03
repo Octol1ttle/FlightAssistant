@@ -68,8 +68,8 @@ public class FlightModeIndicator extends HudComponent {
             if (targetSpeed != null) {
                 String type = autoflight.selectedSpeed != null ? ".selected" : ".managed";
                 fireworkMode.update(Text.translatable("flightassistant.mode.firework.speed" + type, targetSpeed));
-            } else if (autoflight.getTargetPitch() != null) {
-                if (autoflight.getTargetPitch() >= 5.0f) {
+            } else if (autoflight.getTargetAltitude() != null) {
+                if (autoflight.getTargetAltitude() > data.altitude + 2.0f && data.velocityPerSecond.y < -2.0f) {
                     fireworkMode.update(Text.translatable("flightassistant.mode.firework.climb"));
                 } else {
                     fireworkMode.update(Text.translatable("flightassistant.mode.firework.idle"));
