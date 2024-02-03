@@ -7,6 +7,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.joml.Vector2d;
 import ru.octol1ttle.flightassistant.commands.plan.AddWaypointCommand;
+import ru.octol1ttle.flightassistant.commands.plan.ClearWaypointsCommand;
 import ru.octol1ttle.flightassistant.commands.plan.ExecutePlanCommand;
 import ru.octol1ttle.flightassistant.commands.plan.InsertWaypointCommand;
 import ru.octol1ttle.flightassistant.commands.plan.ListWaypointsCommand;
@@ -39,6 +40,14 @@ public class FlightPlanCommand {
 
         var list = literal("list").executes(ListWaypointsCommand::execute);
 
+        var clear = literal("clear")
+                .executes(context -> ClearWaypointsCommand.execute(context, 0))
+                .then(argument("fromWaypoint", IntegerArgumentType.integer(0))
+                        .executes(
+                                context -> ClearWaypointsCommand.execute(context, IntegerArgumentType.getInteger(context, "fromWaypoint"))
+                        )
+                );
+
         var execute = literal("execute")
                 .executes(context -> ExecutePlanCommand.execute(context, 0))
                 .then(argument("fromWaypoint", IntegerArgumentType.integer(0))
@@ -52,6 +61,7 @@ public class FlightPlanCommand {
         plan.then(insert);
         plan.then(replace);
         plan.then(list);
+        plan.then(clear);
         plan.then(execute);
         builder.then(plan);
     }
