@@ -35,10 +35,6 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         }
     }
 
-    public boolean waypointExistsAt(int index) {
-        return index < this.size();
-    }
-
     public @Nullable Integer getManagedSpeed() {
         if (targetWaypoint == null) {
             return null;
@@ -77,6 +73,18 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         if (waypointExistsAt(waypointIndex)) {
             targetWaypoint = this.get(waypointIndex);
         }
+    }
+
+    public boolean waypointExistsAt(int index) {
+        return index < this.size();
+    }
+
+    @Override
+    public Waypoint set(int index, Waypoint element) {
+        if (index == this.indexOf(targetWaypoint)) {
+            targetWaypoint = element;
+        }
+        return super.set(index, element);
     }
 
     @Override
