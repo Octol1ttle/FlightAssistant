@@ -33,8 +33,6 @@ public class PitchController implements ITickableComputer {
             return;
         }
 
-        smoothSetPitch(targetPitch, time.deltaTime);
-
         if (data.pitch > stall.maximumSafePitch) {
             smoothSetPitch(stall.maximumSafePitch, time.deltaTime);
             return;
@@ -43,6 +41,7 @@ public class PitchController implements ITickableComputer {
             smoothSetPitch(voidLevel.minimumSafePitch, time.deltaTime);
             return;
         }
+
         if (gpws.shouldCorrectSinkrate()) {
             smoothSetPitch(90.0f, MathHelper.clamp(time.deltaTime / gpws.descentImpactTime, 0.001f, 1.0f));
         } else if (gpws.shouldCorrectTerrain()) {
