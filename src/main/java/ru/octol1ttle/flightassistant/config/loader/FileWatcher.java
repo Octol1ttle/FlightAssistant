@@ -43,6 +43,7 @@ public class FileWatcher implements Runnable {
                 poll = pollEvents(watchService);
             }
         } catch (IOException | InterruptedException | ClosedWatchServiceException e) {
+            FlightAssistant.LOGGER.error("Exception polling events", e);
             Thread.currentThread().interrupt();
         }
     }

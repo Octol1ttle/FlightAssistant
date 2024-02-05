@@ -21,6 +21,7 @@ public class SettingsConfig implements IConfig {
         try {
             return DisplayMode.valueOf(s);
         } catch (Exception e) {
+            FlightAssistant.LOGGER.error("Exception parsing display mode from string: " + s, e);
             return DisplayMode.NONE;
         }
     }

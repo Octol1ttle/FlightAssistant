@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.config;
 
 import java.awt.Color;
+import ru.octol1ttle.flightassistant.FlightAssistant;
 import ru.octol1ttle.flightassistant.config.loader.IConfig;
 
 public class HudConfig implements IConfig {
@@ -77,6 +78,7 @@ public class HudConfig implements IConfig {
         try {
             halfThickness = thickness * 0.5f;
         } catch (Exception e) {
+            FlightAssistant.LOGGER.error("Exception updating thickness", e);
             halfThickness = 0.5f;
         }
     }
@@ -85,6 +87,7 @@ public class HudConfig implements IConfig {
         try {
             color = new Color(color_red, color_green, color_blue).getRGB();
         } catch (Exception e) {
+            FlightAssistant.LOGGER.error("Exception updating color", e);
             color = Color.GREEN.getRGB();
         }
     }
