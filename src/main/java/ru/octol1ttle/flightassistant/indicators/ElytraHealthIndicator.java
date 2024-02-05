@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.indicators;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
@@ -32,7 +33,7 @@ public class ElytraHealthIndicator extends HudComponent {
             drawBox(context, x - 3.5f, y - 1.5f, 30, color);
             drawText(textRenderer, context, Text.translatable("flightassistant.elytra_short"), x - 10, y, color);
 
-            drawText(textRenderer, context, asText("%d", i(data.elytraHealth)).append("%"), x, y, color);
+            drawText(textRenderer, context, asText("%d", MathHelper.ceil(data.elytraHealth)).append("%"), x, y, color);
         }
     }
 

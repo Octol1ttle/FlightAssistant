@@ -89,7 +89,7 @@ public class AirDataComputer implements ITickableComputer {
     private Float computeElytraHealth() {
         ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
         if (stack != null && stack.getItem().equals(Items.ELYTRA)) {
-            float remain = (float) (stack.getMaxDamage() - 1 - stack.getDamage()) / stack.getMaxDamage();
+            float remain = (float) (stack.getMaxDamage() - stack.getDamage()) / stack.getMaxDamage();
             return remain * 100.0f;
         }
         return null;
