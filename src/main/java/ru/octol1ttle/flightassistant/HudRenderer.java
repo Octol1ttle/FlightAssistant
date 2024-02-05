@@ -39,7 +39,7 @@ public class HudRenderer extends HudComponent {
                 new HeadingIndicator(dim, host.data, host.autoflight), new SpeedIndicator(dim, host.data),
                 new AltitudeIndicator(dim, host.data, host.autoflight), new PitchIndicator(dim, host.data, host.stall, host.voidLevel),
                 new ElytraHealthIndicator(dim, host.data), new AlertIndicator(dim, host, host.alert, host.time),
-                new FlightModeIndicator(dim, host.firework, host.time, host.autoflight, host.plan, host.data, host.collision), new StatusIndicator(dim, host.firework),
+                new FlightModeIndicator(dim, host.firework, host.time, host.autoflight, host.plan, host.data), new StatusIndicator(dim, host.firework),
                 new FlightDirectorsIndicator(dim, host.autoflight, host.data)));
         this.faulted = new ArrayList<>(components.size());
     }

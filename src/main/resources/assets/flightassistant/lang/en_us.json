@@ -7,6 +7,7 @@
   "key.flightassistant.toggle_auto_pilot": "Toggle Auto Pilot",
   "key.flightassistant.dismiss_master_warning": "Silence (hide on second press) master warning",
   "key.flightassistant.dismiss_master_caution": "Silence (hide on second press) master caution",
+  "key.flightassistant.lock_manual_fireworks": "Lock Manual Fireworks",
   "commands.flightassistant.no_such_waypoint": "There is no waypoint at that index",
   "commands.flightassistant.nothing_to_clear": "There are no waypoints to clear",
   "commands.flightassistant.waypoint_created": "Created waypoint at index %s (now %s waypoints in total)",

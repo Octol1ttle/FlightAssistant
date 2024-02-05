@@ -7,6 +7,7 @@
   "key.flightassistant.toggle_auto_pilot": "Вкл/выкл автопилот",
   "key.flightassistant.dismiss_master_warning": "Заглушить (скрыть при втором нажатии) предупреждение особой важности",
   "key.flightassistant.dismiss_master_caution": "Заглушить (скрыть при втором нажатии) обычное предупреждение",
+  "key.flightassistant.lock_manual_fireworks": "Заблокировать ручные фейерверки",
   "commands.flightassistant.no_such_waypoint": "На указанной позиции нет точки назначения",
   "commands.flightassistant.nothing_to_clear": "Нет точек назначения для очищения",
   "commands.flightassistant.waypoint_created": "Создана точка назначения с позицией %s (теперь всего %s точек назначения)",

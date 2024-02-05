@@ -23,6 +23,7 @@ public class FireworkController implements ITickableComputer {
     public boolean noFireworks = false;
     public boolean unsafeFireworks = false;
     public boolean activationInProgress = false;
+    public boolean lockManualFireworks = false;
 
     public FireworkController(TimeComputer time, AirDataComputer data, ClientPlayerInteractionManager interaction) {
         this.time = time;

@@ -20,6 +20,8 @@ public class FAKeyBindings {
     private static KeyBinding dismissMasterWarning;
     private static KeyBinding dismissMasterCaution;
 
+    private static KeyBinding lockManualFireworks;
+
     public static void setup() {
         toggleDisplayMode = new KeyBinding("key.flightassistant.toggle_display_mode", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_GRAVE_ACCENT, "category.flightassistant");
@@ -36,6 +38,9 @@ public class FAKeyBindings {
         dismissMasterCaution = new KeyBinding("key.flightassistant.dismiss_master_caution", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_KP_DECIMAL, "category.flightassistant");
 
+        lockManualFireworks = new KeyBinding("key.flightassistant.lock_manual_fireworks", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_KP_DECIMAL, "category.flightassistant");
+
         KeyBindingHelper.registerKeyBinding(toggleDisplayMode);
 
         KeyBindingHelper.registerKeyBinding(toggleFlightDirectors);
@@ -44,6 +49,8 @@ public class FAKeyBindings {
 
         KeyBindingHelper.registerKeyBinding(dismissMasterWarning);
         KeyBindingHelper.registerKeyBinding(dismissMasterCaution);
+
+        KeyBindingHelper.registerKeyBinding(lockManualFireworks);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (toggleDisplayMode.wasPressed()) {
@@ -80,6 +87,10 @@ public class FAKeyBindings {
 
                 while (dismissMasterCaution.wasPressed()) {
                     host.alert.dismiss(AlertSoundData.MASTER_CAUTION);
+                }
+
+                while (lockManualFireworks.wasPressed()) {
+                    host.firework.lockManualFireworks = !host.firework.lockManualFireworks;
                 }
             }
         });

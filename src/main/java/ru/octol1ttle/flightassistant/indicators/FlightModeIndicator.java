@@ -12,7 +12,6 @@ import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
-import ru.octol1ttle.flightassistant.computers.safety.WallCollisionComputer;
 
 public class FlightModeIndicator extends HudComponent {
     private final Dimensions dim;
@@ -21,21 +20,19 @@ public class FlightModeIndicator extends HudComponent {
     private final AutoFlightComputer autoflight;
     private final FlightPlanner plan;
     private final AirDataComputer data;
-    private final WallCollisionComputer collision;
 
     private final FlightMode fireworkMode;
     private final FlightMode verticalMode;
     private final FlightMode lateralMode;
     private final FlightMode automationMode;
 
-    public FlightModeIndicator(Dimensions dim, FireworkController firework, TimeComputer time, AutoFlightComputer autoflight, FlightPlanner plan, AirDataComputer data, WallCollisionComputer collision) {
+    public FlightModeIndicator(Dimensions dim, FireworkController firework, TimeComputer time, AutoFlightComputer autoflight, FlightPlanner plan, AirDataComputer data) {
         this.dim = dim;
         this.firework = firework;
         this.time = time;
         this.autoflight = autoflight;
         this.plan = plan;
         this.data = data;
-        this.collision = collision;
 
         this.fireworkMode = new FlightMode(this.time);
         this.verticalMode = new FlightMode(this.time);
@@ -60,8 +57,6 @@ public class FlightModeIndicator extends HudComponent {
         Integer targetSpeed = autoflight.getTargetSpeed();
         if (firework.noFireworks) {
             fireworkMode.update(Text.translatable("flightassistant.mode.firework.none_in_hotbar"), autoflight.autoFireworkEnabled);
-        } else if (collision.collided) {
-            fireworkMode.update(Text.translatable("flightassistant.mode.firework.locked"), true);
         } else if (firework.lastProtTrigger != null && time.prevMillis - firework.lastProtTrigger < 2000) {
             fireworkMode.update(Text.translatable("flightassistant.mode.firework.protection"), true);
         } else if (autoflight.autoFireworkEnabled) {
@@ -75,10 +70,18 @@ public class FlightModeIndicator extends HudComponent {
                     fireworkMode.update(Text.translatable("flightassistant.mode.firework.idle"));
                 }
             } else {
-                fireworkMode.update(Text.translatable("flightassistant.mode.firework.manual"), true);
+                if (firework.lockManualFireworks) {
+                    fireworkMode.update(Text.translatable("flightassistant.mode.firework.locked"), true);
+                } else {
+                    fireworkMode.update(Text.translatable("flightassistant.mode.firework.manual"), true);
+                }
             }
         } else {
-            fireworkMode.update(Text.translatable("flightassistant.mode.firework.manual"), autoflight.autoPilotEnabled);
+            if (firework.lockManualFireworks) {
+                fireworkMode.update(Text.translatable("flightassistant.mode.firework.locked"), true);
+            } else {
+                fireworkMode.update(Text.translatable("flightassistant.mode.firework.manual"), autoflight.autoPilotEnabled);
+            }
         }
 
         float x = dim.lFrame + dim.wFrame * (1 / 5.0f);

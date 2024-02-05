@@ -56,15 +56,10 @@ public class FACallbacks {
                 return TypedActionResult.pass(stack);
             }
 
-            if (!host.faulted.contains(host.autoflight) && host.autoflight.autoFireworkEnabled && !host.firework.activationInProgress) {
-                host.autoflight.disconnectAutoFirework(true);
-            }
-
             host.firework.unsafeFireworks = !host.firework.isFireworkSafe(stack);
 
             boolean gpwsDanger = !host.faulted.contains(host.gpws) && (host.gpws.isInDanger() || !host.gpws.fireworkUseSafe);
-            boolean wallCollision = !host.faulted.contains(host.collision) && host.collision.collided;
-            if (!host.firework.activationInProgress && (host.firework.unsafeFireworks || gpwsDanger || wallCollision)) {
+            if (!host.firework.activationInProgress && (host.firework.unsafeFireworks || host.firework.lockManualFireworks || gpwsDanger)) {
                 return TypedActionResult.fail(stack);
             }
 

@@ -19,7 +19,6 @@ import ru.octol1ttle.flightassistant.computers.safety.ElytraStateComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
-import ru.octol1ttle.flightassistant.computers.safety.WallCollisionComputer;
 
 public class ComputerHost {
     public final AirDataComputer data;
@@ -33,7 +32,6 @@ public class ComputerHost {
     public final PitchController pitch;
     public final YawController yaw;
     public final FlightPlanner plan;
-    public final WallCollisionComputer collision;
     public final ElytraStateComputer elytra;
     public final List<IComputer> faulted;
     private final List<ITickableComputer> tickables;
@@ -48,20 +46,19 @@ public class ComputerHost {
         this.stall = new StallComputer(firework, data);
         this.voidLevel = new VoidLevelComputer(data, firework, stall);
         this.gpws = new GPWSComputer(data);
-        this.collision = new WallCollisionComputer(data);
         this.elytra = new ElytraStateComputer(data);
 
         this.yaw = new YawController(time, data);
         this.pitch = new PitchController(data, stall, time, voidLevel, gpws);
 
         this.plan = new FlightPlanner(data);
-        this.autoflight = new AutoFlightComputer(data, gpws, plan, firework, collision, pitch, yaw);
+        this.autoflight = new AutoFlightComputer(data, gpws, plan, firework, pitch, yaw);
 
         this.alert = new AlertController(this, mc.getSoundManager(), renderer);
 
         // computers are sorted in the order they should be ticked to avoid errors
         this.tickables = new ArrayList<>(List.of(
-                data, time, stall, gpws, voidLevel, collision, elytra, plan, autoflight, firework, alert, pitch, yaw
+                data, time, stall, gpws, voidLevel, elytra, plan, autoflight, firework, alert, pitch, yaw
         ));
         Collections.reverse(this.tickables); // we tick computers in reverse, so reverse the collections so that the order is correct
 
