@@ -62,7 +62,7 @@
 
   "status.flightassistant.firework_count": "КОЛ-ВО ФРВКОВ: %s",
   "flightassistant.mode.firework.none_in_hotbar": "НЕТ ФРВКОВ",
-  "flightassistant.mode.firework.locked": "ФРВК ЗАБЛОК.",
+  "flightassistant.mode.firework.locked": "ТОЛЬКО А/ФРВК",
   "flightassistant.mode.firework.manual": "РУЧН ФРВК",
   "flightassistant.mode.firework.protection": "ФРВК ЗАЩИТА",
   "flightassistant.mode.firework.idle": "ФРВК",

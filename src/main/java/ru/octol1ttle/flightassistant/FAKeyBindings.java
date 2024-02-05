@@ -39,7 +39,7 @@ public class FAKeyBindings {
                 GLFW.GLFW_KEY_KP_DECIMAL, "category.flightassistant");
 
         lockManualFireworks = new KeyBinding("key.flightassistant.lock_manual_fireworks", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_DECIMAL, "category.flightassistant");
+                GLFW.GLFW_KEY_KP_ENTER, "category.flightassistant");
 
         KeyBindingHelper.registerKeyBinding(toggleDisplayMode);
 

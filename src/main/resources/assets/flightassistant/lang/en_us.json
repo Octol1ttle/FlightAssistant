@@ -62,7 +62,7 @@
 
   "status.flightassistant.firework_count": "FRWK CNT: %s",
   "flightassistant.mode.firework.none_in_hotbar": "NO FRWKS",
-  "flightassistant.mode.firework.locked": "FRWK LOCKED",
+  "flightassistant.mode.firework.locked": "A/FRWK ONLY",
   "flightassistant.mode.firework.manual": "MAN FRWK",
   "flightassistant.mode.firework.protection": "FRWK PROT",
   "flightassistant.mode.firework.idle": "FRWK IDLE",
