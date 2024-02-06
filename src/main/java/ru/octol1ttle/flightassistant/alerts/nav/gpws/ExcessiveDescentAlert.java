@@ -10,7 +10,7 @@ import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 
-import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
+
 
 public class ExcessiveDescentAlert extends AbstractAlert {
     private static final float SINK_RATE_THRESHOLD = 7.5f;
@@ -32,14 +32,14 @@ public class ExcessiveDescentAlert extends AbstractAlert {
     public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         if (gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
             HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.pull_up"), x, y,
-                    CONFIG.alertColor, highlight);
+                    FAConfig.get().alertColor, highlight);
 
             return true;
         }
 
         if (gpws.descentImpactTime <= SINK_RATE_THRESHOLD) {
             HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.sink_rate"), x, y,
-                    CONFIG.amberColor, highlight);
+                    FAConfig.get().amberColor, highlight);
 
             return true;
         }

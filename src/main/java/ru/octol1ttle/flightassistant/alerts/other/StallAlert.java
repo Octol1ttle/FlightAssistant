@@ -4,12 +4,13 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
+import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 
-import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
+
 
 public class StallAlert extends AbstractAlert {
     private final StallComputer stall;
@@ -30,7 +31,7 @@ public class StallAlert extends AbstractAlert {
 
     @Override
     public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
-        HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.stall"), x, y, CONFIG.alertColor, highlight);
+        HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.stall"), x, y, FAConfig.get().alertColor, highlight);
 
         return true;
     }

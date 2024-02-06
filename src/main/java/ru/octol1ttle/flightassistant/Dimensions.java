@@ -1,7 +1,6 @@
 package ru.octol1ttle.flightassistant;
 
 import net.minecraft.client.MinecraftClient;
-import ru.octol1ttle.flightassistant.config.HudConfig;
 
 public class Dimensions {
 
@@ -19,29 +18,20 @@ public class Dimensions {
     public float bFrame;
 
     public void update(MinecraftClient client) {
-        if (HudComponent.CONFIG == null) {
-            return;
-        }
-        HudConfig c = HudComponent.CONFIG;
-        hScreen = client.getWindow().getScaledHeight();
-        wScreen = client.getWindow().getScaledWidth();
-
-        if (c.scale != 1d && c.scale > 0) {
-            hScreen = hScreen * c.scale;
-            wScreen = wScreen * c.scale;
-        }
+        hScreen = client.getWindow().getScaledHeight() * FAConfig.get().hudScale;
+        wScreen = client.getWindow().getScaledWidth() * FAConfig.get().hudScale;
 
         degreesPerPixel = hScreen / (float) client.options.getFov().getValue();
         xMid = wScreen * 0.5f;
         yMid = hScreen * 0.5f;
 
-        wFrame = wScreen * c.width;
-        hFrame = hScreen * c.height;
+        wFrame = wScreen;
+        hFrame = hScreen;
 
-        lFrame = ((wScreen - wFrame) * 0.5f) + c.xOffset;
+        lFrame = ((wScreen - wFrame) * 0.5f);
         rFrame = lFrame + wFrame;
 
-        tFrame = ((hScreen - hFrame) * 0.5f) + c.yOffset;
+        tFrame = ((hScreen - hFrame) * 0.5f);
         bFrame = tFrame + hFrame;
     }
 

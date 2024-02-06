@@ -1,9 +1,11 @@
 package ru.octol1ttle.flightassistant.indicators;
 
+import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
+import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
@@ -36,13 +38,13 @@ public class AltitudeIndicator extends HudComponent {
         int safeLevel = data.groundLevel == data.voidLevel ? data.voidLevel + 16 : data.groundLevel;
 
         if (CONFIG.altitude_showReadout) {
-            int color = getAltitudeColor(safeLevel, data.altitude);
+            Color color = getAltitudeColor(safeLevel, data.altitude);
             drawText(textRenderer, context, asText("%.0f", data.altitude), xAltText, dim.yMid - 3, color);
             drawBox(context, xAltText - 2, dim.yMid - 4.5f, 28, color);
         }
 
         if (CONFIG.altitude_showHeight) {
-            int color = data.altitude < safeLevel ? CONFIG.alertColor : CONFIG.color;
+            Color color = data.altitude < safeLevel ? FAConfig.get().alertColor : FAConfig.get().primaryColor;
             drawText(textRenderer, context, Text.translatable(data.groundLevel == data.voidLevel ? "flightassistant.void_level" : "flightassistant.ground_level"), xAltText - 10, bottom + 3, color);
             drawText(textRenderer, context, asText("%d", i(data.heightAboveGround)), xAltText, bottom + 3, color);
             drawBox(context, xAltText - 2, bottom + 1.5f, 28, color);
@@ -58,7 +60,7 @@ public class AltitudeIndicator extends HudComponent {
                     break;
                 }
 
-                int color = getAltitudeColor(safeLevel, i);
+                Color color = getAltitudeColor(safeLevel, i);
                 int targetAltitude = autoflight.getTargetAltitude() != null ? autoflight.getTargetAltitude() : Integer.MIN_VALUE + 1;
 
                 boolean forceMark = i == data.groundLevel || i == targetAltitude;
@@ -79,22 +81,22 @@ public class AltitudeIndicator extends HudComponent {
         }
     }
 
-    private int getAltitudeColor(int safeLevel, float altitude) {
+    private Color getAltitudeColor(int safeLevel, float altitude) {
         if (altitude <= safeLevel) {
-            return CONFIG.alertColor;
+            return FAConfig.get().alertColor;
         }
 
         Integer targetAltitude = autoflight.getTargetAltitude();
         if (targetAltitude != null && Math.abs(targetAltitude - altitude) <= 5.0f) {
-            return CONFIG.adviceColor;
+            return FAConfig.get().adviceColor;
         } else {
-            return CONFIG.color;
+            return FAConfig.get().primaryColor;
         }
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawText(textRenderer, context, Text.translatable("flightassistant.altitude_short"), dim.rFrame + 7, dim.yMid - 3, CONFIG.alertColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.altitude_short"), dim.rFrame + 7, dim.yMid - 3, FAConfig.get().alertColor);
     }
 
     @Override

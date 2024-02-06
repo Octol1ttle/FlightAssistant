@@ -51,38 +51,11 @@ public class HudRenderer extends HudComponent {
         return INSTANCE.host;
     }
 
-    private void setupConfig() {
-        HudComponent.CONFIG = null;
-        if (host.data.isFlying) {
-            if (FlightAssistant.CONFIG_SETTINGS.displayModeWhenFlying.equals(FULL)) {
-                HudComponent.CONFIG = FlightAssistant.CONFIG_FULL;
-            } else if (FlightAssistant.CONFIG_SETTINGS.displayModeWhenFlying.equals(MIN)) {
-                HudComponent.CONFIG = FlightAssistant.CONFIG_MIN;
-            }
-        } else {
-            if (FlightAssistant.CONFIG_SETTINGS.displayModeWhenNotFlying.equals(FULL)) {
-                HudComponent.CONFIG = FlightAssistant.CONFIG_FULL;
-            } else if (FlightAssistant.CONFIG_SETTINGS.displayModeWhenNotFlying.equals(MIN)) {
-                HudComponent.CONFIG = FlightAssistant.CONFIG_MIN;
-            }
-        }
-    }
-
     public void render(DrawContext context, MinecraftClient mc) {
-        setupConfig();
-
-        if (HudComponent.CONFIG == null) {
-            return;
-        }
+        dim.update(mc);
 
         context.getMatrices().push();
-
-        if (HudComponent.CONFIG.scale != 1d) {
-            float scale = 1 / HudComponent.CONFIG.scale;
-            context.getMatrices().scale(scale, scale, scale);
-        }
-
-        dim.update(mc);
+        context.getMatrices().scale(FAConfig.get().hudScale, FAConfig.get().hudScale, FAConfig.get().hudScale);
 
         for (int i = components.size() - 1; i >= 0; i--) {
             HudComponent component = components.get(i);

@@ -8,11 +8,7 @@ import org.lwjgl.glfw.GLFW;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
 
-import static ru.octol1ttle.flightassistant.FlightAssistant.CONFIG_SETTINGS;
-
 public class FAKeyBindings {
-    private static KeyBinding toggleDisplayMode;
-
     private static KeyBinding toggleFlightDirectors;
     private static KeyBinding toggleAutoFirework;
     private static KeyBinding toggleAutoPilot;
@@ -23,9 +19,6 @@ public class FAKeyBindings {
     private static KeyBinding lockManualFireworks;
 
     public static void setup() {
-        toggleDisplayMode = new KeyBinding("key.flightassistant.toggle_display_mode", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_GRAVE_ACCENT, "category.flightassistant");
-
         toggleFlightDirectors = new KeyBinding("key.flightassistant.toggle_flight_directors", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_KP_1, "category.flightassistant");
         toggleAutoFirework = new KeyBinding("key.flightassistant.toggle_auto_firework", InputUtil.Type.KEYSYM,
@@ -41,8 +34,6 @@ public class FAKeyBindings {
         lockManualFireworks = new KeyBinding("key.flightassistant.lock_manual_fireworks", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_KP_ENTER, "category.flightassistant");
 
-        KeyBindingHelper.registerKeyBinding(toggleDisplayMode);
-
         KeyBindingHelper.registerKeyBinding(toggleFlightDirectors);
         KeyBindingHelper.registerKeyBinding(toggleAutoFirework);
         KeyBindingHelper.registerKeyBinding(toggleAutoPilot);
@@ -53,10 +44,6 @@ public class FAKeyBindings {
         KeyBindingHelper.registerKeyBinding(lockManualFireworks);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (toggleDisplayMode.wasPressed()) {
-                CONFIG_SETTINGS.toggleDisplayMode(client);
-            }
-
             ComputerHost host = HudRenderer.getHost();
             if (host != null) {
                 while (toggleFlightDirectors.wasPressed()) {

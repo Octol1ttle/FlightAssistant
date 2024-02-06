@@ -18,6 +18,14 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    maven {
+        name 'Xander Maven'
+        url 'https://maven.isxander.dev/releases'
+    }
+    maven {
+        name 'Sonatype OSS Maven' // required by YACL
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
 }
 
 dependencies {
@@ -28,6 +36,7 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}+${project.minecraft_version}"
+    modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}+${project.minecraft_version}"
     modCompileOnlyApi "maven.modrinth:immediatelyfast:${project.immediatelyfast_version}+${project.minecraft_version}"
 }
 

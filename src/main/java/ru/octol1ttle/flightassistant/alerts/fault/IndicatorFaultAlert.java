@@ -4,12 +4,13 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
+import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 
-import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
+
 
 public class IndicatorFaultAlert extends AbstractAlert {
 
@@ -34,7 +35,7 @@ public class IndicatorFaultAlert extends AbstractAlert {
         int i = 0;
         for (HudComponent component : renderer.faulted) {
             i += HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.fault.indicators." + component.getId()), x, y,
-                    CONFIG.amberColor,
+                    FAConfig.get().amberColor,
                     !dismissed);
             y += 10;
         }

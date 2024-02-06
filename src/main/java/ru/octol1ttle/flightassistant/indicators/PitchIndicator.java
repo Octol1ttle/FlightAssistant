@@ -1,10 +1,12 @@
 package ru.octol1ttle.flightassistant.indicators;
 
+import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.RotationAxis;
 import ru.octol1ttle.flightassistant.Dimensions;
+import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
@@ -51,10 +53,10 @@ public class PitchIndicator extends HudComponent {
         float climbAngle = CONFIG.pitchLadder_optimumClimbAngle;
         float glideAngle = CONFIG.pitchLadder_optimumGlideAngle;
 
-        drawReferenceMark(context, yHorizon, stall.maximumSafePitch, CONFIG.alertColor);
+        drawReferenceMark(context, yHorizon, stall.maximumSafePitch, FAConfig.get().alertColor);
         drawReferenceMark(context, yHorizon, climbAngle, getPitchColor(climbAngle));
         drawReferenceMark(context, yHorizon, glideAngle, getPitchColor(glideAngle));
-        drawReferenceMark(context, yHorizon, voidLevel.minimumSafePitch, CONFIG.alertColor);
+        drawReferenceMark(context, yHorizon, voidLevel.minimumSafePitch, FAConfig.get().alertColor);
 
         if (CONFIG.pitchLadder_showHorizon) {
             pitchData.l1 -= pitchData.margin;
@@ -67,14 +69,14 @@ public class PitchIndicator extends HudComponent {
         }
     }
 
-    private int getPitchColor(float degree) {
+    private Color getPitchColor(float degree) {
         return degree < Math.max(PitchController.DESCEND_PITCH, voidLevel.minimumSafePitch) || degree > stall.maximumSafePitch
-                ? CONFIG.alertColor : CONFIG.color;
+                ? FAConfig.get().alertColor : FAConfig.get().primaryColor;
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.pitch_short"), dim.xMid, dim.yMid - 10, CONFIG.alertColor);
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.pitch_short"), dim.xMid, dim.yMid - 10, FAConfig.get().alertColor);
     }
 
     @Override
@@ -96,7 +98,7 @@ public class PitchIndicator extends HudComponent {
         }
     }
 
-    private void drawReferenceMark(DrawContext context, float yHorizon, float degrees, int color) {
+    private void drawReferenceMark(DrawContext context, float yHorizon, float degrees, Color color) {
         if (degrees == 0) {
             return;
         }
@@ -121,7 +123,7 @@ public class PitchIndicator extends HudComponent {
             return;
         }
 
-        int color = getPitchColor(degree);
+        Color color = getPitchColor(degree);
         int dashes = degree < 0 ? 4 : 1;
 
         drawHorizontalLineDashed(context, pitchData.l1, pitchData.l2, y, dashes, color);

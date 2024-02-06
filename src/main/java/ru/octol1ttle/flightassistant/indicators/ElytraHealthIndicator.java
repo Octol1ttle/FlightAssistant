@@ -1,10 +1,12 @@
 package ru.octol1ttle.flightassistant.indicators;
 
+import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.Dimensions;
+import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 
@@ -24,11 +26,11 @@ public class ElytraHealthIndicator extends HudComponent {
         float y = dim.hScreen * CONFIG.elytra_y;
 
         if (CONFIG.elytra_showHealth && data.elytraHealth != null) {
-            int color;
+            Color color;
             if (data.elytraHealth <= 5.0f) { // TODO: configurable
-                color = CONFIG.alertColor;
+                color = FAConfig.get().alertColor;
             } else {
-                color = data.elytraHealth <= 10.0f ? CONFIG.amberColor : CONFIG.color;
+                color = data.elytraHealth <= 10.0f ? FAConfig.get().amberColor : FAConfig.get().primaryColor;
             }
             drawBox(context, x - 3.5f, y - 1.5f, 30, color);
             drawText(textRenderer, context, Text.translatable("flightassistant.elytra_short"), x - 10, y, color);
@@ -41,7 +43,7 @@ public class ElytraHealthIndicator extends HudComponent {
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
         drawText(textRenderer, context, Text.translatable("flightassistant.elytra_health_short"),
                 dim.wScreen * CONFIG.elytra_x, dim.hScreen * CONFIG.elytra_y,
-                CONFIG.alertColor);
+                FAConfig.get().alertColor);
     }
 
     @Override

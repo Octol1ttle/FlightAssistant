@@ -1,9 +1,11 @@
 package ru.octol1ttle.flightassistant.indicators;
 
+import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
+import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
 
@@ -21,13 +23,13 @@ public class StatusIndicator extends HudComponent {
         float x = dim.rFrame - 5;
         float y = dim.tFrame + 5;
 
-        int fireworkColor = CONFIG.white;
+        Color fireworkColor = FAConfig.get().statusColor;
         if (firework.safeFireworkCount > 0) {
             if (firework.safeFireworkCount <= 24) {
-                fireworkColor = CONFIG.amberColor;
+                fireworkColor = FAConfig.get().amberColor;
             }
         } else {
-            fireworkColor = CONFIG.alertColor;
+            fireworkColor = FAConfig.get().alertColor;
         }
         drawRightAlignedText(textRenderer, context,
                 Text.translatable("status.flightassistant.firework_count", firework.safeFireworkCount),
@@ -38,7 +40,7 @@ public class StatusIndicator extends HudComponent {
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
         drawRightAlignedText(textRenderer, context,
                 Text.translatable("flightassistant.status_short"),
-                dim.rFrame - 5, dim.tFrame + 15, CONFIG.alertColor);
+                dim.rFrame - 5, dim.tFrame + 15, FAConfig.get().alertColor);
     }
 
     @Override

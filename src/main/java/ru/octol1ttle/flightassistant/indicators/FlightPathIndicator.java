@@ -1,9 +1,11 @@
 package ru.octol1ttle.flightassistant.indicators;
 
+import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
+import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
@@ -44,10 +46,10 @@ public class FlightPathIndicator extends HudComponent {
 
         float l = x - 3;
         float r = x + 3;
-        float t = y - 3 - CONFIG.halfThickness;
-        float b = y + 3 - CONFIG.halfThickness;
+        float t = y - 3 - FAConfig.get().halfThickness;
+        float b = y + 3 - FAConfig.get().halfThickness;
 
-        int color = gpws.getGPWSLampColor();
+        Color color = gpws.getGPWSLampColor();
         drawVerticalLine(context, l, t, b, color);
         drawVerticalLine(context, r, t, b, color);
 
@@ -55,13 +57,13 @@ public class FlightPathIndicator extends HudComponent {
         drawHorizontalLine(context, l, r, b, color);
 
         drawVerticalLine(context, x, t - 5, t, color);
-        drawHorizontalLine(context, l - 4, l, y - CONFIG.halfThickness, color);
-        drawHorizontalLine(context, r, r + 4, y - CONFIG.halfThickness, color);
+        drawHorizontalLine(context, l - 4, l, y - FAConfig.get().halfThickness, color);
+        drawHorizontalLine(context, r, r + 4, y - FAConfig.get().halfThickness, color);
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.flight_path_short"), dim.xMid, dim.yMid + 10, CONFIG.alertColor);
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.flight_path_short"), dim.xMid, dim.yMid + 10, FAConfig.get().alertColor);
     }
 
     @Override

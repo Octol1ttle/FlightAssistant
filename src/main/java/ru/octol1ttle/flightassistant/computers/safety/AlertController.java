@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import net.minecraft.client.sound.SoundManager;
 import ru.octol1ttle.flightassistant.AlertSoundInstance;
-import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
@@ -51,7 +50,7 @@ public class AlertController implements ITickableComputer {
 
     @Override
     public void tick() {
-        if (HudComponent.CONFIG == null) { // HUD hidden
+        if (false) { // TODO: HUD hidden
             reset();
             return;
         }

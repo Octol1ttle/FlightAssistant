@@ -4,6 +4,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
+import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
@@ -52,7 +53,7 @@ public class AlertIndicator extends HudComponent {
 
     private void renderFaulted(DrawContext context, TextRenderer textRenderer, Text text) {
         HudComponent.drawHighlightedText(textRenderer, context, text, dim.lFrame + 5, dim.tFrame + 15,
-                CONFIG.alertColor, time.highlight);
+                FAConfig.get().alertColor, time.highlight);
     }
 
     @Override

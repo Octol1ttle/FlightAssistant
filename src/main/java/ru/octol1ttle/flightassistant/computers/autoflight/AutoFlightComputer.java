@@ -9,7 +9,7 @@ import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 
-import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
+
 
 public class AutoFlightComputer implements ITickableComputer {
     private final AirDataComputer data;
@@ -41,7 +41,7 @@ public class AutoFlightComputer implements ITickableComputer {
 
     @Override
     public void tick() {
-        if (autoFireworkEnabled && gpws.getGPWSLampColor() == CONFIG.color) {
+        if (autoFireworkEnabled && gpws.getGPWSLampColor() == FAConfig.get().primaryColor) {
             Integer targetSpeed = getTargetSpeed();
             Integer targetAltitude = getTargetAltitude();
             if (targetSpeed != null) {

@@ -4,6 +4,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
+import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
@@ -34,7 +35,7 @@ public class ApproachingVoidDamageLevelAlert extends AbstractAlert {
                 : Text.translatable("alerts.flightassistant.approaching_void_damage_level");
 
         return HudComponent.drawHighlightedText(textRenderer, context, text, x, y,
-                HudComponent.CONFIG.alertColor,
+                FAConfig.get().alertColor,
                 !dismissed && highlight);
     }
 }

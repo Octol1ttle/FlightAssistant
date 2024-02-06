@@ -13,7 +13,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Matrix3f;
 import ru.octol1ttle.flightassistant.FAMathHelper;
-import ru.octol1ttle.flightassistant.FlightAssistant;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
@@ -111,10 +110,6 @@ public class AirDataComputer implements ITickableComputer {
     }
 
     private float computeRoll(Matrix3f normalMatrix) {
-        if (!FlightAssistant.CONFIG_SETTINGS.calculateRoll) {
-            return 0.0f;
-        }
-
         float y = normalMatrix.getRowColumn(0, 1);
         float x = normalMatrix.getRowColumn(1, 1);
         return FAMathHelper.toDegrees(Math.atan2(y, x));

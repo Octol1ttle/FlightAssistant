@@ -1,9 +1,11 @@
 package ru.octol1ttle.flightassistant.indicators;
 
+import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
+import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
@@ -31,13 +33,13 @@ public class HeadingIndicator extends HudComponent {
         float xNorth = dim.xMid - northOffset;
 
         if (CONFIG.heading_showReadout) {
-            int color = getHeadingColor(data.heading);
+            Color color = getHeadingColor(data.heading);
             drawText(textRenderer, context, asText("%03d", i(data.heading)), dim.xMid - 8, yText, color);
             drawBox(context, dim.xMid - 15, yText - 1.5f, 30, color);
         }
 
         if (CONFIG.heading_showScale) {
-            drawMiddleAlignedText(textRenderer, context, asText("^"), dim.xMid, top + 10, CONFIG.color);
+            drawMiddleAlignedText(textRenderer, context, asText("^"), dim.xMid, top + 10, FAConfig.get().primaryColor);
 
             for (int i = -540; i < 540; i++) {
                 float x = (i * dim.degreesPerPixel) + xNorth;
@@ -49,7 +51,7 @@ public class HeadingIndicator extends HudComponent {
                 }
 
                 int degrees = wrapHeading(i);
-                int color = getHeadingColor(degrees);
+                Color color = getHeadingColor(degrees);
                 double targetHeading = autoflight.getTargetHeading() != null ? autoflight.getTargetHeading() : Integer.MIN_VALUE + 1;
 
                 boolean forceMark = degrees == Math.round(targetHeading);
@@ -76,18 +78,18 @@ public class HeadingIndicator extends HudComponent {
         }
     }
 
-    private int getHeadingColor(float heading) {
+    private Color getHeadingColor(float heading) {
         Float targetHeading = autoflight.getTargetHeading();
         if (targetHeading != null && Math.abs(targetHeading - heading) <= 5.0f) {
-            return CONFIG.adviceColor;
+            return FAConfig.get().adviceColor;
         } else {
-            return CONFIG.color;
+            return FAConfig.get().primaryColor;
         }
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawText(textRenderer, context, Text.translatable("flightassistant.heading_short"), dim.xMid - 8, dim.tFrame - 17, CONFIG.alertColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.heading_short"), dim.xMid - 8, dim.tFrame - 17, FAConfig.get().alertColor);
     }
 
     @Override

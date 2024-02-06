@@ -7,7 +7,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.FlightAssistant;
-import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
@@ -66,10 +65,6 @@ public class ComputerHost {
     }
 
     public void tick() {
-        if (HudComponent.CONFIG == null) {
-            return;
-        }
-
         for (int i = tickables.size() - 1; i >= 0; i--) {
             ITickableComputer computer = tickables.get(i);
             try {

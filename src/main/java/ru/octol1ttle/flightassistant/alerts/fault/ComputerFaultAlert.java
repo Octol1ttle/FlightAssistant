@@ -4,13 +4,12 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
+import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.computers.IComputer;
-
-import static ru.octol1ttle.flightassistant.HudComponent.CONFIG;
 
 public class ComputerFaultAlert extends AbstractAlert {
     private final ComputerHost host;
@@ -35,7 +34,7 @@ public class ComputerFaultAlert extends AbstractAlert {
         for (IComputer computer : host.faulted) {
             boolean isADC = host.data.equals(computer);
             i += HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.fault.computers." + computer.getId()), x, y,
-                    isADC ? CONFIG.alertColor : CONFIG.amberColor,
+                    isADC ? FAConfig.get().alertColor : FAConfig.get().amberColor,
                     !dismissed && (highlight || !isADC));
             y += 10;
         }
