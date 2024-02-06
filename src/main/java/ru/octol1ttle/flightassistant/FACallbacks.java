@@ -1,6 +1,10 @@
 package ru.octol1ttle.flightassistant;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
@@ -9,13 +13,34 @@ import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.TypedActionResult;
 import org.joml.Matrix3f;
+import ru.octol1ttle.flightassistant.commands.FlightPlanCommand;
+import ru.octol1ttle.flightassistant.commands.MCPCommand;
+import ru.octol1ttle.flightassistant.commands.ResetCommand;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
+
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class FACallbacks {
     public static void setup() {
+        setupCommandRegistration();
         setupWorldRender();
         setupHudRender();
         setupUseItem();
+    }
+
+    private static void setupCommandRegistration() {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
+            LiteralArgumentBuilder<FabricClientCommandSource> builder = literal(FlightAssistant.MODID);
+            SwitchDisplayModeCommand.register(builder);
+            ResetCommand.register(builder);
+            MCPCommand.register(builder);
+            FlightPlanCommand.register(builder);
+
+            LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(builder);
+            dispatcher.register(literal("flas").redirect(node));
+            dispatcher.register(literal("fhud").redirect(node));
+            dispatcher.register(literal("fh").redirect(node));
+        });
     }
 
     private static void setupWorldRender() {

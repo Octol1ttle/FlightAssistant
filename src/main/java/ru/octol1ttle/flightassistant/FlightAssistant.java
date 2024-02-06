@@ -1,21 +1,11 @@
 package ru.octol1ttle.flightassistant;
 
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.octol1ttle.flightassistant.commands.FlightPlanCommand;
-import ru.octol1ttle.flightassistant.commands.MCPCommand;
-import ru.octol1ttle.flightassistant.commands.ResetCommand;
-import ru.octol1ttle.flightassistant.commands.SwitchDisplayModeCommand;
 import ru.octol1ttle.flightassistant.config.HudConfig;
 import ru.octol1ttle.flightassistant.config.SettingsConfig;
 import ru.octol1ttle.flightassistant.config.loader.ConfigLoader;
-
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 // TODO: try to remove all abbreviations/shortenings and see what comes of it
 // TODO: block certain alerts in certain phases of flight
@@ -44,21 +34,6 @@ public class FlightAssistant implements ClientModInitializer {
             FlightAssistant.MODID + ".min.json",
             config -> FlightAssistant.CONFIG_MIN = config);
 
-    private static void setupCommands() {
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-            LiteralArgumentBuilder<FabricClientCommandSource> builder = literal("flightassistant");
-            SwitchDisplayModeCommand.register(builder);
-            ResetCommand.register(builder);
-            MCPCommand.register(builder);
-            FlightPlanCommand.register(builder);
-
-            LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(builder);
-            dispatcher.register(literal("flas").redirect(node));
-            dispatcher.register(literal("fhud").redirect(node));
-            dispatcher.register(literal("fh").redirect(node));
-        });
-    }
-
     @Override
     public void onInitializeClient() {
         CONFIG_LOADER_SETTINGS.load();
@@ -67,6 +42,5 @@ public class FlightAssistant implements ClientModInitializer {
 
         FAKeyBindings.setup();
         FACallbacks.setup();
-        setupCommands();
     }
 }
