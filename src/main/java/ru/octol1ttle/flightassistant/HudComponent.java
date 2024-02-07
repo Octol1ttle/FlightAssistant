@@ -1,21 +1,15 @@
 package ru.octol1ttle.flightassistant;
 
 import java.awt.Color;
-import java.util.Map;
-import java.util.function.Consumer;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.compatibility.ImmediatelyFastBatchingAccessor;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public abstract class HudComponent {
     private static final int SINGLE_LINE_DRAWN = 1;
-    private static final Map<Color, Color> colorHighlightMap = Map.of(
-            Color.RED, Color.WHITE,
-            Color.YELLOW, Color.BLACK
-    );
 
     public static MutableText asText(String format, Object... args) {
         return Text.literal(String.format(format, args));
@@ -43,9 +37,10 @@ public abstract class HudComponent {
 
     public static int drawHighlightedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color, boolean highlight) {
         if (highlight) {
-            drawUnbatched(context, ctx -> {
+            drawUnbatched(() -> {
+                Color textColor = color == FAConfig.hud().warningTextColor ? FAConfig.hud().highlightedWarningTextColor : FAConfig.hud().highlightedCautionTextColor;
                 HudComponent.fill(context, x - 2.0f, y - 1.0f, x + textRenderer.getWidth(text) + 1.0f, y + 8.0f, color);
-                HudComponent.drawText(textRenderer, context, text, x, y, colorHighlightMap.get(color));
+                HudComponent.drawText(textRenderer, context, text, x, y, textColor);
             });
             return SINGLE_LINE_DRAWN;
         }
@@ -59,12 +54,12 @@ public abstract class HudComponent {
         drawHighlightedText(textRenderer, context, text, x - textRenderer.getWidth(text) * 0.5f, y, color, highlight);
     }
 
-    public static void drawUnbatched(DrawContext context, Consumer<DrawContext> c) {
-        if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
+    public static void drawUnbatched(Runnable draw) {
+        if (FlightAssistant.isHUDBatched()) {
             ImmediatelyFastBatchingAccessor.endHudBatching();
         }
-        c.accept(context);
-        if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
+        draw.run();
+        if (FlightAssistant.isHUDBatched()) {
             ImmediatelyFastBatchingAccessor.beginHudBatching();
         }
     }
@@ -75,8 +70,8 @@ public abstract class HudComponent {
             x1 = x2;
             x2 = i;
         }
-        fill(context, x1 - FAConfig.get().halfThickness, y - FAConfig.get().halfThickness, x2 + FAConfig.get().halfThickness,
-                y + FAConfig.get().halfThickness, color);
+        fill(context, x1 - 0.5f /* TODO: remove this */, y - 0.5f /* TODO: remove this */, x2 + 0.5f /* TODO: remove this */,
+                y + 0.5f /* TODO: remove this */, color);
     }
 
     public static void drawVerticalLine(DrawContext context, float x, float y1, float y2, Color color) {
@@ -86,8 +81,8 @@ public abstract class HudComponent {
             y2 = i;
         }
 
-        fill(context, x - FAConfig.get().halfThickness, y1 + FAConfig.get().halfThickness, x + FAConfig.get().halfThickness,
-                y2 - FAConfig.get().halfThickness, color);
+        fill(context, x - 0.5f /* TODO: remove this */, y1 + 0.5f /* TODO: remove this */, x + 0.5f /* TODO: remove this */,
+                y2 - 0.5f /* TODO: remove this */, color);
     }
 
     public static void drawBox(DrawContext context, float x, float y, float w, Color color) {

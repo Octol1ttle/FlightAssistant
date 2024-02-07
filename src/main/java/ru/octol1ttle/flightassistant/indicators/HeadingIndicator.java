@@ -5,10 +5,10 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
-import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class HeadingIndicator extends HudComponent {
 
@@ -32,14 +32,14 @@ public class HeadingIndicator extends HudComponent {
         float northOffset = data.heading * dim.degreesPerPixel;
         float xNorth = dim.xMid - northOffset;
 
-        if (CONFIG.heading_showReadout) {
+        if (FAConfig.hud().heading_showReadout) {
             Color color = getHeadingColor(data.heading);
             drawText(textRenderer, context, asText("%03d", i(data.heading)), dim.xMid - 8, yText, color);
             drawBox(context, dim.xMid - 15, yText - 1.5f, 30, color);
         }
 
-        if (CONFIG.heading_showScale) {
-            drawMiddleAlignedText(textRenderer, context, asText("^"), dim.xMid, top + 10, FAConfig.get().primaryColor);
+        if (FAConfig.hud().heading_showScale) {
+            drawMiddleAlignedText(textRenderer, context, asText("^"), dim.xMid, top + 10, FAConfig.hud().frameColor);
 
             for (int i = -540; i < 540; i++) {
                 float x = (i * dim.degreesPerPixel) + xNorth;
@@ -65,7 +65,7 @@ public class HeadingIndicator extends HudComponent {
                         drawVerticalLine(context, x, top + 3, top + 10, color);
                     }
 
-                    if (!CONFIG.heading_showReadout || x <= dim.xMid - 26 || x >= dim.xMid + 26) {
+                    if (!FAConfig.hud().heading_showReadout || x <= dim.xMid - 26 || x >= dim.xMid + 26) {
                         drawText(textRenderer, context, asText("%03d", degrees), x - 8, yText, color);
                     }
                     continue;
@@ -81,15 +81,15 @@ public class HeadingIndicator extends HudComponent {
     private Color getHeadingColor(float heading) {
         Float targetHeading = autoflight.getTargetHeading();
         if (targetHeading != null && Math.abs(targetHeading - heading) <= 5.0f) {
-            return FAConfig.get().adviceColor;
+            return FAConfig.hud().advisoryColor;
         } else {
-            return FAConfig.get().primaryColor;
+            return FAConfig.hud().frameColor;
         }
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawText(textRenderer, context, Text.translatable("flightassistant.heading_short"), dim.xMid - 8, dim.tFrame - 17, FAConfig.get().alertColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.heading_short"), dim.xMid - 8, dim.tFrame - 17, FAConfig.hud().warningTextColor);
     }
 
     @Override

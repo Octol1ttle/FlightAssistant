@@ -11,6 +11,7 @@ import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
 
 public class PitchController implements ITickableComputer {
     public static final float CLIMB_PITCH = 55.0f;
+    public static final float GLIDE_PITCH = -2.2f;
     public static final float DESCEND_PITCH = -35.0f;
     private final AirDataComputer data;
     private final StallComputer stall;

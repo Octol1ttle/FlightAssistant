@@ -12,6 +12,7 @@ import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class FlightModeIndicator extends HudComponent {
     private final Dimensions dim;
@@ -47,10 +48,19 @@ public class FlightModeIndicator extends HudComponent {
             renderFaulted(context, textRenderer);
             return;
         }
-        renderFireworkMode(context, textRenderer);
-        renderVerticalMode(context, textRenderer);
-        renderLateralMode(context, textRenderer);
-        renderAutomationMode(context, textRenderer);
+
+        if (FAConfig.hud().flightMode_showFirework) {
+            renderFireworkMode(context, textRenderer);
+        }
+        if (FAConfig.hud().flightMode_showVertical) {
+            renderVerticalMode(context, textRenderer);
+        }
+        if (FAConfig.hud().flightMode_showLateral) {
+            renderLateralMode(context, textRenderer);
+        }
+        if (FAConfig.hud().flightMode_showAutomation) {
+            renderAutomationMode(context, textRenderer);
+        }
     }
 
     private void renderFireworkMode(DrawContext context, TextRenderer textRenderer) {
@@ -161,7 +171,7 @@ public class FlightModeIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawText(textRenderer, context, Text.translatable("flightassistant.flight_mode_short"), dim.lFrame + dim.wFrame * 0.2f, dim.bFrame + 10, FAConfig.get().alertColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.flight_mode_short"), dim.lFrame + dim.wFrame * 0.2f, dim.bFrame + 10, FAConfig.hud().warningTextColor);
     }
 
     @Override

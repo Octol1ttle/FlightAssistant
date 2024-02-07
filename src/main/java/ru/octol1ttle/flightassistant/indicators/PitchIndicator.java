@@ -6,14 +6,15 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.RotationAxis;
 import ru.octol1ttle.flightassistant.Dimensions;
-import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class PitchIndicator extends HudComponent {
+    public static final int DEGREES_PER_BAR = 20;
     private final Dimensions dim;
     private final AirDataComputer data;
     private final StallComputer stall;
@@ -29,54 +30,45 @@ public class PitchIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
+        if (!FAConfig.hud().pitchLadder_showLadder) {
+            return;
+        }
+
         pitchData.update(dim);
 
         float horizonOffset = data.pitch * dim.degreesPerPixel;
         float yHorizon = dim.yMid + horizonOffset;
 
-        float a = dim.yMid;
-        float b = dim.xMid;
+        float xMid = dim.xMid;
+        float yMid = dim.yMid;
 
-        float roll = data.roll * (CONFIG.pitchLadder_reverseRoll ? -1 : 1);
+        context.getMatrices().push();
+        context.getMatrices().translate(xMid, yMid, 0);
+        context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(data.roll));
+        context.getMatrices().translate(-xMid, -yMid, 0);
 
-        if (CONFIG.pitchLadder_showRoll) {
-            context.getMatrices().push();
-            context.getMatrices().translate(b, a, 0);
-            context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(roll));
-            context.getMatrices().translate(-b, -a, 0);
-        }
+        drawLadder(textRenderer, context, yHorizon);
 
-        if (CONFIG.pitchLadder_showLadder) {
-            drawLadder(textRenderer, context, yHorizon);
-        }
+        drawReferenceMark(context, yHorizon, stall.maximumSafePitch, FAConfig.hud().warningTextColor);
+        drawReferenceMark(context, yHorizon, PitchController.CLIMB_PITCH, getPitchColor(PitchController.CLIMB_PITCH));
+        drawReferenceMark(context, yHorizon, PitchController.GLIDE_PITCH, getPitchColor(PitchController.GLIDE_PITCH));
+        drawReferenceMark(context, yHorizon, voidLevel.minimumSafePitch, FAConfig.hud().warningTextColor);
 
-        float climbAngle = CONFIG.pitchLadder_optimumClimbAngle;
-        float glideAngle = CONFIG.pitchLadder_optimumGlideAngle;
+        pitchData.l1 -= pitchData.margin;
+        pitchData.r2 += pitchData.margin;
+        drawDegreeBar(textRenderer, context, 0, yHorizon);
 
-        drawReferenceMark(context, yHorizon, stall.maximumSafePitch, FAConfig.get().alertColor);
-        drawReferenceMark(context, yHorizon, climbAngle, getPitchColor(climbAngle));
-        drawReferenceMark(context, yHorizon, glideAngle, getPitchColor(glideAngle));
-        drawReferenceMark(context, yHorizon, voidLevel.minimumSafePitch, FAConfig.get().alertColor);
-
-        if (CONFIG.pitchLadder_showHorizon) {
-            pitchData.l1 -= pitchData.margin;
-            pitchData.r2 += pitchData.margin;
-            drawDegreeBar(textRenderer, context, 0, yHorizon);
-        }
-
-        if (CONFIG.pitchLadder_showRoll) {
-            context.getMatrices().pop();
-        }
+        context.getMatrices().pop();
     }
 
     private Color getPitchColor(float degree) {
         return degree < Math.max(PitchController.DESCEND_PITCH, voidLevel.minimumSafePitch) || degree > stall.maximumSafePitch
-                ? FAConfig.get().alertColor : FAConfig.get().primaryColor;
+                ? FAConfig.hud().warningTextColor : FAConfig.hud().frameColor;
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.pitch_short"), dim.xMid, dim.yMid - 10, FAConfig.get().alertColor);
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.pitch_short"), dim.xMid, dim.yMid - 10, FAConfig.hud().warningTextColor);
     }
 
     @Override
@@ -85,13 +77,7 @@ public class PitchIndicator extends HudComponent {
     }
 
     private void drawLadder(TextRenderer textRenderer, DrawContext context, float yHorizon) {
-        int degreesPerBar = CONFIG.pitchLadder_degreesPerBar;
-
-        if (degreesPerBar < 1) {
-            degreesPerBar = 20;
-        }
-
-        for (int i = degreesPerBar; i <= 90; i += degreesPerBar) {
+        for (int i = DEGREES_PER_BAR; i <= 90; i += DEGREES_PER_BAR) {
             float offset = dim.degreesPerPixel * i;
             drawDegreeBar(textRenderer, context, -i, yHorizon + offset);
             drawDegreeBar(textRenderer, context, i, yHorizon - offset);

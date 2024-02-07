@@ -31,7 +31,6 @@ public class FACallbacks {
     private static void setupCommandRegistration() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> builder = literal(FlightAssistant.MODID);
-            SwitchDisplayModeCommand.register(builder);
             ResetCommand.register(builder);
             MCPCommand.register(builder);
             FlightPlanCommand.register(builder);

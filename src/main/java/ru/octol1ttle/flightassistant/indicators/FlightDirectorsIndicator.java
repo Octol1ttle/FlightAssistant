@@ -5,10 +5,10 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.Dimensions;
-import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class FlightDirectorsIndicator extends HudComponent {
     private final Dimensions dim;
@@ -23,14 +23,14 @@ public class FlightDirectorsIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (!autoflight.flightDirectorsEnabled) {
+        if (!FAConfig.hud().flightDirectors_show || !autoflight.flightDirectorsEnabled) {
             return;
         }
 
         if (autoflight.getTargetPitch() != null) {
             float deltaPitch = autoflight.getTargetPitch() - data.pitch;
             float fdY = MathHelper.clamp(dim.yMid + i(deltaPitch * dim.degreesPerPixel), dim.tFrame - 10, dim.bFrame + 10);
-            drawHorizontalLine(context, dim.xMid - dim.wFrame * 0.1f, dim.xMid + dim.wFrame * 0.1f, fdY, FAConfig.get().adviceColor);
+            drawHorizontalLine(context, dim.xMid - dim.wFrame * 0.1f, dim.xMid + dim.wFrame * 0.1f, fdY, FAConfig.hud().advisoryColor);
         }
 
         if (autoflight.getTargetHeading() != null) {
@@ -43,13 +43,13 @@ public class FlightDirectorsIndicator extends HudComponent {
             }
 
             float fdX = MathHelper.clamp(dim.xMid + i(deltaHeading * dim.degreesPerPixel), dim.lFrame + 10, dim.rFrame - 10);
-            drawVerticalLine(context, fdX, dim.yMid - dim.hFrame * 0.15f, dim.yMid + dim.hFrame * 0.15f, FAConfig.get().adviceColor);
+            drawVerticalLine(context, fdX, dim.yMid - dim.hFrame * 0.15f, dim.yMid + dim.hFrame * 0.15f, FAConfig.hud().advisoryColor);
         }
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.flight_directors_enabled"), dim.xMid, dim.yMid - 20, FAConfig.get().alertColor);
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.flight_directors_enabled"), dim.xMid, dim.yMid - 20, FAConfig.hud().warningTextColor);
     }
 
     @Override

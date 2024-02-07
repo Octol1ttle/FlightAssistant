@@ -18,6 +18,9 @@
   "entrypoints": {
     "client": [
       "ru.octol1ttle.flightassistant.FlightAssistant"
+    ],
+    "modmenu": [
+      "ru.octol1ttle.flightassistant.FAModMenuImpl"
     ]
   },
   "mixins": [

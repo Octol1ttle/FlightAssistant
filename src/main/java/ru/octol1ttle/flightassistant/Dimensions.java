@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant;
 
 import net.minecraft.client.MinecraftClient;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class Dimensions {
 
@@ -25,8 +26,8 @@ public class Dimensions {
         xMid = wScreen * 0.5f;
         yMid = hScreen * 0.5f;
 
-        wFrame = wScreen;
-        hFrame = hScreen;
+        wFrame = wScreen * 0.6f; // TODO: this is supposed to be configurable
+        hFrame = hScreen * 0.6f;
 
         lFrame = ((wScreen - wFrame) * 0.5f);
         rFrame = lFrame + wFrame;
@@ -34,5 +35,4 @@ public class Dimensions {
         tFrame = ((hScreen - hFrame) * 0.5f);
         bFrame = tFrame + hFrame;
     }
-
 }

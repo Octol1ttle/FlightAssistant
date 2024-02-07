@@ -5,10 +5,10 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
-import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class FlightPathIndicator extends HudComponent {
     private final Dimensions dim;
@@ -23,7 +23,7 @@ public class FlightPathIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (!CONFIG.flightPath_show) {
+        if (!FAConfig.hud().flightPath_show) {
             return;
         }
 
@@ -46,8 +46,8 @@ public class FlightPathIndicator extends HudComponent {
 
         float l = x - 3;
         float r = x + 3;
-        float t = y - 3 - FAConfig.get().halfThickness;
-        float b = y + 3 - FAConfig.get().halfThickness;
+        float t = y - 3 - 0.5f /* TODO: remove this */;
+        float b = y + 3 - 0.5f /* TODO: remove this */;
 
         Color color = gpws.getGPWSLampColor();
         drawVerticalLine(context, l, t, b, color);
@@ -57,13 +57,13 @@ public class FlightPathIndicator extends HudComponent {
         drawHorizontalLine(context, l, r, b, color);
 
         drawVerticalLine(context, x, t - 5, t, color);
-        drawHorizontalLine(context, l - 4, l, y - FAConfig.get().halfThickness, color);
-        drawHorizontalLine(context, r, r + 4, y - FAConfig.get().halfThickness, color);
+        drawHorizontalLine(context, l - 4, l, y - 0.5f /* TODO: remove this */, color);
+        drawHorizontalLine(context, r, r + 4, y - 0.5f /* TODO: remove this */, color);
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.flight_path_short"), dim.xMid, dim.yMid + 10, FAConfig.get().alertColor);
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.flight_path_short"), dim.xMid, dim.yMid + 10, FAConfig.hud().warningTextColor);
     }
 
     @Override

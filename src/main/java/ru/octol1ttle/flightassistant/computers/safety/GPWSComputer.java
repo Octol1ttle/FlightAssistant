@@ -8,9 +8,9 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 import org.joml.Vector2d;
-import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class GPWSComputer implements ITickableComputer {
     private static final int STATUS_PLAYER_INVULNERABLE = -1;
@@ -43,7 +43,7 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     public boolean isInDanger() {
-        return getGPWSLampColor() == FAConfig.get().alertColor;
+        return getGPWSLampColor() == FAConfig.hud().warningTextColor;
     }
 
     public boolean shouldCorrectSinkrate() {
@@ -57,13 +57,13 @@ public class GPWSComputer implements ITickableComputer {
 
     public Color getGPWSLampColor() {
         if (positiveLessOrEquals(descentImpactTime, PULL_UP_THRESHOLD) || positiveLessOrEquals(terrainImpactTime, PULL_UP_THRESHOLD)) {
-            return FAConfig.get().alertColor;
+            return FAConfig.hud().warningTextColor;
         }
         if (positiveLessOrEquals(descentImpactTime, CAUTION_THRESHOLD) || positiveLessOrEquals(terrainImpactTime, CAUTION_THRESHOLD)) {
-            return FAConfig.get().amberColor;
+            return FAConfig.hud().cautionTextColor;
         }
 
-        return FAConfig.get().primaryColor;
+        return FAConfig.hud().frameColor;
     }
 
     public boolean shouldBlockPitchChanges() {

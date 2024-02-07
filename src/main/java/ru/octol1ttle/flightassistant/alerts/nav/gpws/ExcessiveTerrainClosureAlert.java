@@ -5,12 +5,12 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
-import ru.octol1ttle.flightassistant.FAConfig;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 
 
@@ -56,14 +56,14 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
     public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         if (gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
             HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.pull_up"), x, y,
-                    FAConfig.get().alertColor, highlight);
+                    FAConfig.hud().warningTextColor, highlight);
 
             return true;
         }
 
         if (gpws.terrainImpactTime <= TERRAIN_THRESHOLD) {
             HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.terrain_ahead"), x, y,
-                    FAConfig.get().amberColor, highlight);
+                    FAConfig.hud().cautionTextColor, highlight);
 
             return true;
         }

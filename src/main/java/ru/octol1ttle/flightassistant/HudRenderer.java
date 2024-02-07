@@ -2,14 +2,13 @@ package ru.octol1ttle.flightassistant;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.compatibility.ImmediatelyFastBatchingAccessor;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
-import ru.octol1ttle.flightassistant.config.SettingsConfig;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 import ru.octol1ttle.flightassistant.indicators.AlertIndicator;
 import ru.octol1ttle.flightassistant.indicators.AltitudeIndicator;
 import ru.octol1ttle.flightassistant.indicators.ElytraHealthIndicator;
@@ -23,8 +22,6 @@ import ru.octol1ttle.flightassistant.indicators.SpeedIndicator;
 import ru.octol1ttle.flightassistant.indicators.StatusIndicator;
 
 public class HudRenderer extends HudComponent {
-    private static final String FULL = SettingsConfig.DisplayMode.FULL.toString();
-    private static final String MIN = SettingsConfig.DisplayMode.MIN.toString();
     public static HudRenderer INSTANCE;
     @NotNull
     public final ComputerHost host;
@@ -53,42 +50,53 @@ public class HudRenderer extends HudComponent {
 
     public void render(DrawContext context, MinecraftClient mc) {
         dim.update(mc);
+        float hudScale = FAConfig.get().hudScale;
+        boolean batchAll = FlightAssistant.canUseBatching() && FAConfig.get().batchedRendering == FAConfig.BatchedRendering.SINGLE_DRAW_CALL;
 
         context.getMatrices().push();
-        context.getMatrices().scale(FAConfig.get().hudScale, FAConfig.get().hudScale, FAConfig.get().hudScale);
+        context.getMatrices().scale(hudScale, hudScale, hudScale);
 
+        if (batchAll) {
+            ImmediatelyFastBatchingAccessor.beginHudBatching();
+        }
         for (int i = components.size() - 1; i >= 0; i--) {
             HudComponent component = components.get(i);
-            if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
-                ImmediatelyFastBatchingAccessor.beginHudBatching();
-            }
-            try {
-                component.render(context, mc.textRenderer);
-            } catch (Exception e) {
-                FlightAssistant.LOGGER.error("Exception rendering component", e);
-                faulted.add(component);
-                components.remove(component);
-            }
-            if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
-                ImmediatelyFastBatchingAccessor.endHudBatching();
-            }
+            drawBatchedComponent(() -> {
+                try {
+                    component.render(context, mc.textRenderer);
+                } catch (Exception e) {
+                    FlightAssistant.LOGGER.error("Exception rendering component", e);
+                    faulted.add(component);
+                    components.remove(component);
+                }
+            });
+        }
+        if (batchAll) {
+            ImmediatelyFastBatchingAccessor.endHudBatching();
         }
 
         for (HudComponent component : faulted) {
-            if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
-                ImmediatelyFastBatchingAccessor.beginHudBatching();
-            }
-            try {
-                component.renderFaulted(context, mc.textRenderer);
-            } catch (Exception e) {
-                FlightAssistant.LOGGER.error("Exception rendering faulted component", e);
-            }
-            if (FabricLoader.getInstance().isModLoaded("immediatelyfast")) {
-                ImmediatelyFastBatchingAccessor.endHudBatching();
-            }
+            drawBatchedComponent(() -> {
+                try {
+                    component.renderFaulted(context, mc.textRenderer);
+                } catch (Exception e) {
+                    FlightAssistant.LOGGER.error("Exception rendering faulted component", e);
+                }
+            });
         }
 
         context.getMatrices().pop();
+    }
+
+    public void drawBatchedComponent(Runnable draw) {
+        boolean batch = FlightAssistant.canUseBatching() && FAConfig.get().batchedRendering == FAConfig.BatchedRendering.DRAW_CALL_PER_COMPONENT;
+        if (batch) {
+            ImmediatelyFastBatchingAccessor.beginHudBatching();
+        }
+        draw.run();
+        if (batch) {
+            ImmediatelyFastBatchingAccessor.endHudBatching();
+        }
     }
 
     public void resetFaulted() {
