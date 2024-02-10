@@ -8,6 +8,13 @@
   "key.flightassistant.dismiss_master_warning": "Заглушить (скрыть при втором нажатии) предупреждение особой важности",
   "key.flightassistant.dismiss_master_caution": "Заглушить (скрыть при втором нажатии) обычное предупреждение",
   "key.flightassistant.lock_manual_fireworks": "Заблокировать ручные фейерверки",
+  "config.flightassistant.category.hud_settings": "Настройки HUD",
+  "config.flightassistant.settings.batching": "Группированная отрисовка HUD",
+  "config.flightassistant.options.batching.no_batching": "Не группировать",
+  "config.flightassistant.options.batching.batch_per_component": "Группировать по компонентам",
+  "config.flightassistant.options.batching.single_batch": "Группировать всё целиком",
+  "config.flightassistant.settings.hud_scale": "Масштаб HUD",
+
   "commands.flightassistant.no_such_waypoint": "На указанной позиции нет точки назначения",
   "commands.flightassistant.nothing_to_clear": "Нет точек назначения для очищения",
   "commands.flightassistant.waypoint_created": "Создана точка назначения с позицией %s (теперь всего %s точек назначения)",

@@ -8,8 +8,9 @@
   "key.flightassistant.dismiss_master_warning": "Silence (hide on second press) master warning",
   "key.flightassistant.dismiss_master_caution": "Silence (hide on second press) master caution",
   "key.flightassistant.lock_manual_fireworks": "Lock Manual Fireworks",
+
   "config.flightassistant.category.hud_settings": "HUD Settings",
-  "config.flightassistant.settings.batching": "Use Batched HUD Rendering",
+  "config.flightassistant.settings.batching": "Batched HUD Rendering",
   "config.flightassistant.options.batching.no_batching": "No Batching",
   "config.flightassistant.options.batching.batch_per_component": "Batch Per Component",
   "config.flightassistant.options.batching.single_batch": "Single Batch",
