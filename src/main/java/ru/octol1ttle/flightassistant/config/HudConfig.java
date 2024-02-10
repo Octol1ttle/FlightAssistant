@@ -4,15 +4,6 @@ import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import java.awt.Color;
 
 public class HudConfig {
-    // TODO START
-    @SerialEntry
-    public float width = 0.6f;
-    @SerialEntry
-    public float height = 0.6f;
-    @SerialEntry
-    public float thickness = 1.0f;
-    // TODO END
-
     @SerialEntry
     public Color frameColor = Color.GREEN;
     @SerialEntry

@@ -19,15 +19,17 @@ public class Dimensions {
     public float bFrame;
 
     public void update(MinecraftClient client) {
-        hScreen = client.getWindow().getScaledHeight() * FAConfig.get().hudScale;
-        wScreen = client.getWindow().getScaledWidth() * FAConfig.get().hudScale;
+        float scale = 1.0f / FAConfig.get().hudScale;
+
+        hScreen = client.getWindow().getScaledHeight() * scale;
+        wScreen = client.getWindow().getScaledWidth() * scale;
 
         degreesPerPixel = hScreen / (float) client.options.getFov().getValue();
         xMid = wScreen * 0.5f;
         yMid = hScreen * 0.5f;
 
-        wFrame = wScreen * 0.6f; // TODO: this is supposed to be configurable
-        hFrame = hScreen * 0.6f;
+        wFrame = wScreen * FAConfig.get().frameWidth;
+        hFrame = hScreen * FAConfig.get().frameHeight;
 
         lFrame = ((wScreen - wFrame) * 0.5f);
         rFrame = lFrame + wFrame;

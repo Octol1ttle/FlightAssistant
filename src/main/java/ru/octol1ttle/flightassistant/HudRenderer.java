@@ -51,7 +51,7 @@ public class HudRenderer extends HudComponent {
     public void render(DrawContext context, MinecraftClient mc) {
         dim.update(mc);
         float hudScale = FAConfig.get().hudScale;
-        boolean batchAll = FlightAssistant.canUseBatching() && FAConfig.get().batchedRendering == FAConfig.BatchedRendering.SINGLE_DRAW_CALL;
+        boolean batchAll = FlightAssistant.canUseBatching() && FAConfig.get().batchedRendering == FAConfig.BatchedRendering.SINGLE_BATCH;
 
         context.getMatrices().push();
         context.getMatrices().scale(hudScale, hudScale, hudScale);
@@ -89,7 +89,7 @@ public class HudRenderer extends HudComponent {
     }
 
     public void drawBatchedComponent(Runnable draw) {
-        boolean batch = FlightAssistant.canUseBatching() && FAConfig.get().batchedRendering == FAConfig.BatchedRendering.DRAW_CALL_PER_COMPONENT;
+        boolean batch = FlightAssistant.canUseBatching() && FAConfig.get().batchedRendering == FAConfig.BatchedRendering.BATCH_PER_COMPONENT;
         if (batch) {
             ImmediatelyFastBatchingAccessor.beginHudBatching();
         }

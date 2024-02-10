@@ -6,6 +6,7 @@ import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.platform.YACLPlatform;
+import java.util.Locale;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -31,9 +32,15 @@ public class FAConfig {
     public HudConfig notFlyingNoElytra = new HudConfig().disableAll();
 
     @SerialEntry
-    public BatchedRendering batchedRendering = BatchedRendering.SINGLE_DRAW_CALL;
+    public BatchedRendering batchedRendering = BatchedRendering.SINGLE_BATCH;
     @SerialEntry
     public float hudScale = 1.0f;
+    @SerialEntry
+    public float frameWidth = 0.6f;
+    @SerialEntry
+    public float frameHeight = 0.6f;
+    @SerialEntry
+    public float frameThickness = 1.0f;
 
     public static void setup() {
         HANDLER.load();
@@ -63,13 +70,13 @@ public class FAConfig {
     }
 
     public enum BatchedRendering implements NameableEnum {
-        SINGLE_DRAW_CALL,
-        DRAW_CALL_PER_COMPONENT,
-        NO_BATCHING;
+        NO_BATCHING,
+        BATCH_PER_COMPONENT,
+        SINGLE_BATCH;
 
         @Override
         public Text getDisplayName() {
-            return Text.literal(name());
+            return Text.translatable("config.flightassistant.options.batching." + name().toLowerCase(Locale.ROOT));
         }
     }
 }

@@ -20,19 +20,19 @@ public class FAKeyBindings {
 
     public static void setup() {
         toggleFlightDirectors = new KeyBinding("key.flightassistant.toggle_flight_directors", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_1, "category.flightassistant");
+                GLFW.GLFW_KEY_KP_1, "mod.flightassistant");
         toggleAutoFirework = new KeyBinding("key.flightassistant.toggle_auto_firework", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_2, "category.flightassistant");
+                GLFW.GLFW_KEY_KP_2, "mod.flightassistant");
         toggleAutoPilot = new KeyBinding("key.flightassistant.toggle_auto_pilot", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_3, "category.flightassistant");
+                GLFW.GLFW_KEY_KP_3, "mod.flightassistant");
 
         dismissMasterWarning = new KeyBinding("key.flightassistant.dismiss_master_warning", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_0, "category.flightassistant");
+                GLFW.GLFW_KEY_KP_0, "mod.flightassistant");
         dismissMasterCaution = new KeyBinding("key.flightassistant.dismiss_master_caution", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_DECIMAL, "category.flightassistant");
+                GLFW.GLFW_KEY_KP_DECIMAL, "mod.flightassistant");
 
         lockManualFireworks = new KeyBinding("key.flightassistant.lock_manual_fireworks", InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_KP_ENTER, "category.flightassistant");
+                GLFW.GLFW_KEY_KP_ENTER, "mod.flightassistant");
 
         KeyBindingHelper.registerKeyBinding(toggleFlightDirectors);
         KeyBindingHelper.registerKeyBinding(toggleAutoFirework);

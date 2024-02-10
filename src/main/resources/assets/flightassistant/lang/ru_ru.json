@@ -1,5 +1,5 @@
 {
-  "category.flightassistant": "Flight Assistant",
+  "mod.flightassistant": "Flight Assistant",
 
   "key.flightassistant.toggle_display_mode": "Переключить режим интерфейса",
   "key.flightassistant.toggle_flight_directors": "Вкл/выкл указатели полёта",

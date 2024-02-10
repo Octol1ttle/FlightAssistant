@@ -4,6 +4,7 @@ import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
@@ -153,7 +154,7 @@ public class PitchIndicator extends HudComponent {
         }
 
         private int i(double d) {
-            return (int) d;
+            return MathHelper.floor(d);
         }
     }
 }

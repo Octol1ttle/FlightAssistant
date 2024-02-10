@@ -5,6 +5,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.compatibility.ImmediatelyFastBatchingAccessor;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
@@ -20,7 +21,7 @@ public abstract class HudComponent {
     }
 
     protected static int i(float f) {
-        return (int) f;
+        return MathHelper.floor(f);
     }
 
     protected static void drawRightAlignedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color) {
