@@ -49,7 +49,7 @@ public class FlightDirectorsIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.flight_directors_enabled"), dim.xMid, dim.yMid - 20, FAConfig.hud().warningTextColor);
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("mode.flightassistant.auto.flight_directors"), dim.xMid, dim.yMid - 20, FAConfig.hud().warningTextColor);
     }
 
     @Override

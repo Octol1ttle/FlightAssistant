@@ -66,31 +66,31 @@ public class FlightModeIndicator extends HudComponent {
     private void renderFireworkMode(DrawContext context, TextRenderer textRenderer) {
         Integer targetSpeed = autoflight.getTargetSpeed();
         if (firework.noFireworks) {
-            fireworkMode.update(Text.translatable("flightassistant.mode.firework.none_in_hotbar"), autoflight.autoFireworkEnabled);
+            fireworkMode.update(Text.translatable("mode.flightassistant.firework.none_in_hotbar"), autoflight.autoFireworkEnabled);
         } else if (firework.lastProtTrigger != null && time.prevMillis - firework.lastProtTrigger < 2000) {
-            fireworkMode.update(Text.translatable("flightassistant.mode.firework.protection"), true);
+            fireworkMode.update(Text.translatable("mode.flightassistant.firework.protection"), true);
         } else if (autoflight.autoFireworkEnabled) {
             if (targetSpeed != null) {
                 String type = autoflight.selectedSpeed != null ? ".selected" : ".managed";
-                fireworkMode.update(Text.translatable("flightassistant.mode.firework.speed" + type, targetSpeed));
+                fireworkMode.update(Text.translatable("mode.flightassistant.firework.speed" + type, targetSpeed));
             } else if (autoflight.getTargetAltitude() != null) {
                 if (autoflight.getTargetAltitude() > data.altitude + 2.0f && data.pitch > 0 && data.velocity.y < 0.0f) {
-                    fireworkMode.update(Text.translatable("flightassistant.mode.firework.climb"));
+                    fireworkMode.update(Text.translatable("mode.flightassistant.firework.climb"));
                 } else {
-                    fireworkMode.update(Text.translatable("flightassistant.mode.firework.idle"));
+                    fireworkMode.update(Text.translatable("mode.flightassistant.firework.idle"));
                 }
             } else {
                 if (firework.lockManualFireworks) {
-                    fireworkMode.update(Text.translatable("flightassistant.mode.firework.locked"), true);
+                    fireworkMode.update(Text.translatable("mode.flightassistant.firework.locked"), true);
                 } else {
-                    fireworkMode.update(Text.translatable("flightassistant.mode.firework.manual"), true);
+                    fireworkMode.update(Text.translatable("mode.flightassistant.firework.manual"), true);
                 }
             }
         } else {
             if (firework.lockManualFireworks) {
-                fireworkMode.update(Text.translatable("flightassistant.mode.firework.locked"), true);
+                fireworkMode.update(Text.translatable("mode.flightassistant.firework.locked"), true);
             } else {
-                fireworkMode.update(Text.translatable("flightassistant.mode.firework.manual"), autoflight.autoPilotEnabled);
+                fireworkMode.update(Text.translatable("mode.flightassistant.firework.manual"), autoflight.autoPilotEnabled);
             }
         }
 
@@ -109,13 +109,13 @@ public class FlightModeIndicator extends HudComponent {
         String type = autoflight.selectedAltitude != null ? ".selected" : ".managed";
 
         if (!autoflight.autoPilotEnabled || diff <= 5) {
-            verticalMode.update(Text.translatable("flightassistant.mode.vert.alt_hold" + type, targetAltitude));
+            verticalMode.update(Text.translatable("mode.flightassistant.vert.alt_hold" + type, targetAltitude));
         } else if (diff <= 10) {
-            verticalMode.update(Text.translatable("flightassistant.mode.vert.alt_approaching" + type, targetAltitude));
+            verticalMode.update(Text.translatable("mode.flightassistant.vert.alt_approaching" + type, targetAltitude));
         } else if (targetAltitude > data.altitude) {
-            verticalMode.update(Text.translatable("flightassistant.mode.vert.climb" + type, targetAltitude));
+            verticalMode.update(Text.translatable("mode.flightassistant.vert.climb" + type, targetAltitude));
         } else {
-            verticalMode.update(Text.translatable("flightassistant.mode.vert.descend" + type, targetAltitude));
+            verticalMode.update(Text.translatable("mode.flightassistant.vert.descend" + type, targetAltitude));
         }
 
         float x = dim.lFrame + dim.wFrame * (2 / 5.0f);
@@ -129,10 +129,10 @@ public class FlightModeIndicator extends HudComponent {
         }
 
         if (autoflight.selectedHeading != null) {
-            lateralMode.update(Text.translatable("flightassistant.mode.lat.heading", autoflight.selectedHeading));
+            lateralMode.update(Text.translatable("mode.flightassistant.lat.heading", autoflight.selectedHeading));
         } else if (plan.getTargetPosition() != null) {
             Vector2d target = plan.getTargetPosition();
-            lateralMode.update(Text.translatable("flightassistant.mode.lat.position", target.x, target.y));
+            lateralMode.update(Text.translatable("mode.flightassistant.lat.position", target.x, target.y));
         }
 
         float x = dim.lFrame + dim.wFrame * (3 / 5.0f);
@@ -143,13 +143,13 @@ public class FlightModeIndicator extends HudComponent {
     private void renderAutomationMode(DrawContext context, TextRenderer textRenderer) {
         MutableText automationStatus = Text.literal("");
         if (autoflight.flightDirectorsEnabled) {
-            appendWithSeparation(automationStatus, Text.translatable("flightassistant.flight_directors_enabled"));
+            appendWithSeparation(automationStatus, Text.translatable("mode.flightassistant.auto.flight_directors"));
         }
         if (autoflight.autoFireworkEnabled) {
-            appendWithSeparation(automationStatus, Text.translatable("flightassistant.auto_firework_enabled"));
+            appendWithSeparation(automationStatus, Text.translatable("mode.flightassistant.auto.firework"));
         }
         if (autoflight.autoPilotEnabled) {
-            appendWithSeparation(automationStatus, Text.translatable("flightassistant.auto_pilot_enabled"));
+            appendWithSeparation(automationStatus, Text.translatable("mode.flightassistant.auto.pilot"));
         }
         if (automationStatus.getSiblings().isEmpty()) {
             return;
