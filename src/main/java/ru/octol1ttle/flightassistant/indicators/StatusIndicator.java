@@ -24,13 +24,13 @@ public class StatusIndicator extends HudComponent {
         float y = dim.tFrame + 5;
 
         if (FAConfig.hud().showFireworkCount) {
-            Color fireworkColor = FAConfig.hud().statusTextColor;
+            Color fireworkColor = FAConfig.hud().statusColor;
             if (firework.safeFireworkCount > 0) {
                 if (firework.safeFireworkCount <= 24) {
-                    fireworkColor = FAConfig.hud().cautionTextColor;
+                    fireworkColor = FAConfig.hud().cautionColor;
                 }
             } else {
-                fireworkColor = FAConfig.hud().warningTextColor;
+                fireworkColor = FAConfig.hud().warningColor;
             }
             drawRightAlignedText(textRenderer, context,
                     Text.translatable("status.flightassistant.firework_count", firework.safeFireworkCount),
@@ -42,7 +42,7 @@ public class StatusIndicator extends HudComponent {
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
         drawRightAlignedText(textRenderer, context,
                 Text.translatable("flightassistant.status_short"),
-                dim.rFrame - 5, dim.tFrame + 15, FAConfig.hud().warningTextColor);
+                dim.rFrame - 5, dim.tFrame + 15, FAConfig.hud().warningColor);
     }
 
     @Override

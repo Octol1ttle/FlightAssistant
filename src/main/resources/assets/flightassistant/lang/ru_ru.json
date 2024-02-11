@@ -8,7 +8,11 @@
   "key.flightassistant.dismiss_master_warning": "Заглушить (скрыть при втором нажатии) предупреждение особой важности",
   "key.flightassistant.dismiss_master_caution": "Заглушить (скрыть при втором нажатии) обычное предупреждение",
   "key.flightassistant.lock_manual_fireworks": "Заблокировать ручные фейерверки",
+
   "config.flightassistant.category.hud_settings": "Настройки HUD",
+  "config.flightassistant.category.not_flying_no_elytra": "На земле (без элитр)",
+  "config.flightassistant.category.not_flying_has_elytra": "На земле (с элитрами)",
+  "config.flightassistant.category.flying": "В полёте",
   "config.flightassistant.settings.batching": "Группированная отрисовка HUD",
   "config.flightassistant.options.batching.no_batching": "Не группировать",
   "config.flightassistant.options.batching.batch_per_component": "Группировать по компонентам",
@@ -16,6 +20,11 @@
   "config.flightassistant.settings.hud_scale": "Масштаб HUD",
   "config.flightassistant.settings.frame_width": "Ширина рамки HUD",
   "config.flightassistant.settings.frame_height": "Высота рамки HUD",
+  "config.flightassistant.hud.frame_color": "Цвет рамки HUD",
+  "config.flightassistant.hud.status_color": "Цвет статус-текста",
+  "config.flightassistant.hud.advisory_color": "Цвет указывающих элементов",
+  "config.flightassistant.hud.caution_color": "Цвет внимания",
+  "config.flightassistant.hud.warning_color": "Цвет предупреждения",
 
   "commands.flightassistant.no_such_waypoint": "На указанной позиции нет точки назначения",
   "commands.flightassistant.nothing_to_clear": "Нет точек назначения для очищения",

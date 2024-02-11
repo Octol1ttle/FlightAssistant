@@ -35,7 +35,7 @@ public class IndicatorFaultAlert extends AbstractAlert {
         int i = 0;
         for (HudComponent component : renderer.faulted) {
             i += HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.fault.indicators." + component.getId()), x, y,
-                    FAConfig.hud().cautionTextColor,
+                    FAConfig.hud().cautionColor,
                     !dismissed);
             y += 10;
         }

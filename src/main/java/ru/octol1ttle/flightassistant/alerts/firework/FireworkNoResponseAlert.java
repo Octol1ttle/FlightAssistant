@@ -33,7 +33,7 @@ public class FireworkNoResponseAlert extends AbstractAlert {
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.firework.no_response"), x, y,
-                FAConfig.hud().warningTextColor,
+                FAConfig.hud().warningColor,
                 !dismissed && highlight);
     }
 }

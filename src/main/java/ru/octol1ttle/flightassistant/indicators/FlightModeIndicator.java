@@ -171,7 +171,7 @@ public class FlightModeIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawText(textRenderer, context, Text.translatable("flightassistant.flight_mode_short"), dim.lFrame + dim.wFrame * 0.2f, dim.bFrame + 10, FAConfig.hud().warningTextColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.flight_mode_short"), dim.lFrame + dim.wFrame * 0.2f, dim.bFrame + 10, FAConfig.hud().warningColor);
     }
 
     @Override

@@ -37,17 +37,20 @@ public abstract class HudComponent {
     }
 
     public static int drawHighlightedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color, boolean highlight) {
-        if (highlight) {
-            drawUnbatched(() -> {
-                Color textColor = color == FAConfig.hud().warningTextColor ? FAConfig.hud().highlightedWarningTextColor : FAConfig.hud().highlightedCautionTextColor;
+        drawUnbatched(() -> {
+            if (highlight) {
                 HudComponent.fill(context, x - 2.0f, y - 1.0f, x + textRenderer.getWidth(text) + 1.0f, y + 8.0f, color);
-                HudComponent.drawText(textRenderer, context, text, x, y, textColor);
-            });
-            return SINGLE_LINE_DRAWN;
-        }
-        HudComponent.drawText(textRenderer, context, text, x, y, color);
+                HudComponent.drawText(textRenderer, context, text, x, y, getContrasting(color));
+            } else {
+                HudComponent.drawText(textRenderer, context, text, x, y, color);
+            }
+        });
+        return SINGLE_LINE_DRAWN;
+    }
 
-        return 1;
+    private static Color getContrasting(Color original) {
+        double luma = ((0.299 * original.getRed()) + (0.587 * original.getGreen()) + (0.114 * original.getBlue())) / 255.0d;
+        return luma > 0.5d ? Color.BLACK : Color.WHITE;
     }
 
     // that name doe

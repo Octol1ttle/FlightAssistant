@@ -33,7 +33,7 @@ public class FireworkCountZeroAlert extends AbstractAlert {
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.firework.count_zero"), x, y,
-                FAConfig.hud().warningTextColor,
+                FAConfig.hud().warningColor,
                 highlight && !dismissed);
     }
 }

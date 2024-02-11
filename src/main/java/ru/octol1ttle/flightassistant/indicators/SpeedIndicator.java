@@ -38,7 +38,7 @@ public class SpeedIndicator extends HudComponent {
             float frameWidth = dim.rFrame - dim.lFrame;
             // TODO: separate indicator
             drawText(textRenderer, context, Text.translatable("flightassistant.ground_speed_short", String.format("%.2f", data.velocityPerSecond.horizontalLength())), dim.lFrame + frameWidth * 0.25f, dim.bFrame, FAConfig.hud().frameColor);
-            drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", String.format("%.2f", data.velocityPerSecond.y)), dim.lFrame + frameWidth * 0.75f - 7, dim.bFrame, data.velocityPerSecond.y <= -10.0f ? FAConfig.hud().warningTextColor : FAConfig.hud().frameColor);
+            drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", String.format("%.2f", data.velocityPerSecond.y)), dim.lFrame + frameWidth * 0.75f - 7, dim.bFrame, data.velocityPerSecond.y <= -10.0f ? FAConfig.hud().warningColor : FAConfig.hud().frameColor);
         }
 
 
@@ -61,7 +61,7 @@ public class SpeedIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawRightAlignedText(textRenderer, context, Text.translatable("flightassistant.speed_short"), dim.lFrame - 7, dim.yMid - 3, FAConfig.hud().warningTextColor);
+        drawRightAlignedText(textRenderer, context, Text.translatable("flightassistant.speed_short"), dim.lFrame - 7, dim.yMid - 3, FAConfig.hud().warningColor);
     }
 
     @Override

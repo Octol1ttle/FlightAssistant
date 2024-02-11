@@ -36,7 +36,7 @@ public class LocationIndicator extends HudComponent {
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
         drawText(textRenderer, context, Text.translatable("flightassistant.location_short"),
-                dim.lFrame + 15, dim.bFrame, FAConfig.hud().warningTextColor);
+                dim.lFrame + 15, dim.bFrame, FAConfig.hud().warningColor);
     }
 
     @Override

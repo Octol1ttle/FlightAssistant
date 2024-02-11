@@ -56,7 +56,7 @@ public class AlertIndicator extends HudComponent {
 
     private void renderFaulted(DrawContext context, TextRenderer textRenderer, Text text) {
         HudComponent.drawHighlightedText(textRenderer, context, text, dim.lFrame + 5, dim.tFrame + 15,
-                FAConfig.hud().warningTextColor, time.highlight);
+                FAConfig.hud().warningColor, time.highlight);
     }
 
     @Override

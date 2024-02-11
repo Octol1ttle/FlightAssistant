@@ -31,7 +31,7 @@ public class StallAlert extends AbstractAlert {
 
     @Override
     public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
-        HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.stall"), x, y, FAConfig.hud().warningTextColor, highlight);
+        HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.stall"), x, y, FAConfig.hud().warningColor, highlight);
 
         return true;
     }

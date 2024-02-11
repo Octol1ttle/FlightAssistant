@@ -89,7 +89,7 @@ public class HeadingIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawText(textRenderer, context, Text.translatable("flightassistant.heading_short"), dim.xMid - 8, dim.tFrame - 17, FAConfig.hud().warningTextColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.heading_short"), dim.xMid - 8, dim.tFrame - 17, FAConfig.hud().warningColor);
     }
 
     @Override

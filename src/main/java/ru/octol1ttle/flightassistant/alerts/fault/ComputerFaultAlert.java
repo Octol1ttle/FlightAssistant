@@ -34,7 +34,7 @@ public class ComputerFaultAlert extends AbstractAlert {
         for (IComputer computer : host.faulted) {
             boolean isADC = host.data.equals(computer);
             i += HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.fault.computers." + computer.getId()), x, y,
-                    isADC ? FAConfig.hud().warningTextColor : FAConfig.hud().cautionTextColor,
+                    isADC ? FAConfig.hud().warningColor : FAConfig.hud().cautionColor,
                     !dismissed && (highlight || !isADC));
             y += 10;
         }

@@ -44,7 +44,7 @@ public class AltitudeIndicator extends HudComponent {
         }
 
         if (FAConfig.hud().showGroundAltitude) {
-            Color color = data.altitude < safeLevel ? FAConfig.hud().warningTextColor : FAConfig.hud().frameColor;
+            Color color = data.altitude < safeLevel ? FAConfig.hud().warningColor : FAConfig.hud().frameColor;
             drawText(textRenderer, context, Text.translatable(data.groundLevel == data.voidLevel ? "flightassistant.void_level" : "flightassistant.ground_level"), xAltText - 10, bottom, color);
             drawText(textRenderer, context, asText("%d", i(data.heightAboveGround)), xAltText, bottom, color);
             drawBox(context, xAltText - 2, bottom - 1.5f, 28, color);
@@ -83,7 +83,7 @@ public class AltitudeIndicator extends HudComponent {
 
     private Color getAltitudeColor(int safeLevel, float altitude) {
         if (altitude <= safeLevel) {
-            return FAConfig.hud().warningTextColor;
+            return FAConfig.hud().warningColor;
         }
 
         Integer targetAltitude = autoflight.getTargetAltitude();
@@ -96,7 +96,7 @@ public class AltitudeIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawText(textRenderer, context, Text.translatable("flightassistant.altitude_short"), dim.rFrame + 7, dim.yMid - 3, FAConfig.hud().warningTextColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.altitude_short"), dim.rFrame + 7, dim.yMid - 3, FAConfig.hud().warningColor);
     }
 
     @Override

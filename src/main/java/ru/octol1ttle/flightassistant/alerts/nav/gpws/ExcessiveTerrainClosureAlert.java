@@ -56,14 +56,14 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
     public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         if (gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
             HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.pull_up"), x, y,
-                    FAConfig.hud().warningTextColor, highlight);
+                    FAConfig.hud().warningColor, highlight);
 
             return true;
         }
 
         if (gpws.terrainImpactTime <= TERRAIN_THRESHOLD) {
             HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.terrain_ahead"), x, y,
-                    FAConfig.hud().cautionTextColor, highlight);
+                    FAConfig.hud().cautionColor, highlight);
 
             return true;
         }

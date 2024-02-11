@@ -40,10 +40,10 @@ public class FlightMode {
             throw new IllegalStateException("Called render before updating");
         }
         if (time.prevMillis != null && time.prevMillis - lastUpdateTime <= UPDATE_FLASH_TIME) {
-            HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, lastText, x, y, FAConfig.hud().cautionTextColor, time.highlight);
+            HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, lastText, x, y, FAConfig.hud().cautionColor, time.highlight);
             return;
         }
 
-        HudComponent.drawMiddleAlignedText(textRenderer, context, lastText, x, y, FAConfig.hud().statusTextColor);
+        HudComponent.drawMiddleAlignedText(textRenderer, context, lastText, x, y, FAConfig.hud().statusColor);
     }
 }

@@ -7,17 +7,13 @@ public class HudConfig {
     @SerialEntry
     public Color frameColor = Color.GREEN;
     @SerialEntry
-    public Color statusTextColor = Color.WHITE;
+    public Color statusColor = Color.WHITE;
     @SerialEntry
     public Color advisoryColor = Color.CYAN;
     @SerialEntry
-    public Color cautionTextColor = Color.YELLOW;
+    public Color cautionColor = Color.YELLOW;
     @SerialEntry
-    public Color highlightedCautionTextColor = Color.BLACK;
-    @SerialEntry
-    public Color warningTextColor = Color.RED;
-    @SerialEntry
-    public Color highlightedWarningTextColor = Color.WHITE;
+    public Color warningColor = Color.RED;
 
     @SerialEntry
     public boolean showElytraHealth = true;
