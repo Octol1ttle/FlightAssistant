@@ -20,93 +20,83 @@ public class HudConfig {
     public Color highlightedWarningTextColor = Color.WHITE;
 
     @SerialEntry
-    public boolean elytra_showHealth = true;
+    public boolean showElytraHealth = true;
     @SerialEntry
-    public float elytra_x = 0.5f;
+    public boolean showCoordinates = true;
     @SerialEntry
-    public float elytra_y = 0.8f;
+    public boolean showFlightPath = true;
 
     @SerialEntry
-    public boolean location_showReadout = true;
-    @SerialEntry
-    public float location_x = 0.2f;
-    @SerialEntry
-    public float location_y = 0.8f;
+    public boolean showPitchLadder = true;
 
     @SerialEntry
-    public boolean flightPath_show = true;
+    public boolean showSpeedScale = true;
+    @SerialEntry
+    public boolean showSpeedReadout = true;
 
     @SerialEntry
-    public boolean pitchLadder_showLadder = true;
+    public boolean showAltitudeScale = true;
+    @SerialEntry
+    public boolean showAltitudeReadout = true;
+    @SerialEntry
+    public boolean showGroundAltitude = true;
 
     @SerialEntry
-    public boolean speed_showScale = true;
+    public boolean showHeadingScale = true;
     @SerialEntry
-    public boolean speed_showReadout = true;
+    public boolean showHeadingReadout = true;
 
     @SerialEntry
-    public boolean altitude_showScale = true;
-    @SerialEntry
-    public boolean altitude_showReadout = true;
-    @SerialEntry
-    public boolean altitude_showGround = true;
+    public boolean showAlerts = true;
 
     @SerialEntry
-    public boolean heading_showScale = true;
-    @SerialEntry
-    public boolean heading_showReadout = true;
+    public boolean showFlightDirectors = true;
 
     @SerialEntry
-    public boolean alerts_show = true;
+    public boolean showFireworkMode = true;
+    @SerialEntry
+    public boolean showVerticalMode = true;
+    @SerialEntry
+    public boolean showLateralMode = true;
+    @SerialEntry
+    public boolean showAutomationMode = true;
 
     @SerialEntry
-    public boolean flightDirectors_show = true;
-
-    @SerialEntry
-    public boolean flightMode_showFirework = true;
-    @SerialEntry
-    public boolean flightMode_showVertical = true;
-    @SerialEntry
-    public boolean flightMode_showLateral = true;
-    @SerialEntry
-    public boolean flightMode_showAutomation = true;
-
-    @SerialEntry
-    public boolean status_showFireworkCount = true;
+    public boolean showFireworkCount = true;
 
     public HudConfig setMinimal() {
-        this.flightPath_show = false;
-        this.pitchLadder_showLadder = false;
-        this.speed_showScale = false;
-        this.speed_showReadout = false;
-        this.altitude_showScale = false;
-        this.altitude_showGround = false;
-        this.heading_showScale = false;
-        this.flightMode_showFirework = false;
-        this.status_showFireworkCount = false;
+        this.showFlightPath = false;
+        this.showPitchLadder = false;
+        this.showSpeedScale = false;
+        this.showSpeedReadout = false;
+        this.showAltitudeScale = false;
+        this.showGroundAltitude = false;
+        this.showHeadingScale = false;
+        this.showFireworkMode = false;
+        this.showFireworkCount = false;
 
         return this;
     }
 
     public HudConfig disableAll() {
-        this.elytra_showHealth = false;
-        this.location_showReadout = false;
-        this.flightPath_show = false;
-        this.pitchLadder_showLadder = false;
-        this.speed_showScale = false;
-        this.speed_showReadout = false;
-        this.altitude_showScale = false;
-        this.altitude_showReadout = false;
-        this.altitude_showGround = false;
-        this.heading_showScale = false;
-        this.heading_showReadout = false;
-        this.alerts_show = false;
-        this.flightDirectors_show = false;
-        this.flightMode_showFirework = false;
-        this.flightMode_showVertical = false;
-        this.flightMode_showLateral = false;
-        this.flightMode_showAutomation = false;
-        this.status_showFireworkCount = false;
+        this.showElytraHealth = false;
+        this.showCoordinates = false;
+        this.showFlightPath = false;
+        this.showPitchLadder = false;
+        this.showSpeedScale = false;
+        this.showSpeedReadout = false;
+        this.showAltitudeScale = false;
+        this.showAltitudeReadout = false;
+        this.showGroundAltitude = false;
+        this.showHeadingScale = false;
+        this.showHeadingReadout = false;
+        this.showAlerts = false;
+        this.showFlightDirectors = false;
+        this.showFireworkMode = false;
+        this.showVerticalMode = false;
+        this.showLateralMode = false;
+        this.showAutomationMode = false;
+        this.showFireworkCount = false;
 
         return this;
     }

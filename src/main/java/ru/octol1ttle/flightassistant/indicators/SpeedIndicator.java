@@ -31,7 +31,7 @@ public class SpeedIndicator extends HudComponent {
 
         float xSpeedText = left - 5;
 
-        if (FAConfig.hud().speed_showReadout) {
+        if (FAConfig.hud().showSpeedReadout) {
             drawRightAlignedText(textRenderer, context, asText("%.2f", data.speed), xSpeedText, dim.yMid - 3, FAConfig.hud().frameColor);
             drawBox(context, xSpeedText - 29.5f, dim.yMid - 4.5f, 30, FAConfig.hud().frameColor);
 
@@ -42,7 +42,7 @@ public class SpeedIndicator extends HudComponent {
         }
 
 
-        if (FAConfig.hud().speed_showScale) {
+        if (FAConfig.hud().showSpeedScale) {
             for (float i = 0; i <= 100; i += 0.25f) {
                 float y = dim.hScreen - i * unitPerPixel - yFloor;
                 if (y < top || y > (bottom - 5))
@@ -50,7 +50,7 @@ public class SpeedIndicator extends HudComponent {
 
                 if (i % 1 == 0) {
                     drawHorizontalLine(context, left - 2, right, y, FAConfig.hud().frameColor);
-                    if (!FAConfig.hud().speed_showReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
+                    if (!FAConfig.hud().showSpeedReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
                         drawRightAlignedText(textRenderer, context, asText("%.0f", i), xSpeedText, y - 3, FAConfig.hud().frameColor);
                     }
                 }

@@ -31,7 +31,7 @@ public class PitchIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (!FAConfig.hud().pitchLadder_showLadder) {
+        if (!FAConfig.hud().showPitchLadder) {
             return;
         }
 

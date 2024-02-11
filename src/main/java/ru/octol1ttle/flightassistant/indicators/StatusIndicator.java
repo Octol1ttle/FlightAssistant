@@ -23,7 +23,7 @@ public class StatusIndicator extends HudComponent {
         float x = dim.rFrame - 5;
         float y = dim.tFrame + 5;
 
-        if (FAConfig.hud().status_showFireworkCount) {
+        if (FAConfig.hud().showFireworkCount) {
             Color fireworkColor = FAConfig.hud().statusTextColor;
             if (firework.safeFireworkCount > 0) {
                 if (firework.safeFireworkCount <= 24) {

@@ -49,16 +49,16 @@ public class FlightModeIndicator extends HudComponent {
             return;
         }
 
-        if (FAConfig.hud().flightMode_showFirework) {
+        if (FAConfig.hud().showFireworkMode) {
             renderFireworkMode(context, textRenderer);
         }
-        if (FAConfig.hud().flightMode_showVertical) {
+        if (FAConfig.hud().showVerticalMode) {
             renderVerticalMode(context, textRenderer);
         }
-        if (FAConfig.hud().flightMode_showLateral) {
+        if (FAConfig.hud().showLateralMode) {
             renderLateralMode(context, textRenderer);
         }
-        if (FAConfig.hud().flightMode_showAutomation) {
+        if (FAConfig.hud().showAutomationMode) {
             renderAutomationMode(context, textRenderer);
         }
     }

@@ -37,20 +37,20 @@ public class AltitudeIndicator extends HudComponent {
 
         int safeLevel = data.groundLevel == data.voidLevel ? data.voidLevel + 16 : data.groundLevel;
 
-        if (FAConfig.hud().altitude_showReadout) {
+        if (FAConfig.hud().showAltitudeReadout) {
             Color color = getAltitudeColor(safeLevel, data.altitude);
             drawText(textRenderer, context, asText("%.0f", data.altitude), xAltText, dim.yMid - 3, color);
             drawBox(context, xAltText - 2, dim.yMid - 4.5f, 28, color);
         }
 
-        if (FAConfig.hud().altitude_showGround) {
+        if (FAConfig.hud().showGroundAltitude) {
             Color color = data.altitude < safeLevel ? FAConfig.hud().warningTextColor : FAConfig.hud().frameColor;
             drawText(textRenderer, context, Text.translatable(data.groundLevel == data.voidLevel ? "flightassistant.void_level" : "flightassistant.ground_level"), xAltText - 10, bottom, color);
             drawText(textRenderer, context, asText("%d", i(data.heightAboveGround)), xAltText, bottom, color);
             drawBox(context, xAltText - 2, bottom - 1.5f, 28, color);
         }
 
-        if (FAConfig.hud().altitude_showScale) {
+        if (FAConfig.hud().showAltitudeScale) {
             for (int i = -150; i < 1000; i++) {
                 float y = (dim.hScreen - i * blocksPerPixel) - yFloor;
                 if (y > (bottom - 5) || i < data.groundLevel) {
@@ -68,7 +68,7 @@ public class AltitudeIndicator extends HudComponent {
 
                 if (forceMark || i % 50 == 0 && enoughSpace) {
                     drawHorizontalLine(context, left, right + 2, y, color);
-                    if (!FAConfig.hud().altitude_showReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
+                    if (!FAConfig.hud().showAltitudeReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
                         drawText(textRenderer, context, asText("%d", i), xAltText, y - 3, color);
                     }
                     continue;

@@ -32,13 +32,13 @@ public class HeadingIndicator extends HudComponent {
         float northOffset = data.heading * dim.degreesPerPixel;
         float xNorth = dim.xMid - northOffset;
 
-        if (FAConfig.hud().heading_showReadout) {
+        if (FAConfig.hud().showHeadingReadout) {
             Color color = getHeadingColor(data.heading);
             drawText(textRenderer, context, asText("%03d", i(data.heading)), dim.xMid - 8, yText, color);
             drawBox(context, dim.xMid - 15, yText - 1.5f, 30, color);
         }
 
-        if (FAConfig.hud().heading_showScale) {
+        if (FAConfig.hud().showHeadingScale) {
             drawMiddleAlignedText(textRenderer, context, asText("^"), dim.xMid, top + 10, FAConfig.hud().frameColor);
 
             for (int i = -540; i < 540; i++) {
@@ -65,7 +65,7 @@ public class HeadingIndicator extends HudComponent {
                         drawVerticalLine(context, x, top + 3, top + 10, color);
                     }
 
-                    if (!FAConfig.hud().heading_showReadout || x <= dim.xMid - 26 || x >= dim.xMid + 26) {
+                    if (!FAConfig.hud().showHeadingReadout || x <= dim.xMid - 26 || x >= dim.xMid + 26) {
                         drawText(textRenderer, context, asText("%03d", degrees), x - 8, yText, color);
                     }
                     continue;

@@ -26,7 +26,7 @@ public class AlertIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (!FAConfig.hud().alerts_show) {
+        if (!FAConfig.hud().showAlerts) {
             return;
         }
         if (host.faulted.contains(alert)) {
