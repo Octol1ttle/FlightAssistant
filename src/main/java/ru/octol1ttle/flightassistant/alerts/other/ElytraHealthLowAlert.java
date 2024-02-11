@@ -24,13 +24,13 @@ public class ElytraHealthLowAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        return AlertSoundData.MASTER_WARNING;
+        return data.isFlying ? AlertSoundData.MASTER_WARNING : AlertSoundData.EMPTY;
     }
 
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.elytra_health_low"), x, y,
                 FAConfig.hud().warningTextColor,
-                !dismissed && highlight);
+                !dismissed && highlight && data.isFlying);
     }
 }

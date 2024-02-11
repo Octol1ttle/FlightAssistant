@@ -84,12 +84,9 @@ public class AlertController implements ITickableComputer {
 
         for (AbstractAlert alert : activeAlerts) {
             AlertSoundData data = alert.getAlertSoundData();
-            if (data.sound() == null) {
-                continue;
-            }
 
             if (alert.soundInstance != null) {
-                boolean soundChanged = !data.sound().getId().equals(alert.soundInstance.getId());
+                boolean soundChanged = data.sound() == null || !data.sound().getId().equals(alert.soundInstance.getId());
                 if (soundChanged || interrupt || alert.dismissed) {
                     manager.stop(alert.soundInstance);
                     alert.soundInstance = null;
@@ -101,7 +98,7 @@ public class AlertController implements ITickableComputer {
                     }
                 }
 
-                if (manager.isPlaying(alert.soundInstance)) {
+                if (data.sound() != null && manager.isPlaying(alert.soundInstance)) {
                     interrupt = true;
                 }
 
@@ -110,7 +107,7 @@ public class AlertController implements ITickableComputer {
                 }
             }
 
-            if (interrupt || alert.played && !data.repeat() || alert.dismissed) {
+            if (data.sound() == null || interrupt || alert.played && !data.repeat() || alert.dismissed) {
                 continue;
             }
 
