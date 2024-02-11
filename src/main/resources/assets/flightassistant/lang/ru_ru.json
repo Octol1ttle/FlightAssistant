@@ -21,10 +21,10 @@
   "config.flightassistant.settings.frame_width": "Ширина рамки HUD",
   "config.flightassistant.settings.frame_height": "Высота рамки HUD",
   "config.flightassistant.hud.frame_color": "Цвет рамки HUD",
-  "config.flightassistant.hud.status_color": "Цвет статус-текста",
+  "config.flightassistant.hud.status_color": "Цвет информирующих элементов",
   "config.flightassistant.hud.advisory_color": "Цвет указывающих элементов",
-  "config.flightassistant.hud.caution_color": "Цвет внимания",
-  "config.flightassistant.hud.warning_color": "Цвет предупреждения",
+  "config.flightassistant.hud.caution_color": "Цвет предупреждений",
+  "config.flightassistant.hud.warning_color": "Цвет опасности",
 
   "commands.flightassistant.no_such_waypoint": "На указанной позиции нет точки назначения",
   "commands.flightassistant.nothing_to_clear": "Нет точек назначения для очищения",
