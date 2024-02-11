@@ -15,6 +15,8 @@
   "config.flightassistant.options.batching.batch_per_component": "Batch Per Component",
   "config.flightassistant.options.batching.single_batch": "Single Batch",
   "config.flightassistant.settings.hud_scale": "HUD Scale",
+  "config.flightassistant.settings.frame_width": "HUD Frame Width",
+  "config.flightassistant.settings.frame_height": "HUD Frame Height",
 
   "commands.flightassistant.no_such_waypoint": "There is no waypoint at that index",
   "commands.flightassistant.nothing_to_clear": "There are no waypoints to clear",

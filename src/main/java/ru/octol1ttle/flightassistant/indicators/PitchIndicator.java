@@ -105,7 +105,6 @@ public class PitchIndicator extends HudComponent {
     }
 
     private void drawDegreeBar(TextRenderer textRenderer, DrawContext context, float degree, float y) {
-
         if (y < dim.tFrame || y > dim.bFrame) {
             return;
         }
@@ -129,10 +128,8 @@ public class PitchIndicator extends HudComponent {
                 y - fontVerticalOffset, color);
     }
 
-    // TODO: this is absolutely terrible. the amount of imprecision this causes is absurd. (but that can be said about all rendering code here)
     private static class PitchIndicatorData {
         public float width;
-        public float mid;
         public float margin;
         public float sideWidth;
         public float l1;
@@ -141,15 +138,14 @@ public class PitchIndicator extends HudComponent {
         public float r2;
 
         public void update(Dimensions dim) {
-            width = i(dim.wScreen / 3.0f);
-            float left = width;
+            width = dim.wFrame * 0.5f;
+            float left = dim.lFrame + (width * 0.5f);
 
-            mid = i((width * 0.5f) + left);
             margin = i(width * 0.3d);
             l1 = left + margin;
-            l2 = mid - 7;
+            l2 = dim.xMid - 7;
             sideWidth = l2 - l1;
-            r1 = mid + 8;
+            r1 = dim.xMid + 8;
             r2 = r1 + sideWidth;
         }
 

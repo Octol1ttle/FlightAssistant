@@ -40,7 +40,7 @@ public class AlertIndicator extends HudComponent {
         for (AbstractAlert alert : alert.activeAlerts) {
             if (!renderedCentered) {
                 renderedCentered = alert.renderCentered(textRenderer, context, dim.xMid,
-                        dim.hScreen * 0.5f + 10, time.highlight);
+                        dim.yMid + 10, time.highlight);
             }
 
             if (!alert.hidden) {

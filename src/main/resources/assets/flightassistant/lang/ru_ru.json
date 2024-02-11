@@ -14,6 +14,8 @@
   "config.flightassistant.options.batching.batch_per_component": "Группировать по компонентам",
   "config.flightassistant.options.batching.single_batch": "Группировать всё целиком",
   "config.flightassistant.settings.hud_scale": "Масштаб HUD",
+  "config.flightassistant.settings.frame_width": "Ширина рамки HUD",
+  "config.flightassistant.settings.frame_height": "Высота рамки HUD",
 
   "commands.flightassistant.no_such_waypoint": "На указанной позиции нет точки назначения",
   "commands.flightassistant.nothing_to_clear": "Нет точек назначения для очищения",

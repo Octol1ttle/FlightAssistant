@@ -71,8 +71,8 @@ public abstract class HudComponent {
             x1 = x2;
             x2 = i;
         }
-        fill(context, x1 - 0.5f /* TODO: remove this */, y - 0.5f /* TODO: remove this */, x2 + 0.5f /* TODO: remove this */,
-                y + 0.5f /* TODO: remove this */, color);
+        fill(context, x1 - FAConfig.halfThickness(), y - FAConfig.halfThickness(), x2 + FAConfig.halfThickness(),
+                y + FAConfig.halfThickness(), color);
     }
 
     public static void drawVerticalLine(DrawContext context, float x, float y1, float y2, Color color) {
@@ -82,8 +82,8 @@ public abstract class HudComponent {
             y2 = i;
         }
 
-        fill(context, x - 0.5f /* TODO: remove this */, y1 + 0.5f /* TODO: remove this */, x + 0.5f /* TODO: remove this */,
-                y2 - 0.5f /* TODO: remove this */, color);
+        fill(context, x - FAConfig.halfThickness(), y1 + FAConfig.halfThickness(), x + FAConfig.halfThickness(),
+                y2 - FAConfig.halfThickness(), color);
     }
 
     public static void drawBox(DrawContext context, float x, float y, float w, Color color) {

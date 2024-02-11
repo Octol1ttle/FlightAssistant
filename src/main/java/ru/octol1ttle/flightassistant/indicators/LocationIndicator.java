@@ -24,8 +24,8 @@ public class LocationIndicator extends HudComponent {
             return;
         }
 
-        float x = dim.wScreen * FAConfig.hud().location_x;
-        float y = dim.hScreen * FAConfig.hud().location_y;
+        float x = dim.lFrame + 15;
+        float y = dim.bFrame;
 
         int xLoc = i((float) data.position.x);
         int zLoc = i((float) data.position.z);
@@ -36,7 +36,7 @@ public class LocationIndicator extends HudComponent {
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
         drawText(textRenderer, context, Text.translatable("flightassistant.location_short"),
-                dim.wScreen * FAConfig.hud().location_x, dim.hScreen * FAConfig.hud().location_y, FAConfig.hud().warningTextColor);
+                dim.wFrame * FAConfig.hud().location_x, dim.hFrame * FAConfig.hud().location_y, FAConfig.hud().warningTextColor);
     }
 
     @Override

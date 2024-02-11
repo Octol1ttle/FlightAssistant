@@ -46,8 +46,8 @@ public class FlightPathIndicator extends HudComponent {
 
         float l = x - 3;
         float r = x + 3;
-        float t = y - 3 - 0.5f /* TODO: remove this */;
-        float b = y + 3 - 0.5f /* TODO: remove this */;
+        float t = y - 3 - FAConfig.halfThickness();
+        float b = y + 3 - FAConfig.halfThickness();
 
         Color color = gpws.getGPWSLampColor();
         drawVerticalLine(context, l, t, b, color);
@@ -57,8 +57,8 @@ public class FlightPathIndicator extends HudComponent {
         drawHorizontalLine(context, l, r, b, color);
 
         drawVerticalLine(context, x, t - 5, t, color);
-        drawHorizontalLine(context, l - 4, l, y - 0.5f /* TODO: remove this */, color);
-        drawHorizontalLine(context, r, r + 4, y - 0.5f /* TODO: remove this */, color);
+        drawHorizontalLine(context, l - 4, l, y - FAConfig.halfThickness(), color);
+        drawHorizontalLine(context, r, r + 4, y - FAConfig.halfThickness(), color);
     }
 
     @Override

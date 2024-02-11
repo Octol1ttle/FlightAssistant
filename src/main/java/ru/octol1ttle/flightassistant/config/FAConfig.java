@@ -39,8 +39,6 @@ public class FAConfig {
     public float frameWidth = 0.6f;
     @SerialEntry
     public float frameHeight = 0.6f;
-    @SerialEntry
-    public float frameThickness = 1.0f;
 
     public static void setup() {
         HANDLER.load();
@@ -67,6 +65,10 @@ public class FAConfig {
         }
 
         return HANDLER.instance().notFlyingNoElytra;
+    }
+
+    public static float halfThickness() {
+        return 0.5f;
     }
 
     public enum BatchedRendering implements NameableEnum {
