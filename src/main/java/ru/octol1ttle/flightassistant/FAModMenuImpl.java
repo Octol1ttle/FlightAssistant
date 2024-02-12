@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.isxander.yacl3.api.ConfigCategory;
+import dev.isxander.yacl3.api.LabelOption;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
@@ -69,6 +70,7 @@ public class FAModMenuImpl implements ModMenuApi {
     private ConfigCategory hud(Text name, HudConfig config) {
         return ConfigCategory.createBuilder()
                 .name(name)
+                .option(LabelOption.create(Text.translatable("config.flightassistant.hud.colors")))
                 .option(Option.<Color>createBuilder()
                         .name(Text.translatable("config.flightassistant.hud.frame_color"))
                         .binding(Color.GREEN, () -> config.frameColor, o -> config.frameColor = o)

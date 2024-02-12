@@ -20,6 +20,7 @@
   "config.flightassistant.settings.hud_scale": "Масштаб HUD",
   "config.flightassistant.settings.frame_width": "Ширина рамки HUD",
   "config.flightassistant.settings.frame_height": "Высота рамки HUD",
+  "config.flightassistant.hud.colors": "Цвета",
   "config.flightassistant.hud.frame_color": "Цвет рамки HUD",
   "config.flightassistant.hud.status_color": "Цвет информирующих элементов",
   "config.flightassistant.hud.advisory_color": "Цвет указывающих элементов",

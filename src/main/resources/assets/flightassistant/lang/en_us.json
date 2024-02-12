@@ -20,6 +20,7 @@
   "config.flightassistant.settings.hud_scale": "HUD Scale",
   "config.flightassistant.settings.frame_width": "HUD Frame Width",
   "config.flightassistant.settings.frame_height": "HUD Frame Height",
+  "config.flightassistant.hud.colors": "Colors",
   "config.flightassistant.hud.frame_color": "HUD Frame Color",
   "config.flightassistant.hud.status_color": "Status Color",
   "config.flightassistant.hud.advisory_color": "Advisory Color",
