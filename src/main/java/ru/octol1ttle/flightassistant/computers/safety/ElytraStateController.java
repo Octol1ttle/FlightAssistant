@@ -4,12 +4,12 @@ import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 
-public class ElytraStateComputer implements ITickableComputer {
+public class ElytraStateController implements ITickableComputer {
     private final AirDataComputer data;
     private boolean syncedState;
     private boolean changesPending;
 
-    public ElytraStateComputer(AirDataComputer data) {
+    public ElytraStateController(AirDataComputer data) {
         this.data = data;
     }
 

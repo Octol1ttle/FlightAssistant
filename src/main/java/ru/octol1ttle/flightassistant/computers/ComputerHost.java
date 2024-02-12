@@ -14,7 +14,7 @@ import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
 import ru.octol1ttle.flightassistant.computers.autoflight.YawController;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
 import ru.octol1ttle.flightassistant.computers.safety.AlertController;
-import ru.octol1ttle.flightassistant.computers.safety.ElytraStateComputer;
+import ru.octol1ttle.flightassistant.computers.safety.ElytraStateController;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
@@ -31,7 +31,7 @@ public class ComputerHost {
     public final PitchController pitch;
     public final YawController yaw;
     public final FlightPlanner plan;
-    public final ElytraStateComputer elytra;
+    public final ElytraStateController elytra;
     public final List<IComputer> faulted;
     private final List<ITickableComputer> tickables;
 
@@ -45,7 +45,7 @@ public class ComputerHost {
         this.stall = new StallComputer(firework, data);
         this.voidLevel = new VoidLevelComputer(data, firework, stall);
         this.gpws = new GPWSComputer(data);
-        this.elytra = new ElytraStateComputer(data);
+        this.elytra = new ElytraStateController(data);
 
         this.yaw = new YawController(time, data);
         this.pitch = new PitchController(data, stall, time, voidLevel, gpws);
