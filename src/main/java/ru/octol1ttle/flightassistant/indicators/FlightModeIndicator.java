@@ -58,8 +58,8 @@ public class FlightModeIndicator extends HudComponent {
         if (FAConfig.hud().showLateralMode) {
             renderLateralMode(context, textRenderer);
         }
-        if (FAConfig.hud().showAutomationMode) {
-            renderAutomationMode(context, textRenderer);
+        if (FAConfig.hud().showAutomationStatus) {
+            renderAutomationStatus(context, textRenderer);
         }
     }
 
@@ -140,7 +140,7 @@ public class FlightModeIndicator extends HudComponent {
         lateralMode.render(context, textRenderer, x, y);
     }
 
-    private void renderAutomationMode(DrawContext context, TextRenderer textRenderer) {
+    private void renderAutomationStatus(DrawContext context, TextRenderer textRenderer) {
         MutableText automationStatus = Text.literal("");
         if (autoflight.flightDirectorsEnabled) {
             appendWithSeparation(automationStatus, Text.translatable("mode.flightassistant.auto.flight_directors"));
@@ -171,7 +171,7 @@ public class FlightModeIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawText(textRenderer, context, Text.translatable("flightassistant.flight_mode_short"), dim.lFrame + dim.wFrame * 0.2f, dim.bFrame + 10, FAConfig.hud().warningColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.flight_mode_short"), dim.lFrame + dim.wFrame * 0.2f, dim.bFrame - 10, FAConfig.hud().warningColor);
     }
 
     @Override

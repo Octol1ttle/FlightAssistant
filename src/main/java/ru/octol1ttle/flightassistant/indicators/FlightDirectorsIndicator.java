@@ -23,7 +23,7 @@ public class FlightDirectorsIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (!FAConfig.hud().showFlightDirectors || !autoflight.flightDirectorsEnabled) {
+        if (!autoflight.flightDirectorsEnabled) {
             return;
         }
 

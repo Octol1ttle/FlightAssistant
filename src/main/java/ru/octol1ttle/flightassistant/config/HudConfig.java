@@ -16,16 +16,6 @@ public class HudConfig {
     public Color warningColor = Color.RED;
 
     @SerialEntry
-    public boolean showElytraHealth = true;
-    @SerialEntry
-    public boolean showCoordinates = true;
-    @SerialEntry
-    public boolean showFlightPath = true;
-
-    @SerialEntry
-    public boolean showPitchLadder = true;
-
-    @SerialEntry
     public boolean showSpeedScale = true;
     @SerialEntry
     public boolean showSpeedReadout = true;
@@ -43,22 +33,27 @@ public class HudConfig {
     public boolean showHeadingReadout = true;
 
     @SerialEntry
-    public boolean showAlerts = true;
-
-    @SerialEntry
-    public boolean showFlightDirectors = true;
-
-    @SerialEntry
     public boolean showFireworkMode = true;
     @SerialEntry
     public boolean showVerticalMode = true;
     @SerialEntry
     public boolean showLateralMode = true;
     @SerialEntry
-    public boolean showAutomationMode = true;
+    public boolean showAutomationStatus = true;
 
     @SerialEntry
+    public boolean showAlerts = true;
+    @SerialEntry
     public boolean showFireworkCount = true;
+
+    @SerialEntry
+    public boolean showPitchLadder = true;
+    @SerialEntry
+    public boolean showFlightPath = true;
+    @SerialEntry
+    public boolean showCoordinates = true;
+    @SerialEntry
+    public boolean showElytraHealth = true;
 
     public HudConfig setMinimal() {
         this.showFlightPath = false;
@@ -87,11 +82,10 @@ public class HudConfig {
         this.showHeadingScale = false;
         this.showHeadingReadout = false;
         this.showAlerts = false;
-        this.showFlightDirectors = false;
         this.showFireworkMode = false;
         this.showVerticalMode = false;
         this.showLateralMode = false;
-        this.showAutomationMode = false;
+        this.showAutomationStatus = false;
         this.showFireworkCount = false;
 
         return this;
