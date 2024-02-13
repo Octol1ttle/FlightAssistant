@@ -29,10 +29,10 @@ public class FlightSafetyMonitor {
     public static boolean isElytraLow = false;
 
     public static boolean isStalling = false;
-    public static float maximumSafePitch = 0.0f;
+    public static float maximumSafePitch = 90.0f;
 
-    public static float secondsUntilGroundImpact = 0.0f;
-    public static float secondsUntilTerrainImpact = 0.0f;
+    public static float secondsUntilGroundImpact = Float.MAX_VALUE;
+    public static float secondsUntilTerrainImpact = Float.MAX_VALUE;
     public static float terrainDetectionTimer = 0.0f;
     public static int gpwsLampColor;
 
@@ -143,7 +143,7 @@ public class FlightSafetyMonitor {
         if (!CONFIG_SETTINGS.gpws || isStalling || computer.velocityPerSecond.horizontalLength() <= 17.5f || player.isTouchingWater())
             return Float.MAX_VALUE;
         Vec3d vec = raycast(player, computer, 10);
-        float f = vec == null ? Float.MAX_VALUE : (float) (vec.subtract(player.getPos()).horizontalLength() / computer.velocityPerSecond.horizontalLength());
+        float f = vec == null ? Float.MAX_VALUE : (float) (vec.subtract(player.getPos()).length() / computer.velocityPerSecond.horizontalLength());
         if (f <= 10.0f) {
             terrainDetectionTimer = MathHelper.clamp(terrainDetectionTimer + deltaTime, 0.0f, 1.0f);
         } else {
@@ -173,7 +173,7 @@ public class FlightSafetyMonitor {
         Vec3d end = player.getPos().add(vel.multiply(seconds));
 
         BlockHitResult result = player.getWorld().raycast(new RaycastContext(player.getPos(), end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, player));
-        if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP || result.getSide() == Direction.DOWN)
+        if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP)
             return null;
         return result.getPos();
     }

@@ -1,10 +1,10 @@
 package net.torocraft.flighthud;
 
-import java.util.function.Consumer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.config.HudConfig;
 
@@ -16,7 +16,7 @@ public abstract class HudComponent {
     }
 
     protected static int i(float f) {
-        return Math.round(f);
+        return MathHelper.floor(f);
     }
 
     public static float wrapHeading(float degrees) {
@@ -67,13 +67,13 @@ public abstract class HudComponent {
     }
 
     public static void drawTextHighlight(TextRenderer renderer, DrawContext context, float x, float y, String text, int color) {
-        HudComponent.fill(context, x - 1.5f, y - 1.5f, x + renderer.getWidth(text), y + 8.0f, color);
+        HudComponent.fill(context, x - 2.0f, y - 1.0f, x + renderer.getWidth(text) + 1.0f, y + 8.0f, color);
     }
 
-    public static void drawUnbatched(Consumer<DrawContext> c, DrawContext context) {
+    public static void drawUnbatched(Runnable draw) {
         if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
             net.torocraft.flighthud.compat.ImmediatelyFastBatchingAccessor.endHudBatching();
-        c.accept(context);
+        draw.run();
         if (FabricLoader.getInstance().isModLoaded("immediatelyfast"))
             net.torocraft.flighthud.compat.ImmediatelyFastBatchingAccessor.beginHudBatching();
     }

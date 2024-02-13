@@ -2,6 +2,7 @@ package net.torocraft.flighthud.components;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.FlightComputer;
@@ -138,7 +139,7 @@ public class PitchIndicator extends HudComponent {
         }
 
         private int i(double d) {
-            return (int) Math.round(d);
+            return MathHelper.floor(d);
         }
     }
 }

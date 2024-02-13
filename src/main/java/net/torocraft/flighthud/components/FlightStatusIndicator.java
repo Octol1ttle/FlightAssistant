@@ -144,14 +144,14 @@ public class FlightStatusIndicator extends HudComponent {
 
     public void drawCenteredWarning(MinecraftClient mc, DrawContext context, float width, float y, boolean highlight, String text) {
         float x = (width - mc.textRenderer.getWidth(text)) / 2;
-        if (highlight) {
-            HudComponent.drawUnbatched(drawContext -> {
-                HudComponent.drawTextHighlight(mc.textRenderer, drawContext, x, y, text, CONFIG.alertColor);
-                HudComponent.drawCenteredFont(mc, drawContext, text, width, y, CONFIG.white);
-            }, context);
-            return;
-        }
-        HudComponent.drawCenteredFont(mc, context, text, width, y, CONFIG.alertColor);
+        HudComponent.drawUnbatched(() -> {
+            if (highlight) {
+                HudComponent.drawTextHighlight(mc.textRenderer, context, x, y, text, CONFIG.alertColor);
+                HudComponent.drawCenteredFont(mc, context, text, width, y, CONFIG.white);
+            } else {
+                HudComponent.drawCenteredFont(mc, context, text, width, y, CONFIG.alertColor);
+            }
+        });
     }
 
     public void tryStopEvents(PlayerEntity player, SoundManager manager) {

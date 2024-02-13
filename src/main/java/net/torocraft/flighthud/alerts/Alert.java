@@ -10,22 +10,26 @@ public abstract class Alert {
     public boolean hidden;
 
     public static int drawWarning(MinecraftClient mc, DrawContext context, float x, float y, boolean highlight, String text) {
-        if (highlight) {
-            HudComponent.drawTextHighlight(mc.textRenderer, context, x, y, text, CONFIG.alertColor);
-            HudComponent.drawFont(mc, context, text, x, y, CONFIG.white);
-            return 1;
-        }
-        HudComponent.drawFont(mc, context, text, x, y, CONFIG.alertColor);
+        HudComponent.drawUnbatched(() -> {
+            if (highlight) {
+                HudComponent.drawTextHighlight(mc.textRenderer, context, x, y, text, CONFIG.alertColor);
+                HudComponent.drawFont(mc, context, text, x, y, CONFIG.white);
+            } else {
+                HudComponent.drawFont(mc, context, text, x, y, CONFIG.alertColor);
+            }
+        });
         return 1;
     }
 
     public static int drawCaution(MinecraftClient mc, DrawContext context, float x, float y, boolean highlight, String text) {
-        if (highlight) {
-            HudComponent.drawTextHighlight(mc.textRenderer, context, x, y, text, CONFIG.amberColor);
-            HudComponent.drawFont(mc, context, text, x, y, CONFIG.black);
-            return 1;
-        }
-        HudComponent.drawFont(mc, context, text, x, y, CONFIG.amberColor);
+        HudComponent.drawUnbatched(() -> {
+            if (highlight) {
+                HudComponent.drawTextHighlight(mc.textRenderer, context, x, y, text, CONFIG.amberColor);
+                HudComponent.drawFont(mc, context, text, x, y, CONFIG.black);
+            } else {
+                HudComponent.drawFont(mc, context, text, x, y, CONFIG.amberColor);
+            }
+        });
         return 1;
     }
 
