@@ -101,7 +101,7 @@ public class FlightStatusIndicator extends HudComponent {
             if (AutoFlightManager.targetPitch != null) {
                 float deltaPitch = computer.pitch + AutoFlightManager.targetPitch;
                 float fdY = Math.max(dim.tFrame, Math.min(dim.bFrame, dim.yMid + i(deltaPitch * dim.degreesPerPixel)));
-                drawHorizontalLine(context, dim.xMid - dim.wFrame * 0.15f, dim.xMid + dim.wFrame * 0.15f, fdY, CONFIG.adviceColor);
+                drawHorizontalLine(context, dim.xMid - dim.wFrame * 0.1f, dim.xMid + dim.wFrame * 0.1f, fdY, CONFIG.adviceColor);
             }
 
             if (AutoFlightManager.targetHeading != null) {
