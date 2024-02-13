@@ -139,7 +139,7 @@ public class FlightSafetyMonitor {
     }
 
     private static float updateUnsafeTerrainClearance(PlayerEntity player, FlightComputer computer) {
-        if (!CONFIG_SETTINGS.gpws || isStalling || computer.velocityPerSecond.horizontalLength() <= 15)
+        if (!CONFIG_SETTINGS.gpws || isStalling || computer.velocityPerSecond.horizontalLength() <= 17.5f || player.isTouchingWater())
             return Float.MAX_VALUE;
         Vec3d vec = raycast(player, computer, 10);
         float f = vec == null ? Float.MAX_VALUE : (float) (vec.subtract(player.getPos()).horizontalLength() / computer.velocityPerSecond.horizontalLength());
