@@ -57,7 +57,7 @@ public class FlightSafetyMonitor {
             lastPassengers = 0;
             return;
         }
-        maximumSafePitch = updateMaximumSafePitch(computer);
+        maximumSafePitch = updateMaximumSafePitch(computer, mc.player);
         secondsUntilGroundImpact = updateUnsafeSinkrate(computer);
 
         boolean hasCeiling = mc.player.getWorld().getDimension().hasCeiling();
@@ -128,8 +128,8 @@ public class FlightSafetyMonitor {
         return computer.pitch > 0 && computer.distanceFromGround > 3 && computer.velocity.horizontalLength() < -computer.velocity.y;
     }
 
-    private static float updateMaximumSafePitch(FlightComputer computer) {
-        return isStalling && computer.velocityPerSecond.y <= -10 ? 0.0f : computer.speed * 3;
+    private static float updateMaximumSafePitch(FlightComputer computer, PlayerEntity player) {
+        return isStalling && computer.velocityPerSecond.y <= -10 ? 0.0f : (player.isTouchingWater() ? 90.0f : computer.speed * 3);
     }
 
     private static float updateUnsafeSinkrate(FlightComputer computer) {
