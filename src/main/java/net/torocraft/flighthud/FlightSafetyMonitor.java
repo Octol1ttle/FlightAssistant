@@ -13,6 +13,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
 
@@ -144,15 +145,12 @@ public class FlightSafetyMonitor {
         Vec3d vec = raycast(player, computer, 10);
         float f = vec == null ? Float.MAX_VALUE : (float) (vec.subtract(player.getPos()).horizontalLength() / computer.velocityPerSecond.horizontalLength());
         if (f <= 10.0f) {
-            f = Math.min(f, secondsUntilTerrainImpact);
-            terrainDetectionTimer = Math.min(0.5f, terrainDetectionTimer + deltaTime);
+            terrainDetectionTimer = MathHelper.clamp(terrainDetectionTimer + deltaTime, 0.0f, 1.0f);
         } else {
-            terrainDetectionTimer = Math.max(0.0f, terrainDetectionTimer - deltaTime);
-            if (terrainDetectionTimer > 0.0f)
-                f = Math.min(f, secondsUntilTerrainImpact);
+            terrainDetectionTimer = MathHelper.clamp(terrainDetectionTimer - deltaTime, 0.0f, 1.0f);
         }
 
-        return f > 10.0f || terrainDetectionTimer >= Math.min(0.5f, f * 0.2f) ? f : Float.MAX_VALUE;
+        return f > 10.0f || terrainDetectionTimer >= 1.0f ? f : Float.MAX_VALUE;
     }
 
     private static int countSafeFireworks(PlayerEntity player) {
