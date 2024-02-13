@@ -40,7 +40,7 @@ public record AlertSoundData(@Nullable SoundEvent sound, int priority, @Deprecat
             SoundEvent.of(new Identifier("flightassistant:warning")),
             4,
             0.5f,
-            true
+            false
     );
 
     public static final AlertSoundData MASTER_CAUTION = new AlertSoundData(
