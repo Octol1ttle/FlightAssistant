@@ -11,8 +11,6 @@ import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.autoflight.AutopilotOffAlert;
 import ru.octol1ttle.flightassistant.alerts.fault.ComputerFaultAlert;
 import ru.octol1ttle.flightassistant.alerts.fault.IndicatorFaultAlert;
-import ru.octol1ttle.flightassistant.alerts.firework.FireworkCountZeroAlert;
-import ru.octol1ttle.flightassistant.alerts.firework.FireworkLowCountAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkNoResponseAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkUnsafeAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.ApproachingVoidDamageLevelAlert;
@@ -25,36 +23,28 @@ import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 
 public class AlertController implements ITickableComputer {
     public final List<AbstractAlert> activeAlerts;
-    private final ComputerHost host;
     private final SoundManager manager;
     private final List<AbstractAlert> allAlerts;
 
     public AlertController(ComputerHost host, SoundManager manager, HudRenderer renderer) {
-        this.host = host;
         this.manager = manager;
         // TODO: ECAM actions
         allAlerts = List.of(
-                new StallAlert(this.host.stall),
-                new ExcessiveDescentAlert(this.host.data, this.host.gpws), new ExcessiveTerrainClosureAlert(this.host.gpws, this.host.time),
-                new AutopilotOffAlert(this.host.autoflight),
-                new ComputerFaultAlert(this.host),
+                new StallAlert(host.stall),
+                new ExcessiveDescentAlert(host.data, host.gpws), new ExcessiveTerrainClosureAlert(host.gpws, host.time),
+                new AutopilotOffAlert(host.autoflight),
+                new ComputerFaultAlert(host),
                 new IndicatorFaultAlert(renderer),
-                new ApproachingVoidDamageLevelAlert(this.host.voidLevel),
-                new ElytraHealthLowAlert(this.host.data),
-                new FireworkUnsafeAlert(this.host.firework),
-                new FireworkCountZeroAlert(this.host.firework),
-                new FireworkNoResponseAlert(this.host.firework),
-                new FireworkLowCountAlert(this.host.firework));
+                new ApproachingVoidDamageLevelAlert(host.voidLevel),
+                new ElytraHealthLowAlert(host.data),
+                new FireworkUnsafeAlert(host.firework),
+                new FireworkNoResponseAlert(host.firework)
+        );
         activeAlerts = new ArrayList<>(allAlerts.size());
     }
 
     @Override
     public void tick() {
-        if (false) { // TODO: HUD hidden
-            reset();
-            return;
-        }
-
         for (AbstractAlert alert : allAlerts) {
             if (alert.isTriggered()) {
                 if (!activeAlerts.contains(alert)) {
@@ -69,7 +59,6 @@ public class AlertController implements ITickableComputer {
 
             alert.played = false;
             alert.hidden = false;
-            alert.dismissed = false;
 
             if (alert.soundInstance != null) {
                 manager.stop(alert.soundInstance);
@@ -85,33 +74,27 @@ public class AlertController implements ITickableComputer {
         for (AbstractAlert alert : activeAlerts) {
             AlertSoundData data = alert.getAlertSoundData();
 
+            boolean soundChanged = false;
             if (alert.soundInstance != null) {
-                boolean soundChanged = data.sound() == null || !data.sound().getId().equals(alert.soundInstance.getId());
-                if (soundChanged || interrupt || alert.dismissed) {
+                soundChanged = data.sound() == null || !data.sound().getId().equals(alert.soundInstance.getId());
+                if (soundChanged || interrupt || alert.hidden) {
                     manager.stop(alert.soundInstance);
                     alert.soundInstance = null;
-                    if (!interrupt) {
-                        alert.played = false;
-                    }
-                    if (!soundChanged) {
+                    if (soundChanged) {
+                        alert.played = false; // Schedule for new sound instance creation
+                    } else {
                         continue;
                     }
-                }
-
-                if (data.sound() != null && manager.isPlaying(alert.soundInstance)) {
+                } else if (manager.isPlaying(alert.soundInstance)) {
                     interrupt = true;
-                }
-
-                if (!soundChanged) {
-                    continue;
                 }
             }
 
-            if (data.sound() == null || interrupt || alert.played && !data.repeat() || alert.dismissed) {
+            if (data.sound() == null || alert.hidden || alert.played || interrupt && !soundChanged) {
                 continue;
             }
 
-            alert.soundInstance = new AlertSoundInstance(data.sound(), data.volume(), data.repeat());
+            alert.soundInstance = new AlertSoundInstance(data.sound());
             manager.play(alert.soundInstance);
             alert.played = true;
 
@@ -119,26 +102,23 @@ public class AlertController implements ITickableComputer {
         }
     }
 
-    public boolean dismiss(AlertSoundData data) {
-        boolean anyDismissed = false;
+    public void hide() {
         for (AbstractAlert alert : activeAlerts) {
-            if (!alert.dismissed && alert.getAlertSoundData().equals(data)) {
-                alert.dismissed = true;
-                anyDismissed = true;
-            }
-        }
-
-        if (anyDismissed) {
-            return true;
-        }
-
-        for (AbstractAlert alert : activeAlerts) {
-            if (!alert.hidden && alert.getAlertSoundData().equals(data)) {
+            if (!alert.hidden) {
                 alert.hidden = true;
-                return true;
+                return;
             }
         }
-        return false;
+    }
+
+    public void recall() {
+        for (int i = activeAlerts.size() - 1; i >= 0; i--) {
+            AbstractAlert alert = activeAlerts.get(i);
+            if (alert.hidden) {
+                alert.hidden = false;
+                return;
+            }
+        }
     }
 
     @Override
@@ -150,6 +130,7 @@ public class AlertController implements ITickableComputer {
     public void reset() {
         for (AbstractAlert alert : activeAlerts) {
             alert.played = false;
+            alert.hidden = false;
 
             if (alert.soundInstance != null) {
                 manager.stop(alert.soundInstance);

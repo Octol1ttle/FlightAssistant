@@ -28,8 +28,9 @@ public abstract class HudComponent {
         drawText(textRenderer, context, text, x - textRenderer.getWidth(text), y, color);
     }
 
-    public static void drawText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color) {
+    public static int drawText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color) {
         context.drawText(textRenderer, text, i(x), i(y), color.getRGB(), false);
+        return SINGLE_LINE_DRAWN;
     }
 
     public static void drawMiddleAlignedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color) {

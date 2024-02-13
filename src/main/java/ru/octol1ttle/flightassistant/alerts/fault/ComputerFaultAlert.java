@@ -25,17 +25,15 @@ public class ComputerFaultAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        return host.faulted.contains(host.data) ? AlertSoundData.MASTER_WARNING : AlertSoundData.MASTER_CAUTION;
+        return AlertSoundData.MASTER_WARNING;
     }
 
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         int i = 0;
         for (IComputer computer : host.faulted) {
-            boolean isADC = host.data.equals(computer);
             i += HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.fault.computers." + computer.getId()), x, y,
-                    isADC ? FAConfig.hud().warningColor : FAConfig.hud().cautionColor,
-                    !dismissed && (highlight || !isADC));
+                    FAConfig.hud().warningColor, highlight);
             y += 10;
         }
 

@@ -35,7 +35,6 @@ public class ApproachingVoidDamageLevelAlert extends AbstractAlert {
                 : Text.translatable("alerts.flightassistant.approaching_void_damage_level");
 
         return HudComponent.drawHighlightedText(textRenderer, context, text, x, y,
-                FAConfig.hud().warningColor,
-                !dismissed && highlight);
+                FAConfig.hud().warningColor, highlight);
     }
 }

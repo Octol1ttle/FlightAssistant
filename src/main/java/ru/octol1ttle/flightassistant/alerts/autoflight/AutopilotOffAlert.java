@@ -31,6 +31,6 @@ public class AutopilotOffAlert extends AbstractAlert {
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.autoflight.auto_pilot_off"), x, y,
                 FAConfig.hud().warningColor,
-                highlight && !dismissed && autoflight.apDisconnectionForced);
+                highlight && autoflight.apDisconnectionForced);
     }
 }

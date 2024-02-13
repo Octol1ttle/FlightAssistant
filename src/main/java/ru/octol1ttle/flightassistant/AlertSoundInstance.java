@@ -6,11 +6,10 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.random.Random;
 
 public class AlertSoundInstance extends AbstractSoundInstance {
-    public AlertSoundInstance(SoundEvent sound, float volume, boolean repeat) {
+    public AlertSoundInstance(SoundEvent sound) {
         super(sound, SoundCategory.MASTER, Random.create(0L));
-        this.volume = volume;
+        this.volume = 0.5f;
         this.attenuationType = AttenuationType.NONE;
-        this.repeat = repeat;
         this.relative = true;
     }
 

@@ -10,7 +10,6 @@ public abstract class AbstractAlert {
     @Nullable
     public AlertSoundInstance soundInstance;
     public boolean played = false;
-    public boolean dismissed = false;
     public boolean hidden = false;
 
     public abstract boolean isTriggered();
