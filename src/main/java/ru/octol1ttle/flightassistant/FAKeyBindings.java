@@ -67,7 +67,7 @@ public class FAKeyBindings {
                 }
 
                 while (dismissMasterWarning.wasPressed()) {
-                    if (!host.alert.dismiss(AlertSoundData.AUTOPILOT_FORCED_OFF) && !host.alert.dismiss(AlertSoundData.AUTOPILOT_DISCONNECTED_BY_PLAYER)) {
+                    if (!host.alert.dismiss(AlertSoundData.AUTOPILOT_DISCONNECT)) {
                         host.alert.dismiss(AlertSoundData.MASTER_WARNING);
                     }
                 }

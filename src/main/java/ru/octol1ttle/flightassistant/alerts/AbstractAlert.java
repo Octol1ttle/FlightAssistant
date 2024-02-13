@@ -25,12 +25,4 @@ public abstract class AbstractAlert {
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         return 0;
     }
-
-    public boolean canBeDismissed(boolean isPlaying) {
-        return true;
-    }
-
-    public boolean canBeHidden() {
-        return true;
-    }
 }

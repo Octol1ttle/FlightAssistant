@@ -4,7 +4,8 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
-public record AlertSoundData(@Nullable SoundEvent sound, int priority, float volume, boolean repeat) {
+public record AlertSoundData(@Nullable SoundEvent sound, int priority, @Deprecated float volume,
+                             @Deprecated boolean repeat) {
     public static final AlertSoundData STALL = new AlertSoundData(
             SoundEvent.of(new Identifier("flightassistant:stall")),
             0,
@@ -29,13 +30,7 @@ public record AlertSoundData(@Nullable SoundEvent sound, int priority, float vol
             0.5f,
             false
     );
-    public static final AlertSoundData AUTOPILOT_FORCED_OFF = new AlertSoundData(
-            SoundEvent.of(new Identifier("flightassistant:autopilot_disconnect")),
-            3,
-            0.5f,
-            true
-    );
-    public static final AlertSoundData AUTOPILOT_DISCONNECTED_BY_PLAYER = new AlertSoundData(
+    public static final AlertSoundData AUTOPILOT_DISCONNECT = new AlertSoundData(
             SoundEvent.of(new Identifier("flightassistant:autopilot_disconnect")),
             3,
             0.5f,
