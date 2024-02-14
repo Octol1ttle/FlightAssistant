@@ -6,12 +6,12 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Restore Gradle caches
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -25,7 +25,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Setup JDK 8
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
           java-version: 17
@@ -42,7 +42,7 @@ jobs:
         id: ref
 
       - name: Publish build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: flightassistant-${{ steps.ref.outputs.branch }}
           path: build/libs/
