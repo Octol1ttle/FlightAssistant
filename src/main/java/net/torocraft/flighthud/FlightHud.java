@@ -143,7 +143,7 @@ public class FlightHud implements ClientModInitializer {
     private static void setupCommand() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 
-            LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(literal("flightassistant")
+            LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(literal(FlightHud.MODID)
                     .then(literal("toggle").executes(new SwitchDisplayModeCommand()))
                     .then(literal("nav")
                             .then(argument("destinationX", IntegerArgumentType.integer(-30_000_000, 30_000_000))
@@ -156,6 +156,7 @@ public class FlightHud implements ClientModInitializer {
                                     .executes(new AltitudeSelectCommand()))
                             .then(literal("reset")
                                     .executes(new AltitudeResetCommand()))));
+            dispatcher.register(literal("flas").redirect(node));
             dispatcher.register(literal("fhud").redirect(node));
             dispatcher.register(literal("fh").redirect(node));
         });
