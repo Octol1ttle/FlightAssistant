@@ -88,7 +88,6 @@
   "alerts.flightassistant.fault.computers.stall_det": "ОТКАЗ СИСТ. ОБНАРУЖ. СВАЛИВ. (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.computers.void_level": "ОТКАЗ СИСТ. ВЫСОТЫ ПУСТОТЫ (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.computers.yaw_ctl": "ОТКАЗ УПР. РЫСКАНИЕМ",
-  "alerts.flightassistant.fault.computers.collision_det": "ОТКАЗ СИСТ. ОБНАРУЖ. КОЛЛИЗ. (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.computers.elytra_state": "ОТКАЗ УПР. ЭЛИТРАМИ (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.indicators.alert": "ОТКАЗ ИНДИК. ПРЕДУПР.",
   "alerts.flightassistant.fault.indicators.altitude": "ОТКАЗ ИНДИК. ВЫСОТЫ",

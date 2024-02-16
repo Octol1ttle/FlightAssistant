@@ -88,7 +88,6 @@
   "alerts.flightassistant.fault.computers.stall_det": "STALL DET FAULT (PROT LOST)",
   "alerts.flightassistant.fault.computers.void_level": "VOID LVL FAULT (PROT LOST)",
   "alerts.flightassistant.fault.computers.yaw_ctl": "YAW CTL FAULT",
-  "alerts.flightassistant.fault.computers.collision_det": "COLLISION DET FAULT (PROT LOST)",
   "alerts.flightassistant.fault.computers.elytra_state": "ELYTRA STATE FAULT (PROT LOST)",
   "alerts.flightassistant.fault.indicators.alert": "ALERT INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.altitude": "ALTITUDE INDICATOR FAULT",
