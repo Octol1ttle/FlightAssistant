@@ -69,10 +69,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     }
 
     public void execute(int waypointIndex) {
-        // TODO: throw exception if waypoint doesn't exist
-        if (waypointExistsAt(waypointIndex)) {
-            targetWaypoint = this.get(waypointIndex);
-        }
+        targetWaypoint = this.get(waypointIndex);
     }
 
     public boolean waypointExistsAt(int index) {
