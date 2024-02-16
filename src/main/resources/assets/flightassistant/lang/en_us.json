@@ -29,6 +29,8 @@
   "config.flightassistant.hud.speed": "Speed",
   "config.flightassistant.hud.speed.scale": "Show Speed Scale",
   "config.flightassistant.hud.speed.readout": "Show Speed Readout",
+  "config.flightassistant.hud.speed.ground_readout": "Show Ground Speed Readout",
+  "config.flightassistant.hud.speed.vertical_readout": "Show Vertical Speed Readout",
   "config.flightassistant.hud.altitude": "Altitude",
   "config.flightassistant.hud.altitude.scale": "Show Altitude Scale",
   "config.flightassistant.hud.altitude.readout": "Show Altitude Readout",

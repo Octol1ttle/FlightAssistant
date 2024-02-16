@@ -19,6 +19,10 @@ public class HudConfig {
     public boolean showSpeedScale = true;
     @SerialEntry
     public boolean showSpeedReadout = true;
+    @SerialEntry
+    public boolean showGroundSpeedReadout = true;
+    @SerialEntry
+    public boolean showVerticalSpeedReadout = true;
 
     @SerialEntry
     public boolean showAltitudeScale = true;
@@ -60,6 +64,7 @@ public class HudConfig {
         this.showPitchLadder = false;
         this.showSpeedScale = false;
         this.showSpeedReadout = false;
+        this.showVerticalSpeedReadout = false;
         this.showAltitudeScale = false;
         this.showGroundAltitude = false;
         this.showHeadingScale = false;
@@ -76,6 +81,8 @@ public class HudConfig {
         this.showPitchLadder = false;
         this.showSpeedScale = false;
         this.showSpeedReadout = false;
+        this.showGroundSpeedReadout = false;
+        this.showVerticalSpeedReadout = false;
         this.showAltitudeScale = false;
         this.showAltitudeReadout = false;
         this.showGroundAltitude = false;

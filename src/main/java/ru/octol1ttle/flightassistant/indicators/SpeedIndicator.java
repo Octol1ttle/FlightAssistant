@@ -36,11 +36,13 @@ public class SpeedIndicator extends HudComponent {
             drawBox(context, xSpeedText - 29.5f, dim.yMid - 4.5f, 30, FAConfig.hud().frameColor);
 
             float frameWidth = dim.rFrame - dim.lFrame;
-            // TODO: separate indicator
-            drawText(textRenderer, context, Text.translatable("flightassistant.ground_speed_short", String.format("%.2f", data.velocityPerSecond.horizontalLength())), dim.lFrame + frameWidth * 0.25f, dim.bFrame, FAConfig.hud().frameColor);
-            drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", String.format("%.2f", data.velocityPerSecond.y)), dim.lFrame + frameWidth * 0.75f - 7, dim.bFrame, data.velocityPerSecond.y <= -10.0f ? FAConfig.hud().warningColor : FAConfig.hud().frameColor);
+            if (FAConfig.hud().showGroundSpeedReadout) {
+                drawText(textRenderer, context, Text.translatable("flightassistant.ground_speed_short", String.format("%.2f", data.velocityPerSecond.horizontalLength())), dim.lFrame + frameWidth * 0.25f, dim.bFrame, FAConfig.hud().frameColor);
+            }
+            if (FAConfig.hud().showVerticalSpeedReadout) {
+                drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", String.format("%.2f", data.velocityPerSecond.y)), dim.lFrame + frameWidth * 0.75f - 7, dim.bFrame, data.velocityPerSecond.y <= -10.0f ? FAConfig.hud().warningColor : FAConfig.hud().frameColor);
+            }
         }
-
 
         if (FAConfig.hud().showSpeedScale) {
             for (float i = 0; i <= 100; i += 0.25f) {

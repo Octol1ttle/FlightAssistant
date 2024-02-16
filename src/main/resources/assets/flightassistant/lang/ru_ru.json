@@ -29,6 +29,8 @@
   "config.flightassistant.hud.speed": "Скорость",
   "config.flightassistant.hud.speed.scale": "Показывать шкалу скорости",
   "config.flightassistant.hud.speed.readout": "Показывать значение скорости",
+  "config.flightassistant.hud.speed.ground_readout": "Показывать значение горизонтальной скорости",
+  "config.flightassistant.hud.speed.vertical_readout": "Показывать значение вертикальной скорости",
   "config.flightassistant.hud.altitude": "Высота",
   "config.flightassistant.hud.altitude.scale": "Показывать шкалу высоты",
   "config.flightassistant.hud.altitude.readout": "Показывать значение высоты",
