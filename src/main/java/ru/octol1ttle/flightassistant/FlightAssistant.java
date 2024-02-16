@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
-// TODO: try to remove all abbreviations/shortenings and see what comes of it
-// TODO: block certain alerts in certain phases of flight
 public class FlightAssistant implements ClientModInitializer {
     public static final String MODID = "flightassistant";
     public static final Logger LOGGER = LoggerFactory.getLogger("FlightAssistant");

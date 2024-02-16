@@ -20,7 +20,6 @@ public class AirDataComputer implements ITickableComputer {
     private final MinecraftClient mc;
     public ClientPlayerEntity player;
 
-    // TODO: if this computer fails, *everything* is inoperable, making this *the* single point of failure in the mod
     public boolean isFlying = false;
     public Vec3d position = Vec3d.ZERO;
     public Vec3d velocity = Vec3d.ZERO;

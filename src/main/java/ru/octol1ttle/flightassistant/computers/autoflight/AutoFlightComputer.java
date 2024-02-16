@@ -56,8 +56,6 @@ public class AutoFlightComputer implements ITickableComputer {
 
         pitch.targetPitch = autoPilotEnabled ? getTargetPitch() : null;
         yaw.targetHeading = autoPilotEnabled ? getTargetHeading() : null;
-
-        // TODO: disconnect A/P on player input
     }
 
     public @Nullable Integer getTargetSpeed() {
