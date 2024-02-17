@@ -2,7 +2,6 @@ package net.torocraft.flighthud;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.torocraft.flighthud.components.AltitudeIndicator;
 import net.torocraft.flighthud.components.ElytraHealthIndicator;
 import net.torocraft.flighthud.components.FlightPathIndicator;
@@ -12,6 +11,7 @@ import net.torocraft.flighthud.components.LocationIndicator;
 import net.torocraft.flighthud.components.PitchIndicator;
 import net.torocraft.flighthud.components.SpeedIndicator;
 import net.torocraft.flighthud.config.SettingsConfig.DisplayMode;
+import net.torocraft.flighthud.shims.DrawContext;
 
 public class HudRenderer extends HudComponent {
     public static final HudRenderer INSTANCE = new HudRenderer();

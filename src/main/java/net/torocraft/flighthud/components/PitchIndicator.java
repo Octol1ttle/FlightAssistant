@@ -1,13 +1,13 @@
 package net.torocraft.flighthud.components;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.FlightComputer;
 import net.torocraft.flighthud.FlightSafetyMonitor;
 import net.torocraft.flighthud.HudComponent;
+import net.torocraft.flighthud.shims.DrawContext;
 
 public class PitchIndicator extends HudComponent {
     private final Dimensions dim;

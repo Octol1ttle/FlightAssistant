@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -27,6 +26,7 @@ import net.torocraft.flighthud.alerts.NoFireworksAlert;
 import net.torocraft.flighthud.alerts.PassengerDismountedAlert;
 import net.torocraft.flighthud.alerts.ThrustLockedAlert;
 import net.torocraft.flighthud.alerts.UnsafeFireworksAlert;
+import net.torocraft.flighthud.shims.DrawContext;
 
 import static net.torocraft.flighthud.AutoFlightManager.deltaTime;
 import static net.torocraft.flighthud.AutoFlightManager.lastUpdateTimeMs;
