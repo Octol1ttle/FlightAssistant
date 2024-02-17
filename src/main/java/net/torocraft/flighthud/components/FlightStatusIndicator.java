@@ -33,13 +33,13 @@ import static net.torocraft.flighthud.AutoFlightManager.lastUpdateTimeMs;
 import static net.torocraft.flighthud.FlightHud.CONFIG_SETTINGS;
 
 public class FlightStatusIndicator extends HudComponent {
-    public static final SoundEvent ALERT = SoundEvent.of(new Identifier("flightassistant:alert"));
-    public static final SoundEvent STICK_SHAKER = SoundEvent.of(new Identifier("flightassistant:stick_shaker"));
-    public static final SoundEvent STALL_WARNING = SoundEvent.of(new Identifier("flightassistant:stall_warning"));
-    public static final SoundEvent SINKRATE = SoundEvent.of(new Identifier("flightassistant:sinkrate"));
-    public static final SoundEvent TERRAIN = SoundEvent.of(new Identifier("flightassistant:terrain"));
-    public static final SoundEvent PULL_UP = SoundEvent.of(new Identifier("flightassistant:pull_up"));
-    public static final SoundEvent AUTOPILOT_DISCONNECT = SoundEvent.of(new Identifier("flightassistant:autopilot_disconnect"));
+    public static final SoundEvent ALERT = new SoundEvent(new Identifier("flightassistant:alert"));
+    public static final SoundEvent STICK_SHAKER = new SoundEvent(new Identifier("flightassistant:stick_shaker"));
+    public static final SoundEvent STALL_WARNING = new SoundEvent(new Identifier("flightassistant:stall_warning"));
+    public static final SoundEvent SINKRATE = new SoundEvent(new Identifier("flightassistant:sinkrate"));
+    public static final SoundEvent TERRAIN = new SoundEvent(new Identifier("flightassistant:terrain"));
+    public static final SoundEvent PULL_UP = new SoundEvent(new Identifier("flightassistant:pull_up"));
+    public static final SoundEvent AUTOPILOT_DISCONNECT = new SoundEvent(new Identifier("flightassistant:autopilot_disconnect"));
     public static final Alert[] registeredAlerts = {
             new AutoThrustLimitedAlert(), new ThrustLockedAlert(),
             new FlightProtectionsOffAlert(), new GPWSOffAlert(),
