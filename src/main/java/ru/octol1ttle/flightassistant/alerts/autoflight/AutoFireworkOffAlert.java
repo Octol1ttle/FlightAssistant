@@ -10,27 +10,27 @@ import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
-public class AutopilotOffAlert extends AbstractAlert {
+public class AutoFireworkOffAlert extends AbstractAlert {
     private final AutoFlightComputer autoflight;
 
-    public AutopilotOffAlert(AutoFlightComputer autoflight) {
+    public AutoFireworkOffAlert(AutoFlightComputer autoflight) {
         this.autoflight = autoflight;
     }
 
     @Override
     public boolean isTriggered() {
-        return !autoflight.autoPilotEnabled;
+        return !autoflight.autoFireworkEnabled;
     }
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        return AlertSoundData.AUTOPILOT_DISCONNECT;
+        return autoflight.afrwkDisconnectionForced ? AlertSoundData.MASTER_CAUTION : AlertSoundData.EMPTY;
     }
 
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
-        return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.autoflight.autopilot_off"), x, y,
-                FAConfig.hud().warningColor,
-                highlight && autoflight.apDisconnectionForced);
+        return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.autoflight.auto_firework_off"), x, y,
+                FAConfig.hud().cautionColor,
+                highlight && autoflight.afrwkDisconnectionForced);
     }
 }

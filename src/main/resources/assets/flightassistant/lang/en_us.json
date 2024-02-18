@@ -73,7 +73,8 @@
 
   "alerts.flightassistant.approaching_void_damage_level": "APPROACHING VOID DAMAGE LEVEL",
   "alerts.flightassistant.reached_void_damage_level": "REACHED VOID DAMAGE LEVEL",
-  "alerts.flightassistant.autoflight.auto_pilot_off": "AUTOPILOT OFF",
+  "alerts.flightassistant.autoflight.autopilot_off": "AUTOPILOT OFF",
+  "alerts.flightassistant.autoflight.auto_firework_off": "AUTO-FIREWORK OFF",
   "alerts.flightassistant.firework.no_response": "FRWK NO RESPONSE",
   "alerts.flightassistant.firework.no_fireworks": "NO FRWKS IN HOTBAR",
   "alerts.flightassistant.firework.unsafe": "FRWK UNSAFE (EXPLOSIVE)",
