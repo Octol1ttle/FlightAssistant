@@ -20,6 +20,6 @@ public class InGameHudMixin {
 
     @Inject(method = "render", at = @At("RETURN"))
     private void render(MatrixStack matrix, float tickDelta, CallbackInfo ci) {
-        HudRenderer.INSTANCE.render(DrawContext.from(matrix, tickDelta), client);
+        HudRenderer.INSTANCE.render(new DrawContext(matrix, tickDelta), client);
     }
 }

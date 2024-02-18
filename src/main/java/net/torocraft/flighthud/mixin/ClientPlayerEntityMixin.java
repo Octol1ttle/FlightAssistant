@@ -14,8 +14,7 @@ public class ClientPlayerEntityMixin {
     @Inject(method = "damage", at = @At("HEAD"))
     public void detectWallCollision(DamageSource damageSource, float amount, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity $this = (LivingEntity) (Object) this;
-        if ($this instanceof ClientPlayerEntity
-                && $this.isFallFlying()
+        if ($this.isFallFlying()
                 // Damage source is always generic except fall damage in 1.19.2
                 // Use bounding box to check for actual collision
                 && (damageSource == DamageSource.FLY_INTO_WALL

@@ -39,7 +39,4 @@ public class DrawContext extends DrawableHelper {
         fill(matrixStack, x1, y1, x2, y2, color);
     }
 
-    public static DrawContext from(MatrixStack matrixStack, float tickDelta) {
-        return new DrawContext(matrixStack, tickDelta);
-    }
 }
