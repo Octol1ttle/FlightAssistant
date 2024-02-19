@@ -1,13 +1,13 @@
 package net.torocraft.flighthud.components;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Vec3f;
 import net.torocraft.flighthud.Dimensions;
 import net.torocraft.flighthud.FlightComputer;
 import net.torocraft.flighthud.FlightSafetyMonitor;
 import net.torocraft.flighthud.HudComponent;
+import net.torocraft.flighthud.shims.DrawContext;
 
 public class PitchIndicator extends HudComponent {
     private final Dimensions dim;
@@ -34,7 +34,7 @@ public class PitchIndicator extends HudComponent {
         if (CONFIG.pitchLadder_showRoll) {
             context.getMatrices().push();
             context.getMatrices().translate(b, a, 0);
-            context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(roll));
+            context.getMatrices().multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(roll));
             context.getMatrices().translate(-b, -a, 0);
         }
 
