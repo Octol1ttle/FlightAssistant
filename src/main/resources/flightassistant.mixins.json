@@ -9,8 +9,7 @@
     "FireworkRocketEntityMixin",
     "GameRendererMixin",
     "InGameHudMixin",
-    "ClientPlayerEntityMixin",
-    "Matrix3fShimMixin"
+    "LivingEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

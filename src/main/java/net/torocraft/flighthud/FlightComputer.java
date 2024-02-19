@@ -8,9 +8,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Vec3d;
-import net.torocraft.flighthud.shims.Matrix3fShim;
+import org.joml.Matrix3f;
 
 public class FlightComputer {
     private static final float TICKS_PER_SECOND = 20;
@@ -82,10 +81,8 @@ public class FlightComputer {
             return 0.0f;
         }
 
-        Matrix3fShim matrix = (Matrix3fShim) ((Object) normalMatrix);
-        @SuppressWarnings("ConstantConditions")
-        float y = matrix.flightassistant$getRowColumn(0, 1);
-        float x = matrix.flightassistant$getRowColumn(1, 1);
+        float y = normalMatrix.getRowColumn(0, 1);
+        float x = normalMatrix.getRowColumn(1, 1);
         return (float) Math.toDegrees(Math.atan2(y, x));
     }
 

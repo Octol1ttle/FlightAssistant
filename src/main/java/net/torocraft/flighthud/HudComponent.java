@@ -4,7 +4,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.RotationAxis;
 import net.torocraft.flighthud.config.HudConfig;
 import net.torocraft.flighthud.shims.DrawContext;
 
@@ -87,7 +87,7 @@ public abstract class HudComponent {
     protected void drawPointer(DrawContext context, float x, float y, float rot) {
         context.getMatrices().push();
         context.getMatrices().translate(x, y, 0);
-        context.getMatrices().multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(rot + 45));
+        context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(rot + 45));
         drawVerticalLine(context, 0, 0, 5, CONFIG.color);
         drawHorizontalLine(context, 0, 5, 0, CONFIG.color);
         context.getMatrices().pop();
