@@ -1,10 +1,10 @@
 package net.torocraft.flighthud.alerts;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Hand;
 import net.torocraft.flighthud.FlightSafetyMonitor;
 import net.torocraft.flighthud.HudComponent;
+import net.torocraft.flighthud.shims.DrawContext;
 
 import static net.torocraft.flighthud.HudComponent.CONFIG;
 
