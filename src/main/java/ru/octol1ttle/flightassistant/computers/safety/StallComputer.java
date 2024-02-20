@@ -48,7 +48,7 @@ public class StallComputer implements ITickableComputer {
         if (!data.isFlying) {
             return 90.0f;
         }
-        return status == StallStatus.STALL ? 0.0f : MathHelper.clamp(data.speed * 3, 0.0f, 90.0f);
+        return status == StallStatus.STALL ? -90.0f : MathHelper.clamp(data.speed * 3.0f, 0.0f, 90.0f);
     }
 
     @Override
