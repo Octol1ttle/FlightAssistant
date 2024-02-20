@@ -7,16 +7,18 @@ import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
+import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
 
 
 public class FireworkUnsafeAlert extends AbstractAlert {
-
+    private final AirDataComputer data;
     private final FireworkController firework;
 
-    public FireworkUnsafeAlert(FireworkController firework) {
+    public FireworkUnsafeAlert(AirDataComputer data, FireworkController firework) {
+        this.data = data;
         this.firework = firework;
     }
 
@@ -33,6 +35,6 @@ public class FireworkUnsafeAlert extends AbstractAlert {
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.firework.unsafe"), x, y,
-                FAConfig.hud().warningColor, highlight);
+                FAConfig.hud().warningColor, highlight && data.isFlying);
     }
 }

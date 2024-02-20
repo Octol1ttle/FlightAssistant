@@ -38,7 +38,7 @@ public class AlertController implements ITickableComputer {
                 new IndicatorFaultAlert(renderer),
                 new ApproachingVoidDamageLevelAlert(host.voidLevel),
                 new ElytraHealthLowAlert(host.data),
-                new FireworkUnsafeAlert(host.firework),
+                new FireworkUnsafeAlert(host.data, host.firework),
                 new FireworkNoResponseAlert(host.firework)
         );
         activeAlerts = new ArrayList<>(allAlerts.size());
