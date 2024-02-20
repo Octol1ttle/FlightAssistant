@@ -18,7 +18,7 @@ public class ElytraStateController implements ITickableComputer {
         if (syncedState != data.isFlying) {
             changesPending = false;
         }
-        if (changesPending) {
+        if (changesPending || !data.canAutomationsActivate()) {
             return;
         }
 
