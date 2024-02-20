@@ -27,7 +27,7 @@ public class FireworkUnsafeAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
-        return AlertSoundData.MASTER_CAUTION;
+        return AlertSoundData.MASTER_WARNING;
     }
 
     @Override
