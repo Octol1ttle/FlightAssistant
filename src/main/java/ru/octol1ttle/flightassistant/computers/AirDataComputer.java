@@ -47,7 +47,11 @@ public class AirDataComputer implements ITickableComputer {
     }
 
     public boolean canAutomationsActivate() {
-        return isFlying && mc.currentScreen == null && mc.getOverlay() == null;
+        return canAutomationsActivate(true);
+    }
+
+    public boolean canAutomationsActivate(boolean checkFlying) {
+        return (!checkFlying || isFlying) && mc.currentScreen == null && mc.getOverlay() == null;
     }
 
     public boolean isGround(BlockPos pos) {
