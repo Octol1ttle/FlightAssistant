@@ -1,6 +1,6 @@
 package ru.octol1ttle.flightassistant.computers.autoflight;
 
-import net.minecraft.client.network.ClientPlayerInteractionManager;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
@@ -12,9 +12,10 @@ import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
 
 public class FireworkController implements ITickableComputer {
-    private final TimeComputer time;
+    private final MinecraftClient mc;
     private final AirDataComputer data;
-    private final ClientPlayerInteractionManager interaction;
+    private final TimeComputer time;
+
     public int safeFireworkCount = Integer.MAX_VALUE;
     public boolean fireworkResponded = true;
     public float lastUseTime = -1.0f;
@@ -25,10 +26,10 @@ public class FireworkController implements ITickableComputer {
     public boolean activationInProgress = false;
     public boolean lockManualFireworks = false;
 
-    public FireworkController(TimeComputer time, AirDataComputer data, ClientPlayerInteractionManager interaction) {
-        this.time = time;
+    public FireworkController(MinecraftClient mc, AirDataComputer data, TimeComputer time) {
+        this.mc = mc;
         this.data = data;
-        this.interaction = interaction;
+        this.time = time;
     }
 
     @Override
@@ -76,12 +77,12 @@ public class FireworkController implements ITickableComputer {
             this.lastProtTrigger = time.prevMillis;
         }
 
-        if (isFireworkSafe(data.player.getMainHandStack())) {
-            tryActivateFirework(Hand.MAIN_HAND, force);
-            return;
-        }
         if (isFireworkSafe(data.player.getOffHandStack())) {
             tryActivateFirework(Hand.OFF_HAND, force);
+            return;
+        }
+        if (isFireworkSafe(data.player.getMainHandStack())) {
+            tryActivateFirework(Hand.MAIN_HAND, force);
             return;
         }
 
@@ -109,9 +110,10 @@ public class FireworkController implements ITickableComputer {
         if (!force && !fireworkResponded) {
             return;
         }
+        assert mc.interactionManager != null;
 
         activationInProgress = true;
-        interaction.interactItem(data.player, hand);
+        mc.interactionManager.interactItem(data.player, hand);
         activationInProgress = false;
     }
 
