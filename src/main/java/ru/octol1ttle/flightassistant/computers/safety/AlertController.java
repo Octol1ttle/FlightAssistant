@@ -24,10 +24,12 @@ import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 
 public class AlertController implements ITickableComputer {
     public final List<AbstractAlert> activeAlerts;
+    private final ComputerHost host;
     private final SoundManager manager;
     private final List<AbstractAlert> allAlerts;
 
     public AlertController(ComputerHost host, SoundManager manager, HudRenderer renderer) {
+        this.host = host;
         this.manager = manager;
         // TODO: ECAM actions
         allAlerts = List.of(
@@ -91,7 +93,10 @@ public class AlertController implements ITickableComputer {
                 }
             }
 
-            if (data.sound() == null || alert.hidden || alert.played || interrupt && !soundChanged) {
+            if (!host.data.isFlying
+                    || data.sound() == null
+                    || alert.hidden || alert.played
+                    || interrupt && !soundChanged) {
                 continue;
             }
 
