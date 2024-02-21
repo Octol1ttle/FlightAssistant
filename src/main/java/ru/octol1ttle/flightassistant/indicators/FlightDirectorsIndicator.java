@@ -29,7 +29,7 @@ public class FlightDirectorsIndicator extends HudComponent {
 
         if (autoflight.getTargetPitch() != null) {
             float deltaPitch = autoflight.getTargetPitch() - data.pitch;
-            float fdY = MathHelper.clamp(dim.yMid + i(deltaPitch * dim.degreesPerPixel), dim.tFrame - 10, dim.bFrame + 10);
+            float fdY = MathHelper.clamp(dim.yMid - i(deltaPitch * dim.degreesPerPixel), dim.tFrame - 10, dim.bFrame + 10);
             drawHorizontalLine(context, dim.xMid - dim.wFrame * 0.1f, dim.xMid + dim.wFrame * 0.1f, fdY, FAConfig.hud().advisoryColor);
         }
 
