@@ -15,7 +15,7 @@ public class ElytraStateController implements ITickableComputer {
 
     @Override
     public void tick() {
-        if (syncedState != data.isFlying) {
+        if (syncedState != data.isFlying || data.player.isOnGround()) {
             changesPending = false;
         }
         if (changesPending || !data.canAutomationsActivate(false)) {
