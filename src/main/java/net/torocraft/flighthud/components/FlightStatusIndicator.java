@@ -78,7 +78,7 @@ public class FlightStatusIndicator extends HudComponent {
 
         for (Alert alert : registeredAlerts) {
             if (!activeAlerts.contains(alert) && alert.shouldActivate()) {
-                playOnce(mc, ALERT, 0.75f, false);
+                playOnce(mc, ALERT, false);
                 alert.hidden = false;
                 activeAlerts.add(alert);
             }
@@ -123,22 +123,23 @@ public class FlightStatusIndicator extends HudComponent {
         drawCenteredFont(mc, context, AutoFlightManager.statusString, dim.wScreen, dim.tFrame + 15, CONFIG.color);
 
         if (lastAutopilotState) {
-            if (!AutoFlightManager.autoPilotEnabled)
-                playOnce(mc, AUTOPILOT_DISCONNECT, 1f, false);
-            else stopEvent(mc, AUTOPILOT_DISCONNECT);
+            if (!AutoFlightManager.autoPilotEnabled) {
+                playOnce(mc, AUTOPILOT_DISCONNECT, false);
+            } else
+                stopEvent(mc, AUTOPILOT_DISCONNECT);
         }
         lastAutopilotState = AutoFlightManager.autoPilotEnabled;
 
         tryPlayStickShaker(mc, context);
 
         if (FlightSafetyMonitor.secondsUntilGroundImpact <= FlightSafetyMonitor.warningThreshold || FlightSafetyMonitor.secondsUntilTerrainImpact <= FlightSafetyMonitor.warningThreshold) {
-            playOnce(mc, PULL_UP, 0.75f, true);
+            playOnce(mc, PULL_UP, true);
             drawCenteredWarning(mc, context, dim.wScreen, dim.hScreen / 2 + 10, highlight, "PULL UP");
-        } else if (FlightSafetyMonitor.secondsUntilTerrainImpact <= FlightSafetyMonitor.cautionThreshold)
-            playOnce(mc, TERRAIN, 0.5f, true);
-        else if (FlightSafetyMonitor.secondsUntilGroundImpact <= FlightSafetyMonitor.cautionThreshold)
-            playOnce(mc, SINKRATE, 0.5f, true);
-        else
+        } else if (FlightSafetyMonitor.secondsUntilTerrainImpact <= FlightSafetyMonitor.cautionThreshold) {
+            playOnce(mc, TERRAIN, true);
+        } else if (FlightSafetyMonitor.secondsUntilGroundImpact <= FlightSafetyMonitor.cautionThreshold) {
+            playOnce(mc, SINKRATE, true);
+        } else
             stopGpwsEvents(mc);
     }
 
@@ -169,9 +170,9 @@ public class FlightStatusIndicator extends HudComponent {
         activeAlerts.removeIf(alert -> !alert.shouldActivate());
     }
 
-    private void playOnce(MinecraftClient mc, SoundEvent event, float volume, boolean limit) {
+    private void playOnce(MinecraftClient mc, SoundEvent event, boolean limit) {
         if (!limit || !activeEvents.contains(event)) {
-            mc.getSoundManager().play(new AlertSoundInstance(event, volume, mc.player, false));
+            mc.getSoundManager().play(new AlertSoundInstance(event, 0.5f, mc.player, false));
             if (limit)
                 activeEvents.add(event);
         }
@@ -188,7 +189,7 @@ public class FlightStatusIndicator extends HudComponent {
             }
 
             if (computer.velocityPerSecond.y <= -10) {
-                playOnce(mc, STALL_WARNING, 1.0f, true);
+                playOnce(mc, STALL_WARNING, true);
             } else
                 stopEvent(mc, STALL_WARNING);
             drawCenteredWarning(mc, context, dim.wScreen, dim.hScreen / 2 + 10, highlight, "STALL");
