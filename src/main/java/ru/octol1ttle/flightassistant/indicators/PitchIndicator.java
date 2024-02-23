@@ -49,10 +49,10 @@ public class PitchIndicator extends HudComponent {
 
         drawLadder(textRenderer, context, yHorizon);
 
-        drawReferenceMark(context, stall.maximumSafePitch, yHorizon, FAConfig.hud().warningColor);
+        drawPushArrows(textRenderer, context, stall.maximumSafePitch, yHorizon, FAConfig.hud().warningColor);
         drawReferenceMark(context, PitchController.CLIMB_PITCH, yHorizon, getPitchColor(PitchController.CLIMB_PITCH));
         drawReferenceMark(context, PitchController.GLIDE_PITCH, yHorizon, getPitchColor(PitchController.GLIDE_PITCH));
-        drawReferenceMark(context, voidLevel.minimumSafePitch, yHorizon, FAConfig.hud().warningColor);
+        drawPullArrows(textRenderer, context, Math.max(PitchController.DESCEND_PITCH, voidLevel.minimumSafePitch), yHorizon, FAConfig.hud().warningColor);
 
         pitchData.l1 -= pitchData.margin;
         pitchData.r2 += pitchData.margin;
@@ -64,16 +64,6 @@ public class PitchIndicator extends HudComponent {
     private Color getPitchColor(float degree) {
         return degree < Math.max(PitchController.DESCEND_PITCH, voidLevel.minimumSafePitch) || degree > stall.maximumSafePitch
                 ? FAConfig.hud().warningColor : FAConfig.hud().frameColor;
-    }
-
-    @Override
-    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.pitch_short"), dim.xMid, dim.yMid - 10, FAConfig.hud().warningColor);
-    }
-
-    @Override
-    public String getId() {
-        return "pitch";
     }
 
     private void drawLadder(TextRenderer textRenderer, DrawContext context, int yHorizon) {
@@ -125,6 +115,47 @@ public class PitchIndicator extends HudComponent {
 
         drawText(textRenderer, context, asText("%d", Math.round(Math.abs(degree))), pitchData.l1 - 17,
                 y - fontVerticalOffset, color);
+    }
+
+    private void drawPushArrows(TextRenderer textRenderer, DrawContext context, float degrees, int yHorizon, Color color) {
+        Text text = asText("^");
+        for (float f = degrees; f <= 90; f += 10) {
+            int y = MathHelper.floor((-f * dim.degreesPerPixel) + yHorizon);
+
+            if (y < dim.tFrame || y > dim.bFrame) {
+                continue;
+            }
+            context.getMatrices().push();
+            context.getMatrices().translate(dim.xMid, y, 0); // Rotate around the middle of the arrow
+            context.getMatrices().multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f)); // Flip upside down
+            context.getMatrices().translate(-dim.xMid, -y, 0);
+
+            drawMiddleAlignedText(textRenderer, context, text, dim.xMid, y, color);
+
+            context.getMatrices().pop();
+        }
+    }
+
+    private void drawPullArrows(TextRenderer textRenderer, DrawContext context, float degrees, int yHorizon, Color color) {
+        Text text = asText("^");
+        for (float f = degrees; f >= -90; f -= 10) {
+            int y = MathHelper.floor((-f * dim.degreesPerPixel) + yHorizon);
+
+            if (y < dim.tFrame || y > dim.bFrame) {
+                continue;
+            }
+            drawMiddleAlignedText(textRenderer, context, text, dim.xMid, y, color);
+        }
+    }
+
+    @Override
+    public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.pitch_short"), dim.xMid, dim.yMid - 10, FAConfig.hud().warningColor);
+    }
+
+    @Override
+    public String getId() {
+        return "pitch";
     }
 
     private static class PitchIndicatorData {
