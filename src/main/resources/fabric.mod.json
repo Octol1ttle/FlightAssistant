@@ -9,8 +9,16 @@
     "ToroCraft"
   ],
   "contact": {
-    "issues": "https://github.com/Octol1ttle/FlightAssistant/issues",
-    "sources": "https://github.com/Octol1ttle/FlightAssistant"
+    "homepage": "https://modrinth.com/mod/flightassistant",
+    "sources": "https://github.com/Octol1ttle/FlightAssistant",
+    "issues": "https://github.com/Octol1ttle/FlightAssistant/issues"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/5kcBCvnbTp"
+      }
+    }
   },
   "license": "GPL3",
   "icon": "assets/flightassistant/icon.png",
