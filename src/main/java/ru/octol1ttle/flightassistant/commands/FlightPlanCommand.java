@@ -68,8 +68,8 @@ public class FlightPlanCommand {
 
     private static <T extends ArgumentBuilder<FabricClientCommandSource, T>> void readWaypoint(ArgumentBuilder<FabricClientCommandSource, T> builder, ContextWaypointConsumer command) {
         builder
-                .then(argument("targetX", IntegerArgumentType.integer())
-                        .then(argument("targetZ", IntegerArgumentType.integer())
+                .then(argument("targetX", IntegerArgumentType.integer(-30_000_000, 30_000_000))
+                        .then(argument("targetZ", IntegerArgumentType.integer(-30_000_000, 30_000_000))
                                 .executes(context -> command.execute(context, new Waypoint(
                                                 new Vector2d(
                                                         IntegerArgumentType.getInteger(context, "targetX"),
@@ -79,7 +79,7 @@ public class FlightPlanCommand {
                                                 null
                                         ))
                                 )
-                                .then(argument("targetAltitude", IntegerArgumentType.integer(-120))
+                                .then(argument("targetAltitude", IntegerArgumentType.integer(-120, 1200))
                                         .executes(context -> command.execute(context, new Waypoint(
                                                         new Vector2d(
                                                                 IntegerArgumentType.getInteger(context, "targetX"),
