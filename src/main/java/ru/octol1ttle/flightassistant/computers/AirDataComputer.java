@@ -129,7 +129,7 @@ public class AirDataComputer implements ITickableComputer {
     public BlockPos findGround() {
         BlockPos.Mutable pos = player.getBlockPos().mutableCopy();
         while (pos.getY() >= -64) {
-            if (isGround(pos.move(Direction.DOWN))) {
+            if (isGround(pos.move(Direction.DOWN)) || altitude - pos.getY() > 1500) {
                 return pos;
             }
         }
