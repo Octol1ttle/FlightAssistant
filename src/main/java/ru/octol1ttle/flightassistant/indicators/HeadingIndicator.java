@@ -34,8 +34,8 @@ public class HeadingIndicator extends HudComponent {
 
         if (FAConfig.hud().showHeadingReadout) {
             Color color = getHeadingColor(data.heading);
-            drawText(textRenderer, context, asText("%03d", i(data.heading)), dim.xMid - 8, yText, color);
-            drawBox(context, dim.xMid - 15, yText - 1.5f, 30, color);
+            drawText(textRenderer, context, asText("%03d", Math.round(data.heading)), dim.xMid - 8, yText, color);
+            drawBorder(context, dim.xMid - 15, yText - 2.0f, 30, color);
         }
 
         if (FAConfig.hud().showHeadingScale) {

@@ -5,9 +5,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.compatibility.ImmediatelyFastBatchingAccessor;
-import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public abstract class HudComponent {
     private static final int SINGLE_LINE_DRAWN = 1;
@@ -17,11 +15,7 @@ public abstract class HudComponent {
     }
 
     public static void fill(DrawContext context, float x1, float y1, float x2, float y2, Color color) {
-        context.fill(i(x1), i(y1), i(x2), i(y2), color.getRGB());
-    }
-
-    protected static int i(float f) {
-        return MathHelper.floor(f);
+        context.fill(Math.round(x1), Math.round(y1), Math.round(x2), Math.round(y2), color.getRGB());
     }
 
     protected static void drawRightAlignedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color) {
@@ -29,7 +23,7 @@ public abstract class HudComponent {
     }
 
     public static int drawText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color) {
-        context.drawText(textRenderer, text, i(x), i(y), color.getRGB(), false);
+        context.drawText(textRenderer, text, Math.round(x), Math.round(y), color.getRGB(), false);
         return SINGLE_LINE_DRAWN;
     }
 
@@ -70,31 +64,15 @@ public abstract class HudComponent {
     }
 
     public static void drawHorizontalLine(DrawContext context, float x1, float x2, float y, Color color) {
-        if (x2 < x1) {
-            float i = x1;
-            x1 = x2;
-            x2 = i;
-        }
-        fill(context, x1 - FAConfig.halfThickness(), y - FAConfig.halfThickness(), x2 + FAConfig.halfThickness(),
-                y + FAConfig.halfThickness(), color);
+        context.drawHorizontalLine(Math.round(x1), Math.round(x2), Math.round(y), color.getRGB());
     }
 
     public static void drawVerticalLine(DrawContext context, float x, float y1, float y2, Color color) {
-        if (y2 < y1) {
-            float i = y1;
-            y1 = y2;
-            y2 = i;
-        }
-
-        fill(context, x - FAConfig.halfThickness(), y1 + FAConfig.halfThickness(), x + FAConfig.halfThickness(),
-                y2 - FAConfig.halfThickness(), color);
+        context.drawVerticalLine(Math.round(x), Math.round(y1), Math.round(y2), color.getRGB());
     }
 
-    public static void drawBox(DrawContext context, float x, float y, float w, Color color) {
-        drawHorizontalLine(context, x, x + w, y, color);
-        drawHorizontalLine(context, x, x + w, y + 10, color);
-        drawVerticalLine(context, x, y, y + 10, color);
-        drawVerticalLine(context, x + w, y, y + 10, color);
+    public static void drawBorder(DrawContext context, float x, float y, float w, Color color) {
+        context.drawBorder(Math.round(x), Math.round(y), Math.round(w), 11 /* off-by-one my beloved */, color.getRGB());
     }
 
     protected static void drawHorizontalLineDashed(DrawContext context, float x1, float x2, float y,
@@ -113,7 +91,7 @@ public abstract class HudComponent {
             } else {
                 dx2 = ((i + 1) * dashSize) + x1;
             }
-            drawHorizontalLine(context, dx1, dx2, y, color);
+            context.drawHorizontalLine(Math.round(dx1), Math.round(dx2), Math.round(y), color.getRGB());
         }
     }
 

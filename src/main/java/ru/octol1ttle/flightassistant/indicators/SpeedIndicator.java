@@ -33,7 +33,7 @@ public class SpeedIndicator extends HudComponent {
 
         if (FAConfig.hud().showSpeedReadout) {
             drawRightAlignedText(textRenderer, context, asText("%.2f", data.speed), xSpeedText, dim.yMid - 3, FAConfig.hud().frameColor);
-            drawBox(context, xSpeedText - 29.5f, dim.yMid - 4.5f, 30, FAConfig.hud().frameColor);
+            drawBorder(context, xSpeedText - 29.5f, dim.yMid - 5.0f, 30, FAConfig.hud().frameColor);
 
             float frameWidth = dim.rFrame - dim.lFrame;
             if (FAConfig.hud().showGroundSpeedReadout) {

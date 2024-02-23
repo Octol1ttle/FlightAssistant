@@ -29,7 +29,7 @@ public class FlightDirectorsIndicator extends HudComponent {
 
         if (autoflight.getTargetPitch() != null) {
             float deltaPitch = autoflight.getTargetPitch() - data.pitch;
-            float fdY = MathHelper.clamp(dim.yMid - i(deltaPitch * dim.degreesPerPixel), dim.tFrame - 10, dim.bFrame + 10);
+            float fdY = MathHelper.clamp(dim.yMid - Math.round(deltaPitch * dim.degreesPerPixel), dim.tFrame - 10, dim.bFrame + 10);
             drawHorizontalLine(context, dim.xMid - dim.wFrame * 0.1f, dim.xMid + dim.wFrame * 0.1f, fdY, FAConfig.hud().advisoryColor);
         }
 
@@ -42,7 +42,7 @@ public class FlightDirectorsIndicator extends HudComponent {
                 deltaHeading -= 360.0f;
             }
 
-            float fdX = MathHelper.clamp(dim.xMid + i(deltaHeading * dim.degreesPerPixel), dim.lFrame + 10, dim.rFrame - 10);
+            float fdX = MathHelper.clamp(dim.xMid + Math.round(deltaHeading * dim.degreesPerPixel), dim.lFrame + 10, dim.rFrame - 10);
             drawVerticalLine(context, fdX, dim.yMid - dim.hFrame * 0.15f, dim.yMid + dim.hFrame * 0.15f, FAConfig.hud().advisoryColor);
         }
     }

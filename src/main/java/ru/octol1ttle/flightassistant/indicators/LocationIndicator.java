@@ -27,8 +27,8 @@ public class LocationIndicator extends HudComponent {
         float x = dim.lFrame + 15;
         float y = dim.bFrame;
 
-        int xLoc = i((float) data.position.x);
-        int zLoc = i((float) data.position.z);
+        long xLoc = Math.round(data.position.x);
+        long zLoc = Math.round(data.position.z);
 
         drawText(textRenderer, context, asText("%d / %d", xLoc, zLoc), x, y, FAConfig.hud().frameColor);
     }

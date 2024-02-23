@@ -4,6 +4,7 @@ import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
@@ -31,7 +32,7 @@ public class AltitudeIndicator extends HudComponent {
 
         float blocksPerPixel = 1;
 
-        float floorOffset = i(data.altitude * blocksPerPixel);
+        float floorOffset = Math.round(data.altitude * blocksPerPixel);
         float yFloor = dim.yMid - floorOffset;
         float xAltText = right + 5;
 
@@ -40,14 +41,14 @@ public class AltitudeIndicator extends HudComponent {
         if (FAConfig.hud().showAltitudeReadout) {
             Color color = getAltitudeColor(safeLevel, data.altitude);
             drawText(textRenderer, context, asText("%.0f", data.altitude), xAltText, dim.yMid - 3, color);
-            drawBox(context, xAltText - 2, dim.yMid - 4.5f, 28, color);
+            drawBorder(context, xAltText - 2, dim.yMid - 5.0f, 28, color);
         }
 
         if (FAConfig.hud().showGroundAltitude) {
             Color color = data.altitude < safeLevel ? FAConfig.hud().warningColor : FAConfig.hud().frameColor;
             drawText(textRenderer, context, Text.translatable(data.groundLevel == data.voidLevel ? "flightassistant.void_level" : "flightassistant.ground_level"), xAltText - 10, bottom, color);
-            drawText(textRenderer, context, asText("%d", i(data.heightAboveGround)), xAltText, bottom, color);
-            drawBox(context, xAltText - 2, bottom - 1.5f, 28, color);
+            drawText(textRenderer, context, asText("%d", MathHelper.floor(data.heightAboveGround)), xAltText, bottom, color);
+            drawBorder(context, xAltText - 2, bottom - 2.0f, 28, color);
         }
 
         if (FAConfig.hud().showAltitudeScale) {

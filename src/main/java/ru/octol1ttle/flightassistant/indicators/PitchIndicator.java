@@ -4,7 +4,6 @@ import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
@@ -121,10 +120,10 @@ public class PitchIndicator extends HudComponent {
 
         int fontVerticalOffset = degree >= 0 ? 0 : 6;
 
-        drawText(textRenderer, context, asText("%d", i(Math.abs(degree))), pitchData.r2 + 6,
+        drawText(textRenderer, context, asText("%d", Math.round(Math.abs(degree))), pitchData.r2 + 6,
                 y - fontVerticalOffset, color);
 
-        drawText(textRenderer, context, asText("%d", i(Math.abs(degree))), pitchData.l1 - 17,
+        drawText(textRenderer, context, asText("%d", Math.round(Math.abs(degree))), pitchData.l1 - 17,
                 y - fontVerticalOffset, color);
     }
 
@@ -141,16 +140,12 @@ public class PitchIndicator extends HudComponent {
             width = dim.wFrame * 0.5f;
             float left = dim.lFrame + (width * 0.5f);
 
-            margin = i(width * 0.3d);
+            margin = Math.round(width * 0.3d);
             l1 = left + margin;
             l2 = dim.xMid - 7;
             sideWidth = l2 - l1;
             r1 = dim.xMid + 8;
             r2 = r1 + sideWidth;
-        }
-
-        private int i(double d) {
-            return MathHelper.floor(d);
         }
     }
 }

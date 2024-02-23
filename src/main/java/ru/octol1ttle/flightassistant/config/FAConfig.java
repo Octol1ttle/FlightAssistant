@@ -67,10 +67,6 @@ public class FAConfig {
         return HANDLER.instance().notFlyingNoElytra;
     }
 
-    public static float halfThickness() {
-        return 0.5f;
-    }
-
     public enum BatchedRendering implements NameableEnum {
         NO_BATCHING,
         BATCH_PER_COMPONENT,
