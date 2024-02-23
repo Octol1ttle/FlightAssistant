@@ -70,7 +70,7 @@ public class FireworkController implements ITickableComputer {
     }
 
     public void activateFirework(boolean force) {
-        if (!data.canAutomationsActivate() || lastUseTime > 0 && time.prevMillis != null && time.prevMillis - lastUseTime < 750) {
+        if (!data.canAutomationsActivate() || lastUseTime > 0 && time.prevMillis != null && time.prevMillis - lastUseTime < 1000) {
             return;
         }
         if (force && time.prevMillis != null) {
