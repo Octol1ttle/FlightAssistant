@@ -46,6 +46,7 @@
   "config.flightassistant.hud.info": "Информация",
   "config.flightassistant.hud.info.alerts": "Показывать предупреждения",
   "config.flightassistant.hud.info.firework_count": "Показывать счётчик фейерверков",
+  "config.flightassistant.hud.info.waypoint_distance": "Показывать расстояние до точки назначения",
   "config.flightassistant.hud.misc": "Прочее",
   "config.flightassistant.hud.misc.pitch_ladder": "Показывать индикатор тангажа",
   "config.flightassistant.hud.misc.flight_path": "Показывать иконку пути полёта",
@@ -103,6 +104,8 @@
   "alerts.flightassistant.fault.indicators.flt_dir": "ОТКАЗ УКАЗАТЕЛЕЙ ПОЛЁТА",
 
   "status.flightassistant.firework_count": "КОЛ-ВО ФРВКОВ: %s",
+  "status.flightassistant.waypoint_distance": "РАССТ: %s",
+
   "mode.flightassistant.firework.none_in_hotbar": "НЕТ ФРВКОВ",
   "mode.flightassistant.firework.locked": "ТОЛЬКО А/ФРВК",
   "mode.flightassistant.firework.manual": "РУЧН ФРВК",

@@ -49,6 +49,8 @@ public class HudConfig {
     public boolean showAlerts = true;
     @SerialEntry
     public boolean showFireworkCount = true;
+    @SerialEntry
+    public boolean showDistanceToWaypoint = true;
 
     @SerialEntry
     public boolean showPitchLadder = true;
@@ -70,6 +72,7 @@ public class HudConfig {
         this.showHeadingScale = false;
         this.showFireworkMode = false;
         this.showFireworkCount = false;
+        this.showDistanceToWaypoint = false;
 
         return this;
     }
@@ -94,6 +97,7 @@ public class HudConfig {
         this.showLateralMode = false;
         this.showAutomationStatus = false;
         this.showFireworkCount = false;
+        this.showDistanceToWaypoint = false;
 
         return this;
     }

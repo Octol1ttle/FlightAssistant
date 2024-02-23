@@ -68,6 +68,15 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return targetWaypoint.targetPosition();
     }
 
+    public @Nullable Double getDistanceToNextWaypoint() {
+        Vector2d planPos = getTargetPosition();
+        if (planPos == null) {
+            return null;
+        }
+
+        return Vector2d.distance(planPos.x, planPos.y, data.position.x, data.position.z);
+    }
+
     public void execute(int waypointIndex) {
         targetWaypoint = this.get(waypointIndex);
     }

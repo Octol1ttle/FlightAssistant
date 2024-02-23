@@ -46,6 +46,7 @@
   "config.flightassistant.hud.info": "Information",
   "config.flightassistant.hud.info.alerts": "Show Alerts",
   "config.flightassistant.hud.info.firework_count": "Show Firework Count",
+  "config.flightassistant.hud.info.waypoint_distance": "Show Distance To Waypoint",
   "config.flightassistant.hud.misc": "Miscellaneous",
   "config.flightassistant.hud.misc.pitch_ladder": "Show Pitch Ladder",
   "config.flightassistant.hud.misc.flight_path": "Show Flight Path Vector Icon",
@@ -103,6 +104,8 @@
   "alerts.flightassistant.fault.indicators.flt_dir": "FLT DIRECTORS FAULT",
 
   "status.flightassistant.firework_count": "FRWK CNT: %s",
+  "status.flightassistant.waypoint_distance": "WP/DIST: %s",
+
   "mode.flightassistant.firework.none_in_hotbar": "NO FRWKS",
   "mode.flightassistant.firework.locked": "A/FRWK ONLY",
   "mode.flightassistant.firework.manual": "MAN FRWK",
