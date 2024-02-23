@@ -133,7 +133,7 @@ public class FlightModeIndicator extends HudComponent {
             lateralMode.update(Text.translatable("mode.flightassistant.lat.heading", autoflight.selectedHeading));
         } else if (plan.getTargetPosition() != null) {
             Vector2d target = plan.getTargetPosition();
-            lateralMode.update(Text.translatable("mode.flightassistant.lat.position", target.x, target.y));
+            lateralMode.update(Text.translatable("mode.flightassistant.lat.position", (int) target.x, (int) target.y));
         }
 
         int x = MathHelper.floor(dim.lFrame + dim.wFrame * (3 / 5.0f));
