@@ -4,6 +4,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import org.joml.Vector2d;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
@@ -94,8 +95,8 @@ public class FlightModeIndicator extends HudComponent {
             }
         }
 
-        float x = dim.lFrame + dim.wFrame * (1 / 5.0f);
-        float y = dim.bFrame - 10;
+        int x = MathHelper.floor(dim.lFrame + dim.wFrame * (1 / 5.0f));
+        int y = dim.bFrame - 10;
         fireworkMode.render(context, textRenderer, x, y);
     }
 
@@ -118,8 +119,8 @@ public class FlightModeIndicator extends HudComponent {
             verticalMode.update(Text.translatable("mode.flightassistant.vert.descend" + type, targetAltitude));
         }
 
-        float x = dim.lFrame + dim.wFrame * (2 / 5.0f);
-        float y = dim.bFrame - 10;
+        int x = MathHelper.floor(dim.lFrame + dim.wFrame * (2 / 5.0f));
+        int y = dim.bFrame - 10;
         verticalMode.render(context, textRenderer, x, y);
     }
 
@@ -135,8 +136,8 @@ public class FlightModeIndicator extends HudComponent {
             lateralMode.update(Text.translatable("mode.flightassistant.lat.position", target.x, target.y));
         }
 
-        float x = dim.lFrame + dim.wFrame * (3 / 5.0f);
-        float y = dim.bFrame - 10;
+        int x = MathHelper.floor(dim.lFrame + dim.wFrame * (3 / 5.0f));
+        int y = dim.bFrame - 10;
         lateralMode.render(context, textRenderer, x, y);
     }
 
@@ -157,8 +158,8 @@ public class FlightModeIndicator extends HudComponent {
 
         automationMode.update(automationStatus);
 
-        float x = dim.lFrame + dim.wFrame * (4 / 5.0f);
-        float y = dim.bFrame - 10;
+        int x = MathHelper.floor(dim.lFrame + dim.wFrame * (4 / 5.0f));
+        int y = dim.bFrame - 10;
         automationMode.render(context, textRenderer, x, y);
     }
 
@@ -171,7 +172,7 @@ public class FlightModeIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawText(textRenderer, context, Text.translatable("flightassistant.flight_mode_short"), dim.lFrame + dim.wFrame * 0.2f, dim.bFrame - 10, FAConfig.hud().warningColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.flight_mode_short"), dim.lFrame + dim.wFrame / 5, dim.bFrame - 10, FAConfig.hud().warningColor);
     }
 
     @Override

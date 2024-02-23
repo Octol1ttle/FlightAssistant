@@ -35,7 +35,7 @@ public class FlightMode {
         lastText = newText;
     }
 
-    public void render(DrawContext context, TextRenderer textRenderer, float x, float y) {
+    public void render(DrawContext context, TextRenderer textRenderer, int x, int y) {
         if (lastUpdateTime == null) {
             throw new IllegalStateException("Called render before updating");
         }

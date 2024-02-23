@@ -29,7 +29,7 @@ public class ComputerFaultAlert extends AbstractAlert {
     }
 
     @Override
-    public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
+    public int renderECAM(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         int i = 0;
         for (IComputer computer : host.faulted) {
             i += HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.fault.computers." + computer.getId()), x, y,

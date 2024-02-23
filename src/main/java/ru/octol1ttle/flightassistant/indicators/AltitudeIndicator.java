@@ -24,36 +24,36 @@ public class AltitudeIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        float top = dim.tFrame;
-        float bottom = dim.bFrame;
+        int top = dim.tFrame;
+        int bottom = dim.bFrame;
 
-        float right = dim.rFrame + 2;
-        float left = dim.rFrame;
+        int right = dim.rFrame + 2;
+        int left = dim.rFrame;
 
-        float blocksPerPixel = 1;
+        int blocksPerPixel = 1;
 
-        float floorOffset = Math.round(data.altitude * blocksPerPixel);
-        float yFloor = dim.yMid - floorOffset;
-        float xAltText = right + 5;
+        int floorOffset = Math.round(data.altitude * blocksPerPixel);
+        int yFloor = dim.yMid - floorOffset;
+        int xAltText = right + 5;
 
         int safeLevel = data.groundLevel == data.voidLevel ? data.voidLevel + 16 : data.groundLevel;
 
         if (FAConfig.hud().showAltitudeReadout) {
             Color color = getAltitudeColor(safeLevel, data.altitude);
             drawText(textRenderer, context, asText("%.0f", data.altitude), xAltText, dim.yMid - 3, color);
-            drawBorder(context, xAltText - 2, dim.yMid - 5.0f, 28, color);
+            drawBorder(context, xAltText - 2, dim.yMid - 5, 28, color);
         }
 
         if (FAConfig.hud().showGroundAltitude) {
             Color color = data.altitude < safeLevel ? FAConfig.hud().warningColor : FAConfig.hud().frameColor;
             drawText(textRenderer, context, Text.translatable(data.groundLevel == data.voidLevel ? "flightassistant.void_level" : "flightassistant.ground_level"), xAltText - 10, bottom, color);
             drawText(textRenderer, context, asText("%d", MathHelper.floor(data.heightAboveGround)), xAltText, bottom, color);
-            drawBorder(context, xAltText - 2, bottom - 2.0f, 28, color);
+            drawBorder(context, xAltText - 2, bottom - 2, 28, color);
         }
 
         if (FAConfig.hud().showAltitudeScale) {
             for (int i = -150; i < 1000; i++) {
-                float y = (dim.hScreen - i * blocksPerPixel) - yFloor;
+                int y = (dim.hScreen - i * blocksPerPixel) - yFloor;
                 if (y > (bottom - 5) || i < data.groundLevel) {
                     continue;
                 }

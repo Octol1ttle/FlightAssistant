@@ -4,6 +4,7 @@ import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
@@ -24,25 +25,25 @@ public class HeadingIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        float left = dim.lFrame;
-        float right = dim.rFrame;
-        float top = dim.tFrame - 10;
+        int left = dim.lFrame;
+        int right = dim.rFrame;
+        int top = dim.tFrame - 10;
 
-        float yText = top - 7;
-        float northOffset = data.heading * dim.degreesPerPixel;
-        float xNorth = dim.xMid - northOffset;
+        int yText = top - 7;
+        int northOffset = MathHelper.floor(data.heading * dim.degreesPerPixel);
+        int xNorth = dim.xMid - northOffset;
 
         if (FAConfig.hud().showHeadingReadout) {
             Color color = getHeadingColor(data.heading);
             drawText(textRenderer, context, asText("%03d", Math.round(data.heading)), dim.xMid - 8, yText, color);
-            drawBorder(context, dim.xMid - 15, yText - 2.0f, 30, color);
+            drawBorder(context, dim.xMid - 15, yText - 2, 30, color);
         }
 
         if (FAConfig.hud().showHeadingScale) {
             drawMiddleAlignedText(textRenderer, context, asText("^"), dim.xMid, top + 10, FAConfig.hud().frameColor);
 
             for (int i = -540; i < 540; i++) {
-                float x = (i * dim.degreesPerPixel) + xNorth;
+                int x = (i * dim.degreesPerPixel) + xNorth;
                 if (x < left) {
                     continue;
                 }

@@ -28,7 +28,7 @@ public class AutoFireworkOffAlert extends AbstractAlert {
     }
 
     @Override
-    public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
+    public int renderECAM(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.autoflight.auto_firework_off"), x, y,
                 FAConfig.hud().cautionColor,
                 highlight && autoflight.afrwkDisconnectionForced);

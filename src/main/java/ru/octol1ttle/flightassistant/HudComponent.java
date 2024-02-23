@@ -14,27 +14,27 @@ public abstract class HudComponent {
         return Text.literal(String.format(format, args));
     }
 
-    public static void fill(DrawContext context, float x1, float y1, float x2, float y2, Color color) {
-        context.fill(Math.round(x1), Math.round(y1), Math.round(x2), Math.round(y2), color.getRGB());
+    public static void fill(DrawContext context, int x1, int y1, int x2, int y2, Color color) {
+        context.fill(x1, y1, x2, y2, color.getRGB());
     }
 
-    protected static void drawRightAlignedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color) {
+    protected static void drawRightAlignedText(TextRenderer textRenderer, DrawContext context, Text text, int x, int y, Color color) {
         drawText(textRenderer, context, text, x - textRenderer.getWidth(text), y, color);
     }
 
-    public static int drawText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color) {
-        context.drawText(textRenderer, text, Math.round(x), Math.round(y), color.getRGB(), false);
+    public static int drawText(TextRenderer textRenderer, DrawContext context, Text text, int x, int y, Color color) {
+        context.drawText(textRenderer, text, x, y, color.getRGB(), false);
         return SINGLE_LINE_DRAWN;
     }
 
-    public static void drawMiddleAlignedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color) {
-        drawText(textRenderer, context, text, x - textRenderer.getWidth(text) * 0.5f, y, color);
+    public static void drawMiddleAlignedText(TextRenderer textRenderer, DrawContext context, Text text, int x, int y, Color color) {
+        drawText(textRenderer, context, text, x - textRenderer.getWidth(text) / 2, y, color);
     }
 
-    public static int drawHighlightedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color, boolean highlight) {
+    public static int drawHighlightedText(TextRenderer textRenderer, DrawContext context, Text text, int x, int y, Color color, boolean highlight) {
         drawUnbatched(() -> {
             if (highlight) {
-                HudComponent.fill(context, x - 2.0f, y - 1.0f, x + textRenderer.getWidth(text) + 1.0f, y + 8.0f, color);
+                HudComponent.fill(context, x - 2, y - 1, x + textRenderer.getWidth(text) + 1, y + 8, color);
                 HudComponent.drawText(textRenderer, context, text, x, y, getContrasting(color));
             } else {
                 HudComponent.drawText(textRenderer, context, text, x, y, color);
@@ -49,8 +49,8 @@ public abstract class HudComponent {
     }
 
     // that name doe
-    public static void drawHighlightedMiddleAlignedText(TextRenderer textRenderer, DrawContext context, Text text, float x, float y, Color color, boolean highlight) {
-        drawHighlightedText(textRenderer, context, text, x - textRenderer.getWidth(text) * 0.5f, y, color, highlight);
+    public static void drawHighlightedMiddleAlignedText(TextRenderer textRenderer, DrawContext context, Text text, int x, int y, Color color, boolean highlight) {
+        drawHighlightedText(textRenderer, context, text, x - textRenderer.getWidth(text) / 2, y, color, highlight);
     }
 
     public static void drawUnbatched(Runnable draw) {
@@ -63,35 +63,36 @@ public abstract class HudComponent {
         }
     }
 
-    public static void drawHorizontalLine(DrawContext context, float x1, float x2, float y, Color color) {
-        context.drawHorizontalLine(Math.round(x1), Math.round(x2), Math.round(y), color.getRGB());
+    public static void drawHorizontalLine(DrawContext context, int x1, int x2, int y, Color color) {
+        context.drawHorizontalLine(x1, x2, y, color.getRGB());
     }
 
-    public static void drawVerticalLine(DrawContext context, float x, float y1, float y2, Color color) {
-        context.drawVerticalLine(Math.round(x), Math.round(y1), Math.round(y2), color.getRGB());
+    public static void drawVerticalLine(DrawContext context, int x, int y1, int y2, Color color) {
+        context.drawVerticalLine(x, y1, y2, color.getRGB());
     }
 
-    public static void drawBorder(DrawContext context, float x, float y, float w, Color color) {
-        context.drawBorder(Math.round(x), Math.round(y), Math.round(w), 11 /* off-by-one my beloved */, color.getRGB());
+    public static void drawBorder(DrawContext context, int x, int y, int w, Color color) {
+        context.drawBorder(x, y, w, 11, color.getRGB());
     }
 
-    protected static void drawHorizontalLineDashed(DrawContext context, float x1, float x2, float y,
+    protected static void drawHorizontalLineDashed(DrawContext context, int x1, int x2, int y,
                                                    int dashCount, Color color) {
-        float width = x2 - x1;
+        int width = x2 - x1;
         int segmentCount = dashCount * 2 - 1;
-        float dashSize = width / (float) segmentCount;
+        int dashSize = width / segmentCount;
         for (int i = 0; i < segmentCount; i++) {
             if (i % 2 != 0) {
                 continue;
             }
-            float dx1 = i * dashSize + x1;
-            float dx2;
+            int dx1 = i * dashSize + x1;
+
+            int dx2;
             if (i == segmentCount - 1) {
                 dx2 = x2;
             } else {
                 dx2 = ((i + 1) * dashSize) + x1;
             }
-            context.drawHorizontalLine(Math.round(dx1), Math.round(dx2), Math.round(y), color.getRGB());
+            context.drawHorizontalLine(dx1, dx2, y, color.getRGB());
         }
     }
 

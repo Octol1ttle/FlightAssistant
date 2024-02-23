@@ -4,6 +4,7 @@ import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
@@ -34,20 +35,20 @@ public class FlightPathIndicator extends HudComponent {
             deltaHeading += 360;
         }
 
-        float y = dim.yMid;
-        float x = dim.xMid;
+        int y = dim.yMid;
+        int x = dim.xMid;
 
-        y += Math.round(deltaPitch * dim.degreesPerPixel);
-        x += Math.round(deltaHeading * dim.degreesPerPixel);
+        y += MathHelper.floor(deltaPitch * dim.degreesPerPixel);
+        x += MathHelper.floor(deltaHeading * dim.degreesPerPixel);
 
         if (y < dim.tFrame || y > dim.bFrame || x < dim.lFrame || x > dim.rFrame) {
             return;
         }
 
-        float l = x - 3;
-        float r = x + 3;
-        float t = y - 3;
-        float b = y + 3;
+        int l = x - 3;
+        int r = x + 3;
+        int t = y - 3;
+        int b = y + 3;
 
         Color color = gpws.getGPWSLampColor();
         drawVerticalLine(context, l, t, b, color);

@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.indicators;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
@@ -24,11 +25,11 @@ public class LocationIndicator extends HudComponent {
             return;
         }
 
-        float x = dim.lFrame + 15;
-        float y = dim.bFrame;
+        int x = dim.lFrame + 15;
+        int y = dim.bFrame;
 
-        long xLoc = Math.round(data.position.x);
-        long zLoc = Math.round(data.position.z);
+        int xLoc = MathHelper.floor(data.position.x);
+        int zLoc = MathHelper.floor(data.position.z);
 
         drawText(textRenderer, context, asText("%d / %d", xLoc, zLoc), x, y, FAConfig.hud().frameColor);
     }

@@ -34,8 +34,8 @@ public class AlertIndicator extends HudComponent {
             return;
         }
         boolean renderedCentered = false;
-        float x = dim.lFrame + 5;
-        float y = dim.tFrame + 15;
+        int x = dim.lFrame + 5;
+        int y = dim.tFrame + 15;
 
         for (AbstractAlert alert : alert.activeAlerts) {
             if (!renderedCentered) {

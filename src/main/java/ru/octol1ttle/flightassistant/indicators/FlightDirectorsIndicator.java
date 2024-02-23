@@ -29,8 +29,8 @@ public class FlightDirectorsIndicator extends HudComponent {
 
         if (autoflight.getTargetPitch() != null) {
             float deltaPitch = autoflight.getTargetPitch() - data.pitch;
-            float fdY = MathHelper.clamp(dim.yMid - Math.round(deltaPitch * dim.degreesPerPixel), dim.tFrame - 10, dim.bFrame + 10);
-            drawHorizontalLine(context, dim.xMid - dim.wFrame * 0.1f, dim.xMid + dim.wFrame * 0.1f, fdY, FAConfig.hud().advisoryColor);
+            int fdY = MathHelper.clamp(MathHelper.floor(dim.yMid - deltaPitch * dim.degreesPerPixel), dim.tFrame - 10, dim.bFrame + 10);
+            drawHorizontalLine(context, dim.xMid - dim.wFrame / 10, dim.xMid + dim.wFrame / 10, fdY, FAConfig.hud().advisoryColor);
         }
 
         if (autoflight.getTargetHeading() != null) {
@@ -42,8 +42,8 @@ public class FlightDirectorsIndicator extends HudComponent {
                 deltaHeading -= 360.0f;
             }
 
-            float fdX = MathHelper.clamp(dim.xMid + Math.round(deltaHeading * dim.degreesPerPixel), dim.lFrame + 10, dim.rFrame - 10);
-            drawVerticalLine(context, fdX, dim.yMid - dim.hFrame * 0.15f, dim.yMid + dim.hFrame * 0.15f, FAConfig.hud().advisoryColor);
+            int fdX = MathHelper.clamp(MathHelper.floor(dim.xMid + deltaHeading * dim.degreesPerPixel), dim.lFrame + 10, dim.rFrame - 10);
+            drawVerticalLine(context, fdX, dim.yMid - dim.hFrame / 7, dim.yMid + dim.hFrame / 7, FAConfig.hud().advisoryColor);
         }
     }
 

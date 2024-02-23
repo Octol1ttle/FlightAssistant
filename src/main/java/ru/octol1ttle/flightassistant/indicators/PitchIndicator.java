@@ -4,6 +4,7 @@ import java.awt.Color;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
@@ -36,11 +37,10 @@ public class PitchIndicator extends HudComponent {
 
         pitchData.update(dim);
 
-        float horizonOffset = data.pitch * dim.degreesPerPixel;
-        float yHorizon = dim.yMid + horizonOffset;
+        int yHorizon = MathHelper.floor(dim.yMid + data.pitch * dim.degreesPerPixel);
 
-        float xMid = dim.xMid;
-        float yMid = dim.yMid;
+        int xMid = dim.xMid;
+        int yMid = dim.yMid;
 
         context.getMatrices().push();
         context.getMatrices().translate(xMid, yMid, 0);
@@ -49,10 +49,10 @@ public class PitchIndicator extends HudComponent {
 
         drawLadder(textRenderer, context, yHorizon);
 
-        drawReferenceMark(context, yHorizon, stall.maximumSafePitch, FAConfig.hud().warningColor);
-        drawReferenceMark(context, yHorizon, PitchController.CLIMB_PITCH, getPitchColor(PitchController.CLIMB_PITCH));
-        drawReferenceMark(context, yHorizon, PitchController.GLIDE_PITCH, getPitchColor(PitchController.GLIDE_PITCH));
-        drawReferenceMark(context, yHorizon, voidLevel.minimumSafePitch, FAConfig.hud().warningColor);
+        drawReferenceMark(context, stall.maximumSafePitch, yHorizon, FAConfig.hud().warningColor);
+        drawReferenceMark(context, PitchController.CLIMB_PITCH, yHorizon, getPitchColor(PitchController.CLIMB_PITCH));
+        drawReferenceMark(context, PitchController.GLIDE_PITCH, yHorizon, getPitchColor(PitchController.GLIDE_PITCH));
+        drawReferenceMark(context, voidLevel.minimumSafePitch, yHorizon, FAConfig.hud().warningColor);
 
         pitchData.l1 -= pitchData.margin;
         pitchData.r2 += pitchData.margin;
@@ -76,34 +76,34 @@ public class PitchIndicator extends HudComponent {
         return "pitch";
     }
 
-    private void drawLadder(TextRenderer textRenderer, DrawContext context, float yHorizon) {
+    private void drawLadder(TextRenderer textRenderer, DrawContext context, int yHorizon) {
         for (int i = DEGREES_PER_BAR; i <= 90; i += DEGREES_PER_BAR) {
-            float offset = dim.degreesPerPixel * i;
+            int offset = dim.degreesPerPixel * i;
             drawDegreeBar(textRenderer, context, -i, yHorizon + offset);
             drawDegreeBar(textRenderer, context, i, yHorizon - offset);
         }
     }
 
-    private void drawReferenceMark(DrawContext context, float yHorizon, float degrees, Color color) {
+    private void drawReferenceMark(DrawContext context, float degrees, int yHorizon, Color color) {
         if (degrees == 0) {
             return;
         }
 
-        float y = (-degrees * dim.degreesPerPixel) + yHorizon;
+        int y = MathHelper.floor((-degrees * dim.degreesPerPixel) + yHorizon);
 
         if (y < dim.tFrame || y > dim.bFrame) {
             return;
         }
 
-        float width = (pitchData.l2 - pitchData.l1) * 0.45f;
-        float l1 = pitchData.l2 - width;
-        float r2 = pitchData.r1 + width;
+        int width = (pitchData.l2 - pitchData.l1) / 2;
+        int l1 = pitchData.l2 - width;
+        int r2 = pitchData.r1 + width;
 
         drawHorizontalLineDashed(context, l1, pitchData.l2, y, 3, color);
         drawHorizontalLineDashed(context, pitchData.r1, r2, y, 3, color);
     }
 
-    private void drawDegreeBar(TextRenderer textRenderer, DrawContext context, float degree, float y) {
+    private void drawDegreeBar(TextRenderer textRenderer, DrawContext context, float degree, int y) {
         if (y < dim.tFrame || y > dim.bFrame) {
             return;
         }
@@ -128,19 +128,19 @@ public class PitchIndicator extends HudComponent {
     }
 
     private static class PitchIndicatorData {
-        public float width;
-        public float margin;
-        public float sideWidth;
-        public float l1;
-        public float l2;
-        public float r1;
-        public float r2;
+        public int width;
+        public int margin;
+        public int sideWidth;
+        public int l1;
+        public int l2;
+        public int r1;
+        public int r2;
 
         public void update(Dimensions dim) {
-            width = dim.wFrame * 0.5f;
-            float left = dim.lFrame + (width * 0.5f);
+            width = dim.wFrame / 2;
+            int left = dim.lFrame + (width / 2);
 
-            margin = Math.round(width * 0.3d);
+            margin = width / 3;
             l1 = left + margin;
             l2 = dim.xMid - 7;
             sideWidth = l2 - l1;

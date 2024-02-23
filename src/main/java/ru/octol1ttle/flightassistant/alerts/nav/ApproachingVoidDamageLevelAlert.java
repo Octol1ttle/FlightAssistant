@@ -29,7 +29,7 @@ public class ApproachingVoidDamageLevelAlert extends AbstractAlert {
     }
 
     @Override
-    public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
+    public int renderECAM(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         Text text = voidLevel.status == VoidLevelComputer.VoidLevelStatus.REACHED_DAMAGE_LEVEL
                 ? Text.translatable("alerts.flightassistant.reached_void_damage_level")
                 : Text.translatable("alerts.flightassistant.approaching_void_damage_level");

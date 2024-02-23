@@ -28,7 +28,7 @@ public class ElytraHealthLowAlert extends AbstractAlert {
     }
 
     @Override
-    public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
+    public int renderECAM(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.elytra_health_low"), x, y,
                 FAConfig.hud().warningColor, highlight && data.isFlying);
     }

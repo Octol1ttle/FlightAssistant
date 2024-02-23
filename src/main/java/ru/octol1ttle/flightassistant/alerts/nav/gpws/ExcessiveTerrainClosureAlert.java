@@ -53,7 +53,7 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
     }
 
     @Override
-    public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
+    public boolean renderCentered(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         if (gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
             HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.pull_up"), x, y,
                     FAConfig.hud().warningColor, highlight);

@@ -20,8 +20,8 @@ public class StatusIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        float x = dim.rFrame - 5;
-        float y = dim.tFrame + 5;
+        int x = dim.rFrame - 5;
+        int y = dim.tFrame + 5;
 
         if (FAConfig.hud().showFireworkCount) {
             Color fireworkColor = FAConfig.hud().statusColor;
@@ -34,7 +34,7 @@ public class StatusIndicator extends HudComponent {
             }
             drawRightAlignedText(textRenderer, context,
                     Text.translatable("status.flightassistant.firework_count", firework.safeFireworkCount),
-                    x, y += 10, fireworkColor);
+                    x, y + 10, fireworkColor);
         }
     }
 

@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.indicators;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
@@ -19,34 +20,36 @@ public class SpeedIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        float top = dim.tFrame;
-        float bottom = dim.bFrame;
+        int top = dim.tFrame;
+        int bottom = dim.bFrame;
 
-        float left = dim.lFrame - 2;
-        float right = dim.lFrame;
-        float unitPerPixel = 30;
+        int left = dim.lFrame - 2;
+        int right = dim.lFrame;
+        int unitPerPixel = 30;
 
-        float floorOffset = data.speed * unitPerPixel;
-        float yFloor = dim.yMid - floorOffset;
+        int floorOffset = MathHelper.floor(data.speed * unitPerPixel);
+        int yFloor = dim.yMid - floorOffset;
 
-        float xSpeedText = left - 5;
+        int xSpeedText = left - 5;
 
         if (FAConfig.hud().showSpeedReadout) {
             drawRightAlignedText(textRenderer, context, asText("%.2f", data.speed), xSpeedText, dim.yMid - 3, FAConfig.hud().frameColor);
-            drawBorder(context, xSpeedText - 29.5f, dim.yMid - 5.0f, 30, FAConfig.hud().frameColor);
+            drawBorder(context, xSpeedText - 28, dim.yMid - 5, 30, FAConfig.hud().frameColor);
 
-            float frameWidth = dim.rFrame - dim.lFrame;
+            int frameWidth = dim.rFrame - dim.lFrame;
             if (FAConfig.hud().showGroundSpeedReadout) {
-                drawText(textRenderer, context, Text.translatable("flightassistant.ground_speed_short", String.format("%.2f", data.velocityPerSecond.horizontalLength())), dim.lFrame + frameWidth * 0.25f, dim.bFrame, FAConfig.hud().frameColor);
+                int x = MathHelper.floor(dim.lFrame + frameWidth * 0.25f);
+                drawText(textRenderer, context, Text.translatable("flightassistant.ground_speed_short", String.format("%.2f", data.velocityPerSecond.horizontalLength())), x, dim.bFrame, FAConfig.hud().frameColor);
             }
             if (FAConfig.hud().showVerticalSpeedReadout) {
-                drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", String.format("%.2f", data.velocityPerSecond.y)), dim.lFrame + frameWidth * 0.75f - 7, dim.bFrame, data.velocityPerSecond.y <= -10.0f ? FAConfig.hud().warningColor : FAConfig.hud().frameColor);
+                int x = MathHelper.floor(dim.lFrame + frameWidth * 0.75f - 7);
+                drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", String.format("%.2f", data.velocityPerSecond.y)), x, dim.bFrame, data.velocityPerSecond.y <= -10.0f ? FAConfig.hud().warningColor : FAConfig.hud().frameColor);
             }
         }
 
         if (FAConfig.hud().showSpeedScale) {
             for (float i = 0; i <= 100; i += 0.25f) {
-                float y = dim.hScreen - i * unitPerPixel - yFloor;
+                int y = MathHelper.floor(dim.hScreen - i * unitPerPixel - yFloor);
                 if (y < top || y > (bottom - 5))
                     continue;
 

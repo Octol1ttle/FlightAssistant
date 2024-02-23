@@ -17,11 +17,11 @@ public abstract class AbstractAlert {
     @NotNull
     public abstract AlertSoundData getAlertSoundData();
 
-    public boolean renderCentered(TextRenderer textRenderer, DrawContext context, float width, float y, boolean highlight) {
+    public boolean renderCentered(TextRenderer textRenderer, DrawContext context, int width, int y, boolean highlight) {
         return false;
     }
 
-    public int renderECAM(TextRenderer textRenderer, DrawContext context, float x, float y, boolean highlight) {
+    public int renderECAM(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         return 0;
     }
 }
