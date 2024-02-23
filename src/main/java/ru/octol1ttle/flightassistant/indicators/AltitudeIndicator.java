@@ -24,6 +24,11 @@ public class AltitudeIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
+        if (data.altitude < -130 || data.altitude > 1300) {
+            renderFaulted(context, textRenderer);
+            return;
+        }
+
         int top = dim.tFrame;
         int bottom = dim.bFrame;
 
@@ -52,7 +57,7 @@ public class AltitudeIndicator extends HudComponent {
         }
 
         if (FAConfig.hud().showAltitudeScale) {
-            for (int i = -150; i < 1000; i++) {
+            for (int i = -130; i < 1300; i++) {
                 int y = (dim.hScreen - i * blocksPerPixel) - yFloor;
                 if (y > (bottom - 5) || i < data.groundLevel) {
                     continue;
