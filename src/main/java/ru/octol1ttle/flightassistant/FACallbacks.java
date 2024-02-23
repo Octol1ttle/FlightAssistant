@@ -64,7 +64,7 @@ public class FACallbacks {
             }
             HudRenderer.getHost().tick();
 
-            HudRenderer.INSTANCE.render(drawContext, client);
+            HudRenderer.INSTANCE.render(client, drawContext, tickDelta);
         });
     }
 

@@ -20,6 +20,7 @@ import ru.octol1ttle.flightassistant.indicators.LocationIndicator;
 import ru.octol1ttle.flightassistant.indicators.PitchIndicator;
 import ru.octol1ttle.flightassistant.indicators.SpeedIndicator;
 import ru.octol1ttle.flightassistant.indicators.StatusIndicator;
+import ru.octol1ttle.flightassistant.mixin.GameRendererInvoker;
 
 public class HudRenderer extends HudComponent {
     public static HudRenderer INSTANCE;
@@ -48,8 +49,10 @@ public class HudRenderer extends HudComponent {
         return INSTANCE.host;
     }
 
-    public void render(DrawContext context, MinecraftClient mc) {
-        dim.update(mc);
+    public void render(MinecraftClient mc, DrawContext context, float tickDelta) {
+        GameRendererInvoker renderer = (GameRendererInvoker) mc.gameRenderer;
+        dim.update(context, renderer.getFov(mc.gameRenderer.getCamera(), tickDelta, true));
+
         float hudScale = FAConfig.get().hudScale;
         boolean batchAll = FlightAssistant.canUseBatching() && FAConfig.get().batchedRendering == FAConfig.BatchedRendering.SINGLE_BATCH;
 

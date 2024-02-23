@@ -1,40 +1,39 @@
 package ru.octol1ttle.flightassistant;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class Dimensions {
 
-    public float hScreen;
-    public float wScreen;
-    public float degreesPerPixel;
-    public float xMid;
-    public float yMid;
+    public int hScreen;
+    public int wScreen;
+    public int degreesPerPixel;
+    public int xMid;
+    public int yMid;
 
-    public float wFrame;
-    public float hFrame;
-    public float lFrame;
-    public float rFrame;
-    public float tFrame;
-    public float bFrame;
+    public int wFrame;
+    public int hFrame;
+    public int lFrame;
+    public int rFrame;
+    public int tFrame;
+    public int bFrame;
 
-    public void update(MinecraftClient client) {
-        float scale = 1.0f / FAConfig.get().hudScale;
+    public void update(DrawContext context, double fov) {
+        hScreen = MathHelper.ceil(context.getScaledWindowHeight() / FAConfig.get().hudScale);
+        wScreen = MathHelper.ceil(context.getScaledWindowWidth() / FAConfig.get().hudScale);
 
-        hScreen = client.getWindow().getScaledHeight() * scale;
-        wScreen = client.getWindow().getScaledWidth() * scale;
+        degreesPerPixel = MathHelper.ceil(hScreen / fov);
+        xMid = wScreen / 2;
+        yMid = hScreen / 2;
 
-        degreesPerPixel = hScreen / (float) client.options.getFov().getValue();
-        xMid = wScreen * 0.5f;
-        yMid = hScreen * 0.5f;
+        wFrame = (int) (wScreen * FAConfig.get().frameWidth);
+        hFrame = (int) (hScreen * FAConfig.get().frameHeight);
 
-        wFrame = wScreen * FAConfig.get().frameWidth;
-        hFrame = hScreen * FAConfig.get().frameHeight;
-
-        lFrame = ((wScreen - wFrame) * 0.5f);
+        lFrame = (wScreen - wFrame) / 2;
         rFrame = lFrame + wFrame;
 
-        tFrame = ((hScreen - hFrame) * 0.5f);
+        tFrame = (hScreen - hFrame) / 2;
         bFrame = tFrame + hFrame;
     }
 }
