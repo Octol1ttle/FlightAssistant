@@ -7,6 +7,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -126,18 +127,22 @@ public class AirDataComputer implements ITickableComputer {
         return MathHelper.wrapDegrees(player.getYaw());
     }
 
-    public BlockPos findGround() {
-        BlockPos.Mutable pos = player.getBlockPos().mutableCopy();
-        while (pos.getY() >= -64) {
-            if (isGround(pos.move(Direction.DOWN)) || altitude - pos.getY() > 1500) {
-                return pos;
+    public BlockPos findGround(BlockPos.Mutable from) {
+        if (!world.getChunkManager().isChunkLoaded(ChunkSectionPos.getSectionCoord(from.getX()), ChunkSectionPos.getSectionCoord(from.getZ()))) {
+            return null;
+        }
+        int start = from.getY();
+
+        while (from.getY() >= world.getBottomY()) {
+            if (isGround(from.move(Direction.DOWN)) || start - from.getY() > 1500) {
+                return from;
             }
         }
         return null;
     }
 
     private int computeGroundLevel() {
-        BlockPos ground = findGround();
+        BlockPos ground = findGround(player.getBlockPos().mutableCopy());
         return ground == null ? voidLevel : ground.getY();
     }
 
