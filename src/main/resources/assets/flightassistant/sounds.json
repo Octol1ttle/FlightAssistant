@@ -9,6 +9,11 @@
       "flightassistant:caution"
     ]
   },
+  "minimums": {
+    "sounds": [
+      "flightassistant:minimums"
+    ]
+  },
   "pull_up": {
     "sounds": [
       "flightassistant:pull_up"

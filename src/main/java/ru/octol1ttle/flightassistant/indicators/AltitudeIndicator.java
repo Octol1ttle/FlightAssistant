@@ -9,17 +9,20 @@ import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.AutoFlightComputer;
+import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class AltitudeIndicator extends HudComponent {
     private final Dimensions dim;
     private final AirDataComputer data;
     private final AutoFlightComputer autoflight;
+    private final FlightPlanner plan;
 
-    public AltitudeIndicator(Dimensions dim, AirDataComputer data, AutoFlightComputer autoflight) {
+    public AltitudeIndicator(Dimensions dim, AirDataComputer data, AutoFlightComputer autoflight, FlightPlanner plan) {
         this.dim = dim;
         this.data = data;
         this.autoflight = autoflight;
+        this.plan = plan;
     }
 
     @Override
@@ -90,6 +93,11 @@ public class AltitudeIndicator extends HudComponent {
     private Color getAltitudeColor(int safeLevel, float altitude) {
         if (altitude <= safeLevel) {
             return FAConfig.hud().warningColor;
+        }
+
+        Integer minimums = plan.getMinimums(data.groundLevel);
+        if (minimums != null && altitude <= minimums) {
+            return FAConfig.hud().cautionColor;
         }
 
         Integer targetAltitude = autoflight.getTargetAltitude();

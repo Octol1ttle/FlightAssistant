@@ -29,10 +29,13 @@ public record AlertSoundData(@Nullable SoundEvent sound, int priority) {
             SoundEvent.of(new Identifier("flightassistant:warning")),
             4
     );
-
+    public static final AlertSoundData MINIMUMS = new AlertSoundData(
+            SoundEvent.of(new Identifier("flightassistant:minimums")),
+            5
+    );
     public static final AlertSoundData MASTER_CAUTION = new AlertSoundData(
             SoundEvent.of(new Identifier("flightassistant:caution")),
-            5
+            6
     );
     public static final AlertSoundData EMPTY = new AlertSoundData(
             null,

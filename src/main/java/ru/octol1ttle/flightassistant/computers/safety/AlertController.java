@@ -15,6 +15,7 @@ import ru.octol1ttle.flightassistant.alerts.fault.IndicatorFaultAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkNoResponseAlert;
 import ru.octol1ttle.flightassistant.alerts.firework.FireworkUnsafeAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.ApproachingVoidDamageLevelAlert;
+import ru.octol1ttle.flightassistant.alerts.nav.MinimumsAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveDescentAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveTerrainClosureAlert;
 import ru.octol1ttle.flightassistant.alerts.other.ElytraHealthLowAlert;
@@ -36,12 +37,11 @@ public class AlertController implements ITickableComputer {
                 new StallAlert(host.stall),
                 new ExcessiveDescentAlert(host.data, host.gpws), new ExcessiveTerrainClosureAlert(host.gpws, host.time),
                 new AutopilotOffAlert(host.autoflight), new AutoFireworkOffAlert(host.autoflight),
-                new ComputerFaultAlert(host),
-                new IndicatorFaultAlert(renderer),
+                new MinimumsAlert(host.data, host.plan),
+                new ComputerFaultAlert(host), new IndicatorFaultAlert(renderer),
                 new ApproachingVoidDamageLevelAlert(host.voidLevel),
                 new ElytraHealthLowAlert(host.data),
-                new FireworkUnsafeAlert(host.data, host.firework),
-                new FireworkNoResponseAlert(host.firework)
+                new FireworkUnsafeAlert(host.data, host.firework), new FireworkNoResponseAlert(host.firework)
         );
         activeAlerts = new ArrayList<>(allAlerts.size());
     }

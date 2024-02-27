@@ -11,7 +11,6 @@ import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class ApproachingVoidDamageLevelAlert extends AbstractAlert {
-
     private final VoidLevelComputer voidLevel;
 
     public ApproachingVoidDamageLevelAlert(VoidLevelComputer voidLevel) {

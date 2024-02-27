@@ -143,6 +143,14 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return Vector2d.distance(planPos.x, planPos.y, data.position.x, data.position.z);
     }
 
+    public @Nullable Integer getMinimums(int ground) {
+        if (targetWaypoint instanceof LandingWaypoint land) {
+            return land.minimums(ground);
+        }
+
+        return null;
+    }
+
     public void execute(int waypointIndex) {
         targetWaypoint = this.get(waypointIndex);
         if (targetWaypoint instanceof LandingWaypoint) {

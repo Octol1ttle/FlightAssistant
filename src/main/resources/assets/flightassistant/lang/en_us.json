@@ -75,6 +75,7 @@
 
   "alerts.flightassistant.approaching_void_damage_level": "APPROACHING VOID DAMAGE LEVEL",
   "alerts.flightassistant.reached_void_damage_level": "REACHED VOID DAMAGE LEVEL",
+  "alerts.flightassistant.reached_minimums": "REACHED MINIMUMS",
   "alerts.flightassistant.autoflight.autopilot_off": "AUTOPILOT OFF",
   "alerts.flightassistant.autoflight.auto_firework_off": "AUTO-FIREWORK OFF",
   "alerts.flightassistant.firework.no_response": "FRWK NO RESPONSE",
