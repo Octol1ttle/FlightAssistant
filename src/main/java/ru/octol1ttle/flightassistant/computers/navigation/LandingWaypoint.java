@@ -35,9 +35,7 @@ public class LandingWaypoint extends Waypoint {
         };
     }
 
-    @Override
-    public Waypoint setTargetAltitude(Integer targetAltitude) {
+    public void setTargetAltitude(Integer targetAltitude) {
         this.targetAltitude = targetAltitude;
-        return this;
     }
 }

@@ -111,8 +111,7 @@ public class FlightModeIndicator extends HudComponent {
         String type = autoflight.selectedAltitude != null ? ".selected" : ".managed";
 
         if (plan.landingInProgress) {
-            String key = plan.shouldFlare() ? "mode.flightassistant.vert.flare" : "mode.flightassistant.vert.land";
-            verticalMode.update(Text.translatable(key, plan.landAltitude));
+            verticalMode.update(Text.translatable("mode.flightassistant.vert.land", plan.landAltitude));
         } else if (!autoflight.autoPilotEnabled || diff <= 5) {
             verticalMode.update(Text.translatable("mode.flightassistant.vert.alt_hold" + type, targetAltitude));
         } else if (diff <= 10) {

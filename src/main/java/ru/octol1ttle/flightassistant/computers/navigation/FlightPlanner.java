@@ -27,8 +27,9 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
     @Override
     public void tick() {
-        if (!this.contains(targetWaypoint)) {
-            targetWaypoint = null;
+        landAltitude = null;
+        if (targetWaypoint != null && !this.contains(targetWaypoint)) {
+            nextWaypoint(MathHelper.floor(data.altitude));
         }
 
         if (targetWaypoint == null) {
@@ -37,60 +38,60 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
         Vector2d target = new Vector2d(targetWaypoint.targetPosition());
 
-        landAltitude = null;
         if (targetWaypoint instanceof LandingWaypoint) {
             landingInProgress = tickLanding(target);
             if (landingInProgress) {
-                targetWaypoint.setTargetAltitude(landAltitude);
+                setLandTargetAltitude(landAltitude);
             }
-
             return;
         }
 
         float altitude = targetWaypoint.targetAltitude() != null ? targetWaypoint.targetAltitude() : data.altitude;
         if (target.sub(data.position.x, data.position.z).length() <= 20.0f && Math.abs(altitude - data.altitude) <= 10.0f) {
-            nextWaypoint(altitude);
+            nextWaypoint(MathHelper.floor(altitude));
         }
     }
 
-    private void nextWaypoint(Float altitude) {
+    private void nextWaypoint(Integer altitude) {
         int nextIndex = this.indexOf(targetWaypoint) + 1;
         if (waypointExistsAt(nextIndex)) {
             targetWaypoint = this.get(nextIndex);
-            if (targetWaypoint instanceof LandingWaypoint && altitude != null) {
-                targetWaypoint.setTargetAltitude(MathHelper.floor(altitude));
-            }
+            setLandTargetAltitude(altitude);
+        } else {
+            targetWaypoint = null;
+        }
+    }
+
+    private void setLandTargetAltitude(Integer altitude) {
+        if (targetWaypoint instanceof LandingWaypoint land && altitude != null) {
+            land.setTargetAltitude(altitude);
         }
     }
 
     private boolean tickLanding(Vector2d target) {
+        double distance = Vector2d.distance(target.x, target.y, data.position.x, data.position.z);
+        if (distance <= 10.0 && data.heightAboveGround <= 3.0f) {
+            nextWaypoint(null);
+            return false;
+        }
+
         BlockPos landPos = data.findGround(new BlockPos.Mutable(target.x, 320, target.y));
         if (landPos == null) {
             return false;
         }
         landAltitude = landPos.getY();
-        Double distance = getDistanceToNextWaypoint();
-        assert distance != null;
-        if (distance < 5.0) {
-            nextWaypoint(null);
-        }
 
         float landAngle = FAMathHelper.toDegrees(MathHelper.atan2(landAltitude - data.altitude, distance));
-        if (landAngle < PitchController.DESCEND_PITCH + 10) {
+        if (landAngle > 5.0f || landAngle < PitchController.DESCEND_PITCH + 15) {
             return false;
         }
+        BlockHitResult result = data.world.raycast(new RaycastContext(data.position, new Vec3d(target.x, landAltitude, target.y), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player));
 
-        BlockHitResult result = data.world.raycast(new RaycastContext(data.position, new Vec3d(target.x, landAltitude + 1.0, target.y), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player));
-
-        return result.getType() == HitResult.Type.MISS;
+        return result.getType() == HitResult.Type.MISS || Math.abs(result.getPos().y - landAltitude) <= 5.0;
     }
 
     public boolean isOnApproach() {
         return targetWaypoint instanceof LandingWaypoint;
-    }
-
-    public boolean shouldFlare() {
-        return landAltitude != null && data.altitude - landAltitude <= 5.0f;
     }
 
     public @Nullable Text formatMinimums() {
@@ -153,9 +154,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
     public void execute(int waypointIndex) {
         targetWaypoint = this.get(waypointIndex);
-        if (targetWaypoint instanceof LandingWaypoint) {
-            targetWaypoint.setTargetAltitude(MathHelper.floor(data.altitude));
-        }
+        setLandTargetAltitude(MathHelper.floor(data.altitude));
     }
 
     public boolean waypointExistsAt(int index) {

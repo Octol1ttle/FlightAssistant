@@ -44,13 +44,13 @@ public class ComputerHost {
         this.firework = new FireworkController(mc, data, time);
         this.stall = new StallComputer(firework, data);
         this.voidLevel = new VoidLevelComputer(data, firework, stall);
-        this.gpws = new GPWSComputer(data);
+        this.plan = new FlightPlanner(data);
+        this.gpws = new GPWSComputer(data, plan);
         this.elytra = new ElytraStateController(data);
 
         this.yaw = new YawController(time, data);
         this.pitch = new PitchController(data, stall, time, voidLevel, gpws);
 
-        this.plan = new FlightPlanner(data);
         this.autoflight = new AutoFlightComputer(data, gpws, plan, firework, pitch, yaw);
 
         this.alert = new AlertController(this, mc.getSoundManager(), renderer);

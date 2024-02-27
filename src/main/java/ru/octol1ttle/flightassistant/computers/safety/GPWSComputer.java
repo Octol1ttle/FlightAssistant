@@ -10,6 +10,7 @@ import net.minecraft.world.RaycastContext;
 import org.joml.Vector2d;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
+import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class GPWSComputer implements ITickableComputer {
@@ -26,13 +27,15 @@ public class GPWSComputer implements ITickableComputer {
     private static final float PULL_UP_THRESHOLD = 5.0f;
     private static final float PITCH_CORRECT_THRESHOLD = 2.5f;
     private final AirDataComputer data;
+    private final FlightPlanner plan;
     public float descentImpactTime = STATUS_UNKNOWN;
     public float terrainImpactTime = STATUS_UNKNOWN;
     public Vector2d terrainAvoidVector = new Vector2d();
     public boolean fireworkUseSafe = true;
 
-    public GPWSComputer(AirDataComputer data) {
+    public GPWSComputer(AirDataComputer data, FlightPlanner plan) {
         this.data = data;
+        this.plan = plan;
     }
 
     @Override
@@ -99,7 +102,7 @@ public class GPWSComputer implements ITickableComputer {
         Vec3d end = data.position.add(data.velocityPerSecond.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS));
 
         BlockHitResult result = data.world.raycast(new RaycastContext(data.position, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player));
-        if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP) {
+        if (plan.landingInProgress || result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP) {
             return STATUS_NO_TERRAIN_AHEAD;
         }
 

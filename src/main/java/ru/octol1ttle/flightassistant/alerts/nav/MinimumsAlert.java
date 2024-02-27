@@ -23,7 +23,7 @@ public class MinimumsAlert extends AbstractAlert {
     @Override
     public boolean isTriggered() {
         Integer minimums = plan.getMinimums(data.groundLevel);
-        return minimums != null && data.altitude <= minimums && plan.landingInProgress;
+        return data.isFlying && plan.landingInProgress && minimums != null && data.altitude <= minimums;
     }
 
     @Override

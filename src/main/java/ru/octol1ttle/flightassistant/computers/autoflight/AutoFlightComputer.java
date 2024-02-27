@@ -42,7 +42,7 @@ public class AutoFlightComputer implements ITickableComputer {
 
     @Override
     public void tick() {
-        if (autoFireworkEnabled && gpws.getGPWSLampColor() == FAConfig.hud().frameColor && !plan.shouldFlare()) {
+        if (autoFireworkEnabled && gpws.getGPWSLampColor() == FAConfig.hud().frameColor) {
             Integer targetSpeed = getTargetSpeed();
             Integer targetAltitude = getTargetAltitude();
             if (targetSpeed != null) {
@@ -67,9 +67,6 @@ public class AutoFlightComputer implements ITickableComputer {
     }
 
     public @Nullable Float getTargetPitch() {
-        if (plan.shouldFlare()) {
-            return 10.0f;
-        }
         if (getTargetAltitude() == null) {
             return null;
         }

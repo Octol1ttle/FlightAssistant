@@ -25,8 +25,4 @@ public class Waypoint {
     public Integer targetSpeed() {
         return targetSpeed;
     }
-
-    public Waypoint setTargetAltitude(Integer targetAltitude) {
-        throw new IllegalStateException("Cannot update altitude on a non-landing waypoint");
-    }
 }
