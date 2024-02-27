@@ -13,6 +13,8 @@ import ru.octol1ttle.flightassistant.commands.plan.InsertWaypointCommand;
 import ru.octol1ttle.flightassistant.commands.plan.ListWaypointsCommand;
 import ru.octol1ttle.flightassistant.commands.plan.RemoveWaypointCommand;
 import ru.octol1ttle.flightassistant.commands.plan.ReplaceWaypointCommand;
+import ru.octol1ttle.flightassistant.computers.navigation.LandingMinimums;
+import ru.octol1ttle.flightassistant.computers.navigation.LandingWaypoint;
 import ru.octol1ttle.flightassistant.computers.navigation.Waypoint;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
@@ -98,6 +100,42 @@ public class FlightPlanCommand {
                                                                 IntegerArgumentType.getInteger(context, "targetAltitude"),
                                                                 IntegerArgumentType.getInteger(context, "targetSpeed")
                                                         ))
+                                                )
+                                        )
+                                )
+                                .then(literal("land")
+                                        .executes(context -> command.execute(context, new LandingWaypoint(
+                                                        new Vector2d(
+                                                                IntegerArgumentType.getInteger(context, "targetX"),
+                                                                IntegerArgumentType.getInteger(context, "targetZ")
+                                                        ),
+                                                        null
+                                                ))
+                                        )
+                                        .then(argument("minimums", IntegerArgumentType.integer(-60, 400))
+                                                .then(literal("absolute")
+                                                        .executes(context -> command.execute(context, new LandingWaypoint(
+                                                                new Vector2d(
+                                                                        IntegerArgumentType.getInteger(context, "targetX"),
+                                                                        IntegerArgumentType.getInteger(context, "targetZ")
+                                                                ),
+                                                                new LandingMinimums(
+                                                                        LandingMinimums.AltitudeType.ABSOLUTE,
+                                                                        IntegerArgumentType.getInteger(context, "minimums")
+                                                                )
+                                                        )))
+                                                )
+                                                .then(literal("aboveGround")
+                                                        .executes(context -> command.execute(context, new LandingWaypoint(
+                                                                new Vector2d(
+                                                                        IntegerArgumentType.getInteger(context, "targetX"),
+                                                                        IntegerArgumentType.getInteger(context, "targetZ")
+                                                                ),
+                                                                new LandingMinimums(
+                                                                        LandingMinimums.AltitudeType.ABOVE_GROUND,
+                                                                        IntegerArgumentType.getInteger(context, "minimums")
+                                                                )
+                                                        )))
                                                 )
                                         )
                                 )

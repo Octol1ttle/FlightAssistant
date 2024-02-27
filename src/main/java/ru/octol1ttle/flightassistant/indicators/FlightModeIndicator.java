@@ -109,7 +109,10 @@ public class FlightModeIndicator extends HudComponent {
         float diff = Math.abs(targetAltitude - data.altitude);
         String type = autoflight.selectedAltitude != null ? ".selected" : ".managed";
 
-        if (!autoflight.autoPilotEnabled || diff <= 5) {
+        if (plan.landingInProgress) {
+            String key = plan.shouldFlare() ? "mode.flightassistant.vert.flare" : "mode.flightassistant.vert.land";
+            verticalMode.update(Text.translatable(key, plan.landAltitude));
+        } else if (!autoflight.autoPilotEnabled || diff <= 5) {
             verticalMode.update(Text.translatable("mode.flightassistant.vert.alt_hold" + type, targetAltitude));
         } else if (diff <= 10) {
             verticalMode.update(Text.translatable("mode.flightassistant.vert.alt_approaching" + type, targetAltitude));
@@ -129,11 +132,15 @@ public class FlightModeIndicator extends HudComponent {
             return;
         }
 
-        if (autoflight.selectedHeading != null) {
+        Text minimums = plan.formatMinimums();
+        if (minimums != null && plan.landingInProgress) {
+            lateralMode.update(Text.translatable("mode.flightassistant.lat.minimums", plan.formatMinimums()));
+        } else if (autoflight.selectedHeading != null) {
             lateralMode.update(Text.translatable("mode.flightassistant.lat.heading", autoflight.selectedHeading));
         } else if (plan.getTargetPosition() != null) {
             Vector2d target = plan.getTargetPosition();
-            lateralMode.update(Text.translatable("mode.flightassistant.lat.position", (int) target.x, (int) target.y));
+            String key = plan.isOnApproach() ? "mode.flightassistant.lat.approach" : "mode.flightassistant.lat.position";
+            lateralMode.update(Text.translatable(key, (int) target.x, (int) target.y));
         }
 
         int x = MathHelper.floor(dim.lFrame + dim.wFrame * (3 / 5.0f));
