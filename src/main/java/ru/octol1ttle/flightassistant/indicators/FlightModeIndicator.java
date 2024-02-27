@@ -103,6 +103,7 @@ public class FlightModeIndicator extends HudComponent {
     private void renderVerticalMode(DrawContext context, TextRenderer textRenderer) {
         Integer targetAltitude = autoflight.getTargetAltitude();
         if (targetAltitude == null || !autoflight.flightDirectorsEnabled && !autoflight.autoPilotEnabled) {
+            verticalMode.update(Text.empty());
             return;
         }
 
@@ -129,6 +130,7 @@ public class FlightModeIndicator extends HudComponent {
 
     private void renderLateralMode(DrawContext context, TextRenderer textRenderer) {
         if (autoflight.getTargetHeading() == null || !autoflight.flightDirectorsEnabled && !autoflight.autoPilotEnabled) {
+            lateralMode.update(Text.empty());
             return;
         }
 
@@ -149,7 +151,7 @@ public class FlightModeIndicator extends HudComponent {
     }
 
     private void renderAutomationStatus(DrawContext context, TextRenderer textRenderer) {
-        MutableText automationStatus = Text.literal("");
+        MutableText automationStatus = Text.empty();
         if (autoflight.flightDirectorsEnabled) {
             appendWithSeparation(automationStatus, Text.translatable("mode.flightassistant.auto.flight_directors"));
         }
