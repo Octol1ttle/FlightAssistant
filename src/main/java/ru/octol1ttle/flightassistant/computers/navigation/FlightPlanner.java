@@ -52,22 +52,6 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         }
     }
 
-    private void nextWaypoint(Integer altitude) {
-        int nextIndex = this.indexOf(targetWaypoint) + 1;
-        if (waypointExistsAt(nextIndex)) {
-            targetWaypoint = this.get(nextIndex);
-            setLandTargetAltitude(altitude);
-        } else {
-            targetWaypoint = null;
-        }
-    }
-
-    private void setLandTargetAltitude(Integer altitude) {
-        if (targetWaypoint instanceof LandingWaypoint land && altitude != null) {
-            land.setTargetAltitude(altitude);
-        }
-    }
-
     private boolean tickLanding(Vector2d target) {
         double distance = Vector2d.distance(target.x, target.y, data.position.x, data.position.z);
         if (distance <= 10.0 && data.heightAboveGround <= 3.0f) {
@@ -90,17 +74,16 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return result.getType() == HitResult.Type.MISS || Math.abs(result.getPos().y - landAltitude) <= 5.0;
     }
 
-    public boolean isOnApproach() {
-        return targetWaypoint instanceof LandingWaypoint;
-    }
-
-    public @Nullable Text formatMinimums() {
-        if (targetWaypoint instanceof LandingWaypoint land) {
-            return land.formatMinimums();
+    private void nextWaypoint(Integer altitude) {
+        int nextIndex = this.indexOf(targetWaypoint) + 1;
+        if (waypointExistsAt(nextIndex)) {
+            targetWaypoint = this.get(nextIndex);
+            setLandTargetAltitude(altitude);
+        } else {
+            targetWaypoint = null;
         }
-
-        return null;
     }
+
 
     public @Nullable Integer getManagedSpeed() {
         if (targetWaypoint == null) {
@@ -152,9 +135,32 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return null;
     }
 
+    public @Nullable Text formatMinimums() {
+        if (targetWaypoint instanceof LandingWaypoint land) {
+            return land.formatMinimums();
+        }
+
+        return null;
+    }
+
+    public boolean isBelowMinimums() {
+        Integer minimums = getMinimums(data.groundLevel);
+        return data.isFlying && landingInProgress && minimums != null && data.altitude <= minimums;
+    }
+
     public void execute(int waypointIndex) {
         targetWaypoint = this.get(waypointIndex);
         setLandTargetAltitude(MathHelper.floor(data.altitude));
+    }
+
+    private void setLandTargetAltitude(Integer altitude) {
+        if (targetWaypoint instanceof LandingWaypoint land && altitude != null) {
+            land.setTargetAltitude(altitude);
+        }
+    }
+
+    public boolean isOnApproach() {
+        return targetWaypoint instanceof LandingWaypoint;
     }
 
     public boolean waypointExistsAt(int index) {

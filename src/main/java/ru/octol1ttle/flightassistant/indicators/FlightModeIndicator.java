@@ -135,7 +135,7 @@ public class FlightModeIndicator extends HudComponent {
 
         Text minimums = plan.formatMinimums();
         if (minimums != null && plan.landingInProgress) {
-            lateralMode.update(Text.translatable("mode.flightassistant.lat.minimums", plan.formatMinimums()));
+            lateralMode.update(Text.translatable("mode.flightassistant.lat.minimums", plan.formatMinimums()), plan.isBelowMinimums());
         } else if (autoflight.selectedHeading != null) {
             lateralMode.update(Text.translatable("mode.flightassistant.lat.heading", autoflight.selectedHeading));
         } else if (plan.getTargetPosition() != null) {
