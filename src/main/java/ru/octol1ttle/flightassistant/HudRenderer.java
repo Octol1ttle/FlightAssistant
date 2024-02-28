@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.compatibility.ImmediatelyFastBatchingAccessor;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.config.FAConfig;
+import ru.octol1ttle.flightassistant.config.HUDConfig;
 import ru.octol1ttle.flightassistant.indicators.AlertIndicator;
 import ru.octol1ttle.flightassistant.indicators.AltitudeIndicator;
 import ru.octol1ttle.flightassistant.indicators.ElytraHealthIndicator;
@@ -53,8 +54,8 @@ public class HudRenderer extends HudComponent {
         GameRendererInvoker renderer = (GameRendererInvoker) mc.gameRenderer;
         dim.update(context, renderer.getFov(mc.gameRenderer.getCamera(), tickDelta, true));
 
-        float hudScale = FAConfig.get().hudScale;
-        boolean batchAll = FlightAssistant.canUseBatching() && FAConfig.get().batchedRendering == FAConfig.BatchedRendering.SINGLE_BATCH;
+        float hudScale = FAConfig.hud().hudScale;
+        boolean batchAll = FlightAssistant.canUseBatching() && FAConfig.hud().batchedRendering == HUDConfig.BatchedRendering.SINGLE_BATCH;
 
         context.getMatrices().push();
         context.getMatrices().scale(hudScale, hudScale, hudScale);
@@ -92,7 +93,7 @@ public class HudRenderer extends HudComponent {
     }
 
     public void drawBatchedComponent(Runnable draw) {
-        boolean batch = FlightAssistant.canUseBatching() && FAConfig.get().batchedRendering == FAConfig.BatchedRendering.BATCH_PER_COMPONENT;
+        boolean batch = FlightAssistant.canUseBatching() && FAConfig.hud().batchedRendering == HUDConfig.BatchedRendering.PER_COMPONENT;
         if (batch) {
             ImmediatelyFastBatchingAccessor.beginHudBatching();
         }

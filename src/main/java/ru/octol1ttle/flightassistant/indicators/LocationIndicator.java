@@ -21,7 +21,7 @@ public class LocationIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (!FAConfig.hud().showCoordinates) {
+        if (!FAConfig.indicator().showCoordinates) {
             return;
         }
 
@@ -31,13 +31,13 @@ public class LocationIndicator extends HudComponent {
         int xLoc = MathHelper.floor(data.position.x);
         int zLoc = MathHelper.floor(data.position.z);
 
-        drawText(textRenderer, context, asText("%d / %d", xLoc, zLoc), x, y, FAConfig.hud().frameColor);
+        drawText(textRenderer, context, asText("%d / %d", xLoc, zLoc), x, y, FAConfig.indicator().frameColor);
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
         drawText(textRenderer, context, Text.translatable("flightassistant.location_short"),
-                dim.lFrame + 15, dim.bFrame, FAConfig.hud().warningColor);
+                dim.lFrame + 15, dim.bFrame, FAConfig.indicator().warningColor);
     }
 
     @Override

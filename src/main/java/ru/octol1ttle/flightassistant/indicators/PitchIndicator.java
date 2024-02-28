@@ -31,7 +31,7 @@ public class PitchIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (!FAConfig.hud().showPitchLadder) {
+        if (!FAConfig.indicator().showPitchLadder) {
             return;
         }
 
@@ -49,10 +49,10 @@ public class PitchIndicator extends HudComponent {
 
         drawLadder(textRenderer, context, yHorizon);
 
-        drawPushArrows(textRenderer, context, stall.maximumSafePitch, yHorizon, FAConfig.hud().warningColor);
+        drawPushArrows(textRenderer, context, stall.maximumSafePitch, yHorizon, FAConfig.indicator().warningColor);
         drawReferenceMark(context, PitchController.CLIMB_PITCH, yHorizon, getPitchColor(PitchController.CLIMB_PITCH));
         drawReferenceMark(context, PitchController.GLIDE_PITCH, yHorizon, getPitchColor(PitchController.GLIDE_PITCH));
-        drawPullArrows(textRenderer, context, Math.max(PitchController.DESCEND_PITCH, voidLevel.minimumSafePitch), yHorizon, FAConfig.hud().warningColor);
+        drawPullArrows(textRenderer, context, Math.max(PitchController.DESCEND_PITCH, voidLevel.minimumSafePitch), yHorizon, FAConfig.indicator().warningColor);
 
         pitchData.l1 -= pitchData.margin;
         pitchData.r2 += pitchData.margin;
@@ -63,7 +63,7 @@ public class PitchIndicator extends HudComponent {
 
     private Color getPitchColor(float degree) {
         return degree < Math.max(PitchController.DESCEND_PITCH, voidLevel.minimumSafePitch) || degree > stall.maximumSafePitch
-                ? FAConfig.hud().warningColor : FAConfig.hud().frameColor;
+                ? FAConfig.indicator().warningColor : FAConfig.indicator().frameColor;
     }
 
     private void drawLadder(TextRenderer textRenderer, DrawContext context, int yHorizon) {
@@ -150,7 +150,7 @@ public class PitchIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.pitch_short"), dim.xMid, dim.yMid - 10, FAConfig.hud().warningColor);
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.pitch_short"), dim.xMid, dim.yMid - 10, FAConfig.indicator().warningColor);
     }
 
     @Override

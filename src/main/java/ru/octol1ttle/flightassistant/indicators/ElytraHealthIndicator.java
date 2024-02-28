@@ -25,12 +25,12 @@ public class ElytraHealthIndicator extends HudComponent {
         int x = dim.xMid;
         int y = dim.bFrame;
 
-        if (FAConfig.hud().showElytraHealth && data.elytraHealth != null) {
+        if (FAConfig.indicator().showElytraHealth && data.elytraHealth != null) {
             Color color;
             if (data.elytraHealth <= 5.0f) { // TODO: configurable
-                color = FAConfig.hud().warningColor;
+                color = FAConfig.indicator().warningColor;
             } else {
-                color = data.elytraHealth <= 10.0f ? FAConfig.hud().cautionColor : FAConfig.hud().frameColor;
+                color = data.elytraHealth <= 10.0f ? FAConfig.indicator().cautionColor : FAConfig.indicator().frameColor;
             }
             drawBorder(context, x - 3, y - 2, 30, color);
             drawText(textRenderer, context, Text.translatable("flightassistant.elytra_short"), x - 10, y, color);
@@ -43,7 +43,7 @@ public class ElytraHealthIndicator extends HudComponent {
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
         drawText(textRenderer, context, Text.translatable("flightassistant.elytra_health_short"),
                 dim.xMid, dim.bFrame,
-                FAConfig.hud().warningColor);
+                FAConfig.indicator().warningColor);
     }
 
     @Override

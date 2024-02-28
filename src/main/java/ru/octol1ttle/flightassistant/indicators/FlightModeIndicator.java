@@ -50,16 +50,16 @@ public class FlightModeIndicator extends HudComponent {
             return;
         }
 
-        if (FAConfig.hud().showFireworkMode) {
+        if (FAConfig.indicator().showFireworkMode) {
             renderFireworkMode(context, textRenderer);
         }
-        if (FAConfig.hud().showVerticalMode) {
+        if (FAConfig.indicator().showVerticalMode) {
             renderVerticalMode(context, textRenderer);
         }
-        if (FAConfig.hud().showLateralMode) {
+        if (FAConfig.indicator().showLateralMode) {
             renderLateralMode(context, textRenderer);
         }
-        if (FAConfig.hud().showAutomationStatus) {
+        if (FAConfig.indicator().showAutomationStatus) {
             renderAutomationStatus(context, textRenderer);
         }
     }
@@ -180,7 +180,7 @@ public class FlightModeIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawText(textRenderer, context, Text.translatable("flightassistant.flight_mode_short"), dim.lFrame + dim.wFrame / 5, dim.bFrame - 10, FAConfig.hud().warningColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.flight_mode_short"), dim.lFrame + dim.wFrame / 5, dim.bFrame - 10, FAConfig.indicator().warningColor);
     }
 
     @Override

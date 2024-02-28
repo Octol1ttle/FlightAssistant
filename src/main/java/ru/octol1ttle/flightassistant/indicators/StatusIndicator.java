@@ -26,26 +26,26 @@ public class StatusIndicator extends HudComponent {
         int x = dim.rFrame - 5;
         int y = dim.tFrame + 5;
 
-        if (FAConfig.hud().showFireworkCount) {
-            Color fireworkColor = FAConfig.hud().statusColor;
+        if (FAConfig.indicator().showFireworkCount) {
+            Color fireworkColor = FAConfig.indicator().statusColor;
             if (firework.safeFireworkCount > 0) {
                 if (firework.safeFireworkCount <= 24) {
-                    fireworkColor = FAConfig.hud().cautionColor;
+                    fireworkColor = FAConfig.indicator().cautionColor;
                 }
             } else {
-                fireworkColor = FAConfig.hud().warningColor;
+                fireworkColor = FAConfig.indicator().warningColor;
             }
             drawRightAlignedText(textRenderer, context,
                     Text.translatable("status.flightassistant.firework_count", firework.safeFireworkCount),
                     x, y += 10, fireworkColor);
         }
 
-        if (FAConfig.hud().showDistanceToWaypoint) {
+        if (FAConfig.indicator().showDistanceToWaypoint) {
             Double distance = plan.getDistanceToNextWaypoint();
             if (distance != null) {
                 drawRightAlignedText(textRenderer, context,
                         Text.translatable("status.flightassistant.waypoint_distance", distance.intValue()),
-                        x, y + 10, FAConfig.hud().statusColor);
+                        x, y + 10, FAConfig.indicator().statusColor);
             }
         }
     }
@@ -54,7 +54,7 @@ public class StatusIndicator extends HudComponent {
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
         drawRightAlignedText(textRenderer, context,
                 Text.translatable("flightassistant.status_short"),
-                dim.rFrame - 5, dim.tFrame + 15, FAConfig.hud().warningColor);
+                dim.rFrame - 5, dim.tFrame + 15, FAConfig.indicator().warningColor);
     }
 
     @Override

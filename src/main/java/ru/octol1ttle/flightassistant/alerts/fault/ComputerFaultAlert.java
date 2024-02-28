@@ -33,7 +33,7 @@ public class ComputerFaultAlert extends AbstractAlert {
         int i = 0;
         for (IComputer computer : host.faulted) {
             i += HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.fault.computers." + computer.getId()), x, y,
-                    FAConfig.hud().warningColor, highlight);
+                    FAConfig.indicator().warningColor, highlight);
             y += 10;
         }
 

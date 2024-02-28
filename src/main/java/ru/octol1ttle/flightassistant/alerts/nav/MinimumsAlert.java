@@ -30,6 +30,6 @@ public class MinimumsAlert extends AbstractAlert {
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.reached_minimums"), x, y,
-                FAConfig.hud().cautionColor, false);
+                FAConfig.indicator().cautionColor, false);
     }
 }

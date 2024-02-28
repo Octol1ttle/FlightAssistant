@@ -45,6 +45,6 @@ public class FireworkUnsafeAlert extends AbstractAlert {
     @Override
     public int renderECAM(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.firework.unsafe"), x, y,
-                FAConfig.hud().warningColor, highlight && data.isFlying);
+                FAConfig.indicator().warningColor, highlight && data.isFlying);
     }
 }

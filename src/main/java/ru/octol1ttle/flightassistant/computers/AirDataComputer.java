@@ -14,6 +14,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.joml.Matrix3f;
 import ru.octol1ttle.flightassistant.FAMathHelper;
+import ru.octol1ttle.flightassistant.config.ComputerConfig;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
@@ -52,7 +54,12 @@ public class AirDataComputer implements ITickableComputer {
     }
 
     public boolean canAutomationsActivate(boolean checkFlying) {
-        return (!checkFlying || isFlying) && mc.currentScreen == null && mc.getOverlay() == null;
+        ComputerConfig.FlightProtectionsMode mode = FAConfig.computer().protectionsMode;
+        return switch (mode) {
+            case FULL -> true; // TODO: wtf? this works even with singleplayer paused
+            case NO_OVERLAYS -> (!checkFlying || isFlying) && mc.currentScreen == null && mc.getOverlay() == null;
+            case DISABLED -> false;
+        };
     }
 
     public boolean isGround(BlockPos pos) {

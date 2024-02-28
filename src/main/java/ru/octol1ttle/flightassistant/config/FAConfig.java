@@ -1,80 +1,77 @@
 package ru.octol1ttle.flightassistant.config;
 
 import com.google.gson.GsonBuilder;
-import dev.isxander.yacl3.api.NameableEnum;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
-import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.platform.YACLPlatform;
-import java.util.Locale;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import ru.octol1ttle.flightassistant.FlightAssistant;
 
 public class FAConfig {
-    public static ConfigClassHandler<FAConfig> HANDLER = ConfigClassHandler.createBuilder(FAConfig.class)
-            .id(new Identifier(FlightAssistant.MODID, "main"))
+    private static final ConfigClassHandler<HUDConfig> HUD_HANDLER = ConfigClassHandler.createBuilder(HUDConfig.class)
+            .id(new Identifier(FlightAssistant.MODID, "hud"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
-                    .setPath(YACLPlatform.getConfigDir().resolve("flightassistant.json5"))
+                    .setPath(YACLPlatform.getConfigDir().resolve("flightassistant_hud.json5"))
                     .appendGsonBuilder(GsonBuilder::setPrettyPrinting) // not needed, pretty print by default
                     .setJson5(true)
                     .build())
             .build();
 
-    @SerialEntry
-    public HudConfig flying = new HudConfig();
-    @SerialEntry
-    public HudConfig notFlyingHasElytra = new HudConfig().setMinimal();
-    @SerialEntry
-    public HudConfig notFlyingNoElytra = new HudConfig().disableAll();
+    private static final ConfigClassHandler<IndicatorConfigStorage> INDICATORS_STORAGE_HANDLER = ConfigClassHandler.createBuilder(IndicatorConfigStorage.class)
+            .id(new Identifier(FlightAssistant.MODID, "indicators"))
+            .serializer(config -> GsonConfigSerializerBuilder.create(config)
+                    .setPath(YACLPlatform.getConfigDir().resolve("flightassistant_indicators.json5"))
+                    .appendGsonBuilder(GsonBuilder::setPrettyPrinting) // not needed, pretty print by default
+                    .setJson5(true)
+                    .build())
+            .build();
 
-    @SerialEntry
-    public BatchedRendering batchedRendering = BatchedRendering.SINGLE_BATCH;
-    @SerialEntry
-    public float hudScale = 1.0f;
-    @SerialEntry
-    public float frameWidth = 0.6f;
-    @SerialEntry
-    public float frameHeight = 0.6f;
+    private static final ConfigClassHandler<ComputerConfig> COMPUTER_HANDLER = ConfigClassHandler.createBuilder(ComputerConfig.class)
+            .id(new Identifier(FlightAssistant.MODID, "computers"))
+            .serializer(config -> GsonConfigSerializerBuilder.create(config)
+                    .setPath(YACLPlatform.getConfigDir().resolve("flightassistant_computers.json5"))
+                    .appendGsonBuilder(GsonBuilder::setPrettyPrinting) // not needed, pretty print by default
+                    .setJson5(true)
+                    .build())
+            .build();
 
     public static void setup() {
-        HANDLER.load();
+        HUD_HANDLER.load();
+        INDICATORS_STORAGE_HANDLER.load();
+        COMPUTER_HANDLER.load();
     }
 
-    public static FAConfig get() {
-        return HANDLER.instance();
+    public static HUDConfig hud() {
+        return HUD_HANDLER.instance();
     }
 
-    public static HudConfig hud() {
+    public static IndicatorConfigStorage getIndicatorConfigStorage() {
+        return INDICATORS_STORAGE_HANDLER.instance();
+    }
+
+    public static IndicatorConfigStorage.IndicatorConfig indicator() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null) {
-            throw new IllegalStateException("Attempted to retrieve HUD settings when there is no player");
+            throw new IllegalStateException("Attempted to retrieve indicator settings when there is no player");
         }
 
         if (client.player.isFallFlying()) {
-            return HANDLER.instance().flying;
+            return INDICATORS_STORAGE_HANDLER.instance().flying;
         }
 
         for (ItemStack stack : client.player.getItemsEquipped()) {
             if (Items.ELYTRA.equals(stack.getItem())) {
-                return HANDLER.instance().notFlyingHasElytra;
+                return INDICATORS_STORAGE_HANDLER.instance().notFlyingHasElytra;
             }
         }
 
-        return HANDLER.instance().notFlyingNoElytra;
+        return INDICATORS_STORAGE_HANDLER.instance().notFlyingNoElytra;
     }
 
-    public enum BatchedRendering implements NameableEnum {
-        NO_BATCHING,
-        BATCH_PER_COMPONENT,
-        SINGLE_BATCH;
-
-        @Override
-        public Text getDisplayName() {
-            return Text.translatable("config.flightassistant.options.batching." + name().toLowerCase(Locale.ROOT));
-        }
+    public static ComputerConfig computer() {
+        return COMPUTER_HANDLER.instance();
     }
 }

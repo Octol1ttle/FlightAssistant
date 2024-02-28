@@ -46,7 +46,7 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     public boolean isInDanger() {
-        return getGPWSLampColor() == FAConfig.hud().warningColor;
+        return getGPWSLampColor() == FAConfig.indicator().warningColor;
     }
 
     public boolean shouldCorrectSinkrate() {
@@ -60,13 +60,13 @@ public class GPWSComputer implements ITickableComputer {
 
     public Color getGPWSLampColor() {
         if (positiveLessOrEquals(descentImpactTime, PULL_UP_THRESHOLD) || positiveLessOrEquals(terrainImpactTime, PULL_UP_THRESHOLD)) {
-            return FAConfig.hud().warningColor;
+            return FAConfig.indicator().warningColor;
         }
         if (positiveLessOrEquals(descentImpactTime, CAUTION_THRESHOLD) || positiveLessOrEquals(terrainImpactTime, CAUTION_THRESHOLD)) {
-            return FAConfig.hud().cautionColor;
+            return FAConfig.indicator().cautionColor;
         }
 
-        return FAConfig.hud().frameColor;
+        return FAConfig.indicator().frameColor;
     }
 
     public boolean shouldBlockPitchChanges() {

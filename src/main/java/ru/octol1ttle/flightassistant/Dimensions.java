@@ -20,15 +20,15 @@ public class Dimensions {
     public int bFrame;
 
     public void update(DrawContext context, double fov) {
-        hScreen = MathHelper.floor(context.getScaledWindowHeight() / FAConfig.get().hudScale);
-        wScreen = MathHelper.floor(context.getScaledWindowWidth() / FAConfig.get().hudScale);
+        hScreen = MathHelper.floor(context.getScaledWindowHeight() / FAConfig.hud().hudScale);
+        wScreen = MathHelper.floor(context.getScaledWindowWidth() / FAConfig.hud().hudScale);
 
         degreesPerPixel = MathHelper.floor(hScreen / fov);
         xMid = wScreen / 2;
         yMid = hScreen / 2;
 
-        wFrame = (int) (wScreen * FAConfig.get().frameWidth);
-        hFrame = (int) (hScreen * FAConfig.get().frameHeight);
+        wFrame = (int) (wScreen * FAConfig.hud().frameWidth);
+        hFrame = (int) (hScreen * FAConfig.hud().frameHeight);
 
         lFrame = (wScreen - wFrame) / 2;
         rFrame = lFrame + wFrame;

@@ -32,41 +32,41 @@ public class SpeedIndicator extends HudComponent {
 
         int xSpeedText = left - 5;
 
-        if (FAConfig.hud().showSpeedReadout) {
-            drawRightAlignedText(textRenderer, context, asText("%.2f", data.speed), xSpeedText, dim.yMid - 3, FAConfig.hud().frameColor);
-            drawBorder(context, xSpeedText - 28, dim.yMid - 5, 30, FAConfig.hud().frameColor);
+        if (FAConfig.indicator().showSpeedReadout) {
+            drawRightAlignedText(textRenderer, context, asText("%.2f", data.speed), xSpeedText, dim.yMid - 3, FAConfig.indicator().frameColor);
+            drawBorder(context, xSpeedText - 28, dim.yMid - 5, 30, FAConfig.indicator().frameColor);
 
             int frameWidth = dim.rFrame - dim.lFrame;
-            if (FAConfig.hud().showGroundSpeedReadout) {
+            if (FAConfig.indicator().showGroundSpeedReadout) {
                 int x = MathHelper.floor(dim.lFrame + frameWidth * 0.25f);
-                drawText(textRenderer, context, Text.translatable("flightassistant.ground_speed_short", String.format("%.2f", data.velocityPerSecond.horizontalLength())), x, dim.bFrame, FAConfig.hud().frameColor);
+                drawText(textRenderer, context, Text.translatable("flightassistant.ground_speed_short", String.format("%.2f", data.velocityPerSecond.horizontalLength())), x, dim.bFrame, FAConfig.indicator().frameColor);
             }
-            if (FAConfig.hud().showVerticalSpeedReadout) {
+            if (FAConfig.indicator().showVerticalSpeedReadout) {
                 int x = MathHelper.floor(dim.lFrame + frameWidth * 0.75f - 7);
-                drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", String.format("%.2f", data.velocityPerSecond.y)), x, dim.bFrame, data.velocityPerSecond.y <= -10.0f ? FAConfig.hud().warningColor : FAConfig.hud().frameColor);
+                drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", String.format("%.2f", data.velocityPerSecond.y)), x, dim.bFrame, data.velocityPerSecond.y <= -10.0f ? FAConfig.indicator().warningColor : FAConfig.indicator().frameColor);
             }
         }
 
-        if (FAConfig.hud().showSpeedScale) {
+        if (FAConfig.indicator().showSpeedScale) {
             for (float i = 0; i <= 100; i += 0.25f) {
                 int y = MathHelper.floor(dim.hScreen - i * unitPerPixel - yFloor);
                 if (y < top || y > (bottom - 5))
                     continue;
 
                 if (i % 1 == 0) {
-                    drawHorizontalLine(context, left - 2, right, y, FAConfig.hud().frameColor);
-                    if (!FAConfig.hud().showSpeedReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
-                        drawRightAlignedText(textRenderer, context, asText("%.0f", i), xSpeedText, y - 3, FAConfig.hud().frameColor);
+                    drawHorizontalLine(context, left - 2, right, y, FAConfig.indicator().frameColor);
+                    if (!FAConfig.indicator().showSpeedReadout || y > dim.yMid + 7 || y < dim.yMid - 7) {
+                        drawRightAlignedText(textRenderer, context, asText("%.0f", i), xSpeedText, y - 3, FAConfig.indicator().frameColor);
                     }
                 }
-                drawHorizontalLine(context, left, right, y, FAConfig.hud().frameColor);
+                drawHorizontalLine(context, left, right, y, FAConfig.indicator().frameColor);
             }
         }
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawRightAlignedText(textRenderer, context, Text.translatable("flightassistant.speed_short"), dim.lFrame - 7, dim.yMid - 3, FAConfig.hud().warningColor);
+        drawRightAlignedText(textRenderer, context, Text.translatable("flightassistant.speed_short"), dim.lFrame - 7, dim.yMid - 3, FAConfig.indicator().warningColor);
     }
 
     @Override

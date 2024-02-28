@@ -33,14 +33,14 @@ public class HeadingIndicator extends HudComponent {
         int northOffset = MathHelper.floor(data.heading * dim.degreesPerPixel);
         int xNorth = dim.xMid - northOffset;
 
-        if (FAConfig.hud().showHeadingReadout) {
+        if (FAConfig.indicator().showHeadingReadout) {
             Color color = getHeadingColor(data.heading);
             drawText(textRenderer, context, asText("%03d", Math.round(data.heading)), dim.xMid - 8, yText, color);
             drawBorder(context, dim.xMid - 15, yText - 2, 30, color);
         }
 
-        if (FAConfig.hud().showHeadingScale) {
-            drawMiddleAlignedText(textRenderer, context, asText("^"), dim.xMid, top + 10, FAConfig.hud().frameColor);
+        if (FAConfig.indicator().showHeadingScale) {
+            drawMiddleAlignedText(textRenderer, context, asText("^"), dim.xMid, top + 10, FAConfig.indicator().frameColor);
 
             for (int i = -540; i < 540; i++) {
                 int x = (i * dim.degreesPerPixel) + xNorth;
@@ -66,7 +66,7 @@ public class HeadingIndicator extends HudComponent {
                         drawVerticalLine(context, x, top + 3, top + 10, color);
                     }
 
-                    if (!FAConfig.hud().showHeadingReadout || x <= dim.xMid - 26 || x >= dim.xMid + 26) {
+                    if (!FAConfig.indicator().showHeadingReadout || x <= dim.xMid - 26 || x >= dim.xMid + 26) {
                         drawText(textRenderer, context, asText("%03d", degrees), x - 8, yText, color);
                     }
                     continue;
@@ -82,15 +82,15 @@ public class HeadingIndicator extends HudComponent {
     private Color getHeadingColor(float heading) {
         Float targetHeading = autoflight.getTargetHeading();
         if (targetHeading != null && Math.abs(targetHeading - heading) <= 5.0f) {
-            return FAConfig.hud().advisoryColor;
+            return FAConfig.indicator().advisoryColor;
         } else {
-            return FAConfig.hud().frameColor;
+            return FAConfig.indicator().frameColor;
         }
     }
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawText(textRenderer, context, Text.translatable("flightassistant.heading_short"), dim.xMid - 8, dim.tFrame - 17, FAConfig.hud().warningColor);
+        drawText(textRenderer, context, Text.translatable("flightassistant.heading_short"), dim.xMid - 8, dim.tFrame - 17, FAConfig.indicator().warningColor);
     }
 
     @Override

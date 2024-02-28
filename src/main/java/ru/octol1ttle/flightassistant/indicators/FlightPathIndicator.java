@@ -24,7 +24,7 @@ public class FlightPathIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (!FAConfig.hud().showFlightPath) {
+        if (!FAConfig.indicator().showFlightPath) {
             return;
         }
 
@@ -64,7 +64,7 @@ public class FlightPathIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.flight_path_short"), dim.xMid, dim.yMid + 10, FAConfig.hud().warningColor);
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.flight_path_short"), dim.xMid, dim.yMid + 10, FAConfig.indicator().warningColor);
     }
 
     @Override
