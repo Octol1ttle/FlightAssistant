@@ -125,7 +125,6 @@
   "mode.flightassistant.vert.alt_approaching.managed": "P. ALT* %s",
   "mode.flightassistant.vert.alt_hold.managed": "P. ALT %s",
   "mode.flightassistant.vert.land": "LAND %s",
-  "mode.flightassistant.vert.flare": "FLARE %s",
   "mode.flightassistant.lat.heading": "HDG %s",
   "mode.flightassistant.lat.position": "POS %s %s",
   "mode.flightassistant.lat.approach": "APPR %s %s",
