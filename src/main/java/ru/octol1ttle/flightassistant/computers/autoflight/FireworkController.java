@@ -22,7 +22,6 @@ public class FireworkController implements ITickableComputer {
     public float lastDiff = Float.MIN_VALUE;
     public Float lastProtTrigger;
     public boolean noFireworks = false;
-    public boolean unsafeFireworks = false;
     public boolean activationInProgress = false;
     public boolean lockManualFireworks = false;
 
@@ -140,7 +139,7 @@ public class FireworkController implements ITickableComputer {
         lastUseTime = -1.0f;
         lastDiff = Float.MIN_VALUE;
         noFireworks = false;
-        unsafeFireworks = false;
         activationInProgress = false;
+        lockManualFireworks = false;
     }
 }

@@ -76,14 +76,11 @@ public class FACallbacks {
                 return TypedActionResult.pass(stack);
             }
             if (!host.data.isFlying || !(stack.getItem() instanceof FireworkRocketItem)) {
-                host.firework.unsafeFireworks = false;
                 return TypedActionResult.pass(stack);
             }
 
-            host.firework.unsafeFireworks = !host.firework.isFireworkSafe(stack);
-
             boolean gpwsDanger = !host.faulted.contains(host.gpws) && (host.gpws.isInDanger() || !host.gpws.fireworkUseSafe);
-            if (!host.firework.activationInProgress && (host.firework.unsafeFireworks || host.firework.lockManualFireworks || gpwsDanger)) {
+            if (!host.firework.activationInProgress && (!host.firework.isFireworkSafe(player.getStackInHand(hand)) || host.firework.lockManualFireworks || gpwsDanger)) {
                 return TypedActionResult.fail(stack);
             }
 

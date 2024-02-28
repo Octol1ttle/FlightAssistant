@@ -2,7 +2,10 @@ package ru.octol1ttle.flightassistant.alerts.firework;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.item.FireworkRocketItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
+import net.minecraft.util.Hand;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
@@ -24,7 +27,14 @@ public class FireworkUnsafeAlert extends AbstractAlert {
 
     @Override
     public boolean isTriggered() {
-        return firework.unsafeFireworks;
+        for (Hand hand : Hand.values()) {
+            ItemStack stack = data.player.getStackInHand(hand);
+            if (stack.getItem() instanceof FireworkRocketItem && !firework.isFireworkSafe(stack)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
