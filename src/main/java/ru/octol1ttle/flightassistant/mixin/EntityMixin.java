@@ -4,26 +4,31 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
-    @Inject(method = "setPitch", at = @At("HEAD"), cancellable = true)
-    public void preventUpsetPitch(float pitch, CallbackInfo ci) {
+    @ModifyVariable(method = "changeLookDirection", at = @At("STORE"), ordinal = 0)
+    public float preventUpsetPitch(float pitchDelta) {
         Entity that = (Entity) (Object) this;
 
         ComputerHost host = HudRenderer.getHost();
         if (that instanceof ClientPlayerEntity && host != null && host.data.canAutomationsActivate()) {
-            boolean stalling = !host.faulted.contains(host.stall) && -pitch > host.stall.maximumSafePitch
-                    || host.stall.status == StallComputer.StallStatus.STALL;
-            boolean highSinkRate = !stalling && !host.faulted.contains(host.gpws) && host.gpws.shouldBlockPitchChanges();
-            boolean approachingVoidDamage = !host.faulted.contains(host.voidLevel) && -pitch < host.voidLevel.minimumSafePitch;
-            if (stalling && pitch < that.getPitch() || (highSinkRate || approachingVoidDamage) && pitch > that.getPitch())
-                ci.cancel();
+            float oldPitch = host.data.pitch;
+            float newPitch = oldPitch + (-pitchDelta);
+
+            boolean stalling = !host.faulted.contains(host.stall) && (newPitch > host.stall.maximumSafePitch || host.stall.status == StallComputer.StallStatus.STALL);
+            boolean gpwsDanger = !stalling && !host.faulted.contains(host.gpws) && host.gpws.shouldBlockPitchChanges();
+            boolean approachingVoidDamage = !host.faulted.contains(host.voidLevel) && newPitch < host.voidLevel.minimumSafePitch;
+            if (stalling && newPitch > oldPitch ||
+                    (gpwsDanger || approachingVoidDamage) && newPitch < oldPitch) {
+                return 0.0f;
+            }
         }
+
+        return pitchDelta;
     }
 }
