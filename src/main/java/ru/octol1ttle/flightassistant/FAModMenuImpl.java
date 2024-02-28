@@ -34,6 +34,8 @@ public class FAModMenuImpl implements ModMenuApi {
                     .category(indicators(Text.translatable("config.flightassistant.category.flying"), indicators.flying, IndicatorConfigStorage.createDisabled()))
                     .category(computers(Text.translatable("config.flightassistant.category.computer_settings"), computers, new ComputerConfig()))
 
+                    .save(FAConfig::save)
+
                     .build().generateScreen(parent);
         };
     }

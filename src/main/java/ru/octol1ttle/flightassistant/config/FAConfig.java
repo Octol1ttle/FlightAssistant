@@ -44,12 +44,14 @@ public class FAConfig {
         COMPUTER_HANDLER.load();
     }
 
-    public static HUDConfig hud() {
-        return HUD_HANDLER.instance();
+    public static void save() {
+        HUD_HANDLER.save();
+        INDICATORS_STORAGE_HANDLER.save();
+        COMPUTER_HANDLER.save();
     }
 
-    public static IndicatorConfigStorage getIndicatorConfigStorage() {
-        return INDICATORS_STORAGE_HANDLER.instance();
+    public static HUDConfig hud() {
+        return HUD_HANDLER.instance();
     }
 
     public static IndicatorConfigStorage.IndicatorConfig indicator() {
@@ -73,5 +75,9 @@ public class FAConfig {
 
     public static ComputerConfig computer() {
         return COMPUTER_HANDLER.instance();
+    }
+
+    public static IndicatorConfigStorage getIndicatorConfigStorage() {
+        return INDICATORS_STORAGE_HANDLER.instance();
     }
 }

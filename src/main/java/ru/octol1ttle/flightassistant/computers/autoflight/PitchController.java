@@ -76,7 +76,6 @@ public class PitchController implements ITickableComputer {
             newPitch = data.pitch + (pitch - data.pitch) * delta;
         }
 
-        // TODO: wtf? interpolation is missing when opening the inventory
         data.player.setPitch(-newPitch);
     }
 
