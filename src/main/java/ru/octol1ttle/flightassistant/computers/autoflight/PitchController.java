@@ -36,11 +36,8 @@ public class PitchController implements ITickableComputer {
 
         if (data.pitch > stall.maximumSafePitch) {
             smoothSetPitch(stall.maximumSafePitch, time.deltaTime);
-            return;
-        }
-        if (data.pitch < voidLevel.minimumSafePitch) {
+        } else if (data.pitch < voidLevel.minimumSafePitch) {
             smoothSetPitch(voidLevel.minimumSafePitch, time.deltaTime);
-            return;
         }
 
         if (gpws.shouldCorrectSinkrate()) {
