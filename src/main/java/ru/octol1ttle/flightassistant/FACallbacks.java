@@ -3,9 +3,9 @@ package ru.octol1ttle.flightassistant;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import com.shadowhunter22.api.client.renderer.v1.AlternateHudRendererCallback;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.client.MinecraftClient;
@@ -53,7 +53,7 @@ public class FACallbacks {
     }
 
     private static void setupHudRender() {
-        HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
+        AlternateHudRendererCallback.EVENT.register((drawContext, tickDelta) -> {
             MinecraftClient client = MinecraftClient.getInstance();
             if (client.player == null) {
                 return;

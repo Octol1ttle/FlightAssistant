@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.4-SNAPSHOT'
+    id 'fabric-loom' version '1.5-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -30,6 +30,11 @@ repositories {
         name 'TerraformersMC Maven' // required by ModMenu
         url 'https://maven.terraformersmc.com/releases'
     }
+
+    maven {
+        name 'JitPack' // required by Alternate HudRenderCallback
+        url 'https://jitpack.io'
+    }
 }
 
 dependencies {
@@ -39,6 +44,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
+    include(modImplementation "com.github.shadowhunt22:alternate-hudrenderercallback:${project.ahrc_version}")
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}+${project.minecraft_version}"
     modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}+${project.minecraft_version}"
     modCompileOnlyApi "maven.modrinth:immediatelyfast:${project.immediatelyfast_version}+${project.minecraft_version}"
