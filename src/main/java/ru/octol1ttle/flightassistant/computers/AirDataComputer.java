@@ -55,9 +55,10 @@ public class AirDataComputer implements ITickableComputer {
 
     public boolean canAutomationsActivate(boolean checkFlying) {
         ComputerConfig.FlightProtectionsMode mode = FAConfig.computer().protectionsMode;
+        boolean flying = !checkFlying || isFlying;
         return switch (mode) {
-            case FULL -> !mc.isInSingleplayer() || !mc.isPaused();
-            case NO_OVERLAYS -> (!checkFlying || isFlying) && mc.currentScreen == null && mc.getOverlay() == null;
+            case FULL -> flying && (!mc.isInSingleplayer() || !mc.isPaused());
+            case NO_OVERLAYS -> flying && mc.currentScreen == null && mc.getOverlay() == null;
             case DISABLED -> false;
         };
     }
