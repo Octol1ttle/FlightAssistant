@@ -36,7 +36,7 @@ public class ComputerConfig {
     public boolean voidUseFireworks = true;
 
     @SerialEntry
-    public boolean closeElytraInWater = true;
+    public boolean closeElytraUnderwater = true;
     @SerialEntry
     public boolean openElytraAutomatically = true;
 

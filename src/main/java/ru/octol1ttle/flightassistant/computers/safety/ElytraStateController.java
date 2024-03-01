@@ -23,7 +23,7 @@ public class ElytraStateController implements ITickableComputer {
             return;
         }
 
-        if (FAConfig.computer().closeElytraInWater && data.isFlying && data.player.isTouchingWater()) {
+        if (FAConfig.computer().closeElytraUnderwater && data.isFlying && data.player.isSubmergedInWater()) {
             // Retract the wings
             sendSwitchState();
         }

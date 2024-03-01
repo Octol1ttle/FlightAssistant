@@ -79,7 +79,7 @@
   "config.flightassistant.computers.void_level.protection": "Void level protection mode",
   "config.flightassistant.computers.void_level.fireworks": "Use fireworks for recovery",
   "config.flightassistant.computers.elytra_state": "Elytra state",
-  "config.flightassistant.computers.elytra_state.close_in_water": "Close Elytra when in water",
+  "config.flightassistant.computers.elytra_state.close_underwater": "Close Elytra when submerged in water",
   "config.flightassistant.computers.elytra_state.open_automatically": "Open Elytra automatically",
 
   "commands.flightassistant.no_such_waypoint": "There is no waypoint at that index",

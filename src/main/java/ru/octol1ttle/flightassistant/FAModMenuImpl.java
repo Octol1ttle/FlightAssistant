@@ -314,8 +314,8 @@ public class FAModMenuImpl implements ModMenuApi {
 
                 .option(LabelOption.create(Text.translatable("config.flightassistant.computers.elytra_state")))
                 .option(Option.<Boolean>createBuilder()
-                        .name(Text.translatable("config.flightassistant.computers.elytra_state.close_in_water"))
-                        .binding(defaults.closeElytraInWater, () -> config.closeElytraInWater, o -> config.closeElytraInWater = o)
+                        .name(Text.translatable("config.flightassistant.computers.elytra_state.close_underwater"))
+                        .binding(defaults.closeElytraUnderwater, () -> config.closeElytraUnderwater, o -> config.closeElytraUnderwater = o)
                         .controller(TickBoxControllerBuilder::create)
                         .build())
                 .option(Option.<Boolean>createBuilder()

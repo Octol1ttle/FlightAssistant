@@ -80,7 +80,7 @@
   "config.flightassistant.computers.void_level.protection": "Режим защиты от пересечения уровня пустоты",
   "config.flightassistant.computers.void_level.fireworks": "Использовать фейерверки для восстановления",
   "config.flightassistant.computers.elytra_state": "Состояние элитр",
-  "config.flightassistant.computers.elytra_state.close_in_water": "Закрывать элитры в воде",
+  "config.flightassistant.computers.elytra_state.close_underwater": "Закрывать элитры под водой",
   "config.flightassistant.computers.elytra_state.open_automatically": "Автоматически раскрывать элитры",
 
   "commands.flightassistant.no_such_waypoint": "На указанной позиции нет точки назначения",
