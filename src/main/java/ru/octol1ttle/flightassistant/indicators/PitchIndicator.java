@@ -81,7 +81,7 @@ public class PitchIndicator extends HudComponent {
 
         int y = MathHelper.floor((-degrees * dim.degreesPerPixel) + yHorizon);
 
-        if (y < dim.tFrame || y > dim.bFrame) {
+        if (outOfFrame(y)) {
             return;
         }
 
@@ -94,7 +94,7 @@ public class PitchIndicator extends HudComponent {
     }
 
     private void drawDegreeBar(TextRenderer textRenderer, DrawContext context, float degree, int y) {
-        if (y < dim.tFrame || y > dim.bFrame) {
+        if (outOfFrame(y)) {
             return;
         }
 
@@ -122,7 +122,7 @@ public class PitchIndicator extends HudComponent {
         for (float f = degrees; f <= 90; f += 10) {
             int y = MathHelper.floor((-f * dim.degreesPerPixel) + yHorizon);
 
-            if (y < dim.tFrame || y > dim.bFrame) {
+            if (outOfFrame(y)) {
                 continue;
             }
             context.getMatrices().push();
@@ -141,11 +141,15 @@ public class PitchIndicator extends HudComponent {
         for (float f = degrees; f >= -90; f -= 10) {
             int y = MathHelper.floor((-f * dim.degreesPerPixel) + yHorizon);
 
-            if (y < dim.tFrame || y > dim.bFrame) {
+            if (outOfFrame(y)) {
                 continue;
             }
             drawMiddleAlignedText(textRenderer, context, text, dim.xMid, y, color);
         }
+    }
+
+    private boolean outOfFrame(int y) {
+        return y < dim.tFrame || y > dim.bFrame - 20;
     }
 
     @Override
