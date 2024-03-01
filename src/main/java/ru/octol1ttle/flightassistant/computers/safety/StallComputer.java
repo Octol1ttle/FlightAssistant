@@ -27,7 +27,7 @@ public class StallComputer implements ITickableComputer {
     }
 
     private StallStatus computeStalling() {
-        if (!data.isFlying) {
+        if (!data.isFlying || data.player.isTouchingWater()) {
             return StallStatus.UNKNOWN;
         }
         if (data.player.isInvulnerableTo(data.player.getDamageSources().fall())) {
@@ -46,7 +46,7 @@ public class StallComputer implements ITickableComputer {
     }
 
     private float computeMaximumSafePitch() {
-        if (!data.isFlying) {
+        if (!data.isFlying || status == StallStatus.UNKNOWN || status == StallStatus.PLAYER_INVULNERABLE) {
             return 90.0f;
         }
         return status == StallStatus.STALL ? -90.0f : MathHelper.clamp(data.speed * 3.0f, 0.0f, 90.0f);

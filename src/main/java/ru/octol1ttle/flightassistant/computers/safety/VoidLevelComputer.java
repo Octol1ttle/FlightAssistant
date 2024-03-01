@@ -30,7 +30,7 @@ public class VoidLevelComputer implements ITickableComputer {
     }
 
     private VoidLevelStatus computeStatus() {
-        if (!data.isFlying) {
+        if (!data.isFlying || data.player.isTouchingWater()) {
             return VoidLevelStatus.UNKNOWN;
         }
         if (data.player.isInvulnerableTo(data.player.getDamageSources().outOfWorld())) {

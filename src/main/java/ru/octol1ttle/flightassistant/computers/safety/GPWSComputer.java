@@ -75,7 +75,7 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     private float computeDescentImpactTime() {
-        if (!data.isFlying) {
+        if (!data.isFlying || data.player.isTouchingWater()) {
             return STATUS_UNKNOWN;
         }
         if (data.player.isInvulnerableTo(data.player.getDamageSources().fall())) {
@@ -94,7 +94,7 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     private float computeTerrainImpactTime() {
-        if (!data.isFlying) {
+        if (!data.isFlying || data.player.isTouchingWater()) {
             return STATUS_UNKNOWN;
         }
         if (data.player.isInvulnerableTo(data.player.getDamageSources().flyIntoWall())) {
@@ -120,7 +120,7 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     private boolean computeFireworkUseSafe() {
-        if (!data.isFlying) {
+        if (!data.isFlying || data.player.isTouchingWater()) {
             return true;
         }
         if (data.player.isInvulnerableTo(data.player.getDamageSources().flyIntoWall())) {
