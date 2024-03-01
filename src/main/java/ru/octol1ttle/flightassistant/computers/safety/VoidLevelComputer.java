@@ -71,7 +71,7 @@ public class VoidLevelComputer implements ITickableComputer {
         return status == VoidLevelStatus.APPROACHING_DAMAGE_LEVEL || status == VoidLevelStatus.REACHED_DAMAGE_LEVEL;
     }
 
-    public boolean shouldBlockPitchChanges(float newPitch) {
+    public boolean shouldBlockPitchChange(float newPitch) {
         return FAConfig.computer().voidProtection.override() && newPitch < minimumSafePitch;
     }
 

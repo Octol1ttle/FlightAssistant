@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
@@ -19,12 +20,14 @@ public abstract class EntityMixin {
             float oldPitch = host.data.pitch;
             float newPitch = oldPitch + (-pitchDelta);
 
-            boolean stalling = !host.faulted.contains(host.stall) && host.stall.shouldBlockPitchChanges(newPitch);
-            boolean gpwsDanger = !stalling && !host.faulted.contains(host.gpws) && host.gpws.shouldBlockPitchChanges();
-            boolean approachingVoidDamage = !host.faulted.contains(host.voidLevel) && host.voidLevel.shouldBlockPitchChanges(newPitch);
+            boolean isStalling = !host.faulted.contains(host.stall) && host.stall.isPitchUnsafe(newPitch);
+            boolean stallLock = FAConfig.computer().stallProtection.override() && isStalling;
 
-            if (stalling && newPitch > oldPitch ||
-                    (gpwsDanger || approachingVoidDamage) && newPitch < oldPitch) {
+            boolean gpwsLock = !isStalling && !host.faulted.contains(host.gpws) && host.gpws.shouldBlockPitchChanges();
+            boolean voidLevelLock = !host.faulted.contains(host.voidLevel) && host.voidLevel.shouldBlockPitchChange(newPitch);
+
+            if (stallLock && newPitch > oldPitch ||
+                    (gpwsLock || voidLevelLock) && newPitch < oldPitch) {
                 return 0.0f;
             }
         }

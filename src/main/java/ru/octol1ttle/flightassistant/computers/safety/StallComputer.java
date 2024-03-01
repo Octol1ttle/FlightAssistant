@@ -52,8 +52,8 @@ public class StallComputer implements ITickableComputer {
         return status == StallStatus.STALL ? -90.0f : MathHelper.clamp(data.speed * 3.0f, 0.0f, 90.0f);
     }
 
-    public boolean shouldBlockPitchChanges(float newPitch) {
-        return FAConfig.computer().stallProtection.override() && (newPitch > maximumSafePitch || status == StallComputer.StallStatus.STALL);
+    public boolean isPitchUnsafe(float newPitch) {
+        return newPitch > maximumSafePitch || status == StallStatus.STALL;
     }
 
     @Override
