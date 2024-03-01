@@ -17,6 +17,7 @@ import ru.octol1ttle.flightassistant.commands.FlightPlanCommand;
 import ru.octol1ttle.flightassistant.commands.MCPCommand;
 import ru.octol1ttle.flightassistant.commands.ResetCommand;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
@@ -79,8 +80,12 @@ public class FACallbacks {
                 return TypedActionResult.pass(stack);
             }
 
-            boolean gpwsDanger = !host.faulted.contains(host.gpws) && (host.gpws.isInDanger() || !host.gpws.fireworkUseSafe);
-            if (!host.firework.activationInProgress && (!host.firework.isFireworkSafe(player.getStackInHand(hand)) || host.firework.lockManualFireworks || gpwsDanger)) {
+            boolean gpwsLocksFireworks = FAConfig.computer().lockFireworksFacingTerrain;
+            boolean gpwsDanger = !host.faulted.contains(host.gpws) && gpwsLocksFireworks && (host.gpws.isInDanger() || !host.gpws.fireworkUseSafe);
+
+            boolean unsafeFireworks = FAConfig.computer().lockUnsafeFireworks && !host.firework.isFireworkSafe(player.getStackInHand(hand));
+
+            if (!host.firework.activationInProgress && (unsafeFireworks || host.firework.lockManualFireworks || gpwsDanger)) {
                 return TypedActionResult.fail(stack);
             }
 

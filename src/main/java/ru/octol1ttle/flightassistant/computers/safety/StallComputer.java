@@ -4,6 +4,7 @@ import net.minecraft.util.math.MathHelper;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class StallComputer implements ITickableComputer {
     private final FireworkController firework;
@@ -19,7 +20,7 @@ public class StallComputer implements ITickableComputer {
     @Override
     public void tick() {
         status = computeStalling();
-        if (status == StallStatus.STALL) {
+        if (FAConfig.computer().stallUseFireworks && status == StallStatus.STALL) {
             firework.activateFirework(true);
         }
         maximumSafePitch = computeMaximumSafePitch();
@@ -49,6 +50,10 @@ public class StallComputer implements ITickableComputer {
             return 90.0f;
         }
         return status == StallStatus.STALL ? -90.0f : MathHelper.clamp(data.speed * 3.0f, 0.0f, 90.0f);
+    }
+
+    public boolean shouldBlockPitchChanges(float newPitch) {
+        return FAConfig.computer().stallProtection.override() && (newPitch > maximumSafePitch || status == StallComputer.StallStatus.STALL);
     }
 
     @Override

@@ -8,6 +8,7 @@ import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class PitchController implements ITickableComputer {
     public static final float CLIMB_PITCH = 55.0f;
@@ -34,9 +35,9 @@ public class PitchController implements ITickableComputer {
             return;
         }
 
-        if (data.pitch > stall.maximumSafePitch) {
+        if (FAConfig.computer().stallProtection.recover() && data.pitch > stall.maximumSafePitch) {
             smoothSetPitch(stall.maximumSafePitch, time.deltaTime);
-        } else if (data.pitch < voidLevel.minimumSafePitch) {
+        } else if (FAConfig.computer().voidProtection.recover() && data.pitch < voidLevel.minimumSafePitch) {
             smoothSetPitch(voidLevel.minimumSafePitch, time.deltaTime);
         }
 

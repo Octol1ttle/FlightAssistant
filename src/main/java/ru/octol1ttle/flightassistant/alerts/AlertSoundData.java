@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.alerts;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import ru.octol1ttle.flightassistant.config.ComputerConfig;
 
 public record AlertSoundData(@Nullable SoundEvent sound, int priority) {
     public static final AlertSoundData STALL = new AlertSoundData(
@@ -41,4 +42,12 @@ public record AlertSoundData(@Nullable SoundEvent sound, int priority) {
             null,
             Integer.MAX_VALUE
     );
+
+    public static AlertSoundData ifEnabled(ComputerConfig.WarningMode mode, AlertSoundData data) {
+        if (mode.screenOnly()) {
+            return AlertSoundData.EMPTY;
+        }
+
+        return data;
+    }
 }

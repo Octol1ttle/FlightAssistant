@@ -54,6 +54,10 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
 
     @Override
     public boolean renderCentered(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
+        if (FAConfig.computer().terrainWarning.audioOnly()) {
+            return false;
+        }
+
         if (gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
             HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.pull_up"), x, y,
                     FAConfig.indicator().warningColor, highlight);
@@ -73,6 +77,10 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
+        if (FAConfig.computer().terrainWarning.screenOnly()) {
+            return AlertSoundData.EMPTY;
+        }
+
         if (gpws.terrainImpactTime <= PULL_UP_THRESHOLD) {
             return AlertSoundData.PULL_UP;
         }

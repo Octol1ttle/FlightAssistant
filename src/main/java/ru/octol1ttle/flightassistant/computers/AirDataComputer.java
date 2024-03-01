@@ -54,7 +54,7 @@ public class AirDataComputer implements ITickableComputer {
     }
 
     public boolean canAutomationsActivate(boolean checkFlying) {
-        ComputerConfig.FlightProtectionsMode mode = FAConfig.computer().protectionsMode;
+        ComputerConfig.GlobalAutomationsMode mode = FAConfig.computer().globalMode;
         boolean flying = !checkFlying || isFlying;
         return switch (mode) {
             case FULL -> flying && (!mc.isInSingleplayer() || !mc.isPaused());

@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.computers.safety;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class ElytraStateController implements ITickableComputer {
     private final AirDataComputer data;
@@ -22,14 +23,15 @@ public class ElytraStateController implements ITickableComputer {
             return;
         }
 
-        if (data.isFlying && data.player.isTouchingWater()) {
+        if (FAConfig.computer().closeElytraInWater && data.isFlying && data.player.isTouchingWater()) {
             // Retract the wings
             sendSwitchState();
         }
 
         boolean hasUsableElytra = data.elytraHealth != null && data.elytraHealth > (1 / 432.0f);
         boolean notLookingToClutch = data.pitch > -70.0f;
-        if (data.fallDistance > 3.0f && !data.isFlying && hasUsableElytra && notLookingToClutch) {
+        if (FAConfig.computer().openElytraAutomatically
+                && data.fallDistance > 3.0f && !data.isFlying && hasUsableElytra && notLookingToClutch) {
             // Extend the wings
             sendSwitchState();
         }

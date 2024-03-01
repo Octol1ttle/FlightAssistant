@@ -4,6 +4,7 @@ import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.autoflight.FireworkController;
 import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class VoidLevelComputer implements ITickableComputer {
     private static final int OPTIMUM_ALTITUDE_PRESERVATION_PITCH = 15;
@@ -22,7 +23,7 @@ public class VoidLevelComputer implements ITickableComputer {
     @Override
     public void tick() {
         status = computeStatus();
-        if (aboveVoid() && data.altitude - data.voidLevel < 12) {
+        if (FAConfig.computer().voidUseFireworks && aboveVoid() && data.altitude - data.voidLevel < 12) {
             firework.activateFirework(true);
         }
         minimumSafePitch = computeMinimumSafePitch();
@@ -68,6 +69,10 @@ public class VoidLevelComputer implements ITickableComputer {
 
     public boolean approachingOrReachedDamageLevel() {
         return status == VoidLevelStatus.APPROACHING_DAMAGE_LEVEL || status == VoidLevelStatus.REACHED_DAMAGE_LEVEL;
+    }
+
+    public boolean shouldBlockPitchChanges(float newPitch) {
+        return FAConfig.computer().voidProtection.override() && newPitch < minimumSafePitch;
     }
 
     @Override

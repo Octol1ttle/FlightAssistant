@@ -7,7 +7,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
-import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
@@ -20,9 +19,10 @@ public abstract class EntityMixin {
             float oldPitch = host.data.pitch;
             float newPitch = oldPitch + (-pitchDelta);
 
-            boolean stalling = !host.faulted.contains(host.stall) && (newPitch > host.stall.maximumSafePitch || host.stall.status == StallComputer.StallStatus.STALL);
+            boolean stalling = !host.faulted.contains(host.stall) && host.stall.shouldBlockPitchChanges(newPitch);
             boolean gpwsDanger = !stalling && !host.faulted.contains(host.gpws) && host.gpws.shouldBlockPitchChanges();
-            boolean approachingVoidDamage = !host.faulted.contains(host.voidLevel) && newPitch < host.voidLevel.minimumSafePitch;
+            boolean approachingVoidDamage = !host.faulted.contains(host.voidLevel) && host.voidLevel.shouldBlockPitchChanges(newPitch);
+
             if (stalling && newPitch > oldPitch ||
                     (gpwsDanger || approachingVoidDamage) && newPitch < oldPitch) {
                 return 0.0f;

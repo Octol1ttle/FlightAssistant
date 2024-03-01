@@ -31,6 +31,10 @@ public class ExcessiveDescentAlert extends AbstractAlert {
 
     @Override
     public boolean renderCentered(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
+        if (FAConfig.computer().sinkrateWarning.audioOnly()) {
+            return false;
+        }
+
         if (gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
             HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.pull_up"), x, y,
                     FAConfig.indicator().warningColor, highlight);
@@ -50,6 +54,10 @@ public class ExcessiveDescentAlert extends AbstractAlert {
 
     @Override
     public @NotNull AlertSoundData getAlertSoundData() {
+        if (FAConfig.computer().sinkrateWarning.screenOnly()) {
+            return AlertSoundData.EMPTY;
+        }
+
         if (gpws.descentImpactTime <= PULL_UP_THRESHOLD) {
             return AlertSoundData.PULL_UP;
         }

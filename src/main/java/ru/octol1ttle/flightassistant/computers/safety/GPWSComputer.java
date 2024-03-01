@@ -50,11 +50,11 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     public boolean shouldCorrectSinkrate() {
-        return positiveLessOrEquals(descentImpactTime, PITCH_CORRECT_THRESHOLD);
+        return FAConfig.computer().sinkrateProtection.recover() && positiveLessOrEquals(descentImpactTime, PITCH_CORRECT_THRESHOLD);
     }
 
     public boolean shouldCorrectTerrain() {
-        return positiveLessOrEquals(terrainImpactTime, PULL_UP_THRESHOLD);
+        return FAConfig.computer().terrainProtection.recover() && positiveLessOrEquals(terrainImpactTime, PULL_UP_THRESHOLD);
     }
 
 
@@ -70,7 +70,8 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     public boolean shouldBlockPitchChanges() {
-        return positiveLessOrEquals(descentImpactTime, PULL_UP_THRESHOLD) || positiveLessOrEquals(terrainImpactTime, PULL_UP_THRESHOLD);
+        return FAConfig.computer().sinkrateProtection.override() && positiveLessOrEquals(descentImpactTime, PULL_UP_THRESHOLD)
+                || FAConfig.computer().terrainProtection.override() && positiveLessOrEquals(terrainImpactTime, PULL_UP_THRESHOLD);
     }
 
     private float computeDescentImpactTime() {
