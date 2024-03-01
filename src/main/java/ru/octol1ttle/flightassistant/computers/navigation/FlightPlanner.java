@@ -44,6 +44,9 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
                 setLandTargetAltitude(landAltitude);
             }
             return;
+        } else {
+            landingInProgress = false;
+            landAltitude = null;
         }
 
         float altitude = targetWaypoint.targetAltitude() != null ? targetWaypoint.targetAltitude() : data.altitude;
