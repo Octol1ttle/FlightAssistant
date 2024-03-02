@@ -31,7 +31,7 @@ public class StallAlert extends BaseAlert implements ICenteredAlert {
 
     @Override
     public boolean render(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
-        if (FAConfig.computer().stallWarning.audioOnly()) {
+        if (FAConfig.computer().stallWarning.screenDisabled()) {
             return false;
         }
 

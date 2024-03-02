@@ -56,14 +56,14 @@ public class ComputerConfig {
         SCREEN_AND_AUDIO,
         AUDIO_ONLY,
         SCREEN_ONLY,
-        @SuppressWarnings("unused") DISABLED;
+        DISABLED;
 
-        public boolean audioOnly() {
-            return this == AUDIO_ONLY;
+        public boolean screenDisabled() {
+            return this == AUDIO_ONLY || this == DISABLED;
         }
 
-        public boolean screenOnly() {
-            return this == SCREEN_ONLY;
+        public boolean audioDisabled() {
+            return this == SCREEN_ONLY || this == DISABLED;
         }
 
         @Override

@@ -44,7 +44,7 @@ public record AlertSoundData(@Nullable SoundEvent sound, int priority) {
     );
 
     public static AlertSoundData ifEnabled(ComputerConfig.WarningMode mode, AlertSoundData data) {
-        if (mode.screenOnly()) {
+        if (mode.audioDisabled()) {
             return AlertSoundData.EMPTY;
         }
 

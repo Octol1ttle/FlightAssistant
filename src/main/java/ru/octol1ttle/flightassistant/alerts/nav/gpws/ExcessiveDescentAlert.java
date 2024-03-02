@@ -31,7 +31,7 @@ public class ExcessiveDescentAlert extends BaseAlert implements ICenteredAlert {
 
     @Override
     public boolean render(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
-        if (FAConfig.computer().sinkrateWarning.audioOnly()) {
+        if (FAConfig.computer().sinkrateWarning.screenDisabled()) {
             return false;
         }
 
@@ -54,7 +54,7 @@ public class ExcessiveDescentAlert extends BaseAlert implements ICenteredAlert {
 
     @Override
     public @NotNull AlertSoundData getSoundData() {
-        if (FAConfig.computer().sinkrateWarning.screenOnly()) {
+        if (FAConfig.computer().sinkrateWarning.audioDisabled()) {
             return AlertSoundData.EMPTY;
         }
 

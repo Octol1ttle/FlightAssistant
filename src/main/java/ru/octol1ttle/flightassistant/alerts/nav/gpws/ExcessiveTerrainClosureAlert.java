@@ -54,7 +54,7 @@ public class ExcessiveTerrainClosureAlert extends BaseAlert implements ICentered
 
     @Override
     public boolean render(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
-        if (FAConfig.computer().terrainWarning.audioOnly()) {
+        if (FAConfig.computer().terrainWarning.screenDisabled()) {
             return false;
         }
 
@@ -77,7 +77,7 @@ public class ExcessiveTerrainClosureAlert extends BaseAlert implements ICentered
 
     @Override
     public @NotNull AlertSoundData getSoundData() {
-        if (FAConfig.computer().terrainWarning.screenOnly()) {
+        if (FAConfig.computer().terrainWarning.audioDisabled()) {
             return AlertSoundData.EMPTY;
         }
 
