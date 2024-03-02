@@ -6,15 +6,15 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
-import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
+import ru.octol1ttle.flightassistant.alerts.BaseAlert;
+import ru.octol1ttle.flightassistant.alerts.ICenteredAlert;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
 
-
-public class ExcessiveTerrainClosureAlert extends AbstractAlert {
+public class ExcessiveTerrainClosureAlert extends BaseAlert implements ICenteredAlert {
     private static final float TERRAIN_THRESHOLD = 7.5f;
 
     private static final float PULL_UP_THRESHOLD = 5.0f;
@@ -53,7 +53,7 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
     }
 
     @Override
-    public boolean renderCentered(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
+    public boolean render(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         if (FAConfig.computer().terrainWarning.audioOnly()) {
             return false;
         }
@@ -76,7 +76,7 @@ public class ExcessiveTerrainClosureAlert extends AbstractAlert {
     }
 
     @Override
-    public @NotNull AlertSoundData getAlertSoundData() {
+    public @NotNull AlertSoundData getSoundData() {
         if (FAConfig.computer().terrainWarning.screenOnly()) {
             return AlertSoundData.EMPTY;
         }

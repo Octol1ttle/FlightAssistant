@@ -6,13 +6,13 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.HudRenderer;
-import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
+import ru.octol1ttle.flightassistant.alerts.BaseAlert;
+import ru.octol1ttle.flightassistant.alerts.IECAMAlert;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
 
-
-public class IndicatorFaultAlert extends AbstractAlert {
+public class IndicatorFaultAlert extends BaseAlert implements IECAMAlert {
 
     private final HudRenderer renderer;
 
@@ -26,12 +26,12 @@ public class IndicatorFaultAlert extends AbstractAlert {
     }
 
     @Override
-    public @NotNull AlertSoundData getAlertSoundData() {
+    public @NotNull AlertSoundData getSoundData() {
         return AlertSoundData.MASTER_CAUTION;
     }
 
     @Override
-    public int renderECAM(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
+    public int render(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         int i = 0;
         for (HudComponent component : renderer.faulted) {
             i += HudComponent.drawText(textRenderer, context, Text.translatable("alerts.flightassistant.fault.indicators." + component.getId()), x, y,

@@ -5,14 +5,14 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.HudComponent;
-import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
+import ru.octol1ttle.flightassistant.alerts.BaseAlert;
+import ru.octol1ttle.flightassistant.alerts.ICenteredAlert;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
 
-
-public class StallAlert extends AbstractAlert {
+public class StallAlert extends BaseAlert implements ICenteredAlert {
     private final StallComputer stall;
 
     public StallAlert(StallComputer stall) {
@@ -25,12 +25,12 @@ public class StallAlert extends AbstractAlert {
     }
 
     @Override
-    public @NotNull AlertSoundData getAlertSoundData() {
+    public @NotNull AlertSoundData getSoundData() {
         return AlertSoundData.ifEnabled(FAConfig.computer().stallWarning, AlertSoundData.STALL);
     }
 
     @Override
-    public boolean renderCentered(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
+    public boolean render(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         if (FAConfig.computer().stallWarning.audioOnly()) {
             return false;
         }

@@ -6,8 +6,9 @@ import java.util.List;
 import net.minecraft.client.sound.SoundManager;
 import ru.octol1ttle.flightassistant.AlertSoundInstance;
 import ru.octol1ttle.flightassistant.HudRenderer;
-import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
+import ru.octol1ttle.flightassistant.alerts.BaseAlert;
+import ru.octol1ttle.flightassistant.alerts.IECAMAlert;
 import ru.octol1ttle.flightassistant.alerts.autoflight.AutoFireworkOffAlert;
 import ru.octol1ttle.flightassistant.alerts.autoflight.AutopilotOffAlert;
 import ru.octol1ttle.flightassistant.alerts.fault.ComputerFaultAlert;
@@ -24,10 +25,10 @@ import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 
 public class AlertController implements ITickableComputer {
-    public final List<AbstractAlert> activeAlerts;
+    public final List<BaseAlert> activeAlerts;
     private final ComputerHost host;
     private final SoundManager manager;
-    private final List<AbstractAlert> allAlerts;
+    private final List<BaseAlert> allAlerts;
 
     public AlertController(ComputerHost host, SoundManager manager, HudRenderer renderer) {
         this.host = host;
@@ -48,7 +49,7 @@ public class AlertController implements ITickableComputer {
 
     @Override
     public void tick() {
-        for (AbstractAlert alert : allAlerts) {
+        for (BaseAlert alert : allAlerts) {
             if (alert.isTriggered()) {
                 if (!activeAlerts.contains(alert)) {
                     activeAlerts.add(alert);
@@ -72,10 +73,10 @@ public class AlertController implements ITickableComputer {
         }
 
         boolean interrupt = false;
-        activeAlerts.sort(Comparator.comparingDouble(alert -> alert.getAlertSoundData().priority()));
+        activeAlerts.sort(Comparator.comparingDouble(alert -> alert.getSoundData().priority()));
 
-        for (AbstractAlert alert : activeAlerts) {
-            AlertSoundData data = alert.getAlertSoundData();
+        for (BaseAlert alert : activeAlerts) {
+            AlertSoundData data = alert.getSoundData();
 
             boolean soundChanged = false;
             if (alert.soundInstance != null) {
@@ -109,8 +110,8 @@ public class AlertController implements ITickableComputer {
     }
 
     public void hide() {
-        for (AbstractAlert alert : activeAlerts) {
-            if (!alert.hidden) {
+        for (BaseAlert alert : activeAlerts) {
+            if (!alert.hidden && alert instanceof IECAMAlert) {
                 alert.hidden = true;
                 return;
             }
@@ -119,8 +120,8 @@ public class AlertController implements ITickableComputer {
 
     public void recall() {
         for (int i = activeAlerts.size() - 1; i >= 0; i--) {
-            AbstractAlert alert = activeAlerts.get(i);
-            if (alert.hidden) {
+            BaseAlert alert = activeAlerts.get(i);
+            if (alert.hidden && alert instanceof IECAMAlert) {
                 alert.hidden = false;
                 return;
             }
@@ -134,7 +135,7 @@ public class AlertController implements ITickableComputer {
 
     @Override
     public void reset() {
-        for (AbstractAlert alert : activeAlerts) {
+        for (BaseAlert alert : activeAlerts) {
             alert.played = false;
             alert.hidden = false;
 

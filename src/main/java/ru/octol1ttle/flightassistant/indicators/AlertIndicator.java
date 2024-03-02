@@ -5,7 +5,9 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
-import ru.octol1ttle.flightassistant.alerts.AbstractAlert;
+import ru.octol1ttle.flightassistant.alerts.BaseAlert;
+import ru.octol1ttle.flightassistant.alerts.ICenteredAlert;
+import ru.octol1ttle.flightassistant.alerts.IECAMAlert;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import ru.octol1ttle.flightassistant.computers.safety.AlertController;
@@ -37,14 +39,14 @@ public class AlertIndicator extends HudComponent {
         int x = dim.lFrame + 5;
         int y = dim.tFrame + 15;
 
-        for (AbstractAlert alert : alert.activeAlerts) {
-            if (!renderedCentered) {
-                renderedCentered = alert.renderCentered(textRenderer, context, dim.xMid,
+        for (BaseAlert alert : alert.activeAlerts) {
+            if (!renderedCentered && alert instanceof ICenteredAlert centered) {
+                renderedCentered = centered.render(textRenderer, context, dim.xMid,
                         dim.yMid + 10, time.highlight);
             }
 
-            if (!alert.hidden) {
-                y += 10 * alert.renderECAM(textRenderer, context, x, y, time.highlight);
+            if (!alert.hidden && alert instanceof IECAMAlert ecam) {
+                y += 10 * ecam.render(textRenderer, context, x, y, time.highlight);
             }
         }
     }
