@@ -45,8 +45,13 @@ public class FACallbacks {
 
     private static void setupWorldRender() {
         WorldRenderEvents.END.register(context -> {
+            if (HudRenderer.getHost() == null) {
+                HudRenderer.INSTANCE = new HudRenderer(MinecraftClient.getInstance());
+            }
             ComputerHost host = HudRenderer.getHost();
-            if (host != null && !host.faulted.contains(host.data)) {
+            host.tick();
+
+            if (!host.faulted.contains(host.data)) {
                 Matrix3f inverseViewRotationMatrix = RenderSystem.getInverseViewRotationMatrix();
                 host.data.updateRoll(inverseViewRotationMatrix.invert());
             }
@@ -63,7 +68,6 @@ public class FACallbacks {
             if (HudRenderer.getHost() == null) {
                 HudRenderer.INSTANCE = new HudRenderer(client);
             }
-            HudRenderer.getHost().tick();
 
             HudRenderer.INSTANCE.render(client, drawContext, tickDelta);
         });
