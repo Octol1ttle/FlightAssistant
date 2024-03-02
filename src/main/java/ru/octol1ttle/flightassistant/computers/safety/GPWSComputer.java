@@ -114,7 +114,7 @@ public class GPWSComputer implements ITickableComputer {
         }
 
         double distance = result.getPos().subtract(data.position).length();
-        terrainAvoidVector = new Vector2d(distance * 0.75f, findHighest(result.getBlockPos().mutableCopy()).getY() + 10.0f - data.altitude);
+        terrainAvoidVector = new Vector2d(distance, findHighest(result.getBlockPos().mutableCopy()).getY() + 10.0f - data.altitude);
 
         return (float) (distance / speed);
     }
