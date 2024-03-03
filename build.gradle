@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
+// TODO: Rebase codebase on top of latest template repository
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
@@ -43,11 +44,15 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // Fabric API. This is technically optional, but you probably want it anyway.
+    // Embedded: Alternate HudRenderCallback to fix HUD not rendering behind chat
     include(modImplementation "com.github.shadowhunt22:alternate-hudrenderercallback:${project.ahrc_version}")
+    // Required: Fabric API for callbacks
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}+${project.minecraft_version}"
+    // Required: YACL for config storage and screen
     modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}+${project.minecraft_version}"
-    modCompileOnlyApi "maven.modrinth:immediatelyfast:${project.immediatelyfast_version}+${project.minecraft_version}"
+    // Optional: ImmediatelyFast for batching support to increase rendering performance
+    modCompileOnlyApi "maven.modrinth:immediatelyfast:${project.immediatelyfast_version}+${project.minecraft_version}-fabric"
+    // Optional: Mod Menu to access the YACL config screen
     modCompileOnlyApi "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 

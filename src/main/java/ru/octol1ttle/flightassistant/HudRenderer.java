@@ -52,7 +52,7 @@ public class HudRenderer extends HudComponent {
 
     public void render(MinecraftClient mc, DrawContext context, float tickDelta) {
         GameRendererInvoker renderer = (GameRendererInvoker) mc.gameRenderer;
-        dim.update(context, renderer.getFov(mc.gameRenderer.getCamera(), tickDelta, true));
+        dim.update(context, renderer.invokeGetFov(mc.gameRenderer.getCamera(), tickDelta, true));
 
         float hudScale = FAConfig.hud().hudScale;
         boolean batchAll = FlightAssistant.canUseBatching() && FAConfig.hud().batchedRendering == HUDConfig.BatchedRendering.SINGLE_BATCH;
