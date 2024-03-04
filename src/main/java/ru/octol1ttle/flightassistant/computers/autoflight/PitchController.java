@@ -35,7 +35,7 @@ public class PitchController implements ITickableComputer {
             return;
         }
 
-        if (FAConfig.computer().stallProtection.recover() && data.pitch() > stall.maximumSafePitch) {
+        if (FAConfig.computer().stallProtection.recover() && data.pitch() > 0.0f && data.pitch() > stall.maximumSafePitch) {
             smoothSetPitch(stall.maximumSafePitch, time.deltaTime);
         } else if (FAConfig.computer().voidProtection.recover() && data.pitch() < voidLevel.minimumSafePitch) {
             smoothSetPitch(voidLevel.minimumSafePitch, time.deltaTime);
