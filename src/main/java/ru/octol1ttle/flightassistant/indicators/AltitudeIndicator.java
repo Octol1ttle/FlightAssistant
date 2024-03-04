@@ -27,7 +27,7 @@ public class AltitudeIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (data.altitude < -130 || data.altitude > 1300) {
+        if (data.altitude() < -130 || data.altitude() > 1300) {
             renderFaulted(context, textRenderer);
             return;
         }
@@ -40,22 +40,22 @@ public class AltitudeIndicator extends HudComponent {
 
         int blocksPerPixel = 1;
 
-        int floorOffset = Math.round(data.altitude * blocksPerPixel);
+        int floorOffset = Math.round(data.altitude() * blocksPerPixel);
         int yFloor = dim.yMid - floorOffset;
         int xAltText = right + 5;
 
-        int safeLevel = data.groundLevel == data.voidLevel ? data.voidLevel + 16 : data.groundLevel;
+        int safeLevel = data.groundLevel == data.voidLevel() ? data.voidLevel() + 16 : data.groundLevel;
 
         if (FAConfig.indicator().showAltitudeReadout) {
-            Color color = getAltitudeColor(safeLevel, data.altitude);
-            drawText(textRenderer, context, asText("%.0f", data.altitude), xAltText, dim.yMid - 3, color);
+            Color color = getAltitudeColor(safeLevel, data.altitude());
+            drawText(textRenderer, context, asText("%.0f", data.altitude()), xAltText, dim.yMid - 3, color);
             drawBorder(context, xAltText - 2, dim.yMid - 5, 28, color);
         }
 
         if (FAConfig.indicator().showGroundAltitude) {
-            Color color = data.altitude < safeLevel ? FAConfig.indicator().warningColor : FAConfig.indicator().frameColor;
-            drawText(textRenderer, context, Text.translatable(data.groundLevel == data.voidLevel ? "flightassistant.void_level" : "flightassistant.ground_level"), xAltText - 10, bottom, color);
-            drawText(textRenderer, context, asText("%d", MathHelper.floor(data.heightAboveGround)), xAltText, bottom, color);
+            Color color = data.altitude() < safeLevel ? FAConfig.indicator().warningColor : FAConfig.indicator().frameColor;
+            drawText(textRenderer, context, Text.translatable(data.groundLevel == data.voidLevel() ? "flightassistant.void_level" : "flightassistant.ground_level"), xAltText - 10, bottom, color);
+            drawText(textRenderer, context, asText("%d", MathHelper.floor(data.heightAboveGround())), xAltText, bottom, color);
             drawBorder(context, xAltText - 2, bottom - 2, 28, color);
         }
 

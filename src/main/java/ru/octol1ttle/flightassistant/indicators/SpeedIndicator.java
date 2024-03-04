@@ -27,23 +27,23 @@ public class SpeedIndicator extends HudComponent {
         int right = dim.lFrame;
         int unitPerPixel = 30;
 
-        int floorOffset = MathHelper.floor(data.speed * unitPerPixel);
+        int floorOffset = MathHelper.floor(data.speed() * unitPerPixel);
         int yFloor = dim.yMid - floorOffset;
 
         int xSpeedText = left - 5;
 
         if (FAConfig.indicator().showSpeedReadout) {
-            drawRightAlignedText(textRenderer, context, asText("%.2f", data.speed), xSpeedText, dim.yMid - 3, FAConfig.indicator().frameColor);
+            drawRightAlignedText(textRenderer, context, asText("%.2f", data.speed()), xSpeedText, dim.yMid - 3, FAConfig.indicator().frameColor);
             drawBorder(context, xSpeedText - 29, dim.yMid - 5, 30, FAConfig.indicator().frameColor);
 
             int frameWidth = dim.rFrame - dim.lFrame;
             if (FAConfig.indicator().showGroundSpeedReadout) {
                 int x = MathHelper.floor(dim.lFrame + frameWidth * 0.25f);
-                drawText(textRenderer, context, Text.translatable("flightassistant.ground_speed_short", String.format("%.2f", data.velocityPerSecond.horizontalLength())), x, dim.bFrame, FAConfig.indicator().frameColor);
+                drawText(textRenderer, context, Text.translatable("flightassistant.ground_speed_short", String.format("%.2f", data.velocity.horizontalLength())), x, dim.bFrame, FAConfig.indicator().frameColor);
             }
             if (FAConfig.indicator().showVerticalSpeedReadout) {
                 int x = MathHelper.floor(dim.lFrame + frameWidth * 0.75f - 7);
-                drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", String.format("%.2f", data.velocityPerSecond.y)), x, dim.bFrame, data.velocityPerSecond.y <= -10.0f ? FAConfig.indicator().warningColor : FAConfig.indicator().frameColor);
+                drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", String.format("%.2f", data.velocity.y)), x, dim.bFrame, data.velocity.y <= -10.0f ? FAConfig.indicator().warningColor : FAConfig.indicator().frameColor);
             }
         }
 

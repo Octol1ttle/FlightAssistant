@@ -44,37 +44,35 @@ public class FAKeyBindings {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             ComputerHost host = HudRenderer.getHost();
-            if (host != null) {
-                while (toggleFlightDirectors.wasPressed()) {
-                    host.autoflight.flightDirectorsEnabled = !host.autoflight.flightDirectorsEnabled;
-                }
+            while (toggleFlightDirectors.wasPressed()) {
+                host.autoflight.flightDirectorsEnabled = !host.autoflight.flightDirectorsEnabled;
+            }
 
-                while (toggleAutoFirework.wasPressed()) {
-                    if (!host.autoflight.autoFireworkEnabled) {
-                        host.autoflight.autoFireworkEnabled = true;
-                    } else {
-                        host.autoflight.disconnectAutoFirework(false);
-                    }
+            while (toggleAutoFirework.wasPressed()) {
+                if (!host.autoflight.autoFireworkEnabled) {
+                    host.autoflight.autoFireworkEnabled = true;
+                } else {
+                    host.autoflight.disconnectAutoFirework(false);
                 }
+            }
 
-                while (toggleAutoPilot.wasPressed()) {
-                    if (!host.autoflight.autoPilotEnabled) {
-                        host.autoflight.autoPilotEnabled = true;
-                    } else {
-                        host.autoflight.disconnectAutopilot(false);
-                    }
+            while (toggleAutoPilot.wasPressed()) {
+                if (!host.autoflight.autoPilotEnabled) {
+                    host.autoflight.autoPilotEnabled = true;
+                } else {
+                    host.autoflight.disconnectAutopilot(false);
                 }
+            }
 
-                while (hideAlert.wasPressed()) {
-                    host.alert.hide();
-                }
-                while (recallAlert.wasPressed()) {
-                    host.alert.recall();
-                }
+            while (hideAlert.wasPressed()) {
+                host.alert.hide();
+            }
+            while (recallAlert.wasPressed()) {
+                host.alert.recall();
+            }
 
-                while (lockManualFireworks.wasPressed()) {
-                    host.firework.lockManualFireworks = !host.firework.lockManualFireworks;
-                }
+            while (lockManualFireworks.wasPressed()) {
+                host.firework.lockManualFireworks = !host.firework.lockManualFireworks;
             }
         });
     }

@@ -26,7 +26,7 @@ public class ExcessiveDescentAlert extends BaseAlert implements ICenteredAlert {
 
     @Override
     public boolean isTriggered() {
-        return data.pitch < 0 && gpws.descentImpactTime >= 0.0f;
+        return data.pitch() < 0 && gpws.descentImpactTime >= 0.0f;
     }
 
     @Override

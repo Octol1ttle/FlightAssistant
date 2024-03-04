@@ -24,7 +24,7 @@ import ru.octol1ttle.flightassistant.indicators.StatusIndicator;
 import ru.octol1ttle.flightassistant.mixin.GameRendererInvoker;
 
 public class HudRenderer extends HudComponent {
-    public static HudRenderer INSTANCE;
+    public static final HudRenderer INSTANCE = new HudRenderer(MinecraftClient.getInstance());
     @NotNull
     public final ComputerHost host;
     private final Dimensions dim = new Dimensions();
@@ -43,10 +43,7 @@ public class HudRenderer extends HudComponent {
         this.faulted = new ArrayList<>(components.size());
     }
 
-    public static ComputerHost getHost() {
-        if (INSTANCE == null) {
-            return null;
-        }
+    public static @NotNull ComputerHost getHost() {
         return INSTANCE.host;
     }
 
@@ -68,8 +65,8 @@ public class HudRenderer extends HudComponent {
             drawBatchedComponent(() -> {
                 try {
                     component.render(context, mc.textRenderer);
-                } catch (Exception e) {
-                    FlightAssistant.LOGGER.error("Exception rendering component", e);
+                } catch (Throwable t) {
+                    FlightAssistant.LOGGER.error("Exception rendering component", t);
                     faulted.add(component);
                     components.remove(component);
                 }
@@ -83,8 +80,8 @@ public class HudRenderer extends HudComponent {
             drawBatchedComponent(() -> {
                 try {
                     component.renderFaulted(context, mc.textRenderer);
-                } catch (Exception e) {
-                    FlightAssistant.LOGGER.error("Exception rendering faulted component", e);
+                } catch (Throwable t) {
+                    FlightAssistant.LOGGER.error("Exception rendering faulted component", t);
                 }
             });
         }

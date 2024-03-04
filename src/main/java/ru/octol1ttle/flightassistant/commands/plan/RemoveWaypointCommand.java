@@ -11,14 +11,12 @@ import ru.octol1ttle.flightassistant.computers.ComputerHost;
 public class RemoveWaypointCommand {
     public static int execute(CommandContext<FabricClientCommandSource> context) throws CommandSyntaxException {
         ComputerHost host = HudRenderer.getHost();
-        if (host != null) {
-            int waypointIndex = IntegerArgumentType.getInteger(context, "waypointIndex");
-            if (!host.plan.waypointExistsAt(waypointIndex)) {
-                throw WaypointUtil.NO_SUCH_WAYPOINT.create();
-            }
-            host.plan.remove(waypointIndex);
-            context.getSource().sendFeedback(Text.translatable("commands.flightassistant.waypoint_removed", waypointIndex, host.plan.size()));
+        int waypointIndex = IntegerArgumentType.getInteger(context, "waypointIndex");
+        if (!host.plan.waypointExistsAt(waypointIndex)) {
+            throw WaypointUtil.NO_SUCH_WAYPOINT.create();
         }
+        host.plan.remove(waypointIndex);
+        context.getSource().sendFeedback(Text.translatable("commands.flightassistant.waypoint_removed", waypointIndex, host.plan.size()));
         return 0;
     }
 }

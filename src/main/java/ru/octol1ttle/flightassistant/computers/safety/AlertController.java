@@ -94,7 +94,7 @@ public class AlertController implements ITickableComputer {
                 }
             }
 
-            if (!host.data.isFlying
+            if (!host.data.isFlying()
                     || data.sound() == null
                     || alert.hidden || alert.played
                     || interrupt && !soundChanged) {

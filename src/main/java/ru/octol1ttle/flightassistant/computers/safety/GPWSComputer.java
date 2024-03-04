@@ -75,65 +75,65 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     private float computeDescentImpactTime() {
-        if (!data.isFlying || data.player.isTouchingWater()) {
+        if (!data.isFlying() || data.player().isTouchingWater()) {
             return STATUS_UNKNOWN;
         }
-        if (data.player.isInvulnerableTo(data.player.getDamageSources().fall())) {
+        if (data.player().isInvulnerableTo(data.player().getDamageSources().fall())) {
             return STATUS_PLAYER_INVULNERABLE;
         }
-        if (data.fallDistance <= 3) {
+        if (data.fallDistance() <= 3.0f) {
             return STATUS_FALL_DISTANCE_TOO_LOW;
         }
 
-        double speed = -data.velocityPerSecond.y;
+        double speed = -data.velocity.y;
 
         if (speed < MAX_SAFE_SINK_RATE) {
             return STATUS_SPEED_SAFE;
         }
-        return (float) (data.heightAboveGround / speed);
+        return (float) (data.heightAboveGround() / speed);
     }
 
     private float computeTerrainImpactTime() {
-        if (!data.isFlying || data.player.isTouchingWater()) {
+        if (!data.isFlying() || data.player().isTouchingWater()) {
             return STATUS_UNKNOWN;
         }
-        if (data.player.isInvulnerableTo(data.player.getDamageSources().flyIntoWall())) {
+        if (data.player().isInvulnerableTo(data.player().getDamageSources().flyIntoWall())) {
             return STATUS_PLAYER_INVULNERABLE;
         }
-        Vec3d end = data.position.add(data.velocityPerSecond.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS));
+        Vec3d end = data.position().add(data.velocity.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS));
 
-        BlockHitResult result = data.world.raycast(new RaycastContext(data.position, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player));
+        BlockHitResult result = data.world().raycast(new RaycastContext(data.position(), end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player()));
         if (plan.landingInProgress || result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP) {
             return STATUS_NO_TERRAIN_AHEAD;
         }
 
-        double speed = data.velocityPerSecond.horizontalLength();
+        double speed = data.velocity.horizontalLength();
 
         if (speed < MAX_SAFE_GROUND_SPEED) {
             return STATUS_SPEED_SAFE;
         }
 
-        double distance = result.getPos().subtract(data.position).length();
-        terrainAvoidVector = new Vector2d(distance, findHighest(result.getBlockPos().mutableCopy()).getY() + 10.0f - data.altitude);
+        double distance = result.getPos().subtract(data.position()).length();
+        terrainAvoidVector = new Vector2d(distance, findHighest(result.getBlockPos().mutableCopy()).getY() + 10.0f - data.altitude());
 
         return (float) (distance / speed);
     }
 
     private boolean computeFireworkUseSafe() {
-        if (!data.isFlying || data.player.isTouchingWater()) {
+        if (!data.isFlying() || data.player().isTouchingWater()) {
             return true;
         }
-        if (data.player.isInvulnerableTo(data.player.getDamageSources().flyIntoWall())) {
+        if (data.player().isInvulnerableTo(data.player().getDamageSources().flyIntoWall())) {
             return true;
         }
-        Vec3d end = data.position.add(Vec3d.fromPolar(data.pitch, data.yaw).multiply(FIREWORK_SPEED * TERRAIN_RAYCAST_AHEAD_SECONDS));
+        Vec3d end = data.position().add(Vec3d.fromPolar(data.pitch(), data.yaw()).multiply(FIREWORK_SPEED * TERRAIN_RAYCAST_AHEAD_SECONDS));
 
-        BlockHitResult result = data.world.raycast(new RaycastContext(data.position, end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player));
+        BlockHitResult result = data.world().raycast(new RaycastContext(data.position(), end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player()));
         if (result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP) {
             return true;
         }
 
-        double distance = result.getPos().subtract(data.position).length();
+        double distance = result.getPos().subtract(data.position()).length();
 
         return distance / FIREWORK_SPEED > PULL_UP_THRESHOLD;
     }

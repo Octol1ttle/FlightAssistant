@@ -37,7 +37,7 @@ public class PitchIndicator extends HudComponent {
 
         pitchData.update(dim);
 
-        int yHorizon = MathHelper.floor(dim.yMid + data.pitch * dim.degreesPerPixel);
+        int yHorizon = MathHelper.floor(dim.yMid + data.pitch() * dim.degreesPerPixel);
 
         int xMid = dim.xMid;
         int yMid = dim.yMid;

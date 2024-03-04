@@ -1,6 +1,5 @@
 package ru.octol1ttle.flightassistant;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.shadowhunter22.api.client.renderer.v1.AlternateHudRendererCallback;
@@ -12,7 +11,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.TypedActionResult;
-import org.joml.Matrix3f;
 import ru.octol1ttle.flightassistant.commands.FlightPlanCommand;
 import ru.octol1ttle.flightassistant.commands.MCPCommand;
 import ru.octol1ttle.flightassistant.commands.ResetCommand;
@@ -44,43 +42,25 @@ public class FACallbacks {
     }
 
     private static void setupWorldRender() {
-        WorldRenderEvents.END.register(context -> {
-            if (HudRenderer.getHost() == null) {
-                HudRenderer.INSTANCE = new HudRenderer(MinecraftClient.getInstance());
-            }
-            ComputerHost host = HudRenderer.getHost();
-            host.tick();
-
-            if (!host.faulted.contains(host.data)) {
-                Matrix3f inverseViewRotationMatrix = RenderSystem.getInverseViewRotationMatrix();
-                host.data.updateRoll(inverseViewRotationMatrix.invert());
-            }
-        });
+        WorldRenderEvents.END.register(context ->
+                HudRenderer.getHost().tick()
+        );
     }
 
     private static void setupHudRender() {
-        AlternateHudRendererCallback.EVENT.register((drawContext, tickDelta) -> {
-            MinecraftClient client = MinecraftClient.getInstance();
-            if (client.player == null) {
-                return;
-            }
-
-            if (HudRenderer.getHost() == null) {
-                HudRenderer.INSTANCE = new HudRenderer(client);
-            }
-
-            HudRenderer.INSTANCE.render(client, drawContext, tickDelta);
-        });
+        AlternateHudRendererCallback.EVENT.register((drawContext, tickDelta) ->
+                HudRenderer.INSTANCE.render(MinecraftClient.getInstance(), drawContext, tickDelta)
+        );
     }
 
     private static void setupUseItem() {
         UseItemCallback.EVENT.register((player, world, hand) -> {
             ItemStack stack = player.getStackInHand(hand);
             ComputerHost host = HudRenderer.getHost();
-            if (!world.isClient() || host == null || host.faulted.contains(host.firework)) {
+            if (!world.isClient() || host.faulted.contains(host.firework)) {
                 return TypedActionResult.pass(stack);
             }
-            if (!host.data.isFlying || !(stack.getItem() instanceof FireworkRocketItem)) {
+            if (!host.data.isFlying() || !(stack.getItem() instanceof FireworkRocketItem)) {
                 return TypedActionResult.pass(stack);
             }
 

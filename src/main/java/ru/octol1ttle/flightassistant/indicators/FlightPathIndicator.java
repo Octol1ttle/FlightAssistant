@@ -28,8 +28,8 @@ public class FlightPathIndicator extends HudComponent {
             return;
         }
 
-        float deltaPitch = data.pitch - data.flightPitch;
-        float deltaHeading = data.flightHeading - data.heading;
+        float deltaPitch = data.pitch() - data.flightPitch;
+        float deltaHeading = data.flightHeading() - data.heading();
 
         if (deltaHeading < -180) {
             deltaHeading += 360;

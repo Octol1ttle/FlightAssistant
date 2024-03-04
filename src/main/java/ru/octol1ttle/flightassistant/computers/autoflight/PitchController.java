@@ -35,9 +35,9 @@ public class PitchController implements ITickableComputer {
             return;
         }
 
-        if (FAConfig.computer().stallProtection.recover() && data.pitch > stall.maximumSafePitch) {
+        if (FAConfig.computer().stallProtection.recover() && data.pitch() > stall.maximumSafePitch) {
             smoothSetPitch(stall.maximumSafePitch, time.deltaTime);
-        } else if (FAConfig.computer().voidProtection.recover() && data.pitch < voidLevel.minimumSafePitch) {
+        } else if (FAConfig.computer().voidProtection.recover() && data.pitch() < voidLevel.minimumSafePitch) {
             smoothSetPitch(voidLevel.minimumSafePitch, time.deltaTime);
         }
 
@@ -61,7 +61,7 @@ public class PitchController implements ITickableComputer {
             return;
         }
 
-        float difference = pitch - data.pitch;
+        float difference = pitch - data.pitch();
 
         float newPitch;
         if (Math.abs(difference) < 0.05f) {
@@ -74,10 +74,10 @@ public class PitchController implements ITickableComputer {
                 pitch = MathHelper.clamp(pitch, Math.max(DESCEND_PITCH, voidLevel.minimumSafePitch), 90.0f);
             }
 
-            newPitch = data.pitch + (pitch - data.pitch) * delta;
+            newPitch = data.pitch() + (pitch - data.pitch()) * delta;
         }
 
-        data.player.setPitch(-newPitch);
+        data.player().setPitch(-newPitch);
     }
 
     @Override

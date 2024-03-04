@@ -33,7 +33,7 @@ public class FireworkController implements ITickableComputer {
 
     @Override
     public void tick() {
-        if (!data.isFlying) {
+        if (!data.isFlying()) {
             fireworkResponded = true;
         }
         safeFireworkCount = countSafeFireworks();
@@ -42,7 +42,7 @@ public class FireworkController implements ITickableComputer {
         }
 
         noFireworks = true;
-        PlayerInventory inventory = data.player.getInventory();
+        PlayerInventory inventory = data.player().getInventory();
         int i = 0;
         while (PlayerInventory.isValidHotbarIndex(i)) {
             if (isFireworkSafe(inventory.getStack(i))) {
@@ -57,7 +57,7 @@ public class FireworkController implements ITickableComputer {
     private int countSafeFireworks() {
         int i = 0;
 
-        PlayerInventory inventory = data.player.getInventory();
+        PlayerInventory inventory = data.player().getInventory();
         for (int j = 0; j < inventory.size(); ++j) {
             ItemStack itemStack = inventory.getStack(j);
             if (isFireworkSafe(itemStack)) {
@@ -76,18 +76,18 @@ public class FireworkController implements ITickableComputer {
             this.lastProtTrigger = time.prevMillis;
         }
 
-        if (isFireworkSafe(data.player.getOffHandStack())) {
+        if (isFireworkSafe(data.player().getOffHandStack())) {
             tryActivateFirework(Hand.OFF_HAND, force);
             return;
         }
-        if (isFireworkSafe(data.player.getMainHandStack())) {
+        if (isFireworkSafe(data.player().getMainHandStack())) {
             tryActivateFirework(Hand.MAIN_HAND, force);
             return;
         }
 
         int i = 0;
         boolean match = false;
-        PlayerInventory inventory = data.player.getInventory();
+        PlayerInventory inventory = data.player().getInventory();
         while (PlayerInventory.isValidHotbarIndex(i)) {
             if (isFireworkSafe(inventory.getStack(i))) {
                 inventory.selectedSlot = i;
@@ -109,10 +109,12 @@ public class FireworkController implements ITickableComputer {
         if (!force && !fireworkResponded) {
             return;
         }
-        assert mc.interactionManager != null;
+        if (mc.interactionManager == null) {
+            throw new AssertionError();
+        }
 
         activationInProgress = true;
-        mc.interactionManager.interactItem(data.player, hand);
+        mc.interactionManager.interactItem(data.player(), hand);
         activationInProgress = false;
     }
 
@@ -120,7 +122,7 @@ public class FireworkController implements ITickableComputer {
         if (!(stack.getItem() instanceof FireworkRocketItem)) {
             return false;
         }
-        if (data.player.isInvulnerable()) {
+        if (data.player().isInvulnerable()) {
             return true;
         }
         NbtCompound nbtCompound = stack.getSubNbt("Fireworks");

@@ -13,7 +13,7 @@ public class FireworkRocketEntityMixin {
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V", shift = At.Shift.AFTER))
     public void onFireworkActivation(CallbackInfo ci) {
         ComputerHost host = HudRenderer.getHost();
-        if (host == null || host.faulted.contains(host.firework)) {
+        if (host.faulted.contains(host.firework)) {
             return;
         }
         host.firework.fireworkResponded = true;

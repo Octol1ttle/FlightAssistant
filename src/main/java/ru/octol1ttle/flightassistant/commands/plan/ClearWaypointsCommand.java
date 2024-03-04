@@ -13,19 +13,17 @@ public class ClearWaypointsCommand {
 
     public static int execute(CommandContext<FabricClientCommandSource> context, int fromWaypoint) throws CommandSyntaxException {
         ComputerHost host = HudRenderer.getHost();
-        if (host != null) {
-            if (!host.plan.waypointExistsAt(fromWaypoint)) {
-                throw NOTHING_TO_CLEAR.create();
-            }
-
-            for (int i = host.plan.size() - 1; i >= 0; i--) {
-                if (i >= fromWaypoint) {
-                    host.plan.remove(i);
-                }
-            }
-
-            context.getSource().sendFeedback(Text.translatable("commands.flightassistant.flight_plan_cleared", fromWaypoint, host.plan.size()));
+        if (!host.plan.waypointExistsAt(fromWaypoint)) {
+            throw NOTHING_TO_CLEAR.create();
         }
+
+        for (int i = host.plan.size() - 1; i >= 0; i--) {
+            if (i >= fromWaypoint) {
+                host.plan.remove(i);
+            }
+        }
+
+        context.getSource().sendFeedback(Text.translatable("commands.flightassistant.flight_plan_cleared", fromWaypoint, host.plan.size()));
         return 0;
     }
 }

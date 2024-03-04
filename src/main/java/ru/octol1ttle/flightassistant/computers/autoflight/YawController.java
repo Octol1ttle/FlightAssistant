@@ -29,7 +29,7 @@ public class YawController implements ITickableComputer {
             return;
         }
 
-        float difference = heading - data.heading;
+        float difference = heading - data.heading();
         if (difference < -180.0f) {
             difference += 360.0f;
         }
@@ -41,10 +41,10 @@ public class YawController implements ITickableComputer {
         if (Math.abs(difference) < 0.05f) {
             newHeading = heading;
         } else {
-            newHeading = data.heading + difference * delta;
+            newHeading = data.heading() + difference * delta;
         }
 
-        data.player.setYaw(newHeading - 180.0f);
+        data.player().setYaw(newHeading - 180.0f);
     }
 
     @Override

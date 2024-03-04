@@ -25,12 +25,12 @@ public class ElytraHealthLowAlert extends BaseAlert implements IECAMAlert {
 
     @Override
     public @NotNull AlertSoundData getSoundData() {
-        return data.isFlying ? AlertSoundData.MASTER_WARNING : AlertSoundData.EMPTY;
+        return data.isFlying() ? AlertSoundData.MASTER_WARNING : AlertSoundData.EMPTY;
     }
 
     @Override
     public int render(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.elytra_health_low"), x, y,
-                FAConfig.indicator().warningColor, highlight && data.isFlying);
+                FAConfig.indicator().warningColor, highlight && data.isFlying());
     }
 }

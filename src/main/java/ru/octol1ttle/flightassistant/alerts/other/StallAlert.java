@@ -21,7 +21,7 @@ public class StallAlert extends BaseAlert implements ICenteredAlert {
 
     @Override
     public boolean isTriggered() {
-        return stall.status == StallComputer.StallStatus.STALL;
+        return stall.status == StallComputer.StallStatus.FULL_STALL;
     }
 
     @Override

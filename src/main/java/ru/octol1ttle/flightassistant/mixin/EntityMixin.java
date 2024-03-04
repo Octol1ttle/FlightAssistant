@@ -16,8 +16,8 @@ public abstract class EntityMixin {
         Entity that = (Entity) (Object) this;
 
         ComputerHost host = HudRenderer.getHost();
-        if (that instanceof ClientPlayerEntity && host != null && host.data.canAutomationsActivate()) {
-            float oldPitch = host.data.pitch;
+        if (that instanceof ClientPlayerEntity && host.data.canAutomationsActivate()) {
+            float oldPitch = host.data.pitch();
             float newPitch = oldPitch + (-pitchDelta);
 
             boolean isStalling = !host.faulted.contains(host.stall) && host.stall.isPitchUnsafe(newPitch);

@@ -30,12 +30,12 @@ public class HeadingIndicator extends HudComponent {
         int top = dim.tFrame - 10;
 
         int yText = top - 7;
-        int northOffset = MathHelper.floor(data.heading * dim.degreesPerPixel);
+        int northOffset = MathHelper.floor(data.heading() * dim.degreesPerPixel);
         int xNorth = dim.xMid - northOffset;
 
         if (FAConfig.indicator().showHeadingReadout) {
-            Color color = getHeadingColor(data.heading);
-            drawText(textRenderer, context, asText("%03d", Math.round(data.heading)), dim.xMid - 8, yText, color);
+            Color color = getHeadingColor(data.heading());
+            drawText(textRenderer, context, asText("%03d", Math.round(data.heading())), dim.xMid - 8, yText, color);
             drawBorder(context, dim.xMid - 15, yText - 2, 30, color);
         }
 

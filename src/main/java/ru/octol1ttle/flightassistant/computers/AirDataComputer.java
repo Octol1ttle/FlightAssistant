@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.computers;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -12,6 +13,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import ru.octol1ttle.flightassistant.FAMathHelper;
 import ru.octol1ttle.flightassistant.config.ComputerConfig;
@@ -21,32 +23,25 @@ import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 public class AirDataComputer implements ITickableComputer {
     private final MinecraftClient mc;
-    public ClientPlayerEntity player;
-
-    public boolean isFlying = false;
-    public Vec3d position = Vec3d.ZERO;
     public Vec3d velocity = Vec3d.ZERO;
-    public Vec3d velocityPerSecond = Vec3d.ZERO;
-    public float speed;
-    public float pitch;
-    public float yaw;
-    public float heading;
+    public float roll;
     public float flightPitch;
     public float flightYaw;
-    public float flightHeading;
-    public float roll;
-    public float altitude;
-    public int voidLevel = Integer.MIN_VALUE;
     public int groundLevel;
-    public float heightAboveGround;
     public Float elytraHealth;
-    public float fallDistance;
-    public World world;
 
-    public AirDataComputer(MinecraftClient mc, ClientPlayerEntity player) {
+    public AirDataComputer(MinecraftClient mc) {
         this.mc = mc;
-        this.player = player;
-        this.world = this.player.getWorld();
+    }
+
+    @Override
+    public void tick() {
+        velocity = player().getVelocity().multiply(TICKS_PER_SECOND);
+        roll = computeRoll(RenderSystem.getInverseViewRotationMatrix().invert());
+        groundLevel = computeGroundLevel();
+        flightPitch = computeFlightPitch(velocity, pitch());
+        flightYaw = computeFlightYaw(velocity, yaw());
+        elytraHealth = computeElytraHealth();
     }
 
     public boolean canAutomationsActivate() {
@@ -55,7 +50,7 @@ public class AirDataComputer implements ITickableComputer {
 
     public boolean canAutomationsActivate(boolean checkFlying) {
         ComputerConfig.GlobalAutomationsMode mode = FAConfig.computer().globalMode;
-        boolean flying = !checkFlying || isFlying;
+        boolean flying = !checkFlying || isFlying();
         return switch (mode) {
             case FULL -> flying && (!mc.isInSingleplayer() || !mc.isPaused());
             case NO_OVERLAYS -> flying && mc.currentScreen == null && mc.getOverlay() == null;
@@ -63,47 +58,11 @@ public class AirDataComputer implements ITickableComputer {
         };
     }
 
-    public boolean isGround(BlockPos pos) {
-        BlockState block = world.getBlockState(pos);
-        return !block.isAir();
-    }
+    private float computeRoll(Matrix3f normalMatrix) {
+        float y = normalMatrix.getRowColumn(0, 1);
+        float x = normalMatrix.getRowColumn(1, 1);
 
-    @Override
-    public void tick() {
-        assert mc.player != null;
-        player = mc.player;
-
-        isFlying = player.isFallFlying();
-        position = player.getPos();
-        velocity = player.getVelocity();
-        velocityPerSecond = velocity.multiply(TICKS_PER_SECOND);
-        pitch = computePitch();
-        yaw = computeYaw();
-        speed = computeSpeed();
-        heading = computeHeading();
-        altitude = computeAltitude();
-        voidLevel = computeVoidLevel();
-        groundLevel = computeGroundLevel();
-        heightAboveGround = computeDistanceFromGround(altitude, groundLevel);
-        flightPitch = computeFlightPitch(velocity, pitch);
-        flightYaw = computeFlightYaw(velocity, yaw);
-        flightHeading = toHeading(flightYaw);
-        elytraHealth = computeElytraHealth();
-        fallDistance = player.fallDistance;
-        world = player.getWorld();
-    }
-
-    public void updateRoll(Matrix3f normal) {
-        roll = computeRoll(normal);
-    }
-
-    private Float computeElytraHealth() {
-        ItemStack stack = player.getEquippedStack(EquipmentSlot.CHEST);
-        if (stack != null && stack.getItem().equals(Items.ELYTRA)) {
-            float remain = (float) (stack.getMaxDamage() - stack.getDamage()) / stack.getMaxDamage();
-            return remain * 100.0f;
-        }
-        return null;
+        return validate(FAMathHelper.toDegrees(Math.atan2(y, x)), 180.0f);
     }
 
     private float computeFlightPitch(Vec3d velocity, float pitch) {
@@ -111,37 +70,42 @@ public class AirDataComputer implements ITickableComputer {
             return pitch;
         }
         Vec3d n = velocity.normalize();
-        return 90 - FAMathHelper.toDegrees(Math.acos(n.y));
+        return validate(90 - FAMathHelper.toDegrees(Math.acos(n.y)), 90.0f);
     }
 
     private float computeFlightYaw(Vec3d velocity, float yaw) {
         if (velocity.horizontalLength() < 0.01) {
-            return yaw;
+            return validate(yaw, 180.0f);
         }
-        return FAMathHelper.toDegrees(Math.atan2(-velocity.x, velocity.z));
+        return validate(FAMathHelper.toDegrees(Math.atan2(-velocity.x, velocity.z)), 180.0f);
     }
 
-    private float computeRoll(Matrix3f normalMatrix) {
-        float y = normalMatrix.getRowColumn(0, 1);
-        float x = normalMatrix.getRowColumn(1, 1);
-        return FAMathHelper.toDegrees(Math.atan2(y, x));
+    private Float computeElytraHealth() {
+        ItemStack stack = player().getEquippedStack(EquipmentSlot.CHEST);
+        if (stack != null && stack.getItem().equals(Items.ELYTRA)) {
+            float remain = (float) (stack.getMaxDamage() - stack.getDamage()) / stack.getMaxDamage();
+            return validate(remain * 100.0f, 0.0f, 100.0f);
+        }
+        return null;
     }
 
-    private float computePitch() {
-        return -MathHelper.wrapDegrees(player.getPitch());
+    private int computeGroundLevel() {
+        BlockPos ground = findGround(player().getBlockPos().mutableCopy());
+        return ground == null ? voidLevel() : ground.getY();
     }
 
-    private float computeYaw() {
-        return MathHelper.wrapDegrees(player.getYaw());
+    public boolean isGround(BlockPos pos) {
+        BlockState block = world().getBlockState(pos);
+        return !block.isAir();
     }
 
     public BlockPos findGround(BlockPos.Mutable from) {
-        if (!world.getChunkManager().isChunkLoaded(ChunkSectionPos.getSectionCoord(from.getX()), ChunkSectionPos.getSectionCoord(from.getZ()))) {
+        if (!world().getChunkManager().isChunkLoaded(ChunkSectionPos.getSectionCoord(from.getX()), ChunkSectionPos.getSectionCoord(from.getZ()))) {
             return null;
         }
         int start = from.getY();
 
-        while (from.getY() >= world.getBottomY()) {
+        while (from.getY() >= world().getBottomY()) {
             if (isGround(from.move(Direction.DOWN)) || start - from.getY() > 1500) {
                 return from;
             }
@@ -149,34 +113,79 @@ public class AirDataComputer implements ITickableComputer {
         return null;
     }
 
-    private int computeGroundLevel() {
-        BlockPos ground = findGround(player.getBlockPos().mutableCopy());
-        return ground == null ? voidLevel : ground.getY();
-    }
-
-    private int computeVoidLevel() {
-        return world.getBottomY() - 64;
-    }
-
-    private float computeDistanceFromGround(float altitude,
-                                            Integer groundLevel) {
-        return Math.max(0.0f, altitude - groundLevel);
-    }
-
-    private float computeAltitude() {
-        return (float) position.y;
-    }
-
-    private float computeHeading() {
-        return toHeading(yaw);
-    }
-
-    private float computeSpeed() {
-        return (float) velocityPerSecond.length();
-    }
-
     public static float toHeading(float yawDegrees) {
-        return yawDegrees + 180.0f;
+        return validate(yawDegrees + 180.0f, 0.0f, 360.0f);
+    }
+
+    public @NotNull ClientPlayerEntity player() {
+        if (mc.player == null) {
+            throw new AssertionError();
+        }
+        return mc.player;
+    }
+
+    public boolean isFlying() {
+        return player().isFallFlying();
+    }
+
+    public Vec3d position() {
+        return player().getPos();
+    }
+
+    public float altitude() {
+        return (float) position().y;
+    }
+
+    public float speed() {
+        return (float) velocity.length();
+    }
+
+    public float pitch() {
+        return validate(-player().getPitch(), 90.0f);
+    }
+
+    public float yaw() {
+        return validate(MathHelper.wrapDegrees(player().getYaw()), 180.0f);
+    }
+
+    public float heading() {
+        return toHeading(yaw());
+    }
+
+    public float flightHeading() {
+        return toHeading(flightYaw);
+    }
+
+    public float heightAboveGround() {
+        float height = Math.max(0.0f, altitude() - groundLevel);
+        if (height < 1.0f) {
+            throw new AssertionError();
+        }
+        return height;
+    }
+
+    public int voidLevel() {
+        return world().getBottomY() - 64;
+    }
+
+    public float fallDistance() {
+        return Math.max(player().fallDistance, heightAboveGround());
+    }
+
+    public World world() {
+        return player().getWorld();
+    }
+
+    public static float validate(float f, float bounds) {
+        return validate(f, -bounds, bounds);
+    }
+
+    public static float validate(float f, float min, float max) {
+        if (f < min || f > max) {
+            throw new AssertionError(f);
+        }
+
+        return f;
     }
 
     @Override
@@ -186,24 +195,11 @@ public class AirDataComputer implements ITickableComputer {
 
     @Override
     public void reset() {
-        isFlying = false;
-        position = Vec3d.ZERO;
         velocity = Vec3d.ZERO;
-        velocityPerSecond = Vec3d.ZERO;
-        speed = 0.0f;
-        pitch = 0.0f;
-        yaw = 0.0f;
-        heading = 0.0f;
         flightPitch = 0.0f;
         flightYaw = 0.0f;
-        flightHeading = 0.0f;
         roll = 0.0f;
-        altitude = 0.0f;
-        voidLevel = Integer.MIN_VALUE;
         groundLevel = 0;
-        heightAboveGround = 0.0f;
         elytraHealth = null;
-        fallDistance = 0.0f;
-        world = player.getWorld();
     }
 }

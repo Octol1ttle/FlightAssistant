@@ -46,10 +46,10 @@ public class AutoFlightComputer implements ITickableComputer {
             Integer targetSpeed = getTargetSpeed();
             Integer targetAltitude = getTargetAltitude();
             if (targetSpeed != null) {
-                if (data.speed < targetSpeed) {
+                if (data.speed() < targetSpeed) {
                     firework.activateFirework(false);
                 }
-            } else if (targetAltitude != null && targetAltitude > data.altitude && data.pitch > 0 && data.velocity.y < 0.0f) {
+            } else if (targetAltitude != null && targetAltitude > data.altitude() && data.pitch() > 0 && data.velocity.y < 0.0f) {
                 firework.activateFirework(false);
             }
         }
@@ -71,14 +71,14 @@ public class AutoFlightComputer implements ITickableComputer {
             return null;
         }
 
-        double altitudeDelta = getTargetAltitude() - data.altitude;
+        double altitudeDelta = getTargetAltitude() - data.altitude();
 
         double distance;
         Vector2d planPos = plan.getTargetPosition();
         if (planPos != null && selectedAltitude == null) {
-            distance = Vector2d.distance(planPos.x, planPos.y, data.position.x, data.position.z);
+            distance = Vector2d.distance(planPos.x, planPos.y, data.position().x, data.position().z);
         } else {
-            distance = Math.max(10.0f, data.speed);
+            distance = Math.max(10.0f, data.speed());
         }
 
         return FAMathHelper.toDegrees(MathHelper.atan2(altitudeDelta, distance));

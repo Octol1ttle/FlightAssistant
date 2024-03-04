@@ -29,7 +29,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     public void tick() {
         landAltitude = null;
         if (targetWaypoint != null && !this.contains(targetWaypoint)) {
-            nextWaypoint(MathHelper.floor(data.altitude));
+            nextWaypoint(MathHelper.floor(data.altitude()));
         }
 
         if (targetWaypoint == null) {
@@ -49,15 +49,15 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             landAltitude = null;
         }
 
-        float altitude = targetWaypoint.targetAltitude() != null ? targetWaypoint.targetAltitude() : data.altitude;
-        if (target.sub(data.position.x, data.position.z).length() <= 20.0f && Math.abs(altitude - data.altitude) <= 10.0f) {
+        float altitude = targetWaypoint.targetAltitude() != null ? targetWaypoint.targetAltitude() : data.altitude();
+        if (target.sub(data.position().x, data.position().z).length() <= 20.0f && Math.abs(altitude - data.altitude()) <= 10.0f) {
             nextWaypoint(MathHelper.floor(altitude));
         }
     }
 
     private boolean tickLanding(Vector2d target) {
-        double distance = Vector2d.distance(target.x, target.y, data.position.x, data.position.z);
-        if (distance <= 10.0 && data.heightAboveGround <= 3.0f) {
+        double distance = Vector2d.distance(target.x, target.y, data.position().x, data.position().z);
+        if (distance <= 10.0 && data.heightAboveGround() <= 3.0f) {
             nextWaypoint(null);
             return false;
         }
@@ -68,11 +68,11 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         }
         landAltitude = landPos.getY();
 
-        float landAngle = FAMathHelper.toDegrees(MathHelper.atan2(landAltitude - data.altitude, distance));
+        float landAngle = FAMathHelper.toDegrees(MathHelper.atan2(landAltitude - data.altitude(), distance));
         if (landAngle > 5.0f || landAngle < PitchController.DESCEND_PITCH + 15) {
             return false;
         }
-        BlockHitResult result = data.world.raycast(new RaycastContext(data.position, new Vec3d(target.x, landAltitude, target.y), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player));
+        BlockHitResult result = data.world().raycast(new RaycastContext(data.position(), new Vec3d(target.x, landAltitude, target.y), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player()));
 
         return result.getType() == HitResult.Type.MISS || Math.abs(result.getPos().y - landAltitude) <= 5.0;
     }
@@ -107,7 +107,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             return null;
         }
 
-        Vec3d current = data.position;
+        Vec3d current = data.position();
         Vector2d target = targetWaypoint.targetPosition();
 
         return AirDataComputer.toHeading(FAMathHelper.toDegrees(MathHelper.atan2(-(target.x - current.x), target.y - current.z)));
@@ -127,7 +127,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             return null;
         }
 
-        return Vector2d.distance(planPos.x, planPos.y, data.position.x, data.position.z);
+        return Vector2d.distance(planPos.x, planPos.y, data.position().x, data.position().z);
     }
 
     public @Nullable Integer getMinimums(int ground) {
@@ -148,12 +148,12 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
     public boolean isBelowMinimums() {
         Integer minimums = getMinimums(data.groundLevel);
-        return data.isFlying && landingInProgress && minimums != null && data.altitude <= minimums;
+        return data.isFlying() && landingInProgress && minimums != null && data.altitude() <= minimums;
     }
 
     public void execute(int waypointIndex) {
         targetWaypoint = this.get(waypointIndex);
-        setLandTargetAltitude(MathHelper.floor(data.altitude));
+        setLandTargetAltitude(MathHelper.floor(data.altitude()));
     }
 
     private void setLandTargetAltitude(Integer altitude) {

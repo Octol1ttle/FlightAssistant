@@ -21,17 +21,13 @@ public class MCPCommand {
         mcp.then(literal("speed")
                 .then(literal("managed")
                         .executes(context -> {
-                            if (HudRenderer.getHost() != null) {
-                                HudRenderer.getHost().autoflight.selectedSpeed = null;
-                            }
+                            HudRenderer.getHost().autoflight.selectedSpeed = null;
                             return 0;
                         })
                 )
                 .then(argument("target", IntegerArgumentType.integer(0, 30))
                         .executes(context -> {
-                            if (HudRenderer.getHost() != null) {
-                                HudRenderer.getHost().autoflight.selectedSpeed = IntegerArgumentType.getInteger(context, "target");
-                            }
+                            HudRenderer.getHost().autoflight.selectedSpeed = IntegerArgumentType.getInteger(context, "target");
                             return 0;
                         })
                 )
@@ -42,17 +38,13 @@ public class MCPCommand {
         mcp.then(literal("altitude")
                 .then(literal("managed")
                         .executes(context -> {
-                            if (HudRenderer.getHost() != null) {
-                                HudRenderer.getHost().autoflight.selectedAltitude = null;
-                            }
+                            HudRenderer.getHost().autoflight.selectedAltitude = null;
                             return 0;
                         })
                 )
                 .then(argument("target", IntegerArgumentType.integer(-120, 1200))
                         .executes(context -> {
-                            if (HudRenderer.getHost() != null) {
-                                HudRenderer.getHost().autoflight.selectedAltitude = IntegerArgumentType.getInteger(context, "target");
-                            }
+                            HudRenderer.getHost().autoflight.selectedAltitude = IntegerArgumentType.getInteger(context, "target");
                             return 0;
                         })
                 )
@@ -63,17 +55,13 @@ public class MCPCommand {
         mcp.then(literal("heading")
                 .then(literal("managed")
                         .executes(context -> {
-                            if (HudRenderer.getHost() != null) {
-                                HudRenderer.getHost().autoflight.selectedHeading = null;
-                            }
+                            HudRenderer.getHost().autoflight.selectedHeading = null;
                             return 0;
                         })
                 )
                 .then(argument("target", IntegerArgumentType.integer(0, 360))
                         .executes(context -> {
-                            if (HudRenderer.getHost() != null) {
-                                HudRenderer.getHost().autoflight.selectedHeading = IntegerArgumentType.getInteger(context, "target");
-                            }
+                            HudRenderer.getHost().autoflight.selectedHeading = IntegerArgumentType.getInteger(context, "target");
                             return 0;
                         })
                 )

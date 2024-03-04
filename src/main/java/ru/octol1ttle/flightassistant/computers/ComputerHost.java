@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.FlightAssistant;
 import ru.octol1ttle.flightassistant.HudRenderer;
@@ -36,10 +35,7 @@ public class ComputerHost {
     private final List<ITickableComputer> tickables;
 
     public ComputerHost(@NotNull MinecraftClient mc, HudRenderer renderer) {
-        assert mc.player != null;
-        ClientPlayerEntity player = mc.player;
-
-        this.data = new AirDataComputer(mc, player);
+        this.data = new AirDataComputer(mc);
         this.time = new TimeComputer();
         this.firework = new FireworkController(mc, data, time);
         this.stall = new StallComputer(firework, data);
@@ -69,13 +65,20 @@ public class ComputerHost {
             ITickableComputer computer = tickables.get(i);
             try {
                 computer.tick();
-            } catch (Exception e) {
-                FlightAssistant.LOGGER.error("Exception ticking computer", e);
-                computer.reset();
-                faulted.add(computer);
-                tickables.remove(computer);
+            } catch (AssertionError e) {
+                FlightAssistant.LOGGER.error("Data validation failed", e);
+                onComputerFault(computer);
+            } catch (Throwable t) {
+                FlightAssistant.LOGGER.error("Exception ticking computer", t);
+                onComputerFault(computer);
             }
         }
+    }
+
+    private void onComputerFault(ITickableComputer computer) {
+        computer.reset();
+        faulted.add(computer);
+        tickables.remove(computer);
     }
 
     public void resetComputers(boolean resetWorking) {

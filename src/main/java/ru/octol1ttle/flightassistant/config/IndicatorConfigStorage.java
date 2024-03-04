@@ -6,11 +6,11 @@ import java.awt.Color;
 public class IndicatorConfigStorage {
 
     @SerialEntry
-    public IndicatorConfig flying = createFull();
+    public final IndicatorConfig flying = createFull();
     @SerialEntry
-    public IndicatorConfig notFlyingHasElytra = createMinimal();
+    public final IndicatorConfig notFlyingHasElytra = createMinimal();
     @SerialEntry
-    public IndicatorConfig notFlyingNoElytra = createDisabled();
+    public final IndicatorConfig notFlyingNoElytra = createDisabled();
 
     public static IndicatorConfig createFull() {
         return new IndicatorConfig();

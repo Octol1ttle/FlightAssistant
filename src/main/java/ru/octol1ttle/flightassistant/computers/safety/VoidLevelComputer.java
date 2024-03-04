@@ -23,29 +23,29 @@ public class VoidLevelComputer implements ITickableComputer {
     @Override
     public void tick() {
         status = computeStatus();
-        if (FAConfig.computer().voidUseFireworks && aboveVoid() && data.altitude - data.voidLevel < 12) {
+        if (FAConfig.computer().voidUseFireworks && aboveVoid() && data.altitude() - data.voidLevel() < 12) {
             firework.activateFirework(true);
         }
         minimumSafePitch = computeMinimumSafePitch();
     }
 
     private VoidLevelStatus computeStatus() {
-        if (!data.isFlying || data.player.isTouchingWater()) {
+        if (!data.isFlying() || data.player().isTouchingWater()) {
             return VoidLevelStatus.UNKNOWN;
         }
-        if (data.player.isInvulnerableTo(data.player.getDamageSources().outOfWorld())) {
+        if (data.player().isInvulnerableTo(data.player().getDamageSources().outOfWorld())) {
             return VoidLevelStatus.PLAYER_INVULNERABLE;
         }
 
-        if (data.groundLevel != data.voidLevel) {
+        if (data.groundLevel != data.voidLevel()) {
             return VoidLevelStatus.NOT_ABOVE_VOID;
         }
 
-        if (data.altitude - data.voidLevel >= 8) {
+        if (data.altitude() - data.voidLevel() >= 8) {
             return VoidLevelStatus.ALTITUDE_SAFE;
         }
 
-        if (data.altitude >= data.voidLevel) {
+        if (data.altitude() >= data.voidLevel()) {
             return VoidLevelStatus.APPROACHING_DAMAGE_LEVEL;
         }
 
@@ -56,7 +56,7 @@ public class VoidLevelComputer implements ITickableComputer {
         if (status == VoidLevelStatus.UNKNOWN || status == VoidLevelStatus.PLAYER_INVULNERABLE || status == VoidLevelStatus.NOT_ABOVE_VOID) {
             return -90.0f;
         }
-        if (data.altitude - data.voidLevel < 16) {
+        if (data.altitude() - data.voidLevel() < 16) {
             return Math.min(OPTIMUM_ALTITUDE_PRESERVATION_PITCH, stall.maximumSafePitch);
         }
 

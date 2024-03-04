@@ -13,24 +13,18 @@ public class ResetCommand {
                         .then(literal("computers")
                                 .then(literal("all")
                                         .executes(context -> {
-                                            if (HudRenderer.getHost() != null) {
-                                                HudRenderer.getHost().resetComputers(true);
-                                            }
+                                            HudRenderer.getHost().resetComputers(true);
                                             return 0;
                                         }))
                                 .then(literal("faulted")
                                         .executes(context -> {
-                                            if (HudRenderer.getHost() != null) {
-                                                HudRenderer.getHost().resetComputers(false);
-                                            }
+                                            HudRenderer.getHost().resetComputers(false);
                                             return 0;
                                         })
                                 ))
                         .then(literal("indicators")
                                 .executes(context -> {
-                                    if (HudRenderer.INSTANCE != null) {
-                                        HudRenderer.INSTANCE.resetFaulted();
-                                    }
+                                    HudRenderer.INSTANCE.resetFaulted();
                                     return 0;
                                 })
                         )

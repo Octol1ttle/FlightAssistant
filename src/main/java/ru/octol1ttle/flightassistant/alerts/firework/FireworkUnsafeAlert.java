@@ -28,7 +28,7 @@ public class FireworkUnsafeAlert extends BaseAlert implements IECAMAlert {
     @Override
     public boolean isTriggered() {
         for (Hand hand : Hand.values()) {
-            ItemStack stack = data.player.getStackInHand(hand);
+            ItemStack stack = data.player().getStackInHand(hand);
             if (stack.getItem() instanceof FireworkRocketItem && !firework.isFireworkSafe(stack)) {
                 return true;
             }
@@ -45,6 +45,6 @@ public class FireworkUnsafeAlert extends BaseAlert implements IECAMAlert {
     @Override
     public int render(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.firework.unsafe"), x, y,
-                FAConfig.indicator().warningColor, highlight && data.isFlying);
+                FAConfig.indicator().warningColor, highlight && data.isFlying());
     }
 }

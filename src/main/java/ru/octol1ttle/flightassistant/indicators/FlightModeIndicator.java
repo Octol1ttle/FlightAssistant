@@ -75,7 +75,7 @@ public class FlightModeIndicator extends HudComponent {
                 String type = autoflight.selectedSpeed != null ? ".selected" : ".managed";
                 fireworkMode.update(Text.translatable("mode.flightassistant.firework.speed" + type, targetSpeed));
             } else if (autoflight.getTargetAltitude() != null) {
-                if (autoflight.getTargetAltitude() + 1.0f > data.altitude) {
+                if (autoflight.getTargetAltitude() + 1.0f > data.altitude()) {
                     fireworkMode.update(Text.translatable("mode.flightassistant.firework.climb"));
                 } else {
                     fireworkMode.update(Text.translatable("mode.flightassistant.firework.idle"));
@@ -107,7 +107,7 @@ public class FlightModeIndicator extends HudComponent {
             return;
         }
 
-        float diff = Math.abs(targetAltitude - data.altitude);
+        float diff = Math.abs(targetAltitude - data.altitude());
         String type = autoflight.selectedAltitude != null ? ".selected" : ".managed";
 
         if (plan.landingInProgress) {
@@ -116,7 +116,7 @@ public class FlightModeIndicator extends HudComponent {
             verticalMode.update(Text.translatable("mode.flightassistant.vert.alt_hold" + type, targetAltitude));
         } else if (diff <= 10) {
             verticalMode.update(Text.translatable("mode.flightassistant.vert.alt_approaching" + type, targetAltitude));
-        } else if (targetAltitude > data.altitude) {
+        } else if (targetAltitude > data.altitude()) {
             verticalMode.update(Text.translatable("mode.flightassistant.vert.climb" + type, targetAltitude));
         } else {
             verticalMode.update(Text.translatable("mode.flightassistant.vert.descend" + type, targetAltitude));

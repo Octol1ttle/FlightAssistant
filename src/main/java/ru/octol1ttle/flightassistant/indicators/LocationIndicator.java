@@ -28,8 +28,8 @@ public class LocationIndicator extends HudComponent {
         int x = dim.lFrame + 15;
         int y = dim.bFrame;
 
-        int xLoc = MathHelper.floor(data.position.x);
-        int zLoc = MathHelper.floor(data.position.z);
+        int xLoc = MathHelper.floor(data.position().x);
+        int zLoc = MathHelper.floor(data.position().z);
 
         drawText(textRenderer, context, asText("%d / %d", xLoc, zLoc), x, y, FAConfig.indicator().frameColor);
     }

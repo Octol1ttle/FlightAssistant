@@ -16,30 +16,30 @@ public class ElytraStateController implements ITickableComputer {
 
     @Override
     public void tick() {
-        if (syncedState != data.isFlying || data.player.isOnGround()) {
+        if (syncedState != data.isFlying() || data.player().isOnGround()) {
             changesPending = false;
         }
         if (changesPending || !data.canAutomationsActivate(false)) {
             return;
         }
 
-        if (FAConfig.computer().closeElytraUnderwater && data.isFlying && data.player.isSubmergedInWater()) {
+        if (FAConfig.computer().closeElytraUnderwater && data.isFlying() && data.player().isSubmergedInWater()) {
             // Retract the wings
             sendSwitchState();
         }
 
         boolean hasUsableElytra = data.elytraHealth != null && data.elytraHealth > (1 / 432.0f);
-        boolean notLookingToClutch = data.pitch > -70.0f;
+        boolean notLookingToClutch = data.pitch() > -70.0f;
         if (FAConfig.computer().openElytraAutomatically
-                && data.fallDistance > 3.0f && !data.isFlying && hasUsableElytra && notLookingToClutch) {
+                && data.fallDistance() > 3.0f && !data.isFlying() && hasUsableElytra && notLookingToClutch) {
             // Extend the wings
             sendSwitchState();
         }
     }
 
     private void sendSwitchState() {
-        syncedState = data.isFlying;
-        data.player.networkHandler.sendPacket(new ClientCommandC2SPacket(data.player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
+        syncedState = data.isFlying();
+        data.player().networkHandler.sendPacket(new ClientCommandC2SPacket(data.player(), ClientCommandC2SPacket.Mode.START_FALL_FLYING));
         changesPending = true;
     }
 
