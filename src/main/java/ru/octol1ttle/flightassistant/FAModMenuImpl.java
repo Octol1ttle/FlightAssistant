@@ -298,6 +298,12 @@ public class FAModMenuImpl implements ModMenuApi {
                         .controller(opt -> EnumControllerBuilder.create(opt).enumClass(ComputerConfig.ProtectionMode.class))
                         .build()
                 )
+                .option(Option.<ComputerConfig.WarningMode>createBuilder()
+                        .name(Text.translatable("config.flightassistant.computers.gpws.landing.warning"))
+                        .binding(defaults.landingClearanceWarning, () -> config.landingClearanceWarning, o -> config.landingClearanceWarning = o)
+                        .controller(opt -> EnumControllerBuilder.create(opt).enumClass(ComputerConfig.WarningMode.class))
+                        .build()
+                )
 
                 .option(LabelOption.create(Text.translatable("config.flightassistant.computers.void_level")))
                 .option(Option.<ComputerConfig.ProtectionMode>createBuilder()

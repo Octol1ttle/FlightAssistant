@@ -19,6 +19,7 @@ import ru.octol1ttle.flightassistant.alerts.nav.ApproachingVoidDamageLevelAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.MinimumsAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveDescentAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveTerrainClosureAlert;
+import ru.octol1ttle.flightassistant.alerts.nav.gpws.UnsafeTerrainClearanceAlert;
 import ru.octol1ttle.flightassistant.alerts.other.ElytraHealthLowAlert;
 import ru.octol1ttle.flightassistant.alerts.other.StallAlert;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
@@ -37,6 +38,7 @@ public class AlertController implements ITickableComputer {
         allAlerts = List.of(
                 new StallAlert(host.stall),
                 new ExcessiveDescentAlert(host.data, host.gpws), new ExcessiveTerrainClosureAlert(host.gpws, host.time),
+                new UnsafeTerrainClearanceAlert(host.gpws),
                 new AutopilotOffAlert(host.autoflight), new AutoFireworkOffAlert(host.autoflight),
                 new MinimumsAlert(host.plan),
                 new ComputerFaultAlert(host), new IndicatorFaultAlert(renderer),

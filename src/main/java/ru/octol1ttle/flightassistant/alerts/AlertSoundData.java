@@ -22,6 +22,10 @@ public record AlertSoundData(@Nullable SoundEvent sound, int priority) {
             SoundEvent.of(new Identifier("flightassistant:terrain")),
             2
     );
+    public static final AlertSoundData TOO_LOW_TERRAIN = new AlertSoundData(
+            SoundEvent.of(new Identifier("flightassistant:too_low_terrain")),
+            2
+    );
     public static final AlertSoundData AUTOPILOT_DISCONNECT = new AlertSoundData(
             SoundEvent.of(new Identifier("flightassistant:autopilot_disconnect")),
             3

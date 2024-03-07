@@ -159,7 +159,7 @@ public class AirDataComputer implements ITickableComputer {
     public float heightAboveGround() {
         float height = Math.max(0.0f, altitude() - groundLevel);
         if (height < 1.0f) {
-            throw new AssertionError();
+            throw new AssertionError(height);
         }
         return height;
     }

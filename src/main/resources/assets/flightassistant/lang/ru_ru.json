@@ -76,6 +76,7 @@
   "config.flightassistant.computers.gpws.sinkrate.protection": "Режим защиты от быстрого снижения",
   "config.flightassistant.computers.gpws.terrain.warning": "Режим предупреждения о приближении к земле",
   "config.flightassistant.computers.gpws.terrain.protection": "Режим защиты от приближения к земле",
+  "config.flightassistant.computers.gpws.landing.warning": "Режим предупреждения о близости с землёй при посадке",
   "config.flightassistant.computers.void_level": "Уровень пустоты",
   "config.flightassistant.computers.void_level.protection": "Режим защиты от пересечения уровня пустоты",
   "config.flightassistant.computers.void_level.fireworks": "Использовать фейерверки для восстановления",
@@ -100,6 +101,7 @@
   "alerts.flightassistant.sink_rate": "СКОР. СНИЖЕНИЯ",
   "alerts.flightassistant.stall": "СВАЛИВАНИЕ",
   "alerts.flightassistant.terrain_ahead": "ЗЕМЛЯ ВПЕРЕДИ",
+  "alerts.flightassistant.too_low_terrain": "СЛИШКОМ НИЗКО - ЗЕМЛЯ",
 
   "alerts.flightassistant.elytra_health_low": "ЗДОРОВЬЕ ЭЛИТР НИЗК.",
 

@@ -26,11 +26,13 @@ public class GPWSComputer implements ITickableComputer {
     private static final float CAUTION_THRESHOLD = 10.0f;
     private static final float PULL_UP_THRESHOLD = 5.0f;
     private static final float PITCH_CORRECT_THRESHOLD = 2.5f;
+    private static final float OPTIMUM_GLIDE_RATIO = 10.0f;
     private final AirDataComputer data;
     private final FlightPlanner plan;
     public float descentImpactTime = STATUS_UNKNOWN;
     public float terrainImpactTime = STATUS_UNKNOWN;
     public Vector2d terrainAvoidVector = new Vector2d();
+    public LandingClearanceStatus landingClearanceStatus = LandingClearanceStatus.UNKNOWN;
     public boolean fireworkUseSafe = true;
 
     public GPWSComputer(AirDataComputer data, FlightPlanner plan) {
@@ -42,6 +44,7 @@ public class GPWSComputer implements ITickableComputer {
     public void tick() {
         descentImpactTime = this.computeDescentImpactTime();
         terrainImpactTime = this.computeTerrainImpactTime();
+        landingClearanceStatus = this.computeLandingClearanceStatus();
         fireworkUseSafe = this.computeFireworkUseSafe();
     }
 
@@ -138,6 +141,26 @@ public class GPWSComputer implements ITickableComputer {
         return distance / FIREWORK_SPEED > PULL_UP_THRESHOLD;
     }
 
+    private LandingClearanceStatus computeLandingClearanceStatus() {
+        if (!data.isFlying() || data.player().isTouchingWater()) {
+            return LandingClearanceStatus.UNKNOWN;
+        }
+        if (!plan.landingInProgress) {
+            return LandingClearanceStatus.NOT_LANDING;
+        }
+
+        Double distance = plan.getDistanceToNextWaypoint();
+        if (distance == null) {
+            throw new AssertionError();
+        }
+
+        if (data.velocity.y > -3.0f || distance / data.heightAboveGround() <= OPTIMUM_GLIDE_RATIO) {
+            return LandingClearanceStatus.SAFE;
+        }
+
+        return LandingClearanceStatus.TOO_LOW;
+    }
+
     private boolean positiveLessOrEquals(float time, float lessOrEquals) {
         if (time < 0.0f) {
             return false;
@@ -165,6 +188,14 @@ public class GPWSComputer implements ITickableComputer {
         descentImpactTime = STATUS_UNKNOWN;
         terrainImpactTime = STATUS_UNKNOWN;
         terrainAvoidVector = new Vector2d();
+        landingClearanceStatus = LandingClearanceStatus.UNKNOWN;
         fireworkUseSafe = true;
+    }
+
+    public enum LandingClearanceStatus {
+        TOO_LOW,
+        SAFE,
+        NOT_LANDING,
+        UNKNOWN
     }
 }

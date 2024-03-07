@@ -29,6 +29,8 @@ public class ComputerConfig {
     public WarningMode terrainWarning = WarningMode.SCREEN_AND_AUDIO;
     @SerialEntry
     public ProtectionMode terrainProtection = ProtectionMode.HARD;
+    @SerialEntry
+    public WarningMode landingClearanceWarning = WarningMode.SCREEN_AND_AUDIO;
 
     @SerialEntry
     public ProtectionMode voidProtection = ProtectionMode.HARD;

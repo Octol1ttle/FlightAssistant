@@ -75,6 +75,7 @@
   "config.flightassistant.computers.gpws.sinkrate.protection": "Sinkrate protection mode",
   "config.flightassistant.computers.gpws.terrain.warning": "Terrain warning mode",
   "config.flightassistant.computers.gpws.terrain.protection": "Terrain protection mode",
+  "config.flightassistant.computers.gpws.landing.warning": "Landing clearance warning mode",
   "config.flightassistant.computers.void_level": "Void level",
   "config.flightassistant.computers.void_level.protection": "Void level protection mode",
   "config.flightassistant.computers.void_level.fireworks": "Use fireworks for recovery",
@@ -99,6 +100,7 @@
   "alerts.flightassistant.sink_rate": "SINK RATE",
   "alerts.flightassistant.stall": "STALL",
   "alerts.flightassistant.terrain_ahead": "TERRAIN AHEAD",
+  "alerts.flightassistant.too_low_terrain": "TOO LOW - TERRAIN",
 
   "alerts.flightassistant.elytra_health_low": "ELYTRA HEALTH LOW",
 

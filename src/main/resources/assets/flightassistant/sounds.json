@@ -34,6 +34,11 @@
       "flightassistant:terrain"
     ]
   },
+  "too_low_terrain": {
+    "sounds": [
+      "flightassistant:too_low_terrain"
+    ]
+  },
   "warning": {
     "sounds": [
       "flightassistant:warning"
