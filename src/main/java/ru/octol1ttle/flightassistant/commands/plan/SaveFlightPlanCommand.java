@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
-import ru.octol1ttle.flightassistant.config.FlightPlanNbt;
+import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanNbt;
 
 public class SaveFlightPlanCommand {
     public static int execute(CommandContext<FabricClientCommandSource> context) throws CommandSyntaxException {

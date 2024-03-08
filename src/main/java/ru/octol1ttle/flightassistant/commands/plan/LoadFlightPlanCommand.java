@@ -10,7 +10,7 @@ import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.computers.navigation.Waypoint;
-import ru.octol1ttle.flightassistant.config.FlightPlanNbt;
+import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanNbt;
 
 public class LoadFlightPlanCommand {
     public static final SimpleCommandExceptionType NO_SUCH_PLAN = new SimpleCommandExceptionType(Text.translatable("commands.flightassistant.no_such_plan"));
