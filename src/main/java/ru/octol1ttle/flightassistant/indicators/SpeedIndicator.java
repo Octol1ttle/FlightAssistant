@@ -39,11 +39,11 @@ public class SpeedIndicator extends HudComponent {
             int frameWidth = dim.rFrame - dim.lFrame;
             if (FAConfig.indicator().showGroundSpeedReadout) {
                 int x = MathHelper.floor(dim.lFrame + frameWidth * 0.25f);
-                drawText(textRenderer, context, Text.translatable("flightassistant.ground_speed_short", String.format("%.2f", data.velocity.horizontalLength())), x, dim.bFrame, FAConfig.indicator().frameColor);
+                drawText(textRenderer, context, Text.translatable("flightassistant.ground_speed_short", "%.2f".formatted(data.velocity.horizontalLength())), x, dim.bFrame, FAConfig.indicator().frameColor);
             }
             if (FAConfig.indicator().showVerticalSpeedReadout) {
                 int x = MathHelper.floor(dim.lFrame + frameWidth * 0.75f - 7);
-                drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", String.format("%.2f", data.velocity.y)), x, dim.bFrame, data.velocity.y <= -10.0f ? FAConfig.indicator().warningColor : FAConfig.indicator().frameColor);
+                drawText(textRenderer, context, Text.translatable("flightassistant.vertical_speed_short", "%.2f".formatted(data.velocity.y)), x, dim.bFrame, data.velocity.y <= -10.0f ? FAConfig.indicator().warningColor : FAConfig.indicator().frameColor);
             }
         }
 

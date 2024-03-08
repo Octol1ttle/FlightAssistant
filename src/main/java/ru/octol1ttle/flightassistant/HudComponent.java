@@ -10,8 +10,8 @@ import ru.octol1ttle.flightassistant.compatibility.ImmediatelyFastBatchingAccess
 public abstract class HudComponent {
     private static final int SINGLE_LINE_DRAWN = 1;
 
-    public static MutableText asText(String format, Object... args) {
-        return Text.literal(String.format(format, args));
+    public static MutableText asText(String key, Object... args) {
+        return Text.literal(key.formatted(args));
     }
 
     public static void fill(DrawContext context, int x1, int y1, int x2, int y2, Color color) {
