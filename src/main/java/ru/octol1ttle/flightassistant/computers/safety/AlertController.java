@@ -38,7 +38,7 @@ public class AlertController implements ITickableComputer {
         allAlerts = List.of(
                 new StallAlert(host.stall),
                 new ExcessiveDescentAlert(host.data, host.gpws), new ExcessiveTerrainClosureAlert(host.gpws, host.time),
-                new UnsafeTerrainClearanceAlert(host.gpws),
+                new UnsafeTerrainClearanceAlert(host.gpws, host.plan),
                 new AutopilotOffAlert(host.autoflight), new AutoFireworkOffAlert(host.autoflight),
                 new MinimumsAlert(host.plan),
                 new ComputerFaultAlert(host), new IndicatorFaultAlert(renderer),

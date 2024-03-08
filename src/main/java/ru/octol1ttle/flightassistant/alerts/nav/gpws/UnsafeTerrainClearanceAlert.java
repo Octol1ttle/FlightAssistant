@@ -8,14 +8,17 @@ import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.BaseAlert;
 import ru.octol1ttle.flightassistant.alerts.ICenteredAlert;
+import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class UnsafeTerrainClearanceAlert extends BaseAlert implements ICenteredAlert {
     private final GPWSComputer gpws;
+    private final FlightPlanner plan;
 
-    public UnsafeTerrainClearanceAlert(GPWSComputer gpws) {
+    public UnsafeTerrainClearanceAlert(GPWSComputer gpws, FlightPlanner plan) {
         this.gpws = gpws;
+        this.plan = plan;
     }
 
     @Override
@@ -35,7 +38,10 @@ public class UnsafeTerrainClearanceAlert extends BaseAlert implements ICenteredA
         }
 
         HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, Text.translatable("alerts.flightassistant.too_low_terrain"), x, y,
-                FAConfig.indicator().cautionColor, highlight);
+                plan.isBelowMinimums()
+                        ? FAConfig.indicator().warningColor
+                        : FAConfig.indicator().cautionColor
+                , highlight);
         return true;
     }
 }
