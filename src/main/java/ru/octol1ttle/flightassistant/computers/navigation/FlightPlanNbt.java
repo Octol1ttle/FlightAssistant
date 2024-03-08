@@ -56,9 +56,9 @@ public class FlightPlanNbt {
                 loaded.add(Waypoint.readFromNbt(waypointNbt));
             }
         } catch (InvalidNbtException e) {
-            FlightAssistant.LOGGER.error("Invalid NBT detected during flight plan deserialization from: %s".formatted(path.toAbsolutePath().toString()));
+            FlightAssistant.LOGGER.error("Invalid NBT detected during flight plan deserialization from: %s".formatted(path.toAbsolutePath().toString()), e);
         } catch (IOException e) {
-            FlightAssistant.LOGGER.error("IO error detected during flight plan deserialization from: %s".formatted(path.toAbsolutePath().toString()));
+            FlightAssistant.LOGGER.error("IO error detected during flight plan deserialization from: %s".formatted(path.toAbsolutePath().toString()), e);
         }
 
         return loaded;
