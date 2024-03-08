@@ -6,32 +6,32 @@ import org.joml.Vector2d;
 import ru.octol1ttle.flightassistant.HudComponent;
 
 public class LandingWaypoint extends Waypoint {
-    private final LandingMinimums landingMinimums;
+    public final LandingMinimums minimums;
 
-    public LandingWaypoint(Vector2d targetPosition, @Nullable LandingMinimums landingMinimums) {
+    public LandingWaypoint(Vector2d targetPosition, @Nullable LandingMinimums minimums) {
         super(targetPosition, null, null);
-        this.landingMinimums = landingMinimums;
+        this.minimums = minimums;
     }
 
     public Integer minimums(int ground) {
-        if (landingMinimums == null) {
+        if (minimums == null) {
             return null;
         }
 
-        return switch (landingMinimums.type()) {
-            case ABSOLUTE -> landingMinimums.altitude();
-            case ABOVE_GROUND -> ground + landingMinimums.altitude();
+        return switch (minimums.type()) {
+            case ABSOLUTE -> minimums.altitude();
+            case ABOVE_GROUND -> ground + minimums.altitude();
         };
     }
 
     public Text formatMinimums() {
-        if (landingMinimums == null) {
+        if (minimums == null) {
             return Text.translatable("commands.flightassistant.waypoint_info_not_set");
         }
 
-        return switch (landingMinimums.type()) {
-            case ABSOLUTE -> HudComponent.asText("%s", landingMinimums.altitude());
-            case ABOVE_GROUND -> HudComponent.asText("+%s", landingMinimums.altitude());
+        return switch (minimums.type()) {
+            case ABSOLUTE -> HudComponent.asText("%s", minimums.altitude());
+            case ABOVE_GROUND -> HudComponent.asText("+%s", minimums.altitude());
         };
     }
 

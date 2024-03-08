@@ -84,6 +84,7 @@
   "config.flightassistant.computers.elytra_state.open_automatically": "Open Elytra automatically",
 
   "commands.flightassistant.no_such_waypoint": "There is no waypoint at that index",
+  "commands.flightassistant.no_such_plan": "There is no plan with that name",
   "commands.flightassistant.nothing_to_clear": "There are no waypoints to clear",
   "commands.flightassistant.waypoint_created": "Created waypoint at index %s (now %s waypoints in total)",
   "commands.flightassistant.waypoint_removed": "Removed waypoint at index %s (now %s waypoints in total)",
@@ -91,6 +92,8 @@
   "commands.flightassistant.waypoint_replaced": "Replaced waypoint at index %s (now %s waypoints in total)",
   "commands.flightassistant.flight_plan_cleared": "Cleared all waypoints starting from index %s (now %s waypoints in total)",
   "commands.flightassistant.flight_plan_executed": "Executed flight plan starting from waypoint at index %s (%s waypoints in total)",
+  "commands.flightassistant.flight_plan_saved": "Saved flight plan with %s waypoints as \"%s\"",
+  "commands.flightassistant.flight_plan_loaded": "Loaded flight plan with %s waypoints from \"%s\"",
   "commands.flightassistant.total_waypoints": "There are %s waypoints in total",
   "commands.flightassistant.waypoint_info": "Index %s: | X: %s | Z: %s | Altitude: %s | Speed %s",
   "commands.flightassistant.land_waypoint_info": "Index %s: | X: %s | Z: %s | Minimums: %s",

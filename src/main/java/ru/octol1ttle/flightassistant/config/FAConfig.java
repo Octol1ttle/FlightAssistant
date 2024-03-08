@@ -14,7 +14,7 @@ public class FAConfig {
     private static final ConfigClassHandler<HUDConfig> HUD_HANDLER = ConfigClassHandler.createBuilder(HUDConfig.class)
             .id(new Identifier(FlightAssistant.MODID, "hud"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
-                    .setPath(YACLPlatform.getConfigDir().resolve("flightassistant/hud.json5"))
+                    .setPath(YACLPlatform.getConfigDir().resolve("%s/hud.json5".formatted(FlightAssistant.MODID)))
                     .appendGsonBuilder(GsonBuilder::setPrettyPrinting) // not needed, pretty print by default
                     .setJson5(true)
                     .build())
@@ -23,7 +23,7 @@ public class FAConfig {
     private static final ConfigClassHandler<IndicatorConfigStorage> INDICATORS_STORAGE_HANDLER = ConfigClassHandler.createBuilder(IndicatorConfigStorage.class)
             .id(new Identifier(FlightAssistant.MODID, "indicators"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
-                    .setPath(YACLPlatform.getConfigDir().resolve("flightassistant/indicators.json5"))
+                    .setPath(YACLPlatform.getConfigDir().resolve("%s/indicators.json5".formatted(FlightAssistant.MODID)))
                     .appendGsonBuilder(GsonBuilder::setPrettyPrinting) // not needed, pretty print by default
                     .setJson5(true)
                     .build())
@@ -32,7 +32,7 @@ public class FAConfig {
     private static final ConfigClassHandler<ComputerConfig> COMPUTER_HANDLER = ConfigClassHandler.createBuilder(ComputerConfig.class)
             .id(new Identifier(FlightAssistant.MODID, "computers"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
-                    .setPath(YACLPlatform.getConfigDir().resolve("flightassistant/computers.json5"))
+                    .setPath(YACLPlatform.getConfigDir().resolve("%s/computers.json5".formatted(FlightAssistant.MODID)))
                     .appendGsonBuilder(GsonBuilder::setPrettyPrinting) // not needed, pretty print by default
                     .setJson5(true)
                     .build())

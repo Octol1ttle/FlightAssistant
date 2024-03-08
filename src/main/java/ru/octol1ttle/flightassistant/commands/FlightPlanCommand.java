@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.commands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
@@ -11,8 +12,10 @@ import ru.octol1ttle.flightassistant.commands.plan.ClearWaypointsCommand;
 import ru.octol1ttle.flightassistant.commands.plan.ExecutePlanCommand;
 import ru.octol1ttle.flightassistant.commands.plan.InsertWaypointCommand;
 import ru.octol1ttle.flightassistant.commands.plan.ListWaypointsCommand;
+import ru.octol1ttle.flightassistant.commands.plan.LoadFlightPlanCommand;
 import ru.octol1ttle.flightassistant.commands.plan.RemoveWaypointCommand;
 import ru.octol1ttle.flightassistant.commands.plan.ReplaceWaypointCommand;
+import ru.octol1ttle.flightassistant.commands.plan.SaveFlightPlanCommand;
 import ru.octol1ttle.flightassistant.computers.navigation.LandingMinimums;
 import ru.octol1ttle.flightassistant.computers.navigation.LandingWaypoint;
 import ru.octol1ttle.flightassistant.computers.navigation.Waypoint;
@@ -58,6 +61,20 @@ public class FlightPlanCommand {
                         )
                 );
 
+        var save = literal("save")
+                .then(argument("name", StringArgumentType.greedyString())
+                        .executes(
+                                SaveFlightPlanCommand::execute
+                        )
+                );
+
+        var load = literal("load")
+                .then(argument("name", StringArgumentType.greedyString())
+                        .executes(
+                                LoadFlightPlanCommand::execute
+                        )
+                );
+
         plan.then(add);
         plan.then(remove);
         plan.then(insert);
@@ -65,6 +82,8 @@ public class FlightPlanCommand {
         plan.then(list);
         plan.then(clear);
         plan.then(execute);
+        plan.then(save);
+        plan.then(load);
         builder.then(plan);
     }
 
