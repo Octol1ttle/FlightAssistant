@@ -87,6 +87,8 @@
   "commands.flightassistant.no_such_waypoint": "На указанной позиции нет точки назначения",
   "commands.flightassistant.no_such_plan": "Не найден план полёта с таким именем",
   "commands.flightassistant.nothing_to_clear": "Нет точек назначения для очищения",
+  "commands.flightassistant.first_wp_cannot_be_landing": "Первая точка назначения не может быть посадочной",
+  "commands.flightassistant.cannot_execute_from_landing": "План полёта не может быть выполнен, начиная с посадочной точки назначения",
   "commands.flightassistant.waypoint_created": "Создана точка назначения с позицией %s (теперь всего %s точек назначения)",
   "commands.flightassistant.waypoint_removed": "Удалена точка назначения с позицией %s (теперь всего %s точек назначения)",
   "commands.flightassistant.waypoint_inserted": "Добавлена точка назначения на позицию %s (теперь всего %s точек назначения)",

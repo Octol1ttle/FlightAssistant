@@ -86,6 +86,8 @@
   "commands.flightassistant.no_such_waypoint": "There is no waypoint at that index",
   "commands.flightassistant.no_such_plan": "There is no plan with that name",
   "commands.flightassistant.nothing_to_clear": "There are no waypoints to clear",
+  "commands.flightassistant.first_wp_cannot_be_landing": "The first waypoint cannot be a landing waypoint",
+  "commands.flightassistant.cannot_execute_from_landing": "The flight plan cannot be executed starting from a landing waypoint",
   "commands.flightassistant.waypoint_created": "Created waypoint at index %s (now %s waypoints in total)",
   "commands.flightassistant.waypoint_removed": "Removed waypoint at index %s (now %s waypoints in total)",
   "commands.flightassistant.waypoint_inserted": "Inserted waypoint at index %s (now %s waypoints in total)",
