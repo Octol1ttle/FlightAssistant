@@ -29,9 +29,9 @@ public class FAModMenuImpl implements ModMenuApi {
             return YetAnotherConfigLib.createBuilder()
                     .title(Text.translatable("mod.flightassistant"))
                     .category(hud(Text.translatable("config.flightassistant.category.hud_settings"), hud, new HUDConfig()))
-                    .category(indicators(Text.translatable("config.flightassistant.category.not_flying_no_elytra"), indicators.notFlyingNoElytra, IndicatorConfigStorage.createFull()))
+                    .category(indicators(Text.translatable("config.flightassistant.category.not_flying_no_elytra"), indicators.notFlyingNoElytra, IndicatorConfigStorage.createDisabled()))
                     .category(indicators(Text.translatable("config.flightassistant.category.not_flying_has_elytra"), indicators.notFlyingHasElytra, IndicatorConfigStorage.createMinimal()))
-                    .category(indicators(Text.translatable("config.flightassistant.category.flying"), indicators.flying, IndicatorConfigStorage.createDisabled()))
+                    .category(indicators(Text.translatable("config.flightassistant.category.flying"), indicators.flying, IndicatorConfigStorage.createFull()))
                     .category(computers(Text.translatable("config.flightassistant.category.computer_settings"), computers, new ComputerConfig()))
 
                     .save(FAConfig::save)
