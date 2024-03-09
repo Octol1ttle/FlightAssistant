@@ -51,10 +51,8 @@ dependencies {
 	modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}+${project.minecraft_version}"
 	// Optional: Mod Menu to access the YACL config screen
 	modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
-	//modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 	// Optional: ImmediatelyFast for batching support to increase rendering performance
 	modApi "maven.modrinth:immediatelyfast:${project.immediatelyfast_version}+${project.minecraft_version}-fabric"
-	//modLocalRuntime "maven.modrinth:immediatelyfast:${project.immediatelyfast_version}+${project.minecraft_version}-fabric"
 }
 
 processResources {

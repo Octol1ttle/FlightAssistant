@@ -28,10 +28,11 @@ public class ElytraStateController implements ITickableComputer {
             sendSwitchState();
         }
 
+        boolean flying = data.isFlying() || data.player().getAbilities().flying;
         boolean hasUsableElytra = data.elytraHealth != null && data.elytraHealth > (1 / 432.0f);
         boolean notLookingToClutch = data.pitch() > -70.0f;
         if (FAConfig.computer().openElytraAutomatically
-                && data.fallDistance() > 3.0f && !data.isFlying() && hasUsableElytra && notLookingToClutch) {
+                && data.fallDistance() > 3.0f && !flying && hasUsableElytra && notLookingToClutch) {
             // Extend the wings
             sendSwitchState();
         }
