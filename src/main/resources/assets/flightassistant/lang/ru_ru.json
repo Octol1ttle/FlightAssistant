@@ -143,6 +143,9 @@
   "status.flightassistant.firework_count": "КОЛ-ВО ФРВКОВ: %s",
   "status.flightassistant.waypoint_distance": "РАССТ: %s",
 
+  "mode.flightassistant.minimums.absolute": "МИНИМ %s",
+  "mode.flightassistant.minimums.relative": "МИНИМ +%s",
+  "mode.flightassistant.minimums.not_set": "МИНИМ НЕ ЗАДАН",
   "mode.flightassistant.firework.none_in_hotbar": "НЕТ ФРВКОВ",
   "mode.flightassistant.firework.locked": "ТОЛЬКО А/ФРВК",
   "mode.flightassistant.firework.manual": "РУЧН ФРВК",
@@ -163,7 +166,6 @@
   "mode.flightassistant.lat.heading": "КУРС %s",
   "mode.flightassistant.lat.position": "ПОЗ %s %s",
   "mode.flightassistant.lat.approach": "ЗАХОД %s %s",
-  "mode.flightassistant.lat.minimums": "МИНИМ %s",
   "mode.flightassistant.auto.flight_directors": "УК",
   "mode.flightassistant.auto.firework": "А/ФРВК",
   "mode.flightassistant.auto.pilot": "АП",

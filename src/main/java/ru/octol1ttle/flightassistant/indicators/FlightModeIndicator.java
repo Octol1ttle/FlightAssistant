@@ -73,7 +73,7 @@ public class FlightModeIndicator extends HudComponent {
         } else if (firework.lastProtTrigger != null && time.prevMillis - firework.lastProtTrigger < 2000) {
             fireworkMode.update(Text.translatable("mode.flightassistant.firework.protection"), true);
         } else if (minimums != null && plan.landingInProgress) {
-            fireworkMode.update(Text.translatable("mode.flightassistant.minimums", plan.formatMinimums()), plan.isBelowMinimums());
+            fireworkMode.update(minimums, plan.isBelowMinimums());
         } else if (autoflight.autoFireworkEnabled) {
             if (targetSpeed != null) {
                 String type = autoflight.selectedSpeed != null ? ".selected" : ".managed";

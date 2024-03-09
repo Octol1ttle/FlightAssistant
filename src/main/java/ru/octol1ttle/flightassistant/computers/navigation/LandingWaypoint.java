@@ -5,7 +5,6 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
-import ru.octol1ttle.flightassistant.HudComponent;
 
 public class LandingWaypoint extends Waypoint {
     public final @Nullable LandingMinimums minimums;
@@ -28,12 +27,12 @@ public class LandingWaypoint extends Waypoint {
 
     public Text formatMinimums() {
         if (minimums == null) {
-            return Text.translatable("commands.flightassistant.waypoint_info_not_set");
+            return Text.translatable("mode.flightassistant.minimums.not_set");
         }
 
         return switch (minimums.type()) {
-            case ABSOLUTE -> HudComponent.asText("%s", minimums.altitude());
-            case ABOVE_GROUND -> HudComponent.asText("+%s", minimums.altitude());
+            case ABSOLUTE -> Text.translatable("mode.flightassistant.minimums.absolute", minimums.altitude());
+            case ABOVE_GROUND -> Text.translatable("mode.flightassistant.minimums.relative", minimums.altitude());
         };
     }
 
