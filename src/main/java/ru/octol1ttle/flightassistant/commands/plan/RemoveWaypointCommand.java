@@ -12,9 +12,8 @@ public class RemoveWaypointCommand {
     public static int execute(CommandContext<FabricClientCommandSource> context) throws CommandSyntaxException {
         ComputerHost host = HudRenderer.getHost();
         int waypointIndex = IntegerArgumentType.getInteger(context, "waypointIndex");
-        if (!host.plan.waypointExistsAt(waypointIndex)) {
-            throw WaypointUtil.NO_SUCH_WAYPOINT.create();
-        }
+        WaypointUtil.throwOnNotFound(host.plan, waypointIndex);
+
         host.plan.remove(waypointIndex);
         context.getSource().sendFeedback(Text.translatable("commands.flightassistant.waypoint_removed", waypointIndex, host.plan.size()));
         return 0;

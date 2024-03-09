@@ -13,9 +13,8 @@ public class ReplaceWaypointCommand {
     public static int execute(CommandContext<FabricClientCommandSource> context, Waypoint waypoint) throws CommandSyntaxException {
         ComputerHost host = HudRenderer.getHost();
         int waypointIndex = IntegerArgumentType.getInteger(context, "replaceAt");
-        if (!host.plan.waypointExistsAt(waypointIndex)) {
-            throw WaypointUtil.NO_SUCH_WAYPOINT.create();
-        }
+        WaypointUtil.throwOnNotFound(host.plan, waypointIndex);
+
         host.plan.set(waypointIndex, waypoint);
         context.getSource().sendFeedback(Text.translatable("commands.flightassistant.waypoint_replaced", waypointIndex, host.plan.size()));
         return 0;

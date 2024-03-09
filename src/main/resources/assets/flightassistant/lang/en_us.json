@@ -94,6 +94,7 @@
   "commands.flightassistant.flight_plan_executed": "Executed flight plan starting from waypoint at index %s (%s waypoints in total)",
   "commands.flightassistant.flight_plan_saved": "Saved flight plan with %s waypoints as \"%s\"",
   "commands.flightassistant.flight_plan_loaded": "Loaded flight plan with %s waypoints from \"%s\"",
+  "commands.flightassistant.flight_plan_empty": "The flight plan is empty!",
   "commands.flightassistant.total_waypoints": "There are %s waypoints in total",
   "commands.flightassistant.waypoint_info": "Index %s: | X: %s | Z: %s | Altitude: %s | Speed %s",
   "commands.flightassistant.land_waypoint_info": "Index %s: | X: %s | Z: %s | Minimums: %s",
