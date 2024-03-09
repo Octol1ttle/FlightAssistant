@@ -66,10 +66,14 @@ public class FlightModeIndicator extends HudComponent {
 
     private void renderFireworkMode(DrawContext context, TextRenderer textRenderer) {
         Integer targetSpeed = autoflight.getTargetSpeed();
+        Text minimums = plan.formatMinimums();
+
         if (firework.noFireworks) {
             fireworkMode.update(Text.translatable("mode.flightassistant.firework.none_in_hotbar"), autoflight.autoFireworkEnabled);
         } else if (firework.lastProtTrigger != null && time.prevMillis - firework.lastProtTrigger < 2000) {
             fireworkMode.update(Text.translatable("mode.flightassistant.firework.protection"), true);
+        } else if (minimums != null && plan.landingInProgress) {
+            fireworkMode.update(Text.translatable("mode.flightassistant.minimums", plan.formatMinimums()), plan.isBelowMinimums());
         } else if (autoflight.autoFireworkEnabled) {
             if (targetSpeed != null) {
                 String type = autoflight.selectedSpeed != null ? ".selected" : ".managed";
@@ -133,10 +137,7 @@ public class FlightModeIndicator extends HudComponent {
             return;
         }
 
-        Text minimums = plan.formatMinimums();
-        if (minimums != null && plan.landingInProgress) {
-            lateralMode.update(Text.translatable("mode.flightassistant.lat.minimums", plan.formatMinimums()), plan.isBelowMinimums());
-        } else if (autoflight.selectedHeading != null) {
+        if (autoflight.selectedHeading != null) {
             lateralMode.update(Text.translatable("mode.flightassistant.lat.heading", autoflight.selectedHeading));
         } else if (plan.getTargetPosition() != null) {
             Vector2d target = plan.getTargetPosition();
