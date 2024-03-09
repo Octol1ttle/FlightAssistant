@@ -22,6 +22,7 @@ import ru.octol1ttle.flightassistant.config.FAConfig;
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 
 public class AirDataComputer implements ITickableComputer {
+    public static final float OPTIMUM_GLIDE_RATIO = 10.0f;
     private final MinecraftClient mc;
     public Vec3d velocity = Vec3d.ZERO;
     public float roll;

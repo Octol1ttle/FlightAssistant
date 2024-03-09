@@ -67,9 +67,12 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             return false;
         }
         landAltitude = landPos.getY();
+        if (distance / Math.min(data.heightAboveGround(), Math.abs(data.altitude() - landAltitude)) > AirDataComputer.OPTIMUM_GLIDE_RATIO) {
+            return false;
+        }
 
         float landAngle = FAMathHelper.toDegrees(MathHelper.atan2(landAltitude - data.altitude(), distance));
-        if (landAngle > 5.0f || landAngle < PitchController.DESCEND_PITCH + 15) {
+        if (landAngle > 5.0f || landAngle < PitchController.DESCEND_PITCH + 10) {
             return false;
         }
         BlockHitResult result = data.world().raycast(new RaycastContext(data.position(), new Vec3d(target.x, landAltitude, target.y), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player()));

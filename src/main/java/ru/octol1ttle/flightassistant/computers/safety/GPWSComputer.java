@@ -26,7 +26,6 @@ public class GPWSComputer implements ITickableComputer {
     private static final float CAUTION_THRESHOLD = 10.0f;
     private static final float PULL_UP_THRESHOLD = 5.0f;
     private static final float PITCH_CORRECT_THRESHOLD = 2.5f;
-    private static final float OPTIMUM_GLIDE_RATIO = 10.0f;
     private final AirDataComputer data;
     private final FlightPlanner plan;
     public float descentImpactTime = STATUS_UNKNOWN;
@@ -154,7 +153,7 @@ public class GPWSComputer implements ITickableComputer {
             throw new AssertionError();
         }
 
-        if (data.velocity.y > -3.0f || distance / data.heightAboveGround() <= OPTIMUM_GLIDE_RATIO) {
+        if (data.velocity.y > -3.0f || distance / data.heightAboveGround() <= AirDataComputer.OPTIMUM_GLIDE_RATIO) {
             return LandingClearanceStatus.SAFE;
         }
 
