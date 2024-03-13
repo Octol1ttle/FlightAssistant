@@ -14,15 +14,15 @@ import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
-public class PitchIndicator extends HudComponent {
+public class AttitudeIndicator extends HudComponent {
     public static final int DEGREES_PER_BAR = 20;
     private final Dimensions dim;
     private final AirDataComputer data;
     private final StallComputer stall;
     private final VoidLevelComputer voidLevel;
-    private final PitchIndicatorData pitchData = new PitchIndicatorData();
+    private final AttitudeIndicatorData pitchData = new AttitudeIndicatorData();
 
-    public PitchIndicator(Dimensions dim, AirDataComputer data, StallComputer stall, VoidLevelComputer voidLevel) {
+    public AttitudeIndicator(Dimensions dim, AirDataComputer data, StallComputer stall, VoidLevelComputer voidLevel) {
         this.dim = dim;
         this.data = data;
         this.stall = stall;
@@ -31,7 +31,7 @@ public class PitchIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (!FAConfig.indicator().showPitchLadder) {
+        if (!FAConfig.indicator().showAttitudeIndicator) {
             return;
         }
 
@@ -154,15 +154,15 @@ public class PitchIndicator extends HudComponent {
 
     @Override
     public void renderFaulted(DrawContext context, TextRenderer textRenderer) {
-        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.pitch_short"), dim.xMid, dim.yMid - 10, FAConfig.indicator().warningColor);
+        drawMiddleAlignedText(textRenderer, context, Text.translatable("flightassistant.attitude_short"), dim.xMid, dim.yMid - 10, FAConfig.indicator().warningColor);
     }
 
     @Override
     public String getId() {
-        return "pitch";
+        return "attitude";
     }
 
-    private static class PitchIndicatorData {
+    private static class AttitudeIndicatorData {
         public int width;
         public int margin;
         public int sideWidth;

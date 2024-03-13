@@ -18,7 +18,7 @@ import ru.octol1ttle.flightassistant.indicators.FlightModeIndicator;
 import ru.octol1ttle.flightassistant.indicators.FlightPathIndicator;
 import ru.octol1ttle.flightassistant.indicators.HeadingIndicator;
 import ru.octol1ttle.flightassistant.indicators.LocationIndicator;
-import ru.octol1ttle.flightassistant.indicators.PitchIndicator;
+import ru.octol1ttle.flightassistant.indicators.AttitudeIndicator;
 import ru.octol1ttle.flightassistant.indicators.SpeedIndicator;
 import ru.octol1ttle.flightassistant.indicators.StatusIndicator;
 import ru.octol1ttle.flightassistant.mixin.GameRendererInvoker;
@@ -36,7 +36,7 @@ public class HudRenderer extends HudComponent {
         this.components = new ArrayList<>(List.of(
                 new FlightPathIndicator(dim, host.data, host.gpws), new LocationIndicator(dim, host.data),
                 new HeadingIndicator(dim, host.data, host.autoflight), new SpeedIndicator(dim, host.data),
-                new AltitudeIndicator(dim, host.data, host.autoflight, host.plan), new PitchIndicator(dim, host.data, host.stall, host.voidLevel),
+                new AltitudeIndicator(dim, host.data, host.autoflight, host.plan), new AttitudeIndicator(dim, host.data, host.stall, host.voidLevel),
                 new ElytraHealthIndicator(dim, host.data), new AlertIndicator(dim, host, host.alert, host.time),
                 new FlightModeIndicator(dim, host.firework, host.time, host.autoflight, host.plan, host.data), new StatusIndicator(dim, host.firework, host.plan),
                 new FlightDirectorsIndicator(dim, host.autoflight, host.data)));

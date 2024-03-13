@@ -208,8 +208,8 @@ public class FAModMenuImpl implements ModMenuApi {
 
                 .option(LabelOption.create(Text.translatable("config.flightassistant.indicators.misc")))
                 .option(Option.<Boolean>createBuilder()
-                        .name(Text.translatable("config.flightassistant.indicators.misc.pitch_ladder"))
-                        .binding(defaults.showPitchLadder, () -> config.showPitchLadder, o -> config.showPitchLadder = o)
+                        .name(Text.translatable("config.flightassistant.indicators.misc.attitude"))
+                        .binding(defaults.showAttitudeIndicator, () -> config.showAttitudeIndicator, o -> config.showAttitudeIndicator = o)
                         .controller(TickBoxControllerBuilder::create)
                         .build())
                 .option(Option.<Boolean>createBuilder()

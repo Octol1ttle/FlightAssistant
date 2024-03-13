@@ -48,7 +48,7 @@
   "config.flightassistant.indicators.info.firework_count": "Show firework count",
   "config.flightassistant.indicators.info.waypoint_distance": "Show distance to waypoint",
   "config.flightassistant.indicators.misc": "Miscellaneous",
-  "config.flightassistant.indicators.misc.pitch_ladder": "Show pitch ladder",
+  "config.flightassistant.indicators.misc.attitude": "Show attitude",
   "config.flightassistant.indicators.misc.flight_path": "Show flight path vector icon",
   "config.flightassistant.indicators.misc.coordinates": "Show coordinates",
   "config.flightassistant.indicators.misc.elytra_health": "Show Elytra health",
@@ -137,7 +137,7 @@
   "alerts.flightassistant.fault.indicators.flight_path": "FLIGHT PATH INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.heading": "HEADING INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.location": "LOCATION INDICATOR FAULT",
-  "alerts.flightassistant.fault.indicators.pitch": "PITCH INDICATOR FAULT",
+  "alerts.flightassistant.fault.indicators.attitude": "ATT INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.speed": "SPEED INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.status": "STATUS INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.flt_dir": "FLT DIRECTORS FAULT",
@@ -187,7 +187,7 @@
   "flightassistant.flight_path_short": "F/PATH",
   "flightassistant.heading_short": "HDG",
   "flightassistant.location_short": "LOC",
-  "flightassistant.pitch_short": "PITCH",
+  "flightassistant.attitude_short": "ATT",
   "flightassistant.speed_short": "SPD",
   "flightassistant.status_short": "STATUS"
 }

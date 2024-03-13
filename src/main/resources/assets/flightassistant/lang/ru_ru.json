@@ -49,7 +49,7 @@
   "config.flightassistant.indicators.info.firework_count": "Показывать счётчик фейерверков",
   "config.flightassistant.indicators.info.waypoint_distance": "Показывать расстояние до точки назначения",
   "config.flightassistant.indicators.misc": "Прочее",
-  "config.flightassistant.indicators.misc.pitch_ladder": "Показывать индикатор тангажа",
+  "config.flightassistant.indicators.misc.attitude": "Показывать индикатор ориентации",
   "config.flightassistant.indicators.misc.flight_path": "Показывать иконку пути полёта",
   "config.flightassistant.indicators.misc.coordinates": "Показывать координаты",
   "config.flightassistant.indicators.misc.elytra_health": "Показывать здоровье элитр",
@@ -138,7 +138,7 @@
   "alerts.flightassistant.fault.indicators.flight_path": "ОТКАЗ ИНДИК. ПУТИ ПОЛЁТА",
   "alerts.flightassistant.fault.indicators.heading": "ОТКАЗ ИНДИК. КУРСА",
   "alerts.flightassistant.fault.indicators.location": "ОТКАЗ ИНДИК. КООРДИНАТ",
-  "alerts.flightassistant.fault.indicators.pitch": "ОТКАЗ ИНДИК. ТАНГАЖА",
+  "alerts.flightassistant.fault.indicators.attitude": "ОТКАЗ ИНДИК. ОРИЕНТАЦИИ",
   "alerts.flightassistant.fault.indicators.speed": "ОТКАЗ ИНДИК. СКОРОСТИ",
   "alerts.flightassistant.fault.indicators.status": "ОТКАЗ ИНДИК. СТАТУСА",
   "alerts.flightassistant.fault.indicators.flt_dir": "ОТКАЗ УКАЗАТЕЛЕЙ ПОЛЁТА",
@@ -188,7 +188,7 @@
   "flightassistant.flight_path_short": "ПУТЬ ПОЛ.",
   "flightassistant.heading_short": "КУРС",
   "flightassistant.location_short": "КООРД.",
-  "flightassistant.pitch_short": "ТАНГАЖ",
+  "flightassistant.attitude_short": "ОРИЕНТ",
   "flightassistant.speed_short": "СКОР.",
   "flightassistant.status_short": "СТАТУС"
 }

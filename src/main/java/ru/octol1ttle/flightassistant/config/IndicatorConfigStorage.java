@@ -74,7 +74,7 @@ public class IndicatorConfigStorage {
         public boolean showDistanceToWaypoint = true;
 
         @SerialEntry
-        public boolean showPitchLadder = true;
+        public boolean showAttitudeIndicator = true;
         @SerialEntry
         public boolean showFlightPath = true;
         @SerialEntry
@@ -84,7 +84,7 @@ public class IndicatorConfigStorage {
 
         IndicatorConfig setMinimal() {
             this.showFlightPath = false;
-            this.showPitchLadder = false;
+            this.showAttitudeIndicator = false;
             this.showSpeedScale = false;
             this.showSpeedReadout = false;
             this.showVerticalSpeedReadout = false;
@@ -102,7 +102,7 @@ public class IndicatorConfigStorage {
             this.showElytraHealth = false;
             this.showCoordinates = false;
             this.showFlightPath = false;
-            this.showPitchLadder = false;
+            this.showAttitudeIndicator = false;
             this.showSpeedScale = false;
             this.showSpeedReadout = false;
             this.showGroundSpeedReadout = false;
