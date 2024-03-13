@@ -8,17 +8,17 @@ import ru.octol1ttle.flightassistant.HudRenderer;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
-public class MCPCommand {
+public class SelectCommand {
     public static void register(LiteralArgumentBuilder<FabricClientCommandSource> builder) {
-        var mcp = literal("mcp");
-        registerSpeed(mcp);
-        registerAltitude(mcp);
-        registerHeading(mcp);
-        builder.then(mcp);
+        var select = literal("select");
+        registerSpeed(select);
+        registerAltitude(select);
+        registerHeading(select);
+        builder.then(select);
     }
 
-    private static void registerSpeed(LiteralArgumentBuilder<FabricClientCommandSource> mcp) {
-        mcp.then(literal("speed")
+    private static void registerSpeed(LiteralArgumentBuilder<FabricClientCommandSource> select) {
+        select.then(literal("speed")
                 .then(literal("managed")
                         .executes(context -> {
                             HudRenderer.getHost().autoflight.selectedSpeed = null;
@@ -34,8 +34,8 @@ public class MCPCommand {
         );
     }
 
-    private static void registerAltitude(LiteralArgumentBuilder<FabricClientCommandSource> mcp) {
-        mcp.then(literal("altitude")
+    private static void registerAltitude(LiteralArgumentBuilder<FabricClientCommandSource> select) {
+        select.then(literal("altitude")
                 .then(literal("managed")
                         .executes(context -> {
                             HudRenderer.getHost().autoflight.selectedAltitude = null;
@@ -51,8 +51,8 @@ public class MCPCommand {
         );
     }
 
-    private static void registerHeading(LiteralArgumentBuilder<FabricClientCommandSource> mcp) {
-        mcp.then(literal("heading")
+    private static void registerHeading(LiteralArgumentBuilder<FabricClientCommandSource> select) {
+        select.then(literal("heading")
                 .then(literal("managed")
                         .executes(context -> {
                             HudRenderer.getHost().autoflight.selectedHeading = null;

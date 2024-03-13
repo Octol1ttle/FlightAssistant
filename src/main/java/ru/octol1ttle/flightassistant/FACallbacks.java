@@ -12,7 +12,7 @@ import net.minecraft.item.FireworkRocketItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.TypedActionResult;
 import ru.octol1ttle.flightassistant.commands.FlightPlanCommand;
-import ru.octol1ttle.flightassistant.commands.MCPCommand;
+import ru.octol1ttle.flightassistant.commands.SelectCommand;
 import ru.octol1ttle.flightassistant.commands.ResetCommand;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.config.FAConfig;
@@ -31,7 +31,7 @@ public class FACallbacks {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             LiteralArgumentBuilder<FabricClientCommandSource> builder = literal(FlightAssistant.MODID);
             ResetCommand.register(builder);
-            MCPCommand.register(builder);
+            SelectCommand.register(builder);
             FlightPlanCommand.register(builder);
 
             LiteralCommandNode<FabricClientCommandSource> node = dispatcher.register(builder);
