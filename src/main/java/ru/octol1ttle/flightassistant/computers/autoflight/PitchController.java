@@ -5,6 +5,7 @@ import ru.octol1ttle.flightassistant.FAMathHelper;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
+import ru.octol1ttle.flightassistant.computers.safety.ChunkStatusComputer;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
 import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
@@ -19,14 +20,16 @@ public class PitchController implements ITickableComputer {
     private final TimeComputer time;
     private final VoidLevelComputer voidLevel;
     private final GPWSComputer gpws;
+    private final ChunkStatusComputer chunkStatus;
     public Float targetPitch = null;
 
-    public PitchController(AirDataComputer data, StallComputer stall, TimeComputer time, VoidLevelComputer voidLevel, GPWSComputer gpws) {
+    public PitchController(AirDataComputer data, StallComputer stall, TimeComputer time, VoidLevelComputer voidLevel, GPWSComputer gpws, ChunkStatusComputer chunkStatus) {
         this.data = data;
         this.stall = stall;
         this.time = time;
         this.voidLevel = voidLevel;
         this.gpws = gpws;
+        this.chunkStatus = chunkStatus;
     }
 
     @Override
@@ -45,9 +48,12 @@ public class PitchController implements ITickableComputer {
             smoothSetPitch(90.0f, MathHelper.clamp(time.deltaTime / gpws.descentImpactTime, 0.001f, 1.0f));
         } else if (gpws.shouldCorrectTerrain()) {
             smoothSetPitch(FAMathHelper.toDegrees(MathHelper.atan2(gpws.terrainAvoidVector.y, gpws.terrainAvoidVector.x)), time.deltaTime);
+        } else if (chunkStatus.shouldCorrectTerrain()) {
+            smoothSetPitch(chunkStatus.recoverPitch, time.deltaTime);
         } else {
             smoothSetPitch(targetPitch, time.deltaTime);
         }
+
     }
 
     /**

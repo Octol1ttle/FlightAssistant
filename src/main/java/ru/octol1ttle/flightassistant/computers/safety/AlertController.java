@@ -19,6 +19,7 @@ import ru.octol1ttle.flightassistant.alerts.nav.ApproachingVoidDamageLevelAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.MinimumsAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveDescentAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.ExcessiveTerrainClosureAlert;
+import ru.octol1ttle.flightassistant.alerts.nav.UnloadedChunkAlert;
 import ru.octol1ttle.flightassistant.alerts.nav.gpws.UnsafeTerrainClearanceAlert;
 import ru.octol1ttle.flightassistant.alerts.other.ElytraHealthLowAlert;
 import ru.octol1ttle.flightassistant.alerts.other.StallAlert;
@@ -37,6 +38,7 @@ public class AlertController implements ITickableComputer {
         // TODO: ECAM actions
         allAlerts = List.of(
                 new StallAlert(host.stall),
+                new UnloadedChunkAlert(host.chunkStatus),
                 new ExcessiveDescentAlert(host.data, host.gpws), new ExcessiveTerrainClosureAlert(host.gpws, host.time),
                 new UnsafeTerrainClearanceAlert(host.gpws, host.plan),
                 new AutopilotOffAlert(host.autoflight), new AutoFireworkOffAlert(host.autoflight),

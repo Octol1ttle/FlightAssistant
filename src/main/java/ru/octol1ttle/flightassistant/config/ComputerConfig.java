@@ -42,6 +42,9 @@ public class ComputerConfig {
     @SerialEntry
     public boolean openElytraAutomatically = true;
 
+    @SerialEntry
+    public ProtectionMode unloadedChunkProtection = ProtectionMode.HARD;
+
     public enum GlobalAutomationsMode implements NameableEnum {
         FULL,
         // TODO: LIMIT TO NO_OVERLAYS ON SERVERS
