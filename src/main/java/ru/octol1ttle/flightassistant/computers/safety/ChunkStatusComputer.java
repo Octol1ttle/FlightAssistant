@@ -22,6 +22,7 @@ public class ChunkStatusComputer implements ITickableComputer {
     private float lastEncounteredMS = 0f;
     private float lastDiffMS = 0f;
     private float offsetMS = 0f; // for single player pause
+    private boolean changesPending; // reset state when not flying
 
     // milliseconds difference
     private static final float WARN_THRESHOLD = 3200f;
@@ -36,7 +37,14 @@ public class ChunkStatusComputer implements ITickableComputer {
     @Override
     public void tick() {
         if (!data.isFlying()) {
+            if (changesPending) {
+                reset();
+            }
             return;
+        }
+
+        if (!changesPending) {
+            changesPending = true;
         }
 
         isLoaded = data.isCurrentChunkLoaded;
@@ -73,6 +81,7 @@ public class ChunkStatusComputer implements ITickableComputer {
         lastDiffMS = 0f;
         lastEncounteredMS = 0f;
         offsetMS = 0f;
+        changesPending = false;
     }
 
     public boolean shouldCorrectTerrain() {
