@@ -9,9 +9,9 @@ import ru.octol1ttle.flightassistant.alerts.AlertSoundData;
 import ru.octol1ttle.flightassistant.alerts.BaseAlert;
 import ru.octol1ttle.flightassistant.alerts.IECAMAlert;
 import ru.octol1ttle.flightassistant.computers.safety.ChunkStatusComputer;
+import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class UnloadedChunkAlert extends BaseAlert implements IECAMAlert {
-
     private final ChunkStatusComputer chunkStatus;
 
     public UnloadedChunkAlert(ChunkStatusComputer chunkStatus) {
@@ -26,12 +26,11 @@ public class UnloadedChunkAlert extends BaseAlert implements IECAMAlert {
     @Override
     public int render(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.unloaded_chunk"), x, y,
-                chunkStatus.getIndicator(), highlight);
+                FAConfig.indicator().warningColor, highlight);
     }
 
     @Override
     public @NotNull AlertSoundData getSoundData() {
         return AlertSoundData.MASTER_WARNING;
     }
-
 }

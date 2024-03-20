@@ -49,11 +49,10 @@ public class PitchController implements ITickableComputer {
         } else if (gpws.shouldCorrectTerrain()) {
             smoothSetPitch(FAMathHelper.toDegrees(MathHelper.atan2(gpws.terrainAvoidVector.y, gpws.terrainAvoidVector.x)), time.deltaTime);
         } else if (chunkStatus.shouldCorrectTerrain()) {
-            smoothSetPitch(chunkStatus.recoverPitch, time.deltaTime);
+            smoothSetPitch(VoidLevelComputer.OPTIMUM_ALTITUDE_PRESERVATION_PITCH, time.deltaTime);
         } else {
             smoothSetPitch(targetPitch, time.deltaTime);
         }
-
     }
 
     /**
