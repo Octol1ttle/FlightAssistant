@@ -13,6 +13,7 @@ import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
 import ru.octol1ttle.flightassistant.computers.autoflight.YawController;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
 import ru.octol1ttle.flightassistant.computers.safety.AlertController;
+import ru.octol1ttle.flightassistant.computers.safety.ChunkStatusComputer;
 import ru.octol1ttle.flightassistant.computers.safety.ElytraStateController;
 import ru.octol1ttle.flightassistant.computers.safety.GPWSComputer;
 import ru.octol1ttle.flightassistant.computers.safety.StallComputer;
@@ -21,6 +22,7 @@ import ru.octol1ttle.flightassistant.computers.safety.VoidLevelComputer;
 public class ComputerHost {
     public final AirDataComputer data;
     public final StallComputer stall;
+    public final ChunkStatusComputer chunkStatus;
     public final GPWSComputer gpws;
     public final VoidLevelComputer voidLevel;
     public final FireworkController firework;
@@ -38,6 +40,7 @@ public class ComputerHost {
         this.data = new AirDataComputer(mc);
         this.time = new TimeComputer();
         this.firework = new FireworkController(mc, data, time);
+        this.chunkStatus = new ChunkStatusComputer(mc, data, time);
         this.stall = new StallComputer(firework, data);
         this.voidLevel = new VoidLevelComputer(data, firework, stall);
         this.plan = new FlightPlanner(data);
@@ -45,7 +48,7 @@ public class ComputerHost {
         this.elytra = new ElytraStateController(data);
 
         this.yaw = new YawController(time, data);
-        this.pitch = new PitchController(data, stall, time, voidLevel, gpws);
+        this.pitch = new PitchController(data, stall, time, voidLevel, gpws, chunkStatus);
 
         this.autoflight = new AutoFlightComputer(data, gpws, plan, firework, pitch, yaw);
 
@@ -53,7 +56,7 @@ public class ComputerHost {
 
         // computers are sorted in the order they should be ticked to avoid errors
         this.tickables = new ArrayList<>(List.of(
-                data, time, stall, gpws, voidLevel, elytra, plan, autoflight, firework, alert, pitch, yaw
+                data, time, stall, chunkStatus, gpws, voidLevel, elytra, plan, autoflight, firework, alert, pitch, yaw
         ));
         Collections.reverse(this.tickables); // we tick computers in reverse, so reverse the collections so that the order is correct
 

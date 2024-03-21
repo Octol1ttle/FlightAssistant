@@ -82,6 +82,8 @@
   "config.flightassistant.computers.elytra_state": "Elytra state",
   "config.flightassistant.computers.elytra_state.close_underwater": "Close Elytra when submerged in water",
   "config.flightassistant.computers.elytra_state.open_automatically": "Open Elytra automatically",
+  "config.flightassistant.computers.chunk_state": "Chunk state",
+  "config.flightassistant.computers.chunk_state.protection": "Chunk state protection mode",
 
   "commands.flightassistant.no_such_waypoint": "There is no waypoint at that index",
   "commands.flightassistant.no_such_plan": "There is no plan with that name",
@@ -107,6 +109,7 @@
   "alerts.flightassistant.stall": "STALL",
   "alerts.flightassistant.terrain_ahead": "TERRAIN AHEAD",
   "alerts.flightassistant.too_low_terrain": "TOO LOW - TERRAIN",
+  "alerts.flightassistant.unloaded_chunk": "UNLOADED CHUNK",
 
   "alerts.flightassistant.elytra_health_low": "ELYTRA HEALTH LOW",
 
@@ -130,6 +133,7 @@
   "alerts.flightassistant.fault.computers.void_level": "VOID LVL FAULT (PROT LOST)",
   "alerts.flightassistant.fault.computers.yaw_ctl": "YAW CTL FAULT",
   "alerts.flightassistant.fault.computers.elytra_state": "ELYTRA STATE FAULT (PROT LOST)",
+  "alerts.flightassistant.fault.computers.chunk_state": "CHUNK STATE FAULT (PROT LOST)",
   "alerts.flightassistant.fault.indicators.alert": "ALERT INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.altitude": "ALTITUDE INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.elytra_health": "ELYTRA HEALTH INDICATOR FAULT",

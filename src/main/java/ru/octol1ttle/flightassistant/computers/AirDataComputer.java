@@ -30,6 +30,7 @@ public class AirDataComputer implements ITickableComputer {
     public float flightYaw;
     public int groundLevel;
     public Float elytraHealth;
+    public boolean isCurrentChunkLoaded;
 
     public AirDataComputer(MinecraftClient mc) {
         this.mc = mc;
@@ -39,6 +40,7 @@ public class AirDataComputer implements ITickableComputer {
     public void tick() {
         velocity = player().getVelocity().multiply(TICKS_PER_SECOND);
         roll = computeRoll(RenderSystem.getInverseViewRotationMatrix().invert());
+        isCurrentChunkLoaded = isCurrentChunkLoaded();
         groundLevel = computeGroundLevel();
         flightPitch = computeFlightPitch(velocity, pitch());
         flightYaw = computeFlightYaw(velocity, yaw());
@@ -91,6 +93,9 @@ public class AirDataComputer implements ITickableComputer {
     }
 
     private int computeGroundLevel() {
+        if (!isCurrentChunkLoaded) {
+            return groundLevel; // last known cache
+        }
         BlockPos ground = findGround(player().getBlockPos().mutableCopy());
         return ground == null ? voidLevel() : ground.getY();
     }
@@ -101,7 +106,7 @@ public class AirDataComputer implements ITickableComputer {
     }
 
     public BlockPos findGround(BlockPos.Mutable from) {
-        if (!world().getChunkManager().isChunkLoaded(ChunkSectionPos.getSectionCoord(from.getX()), ChunkSectionPos.getSectionCoord(from.getZ()))) {
+        if (!isChunkLoadedAt(from)) {
             return null;
         }
         int start = from.getY();
@@ -159,7 +164,7 @@ public class AirDataComputer implements ITickableComputer {
 
     public float heightAboveGround() {
         float height = Math.max(0.0f, altitude() - groundLevel);
-        if (height < 1.0f) {
+        if (height < 1.0f && isCurrentChunkLoaded) {
             throw new AssertionError(height);
         }
         return height;
@@ -175,6 +180,15 @@ public class AirDataComputer implements ITickableComputer {
 
     public World world() {
         return player().getWorld();
+    }
+
+    public boolean isChunkLoadedAt(BlockPos pos){
+        return world().getChunkManager().isChunkLoaded(ChunkSectionPos.getSectionCoord(pos.getX()), ChunkSectionPos.getSectionCoord(pos.getZ()));
+    }
+
+    private boolean isCurrentChunkLoaded(){
+        BlockPos pos = player().getBlockPos();
+        return isChunkLoadedAt(pos);
     }
 
     public static float validate(float f, float bounds) {
@@ -202,5 +216,6 @@ public class AirDataComputer implements ITickableComputer {
         roll = 0.0f;
         groundLevel = 0;
         elytraHealth = null;
+        isCurrentChunkLoaded = true;
     }
 }
