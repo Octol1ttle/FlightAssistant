@@ -36,10 +36,6 @@ public class LandingWaypoint extends Waypoint {
         };
     }
 
-    public void setTargetAltitude(Integer targetAltitude) {
-        this.targetAltitude = targetAltitude;
-    }
-
     @Override
     public NbtCompound writeToNbt(NbtCompound compound) {
         compound.putBoolean("IsLanding", true);

@@ -105,7 +105,7 @@ public class GPWSComputer implements ITickableComputer {
         Vec3d end = data.position().add(data.velocity.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS));
 
         BlockHitResult result = data.world().raycast(new RaycastContext(data.position(), end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player()));
-        if (plan.landingInProgress || result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP) {
+        if (plan.isOnApproach() || result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP) {
             return STATUS_NO_TERRAIN_AHEAD;
         }
 
@@ -144,16 +144,17 @@ public class GPWSComputer implements ITickableComputer {
         if (!data.isFlying() || data.player().isTouchingWater()) {
             return LandingClearanceStatus.UNKNOWN;
         }
-        if (!plan.landingInProgress) {
+        if (plan.landAltitude == null) {
             return LandingClearanceStatus.NOT_LANDING;
         }
 
-        Double distance = plan.getDistanceToNextWaypoint();
+        Double distance = plan.getDistanceToWaypoint();
         if (distance == null) {
             throw new AssertionError();
         }
 
-        if (data.velocity.y > -3.0f || distance / data.heightAboveGround() <= AirDataComputer.OPTIMUM_GLIDE_RATIO) {
+        float minimumHeight = Math.min(data.heightAboveGround(), Math.abs(data.altitude() - plan.landAltitude));
+        if (data.velocity.y > -3.0f || distance / minimumHeight < AirDataComputer.OPTIMUM_GLIDE_RATIO) {
             return LandingClearanceStatus.SAFE;
         }
 

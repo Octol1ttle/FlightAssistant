@@ -72,7 +72,7 @@ public class FlightModeIndicator extends HudComponent {
             fireworkMode.update(Text.translatable("mode.flightassistant.firework.none_in_hotbar"), autoflight.autoFireworkEnabled);
         } else if (firework.lastProtTrigger != null && time.prevMillis - firework.lastProtTrigger < 2000) {
             fireworkMode.update(Text.translatable("mode.flightassistant.firework.protection"), true);
-        } else if (minimums != null && plan.landingInProgress) {
+        } else if (minimums != null && plan.isOnApproach()) {
             fireworkMode.update(minimums, plan.isBelowMinimums());
         } else if (autoflight.autoFireworkEnabled) {
             if (targetSpeed != null) {
@@ -114,7 +114,7 @@ public class FlightModeIndicator extends HudComponent {
         float diff = Math.abs(targetAltitude - data.altitude());
         String type = autoflight.selectedAltitude != null ? ".selected" : ".managed";
 
-        if (plan.landingInProgress) {
+        if (plan.landAltitude != null) {
             verticalMode.update(Text.translatable("mode.flightassistant.vert.land", plan.landAltitude));
         } else if (!autoflight.autoPilotEnabled || diff <= 5) {
             verticalMode.update(Text.translatable("mode.flightassistant.vert.alt_hold" + type, targetAltitude));

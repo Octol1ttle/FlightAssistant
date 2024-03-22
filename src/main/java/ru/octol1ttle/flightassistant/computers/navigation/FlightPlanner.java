@@ -8,6 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 import ru.octol1ttle.flightassistant.FAMathHelper;
@@ -18,7 +19,7 @@ import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
 public class FlightPlanner extends ArrayList<Waypoint> implements ITickableComputer {
     private final AirDataComputer data;
     private @Nullable Waypoint targetWaypoint;
-    public boolean landingInProgress = false;
+    public boolean autolandAllowed = false;
     public @Nullable Integer landAltitude = null;
 
     public FlightPlanner(AirDataComputer data) {
@@ -27,10 +28,10 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
     @Override
     public void tick() {
-        landingInProgress = false;
+        autolandAllowed = false;
         landAltitude = null;
         if (targetWaypoint != null && !this.contains(targetWaypoint)) {
-            nextWaypoint(MathHelper.floor(data.altitude()));
+            nextWaypoint();
         }
 
         if (targetWaypoint == null) {
@@ -40,23 +41,20 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         Vector2d target = new Vector2d(targetWaypoint.targetPosition());
 
         if (targetWaypoint instanceof LandingWaypoint) {
-            landingInProgress = tickLanding(target);
-            if (landingInProgress) {
-                setLandTargetAltitude(landAltitude);
-            }
+            autolandAllowed = tickLanding(target);
             return;
         }
 
         float altitude = targetWaypoint.targetAltitude() != null ? targetWaypoint.targetAltitude() : data.altitude();
         if (target.sub(data.position().x, data.position().z).length() <= 20.0f && Math.abs(altitude - data.altitude()) <= 10.0f) {
-            nextWaypoint(MathHelper.floor(altitude));
+            nextWaypoint();
         }
     }
 
     private boolean tickLanding(Vector2d target) {
         double distance = Vector2d.distance(target.x, target.y, data.position().x, data.position().z);
         if (distance <= 10.0 && data.heightAboveGround() <= 3.0f) {
-            nextWaypoint(null);
+            nextWaypoint();
             return false;
         }
 
@@ -65,7 +63,9 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             return false;
         }
         landAltitude = landPos.getY();
-        if (distance / Math.min(data.heightAboveGround(), Math.abs(data.altitude() - landAltitude)) > AirDataComputer.OPTIMUM_GLIDE_RATIO) {
+
+        float minimumHeight = Math.min(data.heightAboveGround(), Math.abs(data.altitude() - landAltitude));
+        if (distance / minimumHeight >= AirDataComputer.OPTIMUM_GLIDE_RATIO) {
             return false;
         }
 
@@ -78,16 +78,14 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return result.getType() == HitResult.Type.MISS || Math.abs(result.getPos().y - landAltitude) <= 5.0;
     }
 
-    private void nextWaypoint(Integer altitude) {
+    private void nextWaypoint() {
         int nextIndex = this.indexOf(targetWaypoint) + 1;
         if (waypointExistsAt(nextIndex)) {
             targetWaypoint = this.get(nextIndex);
-            setLandTargetAltitude(altitude);
         } else {
             targetWaypoint = null;
         }
     }
-
 
     public @Nullable Integer getManagedSpeed() {
         if (targetWaypoint == null) {
@@ -99,6 +97,9 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     public @Nullable Integer getManagedAltitude() {
         if (targetWaypoint == null) {
             return null;
+        }
+        if (isOnApproach()) {
+            return landAltitude != null && autolandAllowed ? landAltitude : getPreviousWaypoint().targetAltitude();
         }
         return targetWaypoint.targetAltitude();
     }
@@ -122,13 +123,21 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return targetWaypoint.targetPosition();
     }
 
-    public @Nullable Double getDistanceToNextWaypoint() {
+    public @Nullable Double getDistanceToWaypoint() {
         Vector2d planPos = getTargetPosition();
         if (planPos == null) {
             return null;
         }
 
         return Vector2d.distance(planPos.x, planPos.y, data.position().x, data.position().z);
+    }
+
+    public @NotNull Waypoint getPreviousWaypoint() {
+        if (targetWaypoint == null) {
+            throw new AssertionError();
+        }
+
+        return this.get(this.indexOf(targetWaypoint) - 1);
     }
 
     public @Nullable Integer getMinimums(int ground) {
@@ -149,18 +158,11 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
 
     public boolean isBelowMinimums() {
         Integer minimums = getMinimums(data.groundLevel);
-        return data.isFlying() && landingInProgress && minimums != null && data.altitude() <= minimums;
+        return data.isFlying() && minimums != null && data.altitude() <= minimums;
     }
 
     public void execute(int waypointIndex) {
         targetWaypoint = this.get(waypointIndex);
-        setLandTargetAltitude(MathHelper.floor(data.altitude()));
-    }
-
-    private void setLandTargetAltitude(Integer altitude) {
-        if (targetWaypoint instanceof LandingWaypoint land && altitude != null) {
-            land.setTargetAltitude(altitude);
-        }
     }
 
     public boolean isOnApproach() {
@@ -182,7 +184,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     @Override
     public void reset() {
         targetWaypoint = null;
-        landingInProgress = false;
+        autolandAllowed = false;
         landAltitude = null;
     }
 

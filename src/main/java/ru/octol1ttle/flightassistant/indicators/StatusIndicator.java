@@ -41,7 +41,7 @@ public class StatusIndicator extends HudComponent {
         }
 
         if (FAConfig.indicator().showDistanceToWaypoint) {
-            Double distance = plan.getDistanceToNextWaypoint();
+            Double distance = plan.getDistanceToWaypoint();
             if (distance != null) {
                 drawRightAlignedText(textRenderer, context,
                         Text.translatable("status.flightassistant.waypoint_distance", distance.intValue()),

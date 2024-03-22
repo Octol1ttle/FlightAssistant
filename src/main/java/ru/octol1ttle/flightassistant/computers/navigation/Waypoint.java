@@ -8,7 +8,7 @@ import org.joml.Vector2d;
 
 public class Waypoint {
     private final Vector2d targetPosition;
-    protected @Nullable Integer targetAltitude;
+    private final @Nullable Integer targetAltitude;
     private final @Nullable Integer targetSpeed;
 
     public Waypoint(Vector2d targetPosition, @Nullable Integer targetAltitude, @Nullable Integer targetSpeed) {
