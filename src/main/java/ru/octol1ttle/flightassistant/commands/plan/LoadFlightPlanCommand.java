@@ -10,7 +10,7 @@ import net.minecraft.text.Text;
 import ru.octol1ttle.flightassistant.HudRenderer;
 import ru.octol1ttle.flightassistant.computers.ComputerHost;
 import ru.octol1ttle.flightassistant.computers.navigation.Waypoint;
-import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanNbt;
+import ru.octol1ttle.flightassistant.serialization.FlightPlanSerializer;
 
 public class LoadFlightPlanCommand {
     public static final SimpleCommandExceptionType NO_SUCH_PLAN = new SimpleCommandExceptionType(Text.translatable("commands.flightassistant.no_such_plan"));
@@ -18,7 +18,7 @@ public class LoadFlightPlanCommand {
     public static int execute(CommandContext<FabricClientCommandSource> context) throws CommandSyntaxException {
         ComputerHost host = HudRenderer.getHost();
         String name = StringArgumentType.getString(context, "name");
-        List<Waypoint> loaded = FlightPlanNbt.read(name);
+        List<Waypoint> loaded = FlightPlanSerializer.load(name);
         if (loaded == null) {
             throw NO_SUCH_PLAN.create();
         }
