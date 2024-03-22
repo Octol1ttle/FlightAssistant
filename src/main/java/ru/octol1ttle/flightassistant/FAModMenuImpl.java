@@ -151,7 +151,7 @@ public class FAModMenuImpl implements ModMenuApi {
                         .build())
                 .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.flightassistant.indicators.altitude.ground"))
-                        .binding(defaults.showGroundAltitude, () -> config.showGroundAltitude, o -> config.showGroundAltitude = o)
+                        .binding(defaults.showRadarAltitude, () -> config.showRadarAltitude, o -> config.showRadarAltitude = o)
                         .controller(TickBoxControllerBuilder::create)
                         .build())
 

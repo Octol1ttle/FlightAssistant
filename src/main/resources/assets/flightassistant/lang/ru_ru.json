@@ -145,7 +145,8 @@
   "alerts.flightassistant.fault.indicators.attitude": "ОТКАЗ ИНДИК. ОРИЕНТАЦИИ",
   "alerts.flightassistant.fault.indicators.speed": "ОТКАЗ ИНДИК. СКОРОСТИ",
   "alerts.flightassistant.fault.indicators.status": "ОТКАЗ ИНДИК. СТАТУСА",
-  "alerts.flightassistant.fault.indicators.flt_dir": "ОТКАЗ УКАЗАТЕЛЕЙ ПОЛЁТА",
+  "alerts.flightassistant.fault.indicators.flt_dir": "ОТКАЗ УКАЗ. ПОЛЁТА",
+  "alerts.flightassistant.fault.indicators.radar": "ОТКАЗ РАДИОВЫСОТОМЕРА",
 
   "status.flightassistant.firework_count": "КОЛ-ВО ФРВКОВ: %s",
   "status.flightassistant.waypoint_distance": "РАССТ: %s",
@@ -194,5 +195,6 @@
   "flightassistant.location_short": "КООРД.",
   "flightassistant.attitude_short": "ОРИЕНТ",
   "flightassistant.speed_short": "СКОР.",
-  "flightassistant.status_short": "СТАТУС"
+  "flightassistant.status_short": "СТАТУС",
+  "flightassistant.radar_short": "Р/ВЫС"
 }

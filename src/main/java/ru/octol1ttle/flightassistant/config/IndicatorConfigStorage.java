@@ -50,7 +50,7 @@ public class IndicatorConfigStorage {
         @SerialEntry
         public boolean showAltitudeReadout = true;
         @SerialEntry
-        public boolean showGroundAltitude = true;
+        public boolean showRadarAltitude = true;
 
         @SerialEntry
         public boolean showHeadingScale = true;
@@ -89,7 +89,7 @@ public class IndicatorConfigStorage {
             this.showSpeedReadout = false;
             this.showVerticalSpeedReadout = false;
             this.showAltitudeScale = false;
-            this.showGroundAltitude = false;
+            this.showRadarAltitude = false;
             this.showHeadingScale = false;
             this.showFireworkMode = false;
             this.showFireworkCount = false;
@@ -109,7 +109,7 @@ public class IndicatorConfigStorage {
             this.showVerticalSpeedReadout = false;
             this.showAltitudeScale = false;
             this.showAltitudeReadout = false;
-            this.showGroundAltitude = false;
+            this.showRadarAltitude = false;
             this.showHeadingScale = false;
             this.showHeadingReadout = false;
             this.showAlerts = false;

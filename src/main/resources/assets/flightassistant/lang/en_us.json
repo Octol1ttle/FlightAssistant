@@ -145,6 +145,7 @@
   "alerts.flightassistant.fault.indicators.speed": "SPEED INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.status": "STATUS INDICATOR FAULT",
   "alerts.flightassistant.fault.indicators.flt_dir": "FLT DIRECTORS FAULT",
+  "alerts.flightassistant.fault.indicators.radar": "RADAR ALT INDICATOR FAULT",
 
   "status.flightassistant.firework_count": "FRWK CNT: %s",
   "status.flightassistant.waypoint_distance": "WP/DIST: %s",
@@ -193,5 +194,6 @@
   "flightassistant.location_short": "LOC",
   "flightassistant.attitude_short": "ATT",
   "flightassistant.speed_short": "SPD",
-  "flightassistant.status_short": "STATUS"
+  "flightassistant.status_short": "STATUS",
+  "flightassistant.radar_short": "R/ALT"
 }
