@@ -83,7 +83,7 @@
   "config.flightassistant.computers.elytra_state.close_underwater": "Close Elytra when submerged in water",
   "config.flightassistant.computers.elytra_state.open_automatically": "Open Elytra automatically",
   "config.flightassistant.computers.chunk_state": "Chunk state",
-  "config.flightassistant.computers.chunk_state.protection": "Chunk state protection mode",
+  "config.flightassistant.computers.chunk_state.protection": "Unloaded chunk protection mode",
 
   "commands.flightassistant.no_such_waypoint": "There is no waypoint at that index",
   "commands.flightassistant.no_such_plan": "There is no plan with that name",

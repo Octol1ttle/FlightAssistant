@@ -83,6 +83,8 @@
   "config.flightassistant.computers.elytra_state": "Состояние элитр",
   "config.flightassistant.computers.elytra_state.close_underwater": "Закрывать элитры под водой",
   "config.flightassistant.computers.elytra_state.open_automatically": "Автоматически раскрывать элитры",
+  "config.flightassistant.computers.chunk_state": "Состояние чанков",
+  "config.flightassistant.computers.chunk_state.protection": "Защита при незагружённом чанке",
 
   "commands.flightassistant.no_such_waypoint": "На указанной позиции нет точки назначения",
   "commands.flightassistant.no_such_plan": "Не найден план полёта с таким именем",
@@ -108,6 +110,7 @@
   "alerts.flightassistant.stall": "СВАЛИВАНИЕ",
   "alerts.flightassistant.terrain_ahead": "ЗЕМЛЯ ВПЕРЕДИ",
   "alerts.flightassistant.too_low_terrain": "СЛИШКОМ НИЗКО - ЗЕМЛЯ",
+  "alerts.flightassistant.unloaded_chunk": "ЧАНК НЕ ЗАГРУЖЕН",
 
   "alerts.flightassistant.elytra_health_low": "ЗДОРОВЬЕ ЭЛИТР НИЗК.",
 
@@ -131,6 +134,7 @@
   "alerts.flightassistant.fault.computers.void_level": "ОТКАЗ СИСТ. ВЫСОТЫ ПУСТОТЫ (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.computers.yaw_ctl": "ОТКАЗ УПР. РЫСКАНИЕМ",
   "alerts.flightassistant.fault.computers.elytra_state": "ОТКАЗ УПР. ЭЛИТРАМИ (ЗАЩИТЫ ПОТЕР.)",
+  "alerts.flightassistant.fault.computers.chunk_state": "ОТКАЗ СОСТ. ЧАНКОВ (ЗАЩИТЫ ПОТЕР.)",
   "alerts.flightassistant.fault.indicators.alert": "ОТКАЗ ИНДИК. ПРЕДУПР.",
   "alerts.flightassistant.fault.indicators.altitude": "ОТКАЗ ИНДИК. ВЫСОТЫ",
   "alerts.flightassistant.fault.indicators.elytra_health": "ОТКАЗ ИНДИК. ЗДОРОВЬЯ ЭЛИТР",
