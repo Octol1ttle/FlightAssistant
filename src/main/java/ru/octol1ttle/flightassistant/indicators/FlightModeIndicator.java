@@ -88,14 +88,14 @@ public class FlightModeIndicator extends HudComponent {
                 if (firework.lockManualFireworks) {
                     fireworkMode.update(Text.translatable("mode.flightassistant.firework.locked"), true);
                 } else {
-                    fireworkMode.update(Text.translatable("mode.flightassistant.firework.manual"), true);
+                    fireworkMode.update(Text.translatable("mode.flightassistant.firework.armed"));
                 }
             }
         } else {
             if (firework.lockManualFireworks) {
                 fireworkMode.update(Text.translatable("mode.flightassistant.firework.locked"), true);
             } else {
-                fireworkMode.update(Text.translatable("mode.flightassistant.firework.manual"), autoflight.autoPilotEnabled);
+                fireworkMode.update(Text.translatable("mode.flightassistant.firework.manual"));
             }
         }
 

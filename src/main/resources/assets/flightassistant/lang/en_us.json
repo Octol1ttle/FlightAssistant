@@ -158,6 +158,7 @@
   "mode.flightassistant.firework.none_in_hotbar": "NO FRWKS",
   "mode.flightassistant.firework.locked": "A/FRWK ONLY",
   "mode.flightassistant.firework.manual": "MAN FRWK",
+  "mode.flightassistant.firework.armed": "A/FRWK ARM",
   "mode.flightassistant.firework.protection": "FRWK PROT",
   "mode.flightassistant.firework.idle": "FRWK IDLE",
   "mode.flightassistant.firework.climb": "FRWK CLB",
