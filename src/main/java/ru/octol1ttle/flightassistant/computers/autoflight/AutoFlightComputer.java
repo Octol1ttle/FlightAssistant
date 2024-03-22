@@ -42,7 +42,7 @@ public class AutoFlightComputer implements ITickableComputer {
 
     @Override
     public void tick() {
-        if (autoFireworkEnabled && gpws.fireworkUseSafe && gpws.getGPWSLampColor() == FAConfig.indicator().frameColor) {
+        if (autoFireworkEnabled && data.isCurrentChunkLoaded && gpws.fireworkUseSafe && gpws.getGPWSLampColor() == FAConfig.indicator().frameColor) {
             Integer targetSpeed = getTargetSpeed();
             Integer targetAltitude = getTargetAltitude();
             if (targetSpeed != null) {
