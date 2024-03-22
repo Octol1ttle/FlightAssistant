@@ -13,6 +13,7 @@ import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import java.awt.Color;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+import ru.octol1ttle.flightassistant.computers.safety.ElytraStateController;
 import ru.octol1ttle.flightassistant.config.ComputerConfig;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 import ru.octol1ttle.flightassistant.config.HUDConfig;
@@ -321,11 +322,13 @@ public class FAModMenuImpl implements ModMenuApi {
                 .option(LabelOption.create(Text.translatable("config.flightassistant.computers.elytra_state")))
                 .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.flightassistant.computers.elytra_state.close_underwater"))
+                        .available(ElytraStateController.isAvailable())
                         .binding(defaults.closeElytraUnderwater, () -> config.closeElytraUnderwater, o -> config.closeElytraUnderwater = o)
                         .controller(TickBoxControllerBuilder::create)
                         .build())
                 .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.flightassistant.computers.elytra_state.open_automatically"))
+                        .available(ElytraStateController.isAvailable())
                         .binding(defaults.openElytraAutomatically, () -> config.openElytraAutomatically, o -> config.openElytraAutomatically = o)
                         .controller(TickBoxControllerBuilder::create)
                         .build())

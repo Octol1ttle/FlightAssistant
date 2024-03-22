@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.computers.safety;
 
+import net.minecraft.MinecraftVersion;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
@@ -19,7 +20,7 @@ public class ElytraStateController implements ITickableComputer {
         if (syncedState != data.isFlying() || data.player().isOnGround()) {
             changesPending = false;
         }
-        if (changesPending || !data.canAutomationsActivate(false)) {
+        if (!isAvailable() || changesPending || !data.canAutomationsActivate(false)) {
             return;
         }
 
@@ -42,6 +43,10 @@ public class ElytraStateController implements ITickableComputer {
         syncedState = data.isFlying();
         data.player().networkHandler.sendPacket(new ClientCommandC2SPacket(data.player(), ClientCommandC2SPacket.Mode.START_FALL_FLYING));
         changesPending = true;
+    }
+
+    public static boolean isAvailable() {
+        return MinecraftVersion.CURRENT.getProtocolVersion() >= 764;
     }
 
     @Override
