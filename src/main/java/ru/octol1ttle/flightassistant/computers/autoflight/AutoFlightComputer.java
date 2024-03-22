@@ -80,7 +80,7 @@ public class AutoFlightComputer implements ITickableComputer {
         if (planPos != null && selectedAltitude == null && !isTargettingApproachAltitude) {
             distance = Vector2d.distance(planPos.x, planPos.y, data.position().x, data.position().z);
         } else {
-            distance = Math.max(10.0f, data.speed());
+            distance = Math.max(15.0f, data.speed() * 2.0f);
         }
 
         return FAMathHelper.toDegrees(MathHelper.atan2(altitudeDelta, distance));
