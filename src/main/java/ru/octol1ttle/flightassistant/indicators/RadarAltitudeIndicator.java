@@ -24,7 +24,7 @@ public class RadarAltitudeIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (!FAConfig.indicator().showRadarAltitude) {
+        if (!FAConfig.indicator().showGroundAltitude) {
             return;
         }
         if (!data.isCurrentChunkLoaded) {

@@ -20,9 +20,6 @@ public class VerticalSpeedIndicator extends HudComponent {
 
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (true) {
-            throw new RuntimeException();
-        }
         if (!FAConfig.indicator().showVerticalSpeedReadout) {
             return;
         }
