@@ -17,24 +17,24 @@ import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class FlightModeIndicator extends HudComponent {
     private final Dimensions dim;
-    private final FireworkController firework;
+    private final AirDataComputer data;
     private final TimeComputer time;
+    private final FireworkController firework;
     private final AutoFlightComputer autoflight;
     private final FlightPlanner plan;
-    private final AirDataComputer data;
 
     private final FlightMode fireworkMode;
     private final FlightMode verticalMode;
     private final FlightMode lateralMode;
     private final FlightMode automationMode;
 
-    public FlightModeIndicator(Dimensions dim, FireworkController firework, TimeComputer time, AutoFlightComputer autoflight, FlightPlanner plan, AirDataComputer data) {
+    public FlightModeIndicator(Dimensions dim, AirDataComputer data, TimeComputer time, FireworkController firework, AutoFlightComputer autoflight, FlightPlanner plan) {
         this.dim = dim;
-        this.firework = firework;
+        this.data = data;
         this.time = time;
+        this.firework = firework;
         this.autoflight = autoflight;
         this.plan = plan;
-        this.data = data;
 
         this.fireworkMode = new FlightMode(this.time);
         this.verticalMode = new FlightMode(this.time);

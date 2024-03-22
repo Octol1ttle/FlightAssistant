@@ -17,6 +17,7 @@ import ru.octol1ttle.flightassistant.indicators.FlightDirectorsIndicator;
 import ru.octol1ttle.flightassistant.indicators.FlightModeIndicator;
 import ru.octol1ttle.flightassistant.indicators.FlightPathIndicator;
 import ru.octol1ttle.flightassistant.indicators.HeadingIndicator;
+import ru.octol1ttle.flightassistant.indicators.RadarAltitudeIndicator;
 import ru.octol1ttle.flightassistant.indicators.LocationIndicator;
 import ru.octol1ttle.flightassistant.indicators.AttitudeIndicator;
 import ru.octol1ttle.flightassistant.indicators.SpeedIndicator;
@@ -34,12 +35,19 @@ public class HudRenderer extends HudComponent {
     public HudRenderer(MinecraftClient mc) {
         this.host = new ComputerHost(mc, this);
         this.components = new ArrayList<>(List.of(
-                new FlightPathIndicator(dim, host.data, host.gpws), new LocationIndicator(dim, host.data),
-                new HeadingIndicator(dim, host.data, host.autoflight), new SpeedIndicator(dim, host.data),
-                new AltitudeIndicator(dim, host.data, host.autoflight, host.plan), new AttitudeIndicator(dim, host.data, host.stall, host.voidLevel),
-                new ElytraHealthIndicator(dim, host.data), new AlertIndicator(dim, host, host.alert, host.time),
-                new FlightModeIndicator(dim, host.firework, host.time, host.autoflight, host.plan, host.data), new StatusIndicator(dim, host.firework, host.plan),
-                new FlightDirectorsIndicator(dim, host.autoflight, host.data)));
+                new AlertIndicator(dim, host, host.alert, host.time),
+                new AltitudeIndicator(dim, host.data, host.autoflight, host.plan),
+                new AttitudeIndicator(dim, host.data, host.stall, host.voidLevel),
+                new ElytraHealthIndicator(dim, host.data),
+                new FlightDirectorsIndicator(dim, host.data, host.autoflight),
+                new FlightModeIndicator(dim, host.data, host.time, host.firework, host.autoflight, host.plan),
+                new FlightPathIndicator(dim, host.data, host.gpws),
+                new HeadingIndicator(dim, host.data, host.autoflight),
+                new RadarAltitudeIndicator(dim, host.data, host.plan),
+                new LocationIndicator(dim, host.data),
+                new SpeedIndicator(dim, host.data),
+                new StatusIndicator(dim, host.firework, host.plan)
+        ));
         this.faulted = new ArrayList<>(components.size());
     }
 

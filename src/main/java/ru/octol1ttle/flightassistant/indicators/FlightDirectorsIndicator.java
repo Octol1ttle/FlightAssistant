@@ -12,13 +12,13 @@ import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class FlightDirectorsIndicator extends HudComponent {
     private final Dimensions dim;
-    private final AutoFlightComputer autoflight;
     private final AirDataComputer data;
+    private final AutoFlightComputer autoflight;
 
-    public FlightDirectorsIndicator(Dimensions dim, AutoFlightComputer autoflight, AirDataComputer data) {
+    public FlightDirectorsIndicator(Dimensions dim, AirDataComputer data, AutoFlightComputer autoflight) {
         this.dim = dim;
-        this.autoflight = autoflight;
         this.data = data;
+        this.autoflight = autoflight;
     }
 
     @Override
