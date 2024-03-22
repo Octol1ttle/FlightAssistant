@@ -147,6 +147,8 @@
   "alerts.flightassistant.fault.indicators.status": "ОТКАЗ ИНДИК. СТАТУСА",
   "alerts.flightassistant.fault.indicators.flt_dir": "ОТКАЗ УКАЗ. ПОЛЁТА",
   "alerts.flightassistant.fault.indicators.radar": "ОТКАЗ РАДИОВЫСОТОМЕРА",
+  "alerts.flightassistant.fault.indicators.ground_speed": "ОТКАЗ ИНДИК. ГОРИЗ. СКОР.",
+  "alerts.flightassistant.fault.indicators.vertical_speed": "ОТКАЗ ИНДИК. ВЕРТ. СКОР.",
 
   "status.flightassistant.firework_count": "КОЛ-ВО ФРВКОВ: %s",
   "status.flightassistant.waypoint_distance": "РАССТ: %s",
