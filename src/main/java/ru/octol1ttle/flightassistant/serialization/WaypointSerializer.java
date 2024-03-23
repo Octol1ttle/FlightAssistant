@@ -30,7 +30,7 @@ public class WaypointSerializer {
         object.putDouble("TargetZ", waypoint.targetPosition().y);
         if (waypoint.minimums != null) {
             ISerializableObject minimums = FlightPlanSerializer.WRITE_FACTORY.createObject();
-            minimums.putString("AltitudeType", waypoint.minimums.type().serialisedName);
+            minimums.putString("AltitudeType", waypoint.minimums.type().serializedName);
             minimums.putInt("Altitude", waypoint.minimums.altitude());
 
             object.put("Minimums", minimums);
@@ -69,7 +69,7 @@ public class WaypointSerializer {
 
     private static LandingMinimums readMinimums(ISerializableObject object) {
         return new LandingMinimums(
-                LandingMinimums.AltitudeType.fromSerialisedName(object.getString("AltitudeType")),
+                LandingMinimums.AltitudeType.fromSerializedName(object.getString("AltitudeType")),
                 object.getInt("Altitude")
         );
     }

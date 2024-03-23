@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.MinecraftVersion;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import ru.octol1ttle.flightassistant.FlightAssistant;
 import ru.octol1ttle.flightassistant.MinecraftProtocolVersions;
 import ru.octol1ttle.flightassistant.computers.navigation.Waypoint;
@@ -43,28 +43,33 @@ public class FlightPlanSerializer {
         }
     }
 
-    public static @Nullable List<Waypoint> load(String name) {
+    public static @NotNull FlightPlanLoadResult load(String name) {
         List<Waypoint> loaded = new ArrayList<>();
 
         try {
             ISerializableObject object = JSON_FACTORY.createSerializer().read(PLAN_PATH, name);
-            if (object == null && MinecraftVersion.CURRENT.getProtocolVersion() >= MinecraftProtocolVersions.R20_3) {
-                object = NBT_FACTORY.createSerializer().read(PLAN_PATH, name);
+
+            if (object == null) {
+                if (MinecraftVersion.CURRENT.getProtocolVersion() >= MinecraftProtocolVersions.R20_3) {
+                    object = NBT_FACTORY.createSerializer().read(PLAN_PATH, name);
+                } else if (Files.exists(PLAN_PATH.resolve("%s.dat".formatted(name)))) {
+                    return new FlightPlanLoadResult(null, FlightPlanLoadResult.LoadResultType.NBT_NOT_SUPPORTED);
+                }
             }
 
             if (object == null) {
-                return null;
+                return new FlightPlanLoadResult(null, FlightPlanLoadResult.LoadResultType.NOT_FOUND);
             }
+
             ISerializableList<ISerializableObject> list = object.getList("Waypoints");
             for (ISerializableObject waypointObject : list) {
                 loaded.add(WaypointSerializer.load(waypointObject));
             }
-        } catch (IllegalStateException e) {
-            FlightAssistant.LOGGER.error("Invalid data detected during flight plan deserialization with name: %s".formatted(name), e);
-        } catch (IOException e) {
-            FlightAssistant.LOGGER.error("IO error detected during flight plan deserialization with name: %s".formatted(name), e);
-        }
 
-        return loaded;
+            return new FlightPlanLoadResult(loaded, FlightPlanLoadResult.LoadResultType.SUCCESS);
+        } catch (Exception e) {
+            FlightAssistant.LOGGER.error("Error deserializing flight plan with name: %s".formatted(name), e);
+            return new FlightPlanLoadResult(null, FlightPlanLoadResult.LoadResultType.ERROR);
+        }
     }
 }

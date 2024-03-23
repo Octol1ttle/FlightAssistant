@@ -5,14 +5,14 @@ public record LandingMinimums(AltitudeType type, int altitude) {
         ABSOLUTE("Absolute"),
         ABOVE_GROUND("AboveGround");
 
-        public final String serialisedName;
-        AltitudeType(String serialisedName) {
-            this.serialisedName = serialisedName;
+        public final String serializedName;
+        AltitudeType(String serializedName) {
+            this.serializedName = serializedName;
         }
 
-        public static AltitudeType fromSerialisedName(String nbtName) {
+        public static AltitudeType fromSerializedName(String nbtName) {
             for (AltitudeType type : AltitudeType.values()) {
-                if (type.serialisedName.equals(nbtName)) {
+                if (type.serializedName.equals(nbtName)) {
                     return type;
                 }
             }
