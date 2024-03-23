@@ -9,6 +9,7 @@ import java.util.List;
 import net.minecraft.MinecraftVersion;
 import org.jetbrains.annotations.Nullable;
 import ru.octol1ttle.flightassistant.FlightAssistant;
+import ru.octol1ttle.flightassistant.MinecraftProtocolVersions;
 import ru.octol1ttle.flightassistant.computers.navigation.Waypoint;
 import ru.octol1ttle.flightassistant.serialization.api.ISerializableFactory;
 import ru.octol1ttle.flightassistant.serialization.api.ISerializableList;
@@ -47,7 +48,7 @@ public class FlightPlanSerializer {
 
         try {
             ISerializableObject object = JSON_FACTORY.createSerializer().read(PLAN_PATH, name);
-            if (object == null && MinecraftVersion.CURRENT.getProtocolVersion() >= 765) {
+            if (object == null && MinecraftVersion.CURRENT.getProtocolVersion() >= MinecraftProtocolVersions.R20_3) {
                 object = NBT_FACTORY.createSerializer().read(PLAN_PATH, name);
             }
 

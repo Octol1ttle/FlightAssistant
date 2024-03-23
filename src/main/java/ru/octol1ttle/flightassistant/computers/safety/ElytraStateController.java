@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.computers.safety;
 
 import net.minecraft.MinecraftVersion;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
+import ru.octol1ttle.flightassistant.MinecraftProtocolVersions;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.config.FAConfig;
@@ -46,7 +47,7 @@ public class ElytraStateController implements ITickableComputer {
     }
 
     public static boolean isAvailable() {
-        return MinecraftVersion.CURRENT.getProtocolVersion() >= 764;
+        return MinecraftVersion.CURRENT.getProtocolVersion() >= MinecraftProtocolVersions.R20_2;
     }
 
     @Override
