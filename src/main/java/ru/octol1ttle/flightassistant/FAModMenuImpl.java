@@ -48,7 +48,10 @@ public class FAModMenuImpl implements ModMenuApi {
                 .option(Option.<HUDConfig.BatchedRendering>createBuilder()
                         .name(Text.translatable("config.flightassistant.hud.batching"))
                         .available(FlightAssistant.canUseBatching())
-                        .binding(defaults.batchedRendering, () -> config.batchedRendering, o -> config.batchedRendering = o)
+                        .binding(defaults.batchedRendering, () -> FlightAssistant.canUseBatching()
+                                        ? config.batchedRendering
+                                        : HUDConfig.BatchedRendering.NO_BATCHING
+                                , o -> config.batchedRendering = o)
                         .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HUDConfig.BatchedRendering.class))
                         .build()
                 )
@@ -323,13 +326,13 @@ public class FAModMenuImpl implements ModMenuApi {
                 .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.flightassistant.computers.elytra_state.close_underwater"))
                         .available(ElytraStateController.isAvailable())
-                        .binding(defaults.closeElytraUnderwater, () -> config.closeElytraUnderwater, o -> config.closeElytraUnderwater = o)
+                        .binding(defaults.closeElytraUnderwater, () -> ElytraStateController.isAvailable() && config.closeElytraUnderwater, o -> config.closeElytraUnderwater = o)
                         .controller(TickBoxControllerBuilder::create)
                         .build())
                 .option(Option.<Boolean>createBuilder()
                         .name(Text.translatable("config.flightassistant.computers.elytra_state.open_automatically"))
                         .available(ElytraStateController.isAvailable())
-                        .binding(defaults.openElytraAutomatically, () -> config.openElytraAutomatically, o -> config.openElytraAutomatically = o)
+                        .binding(defaults.openElytraAutomatically, () -> ElytraStateController.isAvailable() && config.openElytraAutomatically, o -> config.openElytraAutomatically = o)
                         .controller(TickBoxControllerBuilder::create)
                         .build())
 
