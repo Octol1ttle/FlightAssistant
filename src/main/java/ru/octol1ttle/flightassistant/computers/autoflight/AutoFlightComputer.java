@@ -49,7 +49,10 @@ public class AutoFlightComputer implements ITickableComputer {
                 if (data.speed() < targetSpeed) {
                     firework.activateFirework(false);
                 }
-            } else if (targetAltitude != null && targetAltitude > data.altitude() && data.pitch() > 0 && data.velocity.y < 0.0f) {
+            } else if (targetAltitude != null && targetAltitude > data.altitude()
+                    && data.speed() < 30
+                    && data.velocity.y < 0.0f
+                    && data.pitch() > 0) {
                 firework.activateFirework(false);
             }
         }
