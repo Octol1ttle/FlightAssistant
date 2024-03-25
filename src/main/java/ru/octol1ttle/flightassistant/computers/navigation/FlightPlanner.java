@@ -8,7 +8,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2d;
 import ru.octol1ttle.flightassistant.FAMathHelper;
@@ -20,6 +19,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     private final AirDataComputer data;
     private @Nullable Waypoint targetWaypoint;
     public boolean autolandAllowed = false;
+    public @Nullable Integer fallbackApproachAltitude = null;
     public @Nullable Integer landAltitude = null;
 
     public FlightPlanner(AirDataComputer data) {
@@ -70,7 +70,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         }
 
         float landAngle = FAMathHelper.toDegrees(MathHelper.atan2(landAltitude - data.altitude(), distance));
-        if (landAngle > 5.0f || landAngle < PitchController.DESCEND_PITCH + 10) {
+        if (landAngle < PitchController.DESCEND_PITCH + 10 || landAngle > PitchController.GLIDE_PITCH) {
             return false;
         }
         BlockHitResult result = data.world().raycast(new RaycastContext(data.position(), new Vec3d(target.x, landAltitude, target.y), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player()));
@@ -99,8 +99,23 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             return null;
         }
         if (isOnApproach()) {
-            return landAltitude != null && autolandAllowed ? landAltitude : getPreviousWaypoint().targetAltitude();
+            if (landAltitude != null && autolandAllowed) {
+                return landAltitude;
+            }
+
+            Waypoint previous = getPreviousWaypoint();
+            if (previous == null || previous instanceof LandingWaypoint) {
+                if (fallbackApproachAltitude == null) {
+                    fallbackApproachAltitude = MathHelper.floor(data.altitude());
+                }
+
+                return fallbackApproachAltitude;
+            }
+
+            return previous.targetAltitude();
         }
+
+        fallbackApproachAltitude = null;
         return targetWaypoint.targetAltitude();
     }
 
@@ -132,12 +147,15 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
         return Vector2d.distance(planPos.x, planPos.y, data.position().x, data.position().z);
     }
 
-    public @NotNull Waypoint getPreviousWaypoint() {
+    public @Nullable Waypoint getPreviousWaypoint() {
         if (targetWaypoint == null) {
             throw new AssertionError();
         }
-
-        return this.get(this.indexOf(targetWaypoint) - 1);
+        int index = this.indexOf(targetWaypoint) - 1;
+        if (!waypointExistsAt(index)) {
+            return null;
+        }
+        return this.get(index);
     }
 
     public @Nullable Integer getMinimums(int ground) {
@@ -170,7 +188,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
     }
 
     public boolean waypointExistsAt(int index) {
-        return index < this.size();
+        return index >= 0 && index < this.size();
     }
 
     @Override
