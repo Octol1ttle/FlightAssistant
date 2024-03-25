@@ -74,8 +74,8 @@ public class FACallbacks {
             }
 
             if (host.firework.fireworkResponded) {
-                if (!host.faulted.contains(host.time) && host.time.prevMillis != null) {
-                    host.firework.lastUseTime = host.time.prevMillis;
+                if (!host.faulted.contains(host.time) && host.time.millis != null) {
+                    host.firework.lastUseTime = host.time.millis;
                 }
                 host.firework.fireworkResponded = false;
             }

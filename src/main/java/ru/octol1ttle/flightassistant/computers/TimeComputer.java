@@ -1,26 +1,42 @@
 package ru.octol1ttle.flightassistant.computers;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 
 public class TimeComputer implements ITickableComputer {
     private static final int HIGHLIGHT_SWITCH_THRESHOLD = 500;
+    private final MinecraftClient mc;
     /**
      * The time between computer ticks *in seconds*
      */
     public float deltaTime;
     public boolean highlight;
-    public Float prevMillis;
+    public Float millis = 0.0f;
+    private Float prevMillis;
     private float highlightMillis;
+
+    public TimeComputer(MinecraftClient mc) {
+        this.mc = mc;
+    }
 
     @Override
     public void tick() {
-        float millis = Util.getMeasuringTimeNano() / 1000000.0f;
+        float currentMillis = Util.getMeasuringTimeNano() / 1000000.0f;
         if (prevMillis == null) {
-            prevMillis = millis - (1000.0f / 60.0f);
+            prevMillis = currentMillis;
+            return;
         }
-        deltaTime = MathHelper.clamp((millis - prevMillis) * 0.001f, 0.001f, 1.0f);
-        prevMillis = millis;
+
+        float deltaMS = currentMillis - prevMillis;
+        prevMillis = currentMillis;
+
+        deltaTime = MathHelper.clamp(deltaMS * 0.001f, 0.001f, 1.0f);
+
+        if (mc.isInSingleplayer() && mc.isPaused()) {
+            return;
+        }
+        millis += deltaMS;
 
         if (millis - highlightMillis > HIGHLIGHT_SWITCH_THRESHOLD) {
             highlight = !highlight;
@@ -37,6 +53,7 @@ public class TimeComputer implements ITickableComputer {
     public void reset() {
         deltaTime = 0.0f;
         highlight = false;
+        millis = null;
         prevMillis = null;
         highlightMillis = 0.0f;
     }

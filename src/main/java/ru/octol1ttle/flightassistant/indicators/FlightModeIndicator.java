@@ -45,7 +45,7 @@ public class FlightModeIndicator extends HudComponent {
     // TODO: consider delegating mode update tasks to a computer
     @Override
     public void render(DrawContext context, TextRenderer textRenderer) {
-        if (time.prevMillis == null) {
+        if (time.millis == null) {
             renderFaulted(context, textRenderer);
             return;
         }
@@ -70,7 +70,7 @@ public class FlightModeIndicator extends HudComponent {
 
         if (firework.noFireworks) {
             fireworkMode.update(Text.translatable("mode.flightassistant.firework.none_in_hotbar"), autoflight.autoFireworkEnabled);
-        } else if (firework.lastProtTrigger != null && time.prevMillis - firework.lastProtTrigger < 2000) {
+        } else if (firework.lastProtTrigger != null && time.millis - firework.lastProtTrigger < 2000) {
             fireworkMode.update(Text.translatable("mode.flightassistant.firework.protection"), true);
         } else if (minimums != null && plan.isOnApproach()) {
             fireworkMode.update(minimums, plan.isBelowMinimums());

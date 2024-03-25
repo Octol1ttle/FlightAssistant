@@ -1,26 +1,20 @@
 package ru.octol1ttle.flightassistant.computers.safety;
 
-import net.minecraft.client.MinecraftClient;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class ChunkStatusComputer implements ITickableComputer {
-    private final MinecraftClient mc;
+    private static final int WARN_THRESHOLD = 2500; // MS
+    private static final int PROTECT_THRESHOLD = 5000; // MS
     private final AirDataComputer data;
     private final TimeComputer time;
 
-    private boolean isInWarning;
-    private float lastEncounteredMS = 0f;
-    private float lastDiffMS = 0f;
-    private float offsetMS = 0f; // for single player pause
+    private float lastLoaded;
+    private float lastDiff;
 
-    // milliseconds difference
-    private static final float WARN_THRESHOLD = 3200f;
-
-    public ChunkStatusComputer(MinecraftClient mc, AirDataComputer data, TimeComputer time) {
-        this.mc = mc;
+    public ChunkStatusComputer(AirDataComputer data, TimeComputer time) {
         this.data = data;
         this.time = time;
     }
@@ -32,38 +26,21 @@ public class ChunkStatusComputer implements ITickableComputer {
             return;
         }
 
-        if (data.isCurrentChunkLoaded) {
-            if (time.prevMillis != null) {
-                lastEncounteredMS = time.prevMillis;
-            }
-            offsetMS = 0f;
+        if (data.isCurrentChunkLoaded && time.millis != null) {
+            lastLoaded = time.millis;
         }
 
-        final boolean isSinglePlayerPause = (mc.isInSingleplayer() && mc.isPaused());
-        if (isSinglePlayerPause && !data.isCurrentChunkLoaded) {
-            offsetMS = ((time.prevMillis - lastEncounteredMS) - lastDiffMS);
+        if (time.millis != null && lastLoaded > 0.0f) {
+            lastDiff = time.millis - lastLoaded;
         }
-
-        if (time.prevMillis != null && lastEncounteredMS > 0f) {
-            lastDiffMS = (time.prevMillis - offsetMS) - lastEncounteredMS;
-        }
-
-        isInWarning = shouldWarn();
     }
 
     public boolean shouldPreserveAltitude() {
-        return FAConfig.computer().unloadedChunkProtection.recover() && isInWarning();
+        return FAConfig.computer().unloadedChunkProtection.recover() && lastDiff >= PROTECT_THRESHOLD;
     }
 
-    public boolean isInWarning() {
-        return isInWarning;
-    }
-
-    private boolean shouldWarn() {
-        if (data.isFlying() && !data.isCurrentChunkLoaded) {
-            return lastDiffMS >= WARN_THRESHOLD;
-        }
-        return false;
+    public boolean shouldWarn() {
+        return lastDiff >= WARN_THRESHOLD;
     }
 
     @Override
@@ -73,9 +50,7 @@ public class ChunkStatusComputer implements ITickableComputer {
 
     @Override
     public void reset() {
-        isInWarning = false;
-        lastDiffMS = 0f;
-        lastEncounteredMS = 0f;
-        offsetMS = 0f;
+        lastDiff = 0f;
+        lastLoaded = 0f;
     }
 }

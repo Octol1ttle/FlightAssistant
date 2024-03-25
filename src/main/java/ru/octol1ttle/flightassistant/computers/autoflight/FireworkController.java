@@ -37,8 +37,8 @@ public class FireworkController implements ITickableComputer {
             fireworkResponded = true;
         }
         safeFireworkCount = countSafeFireworks();
-        if (time.prevMillis != null && lastUseTime > 0) {
-            lastDiff = time.prevMillis - lastUseTime;
+        if (time.millis != null && lastUseTime > 0) {
+            lastDiff = time.millis - lastUseTime;
         }
 
         noFireworks = true;
@@ -69,11 +69,11 @@ public class FireworkController implements ITickableComputer {
     }
 
     public void activateFirework(boolean force) {
-        if (!data.canAutomationsActivate() || lastUseTime > 0 && time.prevMillis != null && time.prevMillis - lastUseTime < 1000) {
+        if (!data.canAutomationsActivate() || lastUseTime > 0 && time.millis != null && time.millis - lastUseTime < 1000) {
             return;
         }
-        if (force && time.prevMillis != null) {
-            this.lastProtTrigger = time.prevMillis;
+        if (force && time.millis != null) {
+            this.lastProtTrigger = time.millis;
         }
 
         if (isFireworkSafe(data.player().getOffHandStack())) {

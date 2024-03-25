@@ -20,7 +20,7 @@ public class UnloadedChunkAlert extends BaseAlert implements IECAMAlert {
 
     @Override
     public boolean isTriggered() {
-        return chunkStatus.isInWarning();
+        return chunkStatus.shouldWarn();
     }
 
     @Override

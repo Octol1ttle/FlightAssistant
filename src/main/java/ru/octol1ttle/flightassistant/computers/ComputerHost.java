@@ -38,9 +38,9 @@ public class ComputerHost {
 
     public ComputerHost(@NotNull MinecraftClient mc, HudRenderer renderer) {
         this.data = new AirDataComputer(mc);
-        this.time = new TimeComputer();
+        this.time = new TimeComputer(mc);
         this.firework = new FireworkController(mc, data, time);
-        this.chunkStatus = new ChunkStatusComputer(mc, data, time);
+        this.chunkStatus = new ChunkStatusComputer(data, time);
         this.stall = new StallComputer(firework, data);
         this.voidLevel = new VoidLevelComputer(data, firework, stall);
         this.plan = new FlightPlanner(data);

@@ -31,7 +31,7 @@ public class FlightMode {
             return;
         }
 
-        lastUpdateTime = time.prevMillis;
+        lastUpdateTime = time.millis;
         lastText = newText;
     }
 
@@ -39,7 +39,7 @@ public class FlightMode {
         if (lastUpdateTime == null) {
             throw new IllegalStateException("Called render before updating");
         }
-        if (time.prevMillis != null && time.prevMillis - lastUpdateTime <= UPDATE_FLASH_TIME) {
+        if (time.millis != null && time.millis - lastUpdateTime <= UPDATE_FLASH_TIME) {
             HudComponent.drawHighlightedMiddleAlignedText(textRenderer, context, lastText, x, y, FAConfig.indicator().cautionColor, time.highlight);
             return;
         }
