@@ -58,7 +58,7 @@ public class FlightPlanner extends ArrayList<Waypoint> implements ITickableCompu
             return false;
         }
 
-        BlockPos landPos = data.findGround(new BlockPos.Mutable(target.x, 320, target.y));
+        BlockPos landPos = data.findGround(new BlockPos.Mutable(target.x, data.world().getTopY(), target.y));
         if (landPos == null) {
             return false;
         }

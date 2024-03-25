@@ -170,7 +170,7 @@ public class GPWSComputer implements ITickableComputer {
     }
 
     private BlockPos findHighest(BlockPos.Mutable at) {
-        while (at.getY() < 320) {
+        while (at.getY() < data.world().getTopY()) {
             if (!data.isGround(at.move(Direction.UP))) {
                 return at;
             }
