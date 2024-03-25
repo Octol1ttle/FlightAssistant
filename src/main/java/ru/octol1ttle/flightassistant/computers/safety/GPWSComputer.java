@@ -7,7 +7,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
-import org.joml.Vector2d;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.navigation.FlightPlanner;
@@ -30,7 +29,6 @@ public class GPWSComputer implements ITickableComputer {
     private final FlightPlanner plan;
     public float descentImpactTime = STATUS_UNKNOWN;
     public float terrainImpactTime = STATUS_UNKNOWN;
-    public Vector2d terrainAvoidVector = new Vector2d();
     public LandingClearanceStatus landingClearanceStatus = LandingClearanceStatus.UNKNOWN;
     public boolean fireworkUseSafe = true;
 
@@ -116,8 +114,6 @@ public class GPWSComputer implements ITickableComputer {
         }
 
         double distance = result.getPos().subtract(data.position()).length();
-        terrainAvoidVector = new Vector2d(distance, findHighest(result.getBlockPos().mutableCopy()).getY() + 10.0f - data.altitude());
-
         return (float) (distance / speed);
     }
 
@@ -187,7 +183,6 @@ public class GPWSComputer implements ITickableComputer {
     public void reset() {
         descentImpactTime = STATUS_UNKNOWN;
         terrainImpactTime = STATUS_UNKNOWN;
-        terrainAvoidVector = new Vector2d();
         landingClearanceStatus = LandingClearanceStatus.UNKNOWN;
         fireworkUseSafe = true;
     }

@@ -7,7 +7,6 @@ import ru.octol1ttle.flightassistant.computers.autoflight.PitchController;
 import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class VoidLevelComputer implements ITickableComputer {
-    public static final float OPTIMUM_ALTITUDE_PRESERVATION_PITCH = 15f;
     private final AirDataComputer data;
     private final FireworkController firework;
     private final StallComputer stall;
@@ -57,7 +56,7 @@ public class VoidLevelComputer implements ITickableComputer {
             return -90.0f;
         }
         if (data.altitude() - data.voidLevel() < 16) {
-            return Math.min(OPTIMUM_ALTITUDE_PRESERVATION_PITCH, stall.maximumSafePitch);
+            return Math.min(PitchController.ALTITUDE_PRESERVE_PITCH, stall.maximumSafePitch);
         }
 
         return PitchController.DESCEND_PITCH + 10;

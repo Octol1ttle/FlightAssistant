@@ -1,7 +1,6 @@
 package ru.octol1ttle.flightassistant.computers.autoflight;
 
 import net.minecraft.util.math.MathHelper;
-import ru.octol1ttle.flightassistant.FAMathHelper;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
 import ru.octol1ttle.flightassistant.computers.ITickableComputer;
 import ru.octol1ttle.flightassistant.computers.TimeComputer;
@@ -13,6 +12,7 @@ import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class PitchController implements ITickableComputer {
     public static final float CLIMB_PITCH = 55.0f;
+    public static final float ALTITUDE_PRESERVE_PITCH = 15.0f;
     public static final float GLIDE_PITCH = -2.2f;
     public static final float DESCEND_PITCH = -35.0f;
     private final AirDataComputer data;
@@ -47,9 +47,9 @@ public class PitchController implements ITickableComputer {
         if (gpws.shouldCorrectSinkrate()) {
             smoothSetPitch(90.0f, MathHelper.clamp(time.deltaTime / gpws.descentImpactTime, 0.001f, 1.0f));
         } else if (gpws.shouldCorrectTerrain()) {
-            smoothSetPitch(FAMathHelper.toDegrees(MathHelper.atan2(gpws.terrainAvoidVector.y, gpws.terrainAvoidVector.x)), time.deltaTime);
-        } else if (chunkStatus.shouldCorrectTerrain()) {
-            smoothSetPitch(VoidLevelComputer.OPTIMUM_ALTITUDE_PRESERVATION_PITCH, time.deltaTime);
+            smoothSetPitch(CLIMB_PITCH, MathHelper.clamp(time.deltaTime / gpws.terrainImpactTime, 0.001f, 1.0f));
+        } else if (chunkStatus.shouldPreserveAltitude()) {
+            smoothSetPitch(ALTITUDE_PRESERVE_PITCH, time.deltaTime);
         } else {
             smoothSetPitch(targetPitch, time.deltaTime);
         }

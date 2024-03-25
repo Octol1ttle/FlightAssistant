@@ -51,16 +51,12 @@ public class ChunkStatusComputer implements ITickableComputer {
         isInWarning = shouldWarn();
     }
 
-    public boolean shouldCorrectTerrain() {
+    public boolean shouldPreserveAltitude() {
         return FAConfig.computer().unloadedChunkProtection.recover() && isInWarning();
     }
 
     public boolean isInWarning() {
         return isInWarning;
-    }
-
-    public float getLastDiffMS() {
-        return lastDiffMS;
     }
 
     private boolean shouldWarn() {
