@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.serialization.nbt;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
 import org.jetbrains.annotations.Nullable;
 import ru.octol1ttle.flightassistant.serialization.api.IFlightPlanSerializer;
@@ -10,7 +11,11 @@ import ru.octol1ttle.flightassistant.serialization.api.ISerializableObject;
 public class NbtSerializer implements IFlightPlanSerializer {
     @Override
     public @Nullable ISerializableObject read(Path path, String fileName) throws IOException {
-        return new NbtSerializableObject(NbtIo.read(path.resolve("%s.dat".formatted(fileName))));
+        NbtCompound compound = NbtIo.read(path.resolve("%s.dat".formatted(fileName)));
+        if (compound == null) {
+            return null;
+        }
+        return new NbtSerializableObject(compound);
     }
 
     @Override
