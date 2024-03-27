@@ -79,8 +79,8 @@ public class AutoFlightComputer implements ITickableComputer {
         double distance;
         Vector2d planPos = plan.getTargetPosition();
 
-        boolean isTargettingApproachAltitude = plan.isOnApproach() && !plan.autolandAllowed;
-        if (planPos != null && selectedAltitude == null && !isTargettingApproachAltitude) {
+        boolean isTargetingApproachAltitude = plan.isOnApproach() && !plan.autolandAllowed;
+        if (planPos != null && selectedAltitude == null && !isTargetingApproachAltitude) {
             distance = Vector2d.distance(planPos.x, planPos.y, data.position().x, data.position().z);
         } else {
             distance = Math.max(15.0f, data.speed() * 2.0f);

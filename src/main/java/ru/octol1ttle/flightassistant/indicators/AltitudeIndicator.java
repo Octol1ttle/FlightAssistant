@@ -1,9 +1,11 @@
 package ru.octol1ttle.flightassistant.indicators;
 
 import java.awt.Color;
+import java.util.Objects;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 import ru.octol1ttle.flightassistant.Dimensions;
 import ru.octol1ttle.flightassistant.HudComponent;
 import ru.octol1ttle.flightassistant.computers.AirDataComputer;
@@ -62,10 +64,11 @@ public class AltitudeIndicator extends HudComponent {
                 }
 
                 Color color = getAltitudeColor(safeLevel, i);
-                int targetAltitude = autoflight.getTargetAltitude() != null ? autoflight.getTargetAltitude() : Integer.MIN_VALUE + 1;
+                Integer targetAltitude = autoflight.getTargetAltitude();
+                Integer minimums = plan.getMinimums(data.groundLevel);
 
-                boolean forceMark = i == data.groundLevel || i == targetAltitude;
-                boolean enoughSpace = Math.abs(data.groundLevel - i) >= 10 && Math.abs(targetAltitude - i) >= 10;
+                boolean forceMark = shouldForceMark(i, targetAltitude, minimums);
+                boolean enoughSpace = isEnoughSpace(i, targetAltitude, minimums);
 
                 if (forceMark || i % 50 == 0 && enoughSpace) {
                     drawHorizontalLine(context, left, right + 2, y, color);
@@ -80,6 +83,16 @@ public class AltitudeIndicator extends HudComponent {
                 }
             }
         }
+    }
+
+    private boolean shouldForceMark(int i, @Nullable Integer targetAltitude, @Nullable Integer minimums) {
+        return Objects.equals(i, data.groundLevel) || Objects.equals(i, targetAltitude) || Objects.equals(i, minimums);
+    }
+
+    private boolean isEnoughSpace(int i, @Nullable Integer targetAltitude, @Nullable Integer minimums) {
+        return Math.abs(data.groundLevel - i) >= 5
+                && (targetAltitude == null || Math.abs(targetAltitude - i) >= 5)
+                && (minimums == null || Math.abs(minimums - i) >= 5);
     }
 
     private Color getAltitudeColor(int safeLevel, float altitude) {
