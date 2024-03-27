@@ -103,7 +103,7 @@ public class GPWSComputer implements ITickableComputer {
         Vec3d end = data.position().add(data.velocity.multiply(TERRAIN_RAYCAST_AHEAD_SECONDS));
 
         BlockHitResult result = data.world().raycast(new RaycastContext(data.position(), end, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.ANY, data.player()));
-        if (plan.isOnApproach() || result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP) {
+        if (plan.autolandAllowed || result.getType() != HitResult.Type.BLOCK || result.getSide() == Direction.UP) {
             return STATUS_NO_TERRAIN_AHEAD;
         }
 
