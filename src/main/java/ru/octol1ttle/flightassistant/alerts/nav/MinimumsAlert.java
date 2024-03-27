@@ -13,6 +13,7 @@ import ru.octol1ttle.flightassistant.config.FAConfig;
 
 public class MinimumsAlert extends BaseAlert implements IECAMAlert {
     private final FlightPlanner plan;
+    private boolean triggered = false;
 
     public MinimumsAlert(FlightPlanner plan) {
         this.plan = plan;
@@ -20,7 +21,12 @@ public class MinimumsAlert extends BaseAlert implements IECAMAlert {
 
     @Override
     public boolean isTriggered() {
-        return plan.isBelowMinimums();
+        if (plan.landAltitude == null) {
+            triggered = false;
+        } else if (plan.isBelowMinimums()) {
+            triggered = true;
+        }
+        return triggered;
     }
 
     @Override
@@ -30,6 +36,10 @@ public class MinimumsAlert extends BaseAlert implements IECAMAlert {
 
     @Override
     public int render(TextRenderer textRenderer, DrawContext context, int x, int y, boolean highlight) {
+        if (!plan.isBelowMinimums()) {
+            return 0;
+        }
+
         return HudComponent.drawHighlightedText(textRenderer, context, Text.translatable("alerts.flightassistant.reached_minimums"), x, y,
                 FAConfig.indicator().cautionColor, false);
     }
