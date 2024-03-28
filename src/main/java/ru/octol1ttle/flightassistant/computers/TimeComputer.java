@@ -12,7 +12,7 @@ public class TimeComputer implements ITickableComputer {
      */
     public float deltaTime;
     public boolean highlight;
-    public Float millis = 0.0f;
+    public Float millis;
     private Float prevMillis;
     private float highlightMillis;
 
@@ -35,6 +35,9 @@ public class TimeComputer implements ITickableComputer {
 
         if (mc.isInSingleplayer() && mc.isPaused()) {
             return;
+        }
+        if (millis == null) {
+            millis = 0.0f;
         }
         millis += deltaMS;
 
