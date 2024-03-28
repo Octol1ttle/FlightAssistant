@@ -67,8 +67,8 @@ public class AltitudeIndicator extends HudComponent {
                 Integer targetAltitude = autoflight.getTargetAltitude();
                 Integer minimums = plan.getMinimums(data.groundLevel);
 
-                boolean forceMark = shouldForceMark(i, targetAltitude, minimums);
-                boolean enoughSpace = isEnoughSpace(i, targetAltitude, minimums);
+                boolean forceMark = shouldForceMark(i, data.groundLevel, targetAltitude, minimums);
+                boolean enoughSpace = isEnoughSpace(i, data.groundLevel, targetAltitude, minimums);
 
                 if (forceMark || i % 50 == 0 && enoughSpace) {
                     drawHorizontalLine(context, left, right + 2, y, color);
@@ -85,14 +85,24 @@ public class AltitudeIndicator extends HudComponent {
         }
     }
 
-    private boolean shouldForceMark(int i, @Nullable Integer targetAltitude, @Nullable Integer minimums) {
-        return Objects.equals(i, data.groundLevel) || Objects.equals(i, targetAltitude) || Objects.equals(i, minimums);
+    private boolean shouldForceMark(int i, @Nullable Integer... ints) {
+        for (Integer j : ints) {
+            if (Objects.equals(i, j)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    private boolean isEnoughSpace(int i, @Nullable Integer targetAltitude, @Nullable Integer minimums) {
-        return Math.abs(data.groundLevel - i) >= 5
-                && (targetAltitude == null || Math.abs(targetAltitude - i) >= 5)
-                && (minimums == null || Math.abs(minimums - i) >= 5);
+    private boolean isEnoughSpace(int i, @Nullable Integer... ints ) {
+        for (Integer j : ints) {
+            if (j != null && Math.abs(j - i) < 5) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private Color getAltitudeColor(int safeLevel, float altitude) {

@@ -21,9 +21,10 @@ public class MinimumsAlert extends BaseAlert implements IECAMAlert {
 
     @Override
     public boolean isTriggered() {
-        if (plan.landAltitude == null) {
+        if (plan.getMinimums(0) == null) {
             triggered = false;
-        } else if (plan.isBelowMinimums()) {
+        }
+        if (plan.isBelowMinimums()) {
             triggered = true;
         }
         return triggered;
