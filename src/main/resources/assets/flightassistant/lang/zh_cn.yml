@@ -19,17 +19,17 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
     critical_durability: 耐久度临界
   fault:
     computer:
-      reset: ' -系统：关闭后重新开启'
+      reset: ' -系统：重启'
     hud:
       .: HUD
-      reset: ' -显示：关闭后重新开启'
+      reset: ' -显示：重启'
       data: 数据系统故障
       flightassistant:altitude: 高度显示故障
       flightassistant:attitude: 姿态显示故障
       flightassistant:automation_modes: 自动模式显示故障
       flightassistant:coordinates: 坐标显示故障
       flightassistant:elytra_durability: 鞘翅耐久度显示故障
-      flightassistant:flight_directors: 飞行指引器显示故障
+      flightassistant:flight_directors: 飞行方向显示故障
       flightassistant:flight_path: 飞行路径显示故障
       flightassistant:heading: 航向显示故障
       flightassistant:radar_altitude: 雷达高度显示故障
@@ -48,15 +48,15 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
     .: 飞行控制
     pitch_fault:
       .: 俯仰限制故障
-      use_manual_pitch: ' -使用手动俯仰控制'
+      use_manual_pitch: ' -手动俯仰控制：启动'
     protections_lost:
-      .: 保护丢失
-      enable_air_data: ' -气象数据：关闭后重新开启'
-      enable_pitch: ' -俯仰系统：关闭后重新开启'
-      enable_prot_sys: ' -保护系统：关闭后重新开启'
+      .: 丧失保护功能
+      enable_air_data: ' -大气数据：重启'
+      enable_pitch: ' -俯仰系统：重启'
+      enable_prot_sys: ' -保护系统：重启'
       max_pitch: ' 最大俯仰角：55° 向上'
       min_pitch: ' 最小俯仰角：35° 向下'
-      maneuver_with_care: ' 小心机动'
+      maneuver_with_care: ' 谨慎操作'
   flight_plan:
     .: 飞行计划
     fault: 系统故障
@@ -67,15 +67,15 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
     dont_sink: 关闭下降率警报
     sink_rate: 下降率过高
     terrain_ahead: 前方地形
-    pull_up: 抬升
+    pull_up: 拉起
   stall:
     .: 失速
     detection_fault: 检测故障
   navigation:
     .: 导航
-    air_data_fault: 气象数据故障
+    air_data_fault: 大气数据故障
     chunk_status_fault: 区块状态故障
-    void_proximity_fault: 虚空邻近故障
+    void_proximity_fault: 虚空邻近检测故障
     slow_chunk_loading: 区块加载缓慢
     no_chunks_loaded: 未加载区块
     approaching_void_damage_altitude: 接近虚空伤害高度
@@ -83,19 +83,19 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
   thrust:
     .: 推力
     fault: 系统故障
-    no_source: 无可用来源
+    no_source: 无可用推力源
     locked:
       .: 锁定
       use_keys: ' -推力控制键：启用'
     reverse_not_supported:
       .: 不支持反推
-      set_forward: ' -推力：设置为向前'
+      set_forward: ' -推力：正前方'
 
 config.flightassistant:
   category:
     global: 全局选项
-    no_elytra: 未飞行（无鞘翅）
-    has_elytra: 未飞行（有鞘翅）
+    no_elytra: 未飞行（未装备鞘翅）
+    has_elytra: 未飞行（装备鞘翅）
     flying: 飞行过程中
     safety: 警报与飞行保护
   option:
@@ -106,48 +106,48 @@ config.flightassistant:
       automations_allowed_in_overlays: 允许自动化（自动驾驶 和飞行保护）在 GUI 中运行（如背包和暂停界面）
     display:
       frame:
-        .: 框架
+        .: 显示框架
         width: 框架宽度
         height: 框架高度
       colors:
-        .: 颜色
+        .: 色彩
         primary: 主颜色
         secondary: 副颜色
         advisory:
           primary: 主提示颜色
           secondary: 副提示颜色
-        caution: 警告颜色
+        caution: 提示颜色
         warning: 危险颜色
       attitude:
-        .: 姿态显示
+        .: 姿态
         show:
-          .: 显示姿态
+          .: 姿态显示
           horizon_and_ladder: 显示地平线和俯仰梯度指示
           horizon_only: 仅显示地平线
           disabled: 禁用
         degree_step: 刻度间隔（度）
         pitch_outside_frame: 在框架外绘制俯仰刻度
       heading:
-        .: 航向显示
+        .: 航向
         show_reading: 显示航向读数
         show_scale: 显示航向刻度
       speed:
-        .: 速度显示
+        .: 速度
         show_reading: 显示速度读数
         show_scale: 显示速度刻度
         show_ground: 显示地速
         show_vertical: 显示垂直速度
       altitude:
-        .: 高度显示
+        .: 高度
         show_reading: 显示高度读数
         show_scale: 显示高度刻度
         show_radar: 显示雷达高度
       flight_path_vector:
-        .: 飞行路径向量显示
+        .: 飞行路径向量
         show: 显示飞行路径向量
         size: 飞行路径向量大小
       elytra_durability:
-        .: 鞘翅耐久度显示
+        .: 鞘翅耐久度
         show: 显示鞘翅耐久度
         units:
           .: 鞘翅耐久度单位
@@ -160,7 +160,7 @@ config.flightassistant:
         alerts: 显示警报
         status_messages: 显示状态消息
         automation_modes: 显示自动化模式
-        flight_directors: 显示飞行指引器
+        flight_directors: 显示飞行指示器
     safety:
       alert_volume: 警报音量
       consider_invulnerability: 在无敌时禁用警报和保护
@@ -191,12 +191,12 @@ config.flightassistant:
         auto_thrust: 自动增加推力逃离虚空
         auto_pitch: 自动抬升俯仰角逃离虚空
       gpws:
-        .: 地面接近警报系统
+        .: 近地警告系统
         sink_rate:
           alert_mode: 下降率警报模式
           alert_method: 下降率警报方法
-          limit_pitch: 在下降率过高时限制俯仰角
-          auto_thrust: 在下降率过高时自动减少推力
+          limit_pitch: 下降率过高时限制俯仰角
+          auto_thrust: 下降率过高时自动减少推力
           auto_pitch: 自动提升俯仰角恢复下降率
         obstacle:
           alert_mode: 地形警报模式
@@ -206,8 +206,8 @@ config.flightassistant:
           auto_pitch: 自动抬升俯仰角逃离地形
       firework:
         .: 烟花
-        explosive_alert: 手持含爆炸物烟花时发出警报
-        lock_explosive: 锁定含爆炸物烟花
+        explosive_alert: 手持含烟火之星的烟花时发出警报
+        lock_explosive: 锁定含烟火之星的烟花
 
 menu.flightassistant:
   .: FlightAssistant 配置界面
@@ -218,25 +218,25 @@ menu.flightassistant:
     manage_displays: 管理显示
     fault: 故障
     'off': '关闭'
-    'off_reset': '关闭/重置'
+    'off_reset': '开启/重置'
     'on': '开启'
     name:
       hud:
-        flightassistant:alert: 警报显示
-        flightassistant:altitude: 高度显示
-        flightassistant:attitude: 姿态显示
-        flightassistant:automation_modes: 自动化模式显示
-        flightassistant:coordinates: 坐标显示
-        flightassistant:elytra_durability: 鞘翅耐久度显示
-        flightassistant:flight_directors: 飞行指引器显示
-        flightassistant:flight_path: 飞行路径显示
-        flightassistant:heading: 航向显示
-        flightassistant:radar_altitude: 雷达高度显示
-        flightassistant:speed: 速度显示
-        flightassistant:status: 状态显示
-        flightassistant:velocity_components: 地速与垂直速度显示
+        flightassistant:alert: 显示警报
+        flightassistant:altitude: 显示高度
+        flightassistant:attitude: 显示姿态
+        flightassistant:automation_modes: 显示自动化模式
+        flightassistant:coordinates: 显示坐标
+        flightassistant:elytra_durability: 显示鞘翅耐久度
+        flightassistant:flight_directors: 显示飞行指示器
+        flightassistant:flight_path: 显示飞行路径
+        flightassistant:heading: 显示航向
+        flightassistant:radar_altitude: 显示雷达高度
+        flightassistant:speed: 显示速度
+        flightassistant:status: 显示状态
+        flightassistant:velocity_components: 显示地速与垂直速度
       computer:
-        flightassistant:air_data: 气象数据计算器
+        flightassistant:air_data: 大气数据计算器
         flightassistant:hud_display_data: HUD 显示数据计算器
         flightassistant:alert: 警报计算器
         flightassistant:chunk_status: 区块状态计算器
@@ -256,7 +256,7 @@ menu.flightassistant:
     .: 选择自动飞行模式
     disabled: '关闭'
     enabled: '开启'
-    flight_directors: '飞行指引器 %s'
+    flight_directors: '飞行指示器 %s'
     auto_thrust: '自动推力 %s'
     autopilot: '自动驾驶 %s'
     thrust:
@@ -301,7 +301,7 @@ menu.flightassistant:
 
 mode.flightassistant:
   thrust:
-    override: 推力接管
+    override: 推力超控
     manual:
       .: 手动推力
       reverse: 手动反推
@@ -315,7 +315,7 @@ mode.flightassistant:
     descend: 推力 下降
     takeoff: 推力 起飞
   vertical:
-    override: 俯仰接管
+    override: 俯仰超控
     void_protection: 虚空保护
     void_escape: 虚空逃离
     stall_protection: 失速保护
@@ -343,10 +343,10 @@ short.flightassistant:
   distance: 距离
   elytra: 鞘翅
   elytra_durability: 鞘翅耐久度
-  flight_directors: 飞行指引器
-  flight_directors_alt: 飞行指引器
+  flight_directors: 飞行指示器
+  flight_directors_alt: 飞行指示器
   flight_path: 飞行路径
-  ground: 地面
+  ground: 地面距离
   ground_speed: '地速 %s'
   heading: 航向
   infinite: 无限
