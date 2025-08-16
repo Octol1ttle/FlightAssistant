@@ -3,19 +3,22 @@ package ru.octol1ttle.flightassistant.config.options
 import dev.isxander.yacl3.api.NameableEnum
 import dev.isxander.yacl3.config.v2.api.SerialEntry
 import java.awt.Color
-import net.minecraft.text.Text
+import net.minecraft.network.chat.Component
 
 class DisplayOptions {
     @SerialEntry
-    var frameWidth: Float = 0.5f
+    var frameWidth: Float = 0.6f
     @SerialEntry
     var frameHeight: Float = 0.5f
 
     @SerialEntry
     var primaryColor: Color = Color.GREEN
     @SerialEntry
-    var advisoryColor: Color = Color.CYAN
-
+    var secondaryColor: Color = Color.WHITE
+    @SerialEntry
+    var primaryAdvisoryColor: Color = Color.CYAN
+    @SerialEntry
+    var secondaryAdvisoryColor: Color = Color.MAGENTA
     @SerialEntry
     var cautionColor: Color = Color.YELLOW
     @SerialEntry
@@ -26,16 +29,12 @@ class DisplayOptions {
     @SerialEntry
     var attitudeDegreeStep: Int = 15
     @SerialEntry
-    var drawHorizonOutsideFrame: Boolean = true
-    @SerialEntry
     var drawPitchOutsideFrame: Boolean = true
 
     @SerialEntry
     var showHeadingReading: Boolean = true
     @SerialEntry
     var showHeadingScale: Boolean = true
-    @SerialEntry
-    var headingDegreeStep: Int = 10
 
     @SerialEntry
     var showSpeedReading: Boolean = true
@@ -69,7 +68,8 @@ class DisplayOptions {
 
     @SerialEntry
     var showAlerts: Boolean = true
-
+    @SerialEntry
+    var showStatusMessages: Boolean = true
     @SerialEntry
     var showAutomationModes: Boolean = true
 
@@ -100,37 +100,38 @@ class DisplayOptions {
         this.showGroundSpeed = false
         this.showVerticalSpeed = false
         this.showAlerts = false
+        this.showStatusMessages = false
         this.showAutomationModes = false
         return this
     }
 
     enum class AttitudeDisplayMode : NameableEnum {
         HORIZON_AND_LADDER {
-            override fun getDisplayName(): Text =
-                Text.translatable("config.flightassistant.options.display.attitude.show.horizon_and_ladder")
+            override fun getDisplayName(): Component =
+                Component.translatable("config.flightassistant.option.display.attitude.show.horizon_and_ladder")
         },
         HORIZON_ONLY {
-            override fun getDisplayName(): Text =
-                Text.translatable("config.flightassistant.options.display.attitude.show.horizon_only")
+            override fun getDisplayName(): Component =
+                Component.translatable("config.flightassistant.option.display.attitude.show.horizon_only")
         },
         DISABLED {
-            override fun getDisplayName(): Text =
-                Text.translatable("config.flightassistant.options.display.attitude.show.disabled")
+            override fun getDisplayName(): Component =
+                Component.translatable("config.flightassistant.option.display.attitude.show.disabled")
         };
     }
 
     enum class DurabilityUnits : NameableEnum {
         RAW {
-            override fun getDisplayName(): Text =
-                Text.translatable("config.flightassistant.options.display.elytra_durability.units.raw")
+            override fun getDisplayName(): Component =
+                Component.translatable("config.flightassistant.option.display.elytra_durability.units.raw")
         },
         PERCENTAGE {
-            override fun getDisplayName(): Text =
-                Text.translatable("config.flightassistant.options.display.elytra_durability.units.percentage")
+            override fun getDisplayName(): Component =
+                Component.translatable("config.flightassistant.option.display.elytra_durability.units.percentage")
         },
         TIME {
-            override fun getDisplayName(): Text =
-                Text.translatable("config.flightassistant.options.display.elytra_durability.units.time")
+            override fun getDisplayName(): Component =
+                Component.translatable("config.flightassistant.option.display.elytra_durability.units.time")
         };
     }
 }

@@ -1,0 +1,24 @@
+{
+    "required": true,
+    "package": "ru.octol1ttle.flightassistant.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "client": [
+        "ClientLevelRunningNormallyInvoker",
+        "EntityInvoker",
+        "EntityTurnMixin",
+        "FireworkRocketEntityMixin",
+        "gui.GuiMixinLayeredDraw",
+        "gui.GuiMixinLegacy",
+        "gui.GuiMixinNew",
+        "level_renderer.LevelRendererMixinLegacy",
+        "level_renderer.LevelRendererMixinNew",
+        "level_renderer.LevelRendererMixinNewest",
+        "level_renderer.LevelRendererMixinOld",
+        "sound.SoundEngineMixin",
+        "sound.SoundManagerMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+    ${refmap}
+}

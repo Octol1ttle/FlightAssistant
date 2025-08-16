@@ -1,25 +1,27 @@
 package ru.octol1ttle.flightassistant.impl.computer.safety
 
-import net.minecraft.util.Identifier
+import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.computer.Computer
-import ru.octol1ttle.flightassistant.api.computer.ComputerAccess
-import ru.octol1ttle.flightassistant.api.util.data
-import ru.octol1ttle.flightassistant.api.util.pitch
+import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 
-class FlightProtectionsComputer : Computer() {
-    var protectionsLost: Boolean = true
-        private set
+// TODO: move min/max pitch here
+// TODO: honestly could move *all* protections here
+// TODO: ...or get rid of this computer entirely?
+class FlightProtectionsComputer(computers: ComputerBus) : Computer(computers) {
+    var protectionsLost: Boolean = false
 
-    override fun tick(computers: ComputerAccess) {
-        protectionsLost = this.faulted || !computers.data.enabled || computers.data.faulted || !computers.pitch.enabled || computers.pitch.faulted
+    override fun tick() {
+        if (protectionsLost || this.isDisabledOrFaulted() || computers.data.isDisabledOrFaulted() || computers.pitch.isDisabledOrFaulted()) {
+            this.faulted = true
+        }
     }
 
     override fun reset() {
-        protectionsLost = true
+        protectionsLost = this.isDisabledOrFaulted()
     }
 
     companion object {
-        val ID: Identifier = FlightAssistant.id("flight_protections")
+        val ID: ResourceLocation = FlightAssistant.id("flight_protections")
     }
 }

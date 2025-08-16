@@ -2,13 +2,20 @@ modmenu:
   descriptionTranslation:
     flightassistant: FlightAssistant предлагает вам ощутить полеты с Элитрами по-новому, и все на стороне клиента!
 
-alerts.flightassistant:
+alert.flightassistant:
   alert:
     .: ПРЕДУПР
     fault: ОТКАЗ (НЕКОТОРЫЕ ПРЕДУПР ПОТЕР)
   autoflight:
     .: АВТО ПОЛЕТ
+    fault: ОТКАЗ СИСТ
+    heading_fault: ОТКАЗ УПР КУРСОМ
     pitch_fault: ОТКАЗ УПР УГЛ НАКЛ
+    roll_fault: ОТКАЗ УПР КРЕНОМ
+    autopilot_off:
+      .: АП ОТКЛ
+      push_to_silence: ' -КЛАВИША ОТКЛ АП: НАЖАТЬ ДЛЯ ЗАГЛУШ'
+    auto_thrust_off: А/ТЯГА ОТКЛ
   elytra:
     .: ЭЛИТРЫ
     fault: ОТКАЗ СТАТУС
@@ -16,19 +23,22 @@ alerts.flightassistant:
     critical_durability: КРИТ ПРОЧНОСТЬ
   fault:
     computer:
-      reset: ' -СИСТЕМА: ВКЛ/СБРОС'
+      reset: ' -СИСТЕМА: ВЫКЛ ЗАТЕМ ВКЛ'
     hud:
       .: HUD
-      reset: ' -ИНДИК: ВКЛ/СБРОС'
+      data: ОТКАЗ ДАНН ИНД
+      reset: ' -ИНДИК: ВЫКЛ ЗАТЕМ ВКЛ'
       flightassistant:altitude: ОТКАЗ ИНД ВЫС
       flightassistant:attitude: ОТКАЗ ИНД ОРИЕНТ
       flightassistant:automation_modes: ОТКАЗ ИНД АВТО РЕЖИМ
       flightassistant:coordinates: ОТКАЗ ИНД КООРД
       flightassistant:elytra_durability: ОТКАЗ ИНД ПРЧН/ЭЛ
+      flightassistant:flight_directors: ОТКАЗ ИНД УКАЗ/П
       flightassistant:flight_path: ОТКАЗ ИНД ВЕКТ/П
       flightassistant:heading: ОТКАЗ ИНД КУРСА
       flightassistant:radar_altitude: ОТКАЗ ИНД Р/ВЫС
       flightassistant:speed: ОТКАЗ ИНД СКОР
+      flightassistant:status: ОТКАЗ ИНД СТАТУС
       flightassistant:velocity_components: ОТКАЗ ИНД Г/С И В/C
   firework:
     .: ФРВК
@@ -36,8 +46,8 @@ alerts.flightassistant:
     explosive:
       main_hand: ОСН РУКА ВЗРЫВООПАСН
       off_hand: ВТОР РУКА ВЗРЫВООПАСН
-      slow_response: МЕДЛЕН ОТКЛИК
-      no_response: ОТСУТСТВ ОТКЛИК
+    slow_response: МЕДЛЕН ОТКЛИК
+    no_response: ОТСУТСТВ ОТКЛИК
   flight_controls:
     .: УПР/ПОЛЕТ
     pitch_fault:
@@ -45,13 +55,20 @@ alerts.flightassistant:
       use_manual_pitch: ' -РУЧН УПР УГЛ НАКЛ: ИСПОЛЬЗ'
     protections_lost:
       .: ЗАЩИТЫ ПОТЕРЯНЫ
-      enable_air_data: ' -КОМП ДАННЫХ ПОЛЕТА: ВКЛ'
-      enable_pitch: ' -КОМП УГЛА НАКЛ: ВКЛ'
-      max_pitch: ' МАКС УГОЛ НАКЛ: 55* UP'
-      max_descent_rate: ' МАКС СКОР СНИЖЕНИЯ: 8 Б/С'
+      enable_air_data: ' -КОМП ДАННЫХ ПОЛЕТА: ВЫКЛ ЗАТЕМ ВКЛ'
+      enable_pitch: ' -КОМП УГЛА НАКЛ: ВЫКЛ ЗАТЕМ ВКЛ'
+      enable_prot_sys: ' -КОМП ЗАЩИТ: ВЫКЛ ЗАТЕМ ВКЛ'
+      max_pitch: ' МАКС УГОЛ НАКЛ: 55* ВВЕРХ'
+      min_pitch: ' МИН УГОЛ НАКЛ: 35* ВНИЗ'
+      maneuver_with_care: ' МАНЕВРИРУЙ С ОСТОРОЖНОСТЬЮ'
+  flight_plan:
+    .: ПЛАН/П
+    fault: ОТКАЗ СИСТ
+    departure_elevation_disagree: НЕСОГЛ ВЫС ВЫЛЕТА
   gpws:
     .: GPWS
     fault: ОТКАЗ
+    dont_sink: НЕ ПАДАЙ
     sink_rate: СКОР. СНИЖЕНИЯ
     terrain_ahead: ЗЕМЛЯ ВПЕРЕДИ
     pull_up: ТЯНИ ВВЕРХ
@@ -79,13 +96,13 @@ alerts.flightassistant:
       set_forward: ' -ТЯГА: УСТАН ВПЕРЕД'
 
 config.flightassistant:
-  categories:
+  category:
     global: Глобальные настройки
     no_elytra: На земле (без элитр)
     has_elytra: На земле (с элитрами)
     flying: В полёте
     safety: Предупреждения и системы безопасности
-  options:
+  option:
     global:
       mod_enabled: Включить FlightAssistant
       hud_enabled: Включить HUD (интерфейс)
@@ -99,7 +116,10 @@ config.flightassistant:
       colors:
         .: Цвета
         primary: Основной цвет
-        advisory: Цвет указывающих элементов
+        secondary: Вторичный цвет
+        advisory:
+          primary: Основной цвет указывающих элементов
+          secondary: Вторичный цвет указывающих элементов
         caution: Цвет предупреждения
         warning: Цвет опасности
       attitude:
@@ -110,13 +130,11 @@ config.flightassistant:
           horizon_only: Только горизонт
           disabled: Отключен
         degree_step: Шаг градусных линий
-        horizon_outside_frame: Отображать горизонт за рамкой
         pitch_outside_frame: Отображать угол наклона за рамкой
       heading:
         .: Индикатор курса
         show_reading: Отображать значение курса
-        show_scale: Отображать шкалу курса на линии горизонта
-        scale_step: Шаг линий курса
+        show_scale: Отображать шкалу курса
       speed:
         .: Индикатор скорости
         show_reading: Отображать значение скорости
@@ -144,7 +162,9 @@ config.flightassistant:
         .: Разное
         coordinates: Отображать координаты
         alerts: Отображать предупреждения
+        status_messages: Отображать сообщения о статусе
         automation_modes: Отображать режимы автоматизации
+        flight_directors: Отображать указатели полёта
     safety:
       alert_volume: Громкость звуков предупреждений
       consider_invulnerability: Выключать предупреждения и защиты во время неуязвимости
@@ -153,6 +173,10 @@ config.flightassistant:
         warning: Только опасности
         caution: Только предупреждения
         disabled: Отключены
+      alert_method:
+        screen_and_audio: Экран и звук
+        screen_only: Только экран
+        audio_only: Только звук
       elytra:
         .: Элитры
         durability_alert_mode: Режим предупреждения прочности элитр
@@ -161,36 +185,45 @@ config.flightassistant:
       stall:
         .: Сваливание
         alert_mode: Режим предупреждения о сваливании
+        alert_method: Способ предупреждения о сваливании
         limit_pitch: Ограничивать угол наклона для предотвращения сваливания
-        auto_thrust: Автоматически использовать тягу для восстановления из сваливания
+        auto_thrust: Автоматически добавлять тягу для восстановления из сваливания
       void:
         .: Высота урона от пустоты
         alert_mode: Режим предупреждений высоты урона от пустоты
-        limit_pitch: Ограничение угла наклона над пустотой
-        auto_thrust: Автоматически использовать тягу чтобы избежать пустоты
+        limit_pitch: Ограничивать угол наклона над пустотой
+        auto_thrust: Автоматически добавлять тягу чтобы избежать пустоты
         auto_pitch: Автоматически повышать угол наклона чтобы избежать пустоты
       gpws:
         .: Система предупреждения о близости земли
         sink_rate:
-          alert_mode: Режим оповещения о скорости снижения
-          limit_pitch: Ограничение угла наклона при чрезмерной скорости снижения
+          alert_mode: Режим предупреждения о скорости снижения
+          alert_method: Способ предупреждения о скорости снижения
+          limit_pitch: Ограничивать угол наклона при чрезмерной скорости снижения
+          auto_thrust: Автоматически убавлять тягу при чрезмерной скорости снижения
           auto_pitch: Автоматическое увеличение угла наклона для устранения чрезмерной скорости снижения
         obstacle:
           alert_mode: Режим предупреждения о рельефе местности
-          limit_pitch: Ограничение угла наклона при обнаружении рельефа местности
-          auto_pitch: Автоматическое увеличение угла наклона для предотвращения столкновения с местностью
+          alert_method: Способ предупреждения о рельефе местности
+          limit_pitch: Ограничивать угол наклона при обнаружении рельефа местности
+          auto_thrust: Автоматически убавлять тягу при обнаружении рельефа местности
+          auto_pitch: Автоматически увеличивать угол наклона для предотвращения столкновения с местностью
       firework:
         .: Фейерверки
+        explosive_alert: Предупреждать при взятии взрывоопасных фейерверков
         lock_explosive: Блокировать использование взрывоопасных фейерверков
 
 menu.flightassistant:
-  .: Настройка полёта
-  flight_plan: План полёта
+  .: Настройки FlightAssistant
+  config: Конфигурация мода
   system:
-    .: Статус систем
+    .: Управление системами
+    manage_computers: 'Управление компьютерами'
+    manage_displays: 'Управление индикаторами'
     fault: ОТКАЗ
     'off': 'ВЫКЛ'
-    on_reset: ВКЛ/СБРОС
+    'off_reset': 'ВЫКЛ/СБРОС'
+    'on': 'ВКЛ'
     name:
       hud:
         flightassistant:alert: Индикатор предупреждений
@@ -199,13 +232,16 @@ menu.flightassistant:
         flightassistant:automation_modes: Индикатор режимов автоматизации
         flightassistant:coordinates: Индикатор координат
         flightassistant:elytra_durability: Индикатор прочности элитр
+        flightassistant:flight_directors: Индикатор указателей полёта
         flightassistant:flight_path: Индикатор пути полёта
         flightassistant:heading: Индикатор курса
         flightassistant:radar_altitude: Радиовысотомер
         flightassistant:speed: Индикатор скорости
+        flightassistant:status: Индикатор статуса
         flightassistant:velocity_components: Индикатор Г/С и В/С
       computer:
         flightassistant:air_data: Компьютер данных полёта
+        flightassistant:hud_display_data: Компьютер данных индикаторов HUD
         flightassistant:alert: Компьютер предупреждений
         flightassistant:chunk_status: Компьютер статуса чанков
         flightassistant:elytra_status: Компьютер статуса элитр
@@ -213,31 +249,104 @@ menu.flightassistant:
         flightassistant:ground_proximity: Компьютер близости земли
         flightassistant:stall: Компьютер обнаружения сваливания
         flightassistant:void_proximity: Компьютер близости пустоты
+        flightassistant:auto_flight: Компьютер автополёта
         flightassistant:firework: Компьютер фейерверков
-        flightassistant:pitch: Компьютер угла наклона
+        flightassistant:flight_plan: Компьютер плана полёта
+        flightassistant:heading: Компьютер управления курсом
+        flightassistant:pitch: Компьютер управления углом наклона
+        flightassistant:roll: Компьютер управления креном
         flightassistant:thrust: Компьютер тяги
+  autoflight:
+    .: Выбрать режимы автополёта
+    disabled: ВЫКЛ
+    enabled: ВКЛ
+    flight_directors: 'УКАЗ ПОЛ %s'
+    auto_thrust: 'А/ТЯГА %s'
+    autopilot: 'АП %s'
+    thrust:
+      mode: 'Режим тяги: '
+      speed: СКОР
+      vertical_profile: В.ПРОФ
+      flight_plan: Ф-ПЛАН
+    vertical:
+      mode: 'Вертикальный режим: '
+      pitch: УГОЛ
+      altitude: ВЫС
+      flight_plan: Ф-ПЛАН
+    lateral:
+      mode: 'Горизонтальный режим: '
+      heading: КУРС
+      coordinates: КООРД
+      flight_plan: Ф-ПЛАН
+    target:
+      speed: 'Целевая скорость: '
+      climb_thrust: 'Целевая тяга (%) набора/крейсера: '
+      descend_thrust: 'Целевая тяга (%) снижения: '
+      pitch: 'Целевой угол: '
+      altitude: 'Целевая высота: '
+      heading: 'Целевой курс: '
+      coordinates: 'Целевые координаты: '
+  fms:
+    .: План полёта
+    departure:
+      .: Вылет
+      takeoff_thrust: 'Взлётная тяга (%): '
+      minimum_climb_speed: 'Минимальная скорость набора: '
+    enroute:
+      .: Маршрут
+      add_waypoint: Добавить точку
+      direct_to: Прямо-на
+      unsaved_changes: НЕСОХРАНЕН ИЗМЕНЕНИЯ
+    arrival: Прибытие
+    save: Сохранить
+    discard_changes: Отменить изменения
+    coordinates: 'Координаты: '
+    elevation: 'Высота: '
 
 mode.flightassistant:
   thrust:
-    manual: РУЧН ТЯГА %s
-    manual_toga: РУЧН ВЗЛЕТН
-    locked: БЛОК ТЯГА %s
+    override: РУЧН ТЯГА
+    manual:
+      .: РУЧН ТЯГА
+      reverse: РУЧН РЕВ
+      toga: РУЧН ВЗЛЕТН
+    locked: БЛОК ТЯГА
     locked_toga: БЛОК ВЗЛЕТН
+    idle: ТЯГА МАЛ
     toga: ТЯГА ВЗЛЕТН
-  pitch:
+    speed: СКОР
+    climb: ТЯГА НАБОР
+    descend: ТЯГА СНИЖ
+    takeoff: ТЯГА ВЫЛЕТ
+  vertical:
+    override: РУЧН УГОЛ
     void_protection: ПУСТ ЗАЩ
     void_escape: ПУСТ ВЫХОД
     stall_protection: СВАЛ ЗАЩ
     terrain_protection: ЗЕМЛ ЗАЩ
     terrain_escape: ЗЕМЛ ИЗБЕЖ
+    selected_pitch: УГОЛ
+    altitude:
+      climb: НАБОР
+      descend: СНИЖ
+      hold: ВЫС
+    speed_reference: СКОР СЛЕД
+  lateral:
+    selected_heading: КУРС
+    selected_coordinates: КООРД
 
 short.flightassistant:
   alert: ПРЕДУПР
   altitude: ВЫС
   attitude: ОРИЕНТ
-  automation_mode: АВТО/РЕЖИМ
-  elytra: Э
+  auto_thrust: А/Т
+  autopilot: АП
+  automation_modes: АВТО/РЕЖИМ
+  distance: ДИСТ
+  elytra: ЭЛ
   elytra_durability: ПРЧН/ЭЛ
+  flight_directors: УКАЗАТ
+  flight_directors_alt: УК
   flight_path: ПУТЬ/П
   ground: ЗЕМЛ
   ground_speed: 'Г/С%s'
@@ -245,16 +354,35 @@ short.flightassistant:
   infinite: БЕСК
   radar_altitude: Р/ВЫС
   speed: СКОР
+  status: СТАТУС
+  time: ВРЕМ
   vertical_speed: 'В/С%s'
   void: ПУСТ
 
-keys.flightassistant:
+status.flightassistant:
+  thrust: 'ТЯГА: %s'
+  firework_count: 'ЧИСЛ ФРВК: %s'
+
+misc.flightassistant:
+  waiting_for_world_load:
+    .: ОЖИДАНИЕ ЗАГРУЗКИ МИРА
+    maximum_time: (МАКС 3 СЕКУНДЫ)
+
+key.flightassistant:
   .: FlightAssistant
-  open_flight_configuration: Открыть экран настройки полёта
+  toggle_enabled: Включить/выключить мод
+  open_flight_setup: Открыть экран настройки полёта
+  autopilot_disconnect: Отключить автопилот
   manual_pitch_override: Принудительное ручное управление углом наклона (зажать)
   hide_current_alert: Скрыть активное предупреждение
   show_hidden_alert: Показать скрытое предупреждение
-  decrease_thrust: Убавить тягу (накл. рычаги назад)
-  increase_thrust: Добавить тягу (накл. рычаги вперед)
-  set_idle: Установить нулевую тягу (0%)
-  set_toga: Установить взлётную тягу (100%)
+  thrust:
+    .: 'FlightAssistant: Тяга'
+    decrease_thrust: Снизить тягу
+    increase_thrust: Увеличить тягу
+    set_idle: Установить малую тягу (0%)
+    set_toga: Установить взлётную тягу (100%)
+
+# Other mods
+menu.flightassistant.system.name.computer.do_a_barrel_roll:roll: Компьютер крена DaBR
+menu.flightassistant.system.name.computer.do_a_barrel_roll:thrust: Компьютер тяги DaBR

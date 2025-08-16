@@ -1,26 +1,26 @@
 package ru.octol1ttle.flightassistant.impl.computer.safety
 
 import kotlin.math.abs
-import net.minecraft.client.world.ClientChunkManager
-import net.minecraft.util.Identifier
-import net.minecraft.util.math.ChunkPos
+import net.minecraft.client.multiplayer.ClientChunkCache
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.level.ChunkPos
 import ru.octol1ttle.flightassistant.FlightAssistant
-import ru.octol1ttle.flightassistant.api.computer.*
-import ru.octol1ttle.flightassistant.api.util.data
+import ru.octol1ttle.flightassistant.api.computer.Computer
+import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 
-class ChunkStatusComputer : Computer() {
+class ChunkStatusComputer(computers: ComputerBus) : Computer(computers) {
     var status: Status = Status.LOADED
         private set
 
-    override fun tick(computers: ComputerAccess) {
-        val chunkPos: ChunkPos = computers.data.player.chunkPos
-        val world: ClientChunkManager = computers.data.world.chunkManager
+    override fun tick() {
+        val chunkPos: ChunkPos = computers.data.player.chunkPosition()
+        val world: ClientChunkCache = computers.data.level.chunkSource
 
         var unloadedClose = 0
         var unloadedFar = false
         for (x: Int in -3..3) {
             for (z: Int in -3..3) {
-                if (!world.isChunkLoaded(chunkPos.x + x, chunkPos.z + z)) {
+                if (!world.hasChunk(chunkPos.x + x, chunkPos.z + z)) {
                     if (abs(x) <= 1 && abs(z) <= 1) {
                         unloadedClose++
                     } else {
@@ -31,12 +31,10 @@ class ChunkStatusComputer : Computer() {
         }
 
         status =
-            if (!unloadedFar && unloadedClose == 0) {
-                Status.LOADED
-            } else if (status != Status.ALL_UNLOADED && (unloadedFar && unloadedClose in 0..<9)) {
-                Status.SOME_UNLOADED
+            if (unloadedFar || unloadedClose > 0) {
+                if (status == Status.ALL_UNLOADED || (unloadedFar && unloadedClose == 9)) Status.ALL_UNLOADED else Status.SOME_UNLOADED
             } else {
-                Status.ALL_UNLOADED
+                Status.LOADED
             }
     }
 
@@ -51,6 +49,6 @@ class ChunkStatusComputer : Computer() {
     }
 
     companion object {
-        val ID: Identifier = FlightAssistant.id("chunk_status")
+        val ID: ResourceLocation = FlightAssistant.id("chunk_status")
     }
 }

@@ -1,170 +1,157 @@
 plugins {
-    `maven-publish`
     kotlin("jvm")
-    id("dev.architectury.loom")
+    id("dev.isxander.modstitch.base") version "0.7.0-unstable"
     id("me.modmuss50.mod-publish-plugin")
-    id("me.fallenbreath.yamlang") version "1.4.1"
+    id("me.fallenbreath.yamlang") version "1.4.2"
+}
+
+fun prop(name: String) : String {
+    return findProperty(name)?.toString() ?: throw IllegalArgumentException("Missing property: $name")
+}
+
+fun ifFindProperty(name: String, consumer: (prop: String) -> Unit) {
+    (findProperty(name) as? String?)
+        ?.let(consumer)
 }
 
 // Variables
 class ModData {
-    val id = property("mod.id").toString()
-    val name = property("mod.name").toString()
-    val version = property("mod.version").toString()
-    val group = property("mod.group").toString()
+    val id = prop("mod.id")
+    val name = prop("mod.name")
+    val version = prop("mod.version")
+    val group = prop("mod.group")
 }
-
 val mod = ModData()
+val minecraft = stonecutter.current.project.substringBeforeLast('-')
+val minecraftVersionRange = prop("mod.mc_version_range")
 
-val loader = loom.platform.get().name.lowercase()
-val isFabric = loader == "fabric"
-val mcVersion = stonecutter.current.project.substringBeforeLast('-')
-val mcDep = property("mod.mc_dep").toString()
-val isSnapshot = hasProperty("env.snapshot")
+// See https://stonecutter.kikugie.dev/stonecutter/guide/comments#condition-constants
+val loader: String = name.split("-")[1]
+stonecutter {
+    constants {
+        match(loader, "fabric", "neoforge", "forge")
+        put("do-a-barrel-roll", hasProperty("deps.dabr"))
+    }
+}
 
-version = "${mod.version}+mc$mcVersion"
-group = mod.group
 base { archivesName.set("${mod.id}-$loader") }
+group = mod.group
+version = "${mod.version}+mc$minecraft"
 
-// Dependencies
-repositories {
-    fun strictMaven(url: String, vararg groups: String) = exclusiveContent {
-        forRepository { maven(url) }
-        filter { groups.forEach(::includeGroup) }
+modstitch {
+    minecraftVersion = minecraft
+
+    val j21: Boolean = stonecutter.eval(minecraft, ">=1.20.6")
+    javaVersion = if (j21) 21 else 17
+    kotlin {
+        jvmToolchain(if (j21) 21 else 17)
     }
-    strictMaven("https://api.modrinth.com/maven", "maven.modrinth")
-    strictMaven("https://thedarkcolour.github.io/KotlinForForge/", "thedarkcolour")
-    strictMaven("https://maven.fallenbreath.me/releases", "me.fallenbreath")
-    strictMaven("https://maven.isxander.dev/releases", "dev.isxander", "org.quiltmc.parsers")
-    maven("https://jitpack.io")
-    maven("https://maven.neoforged.net/releases/")
-    maven("https://maven.terraformersmc.com/releases/")
+
+    // If parchment doesnt exist for a version yet you can safely
+    // omit the "deps.parchment" property from your versioned gradle.properties
+    parchment {
+        ifFindProperty("deps.parchment") { mappingsVersion = it }
+    }
+
+    metadata {
+        modId = mod.id
+        modName = mod.name
+        modVersion = mod.version
+
+        fun <K, V> MapProperty<K, V>.populate(block: MapProperty<K, V>.() -> Unit) {
+            block()
+        }
+
+        val refmapString = ",\"refmap\": \"${mod.id}.refmap.json\""
+        replacementProperties.populate {
+            // You can put any other replacement properties/metadata here that
+            // modstitch doesn't initially support. Some examples below.
+            put("mc", minecraftVersionRange)
+            put("fml", if (loader == "neoforge") "1" else "45")
+            put("mnd", if (loader == "neoforge") "type = \"required\"" else "mandatory = true")
+            put("refmap", if (loader == "forge") refmapString else "")
+        }
+
+        overwriteProjectVersionAndGroup = false
+    }
+
+    // Fabric Loom (Fabric)
+    loom {
+        fabricLoaderVersion = prop("deps.fabric_loader")
+
+        // Configure loom like normal in this block.
+        configureLoom {
+            @Suppress("UnstableApiUsage")
+            mixin {
+                useLegacyMixinAp = false
+            }
+
+            runConfigs.all {
+                ideConfigGenerated(environment == "client")
+                runDir("../../run")
+            }
+        }
+    }
+
+    // ModDevGradle (NeoForge, Forge, Forgelike)
+    moddevgradle {
+        ifFindProperty("deps.forge") { forgeVersion = it }
+        ifFindProperty("deps.neoforge") { neoForgeVersion = it }
+
+        // Configures client and server runs for MDG, it is not done by default
+        defaultRuns(server = false)
+
+        // This block configures the `neoforge` extension that MDG exposes by default,
+        // you can configure MDG like normal from here
+        configureNeoForge {
+            runs.all {
+                gameDirectory = layout.projectDirectory.dir("../../run")
+            }
+        }
+    }
+
+    mixin {
+        // You do not need to specify mixins in any mods.json/toml file if this is set to
+        // true, it will automatically be generated.
+        addMixinsToModManifest = true
+
+        configs.register(mod.id) { side = CLIENT }
+
+        // Most of the time you wont ever need loader specific mixins.
+        // If you do, simply make the mixin file and add it like so for the respective loader:
+        // if (isLoom) configs.register("examplemod-fabric")
+        // if (isModDevGradleRegular) configs.register("examplemod-neoforge")
+        // if (isModDevGradleLegacy) configs.register("examplemod-forge")
+    }
 }
 
+// All dependencies should be specified through modstitch's proxy configuration.
+// Wondering where the "repositories" block is? Go to "stonecutter.gradle.kts"
+// If you want to create proxy configurations for more source sets, such as client source sets,
+// use the modstitch.createProxyConfigurations(sourceSets["client"]) function.
 dependencies {
-    fun modrinth(name: String, dep: Any?) = "maven.modrinth:$name:$dep"
-
-    fun ifStable(str: String, action: (String) -> Unit = { modImplementation(it) }) {
-        if (isSnapshot) modCompileOnly(str) else action(str)
+    modstitch.loom {
+        modstitchModImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fapi")}")
+        modstitchModImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.flk")}+kotlin.2.1.0")
+        modstitchModImplementation("com.terraformersmc:modmenu:${property("deps.modmenu")}")
     }
 
-    minecraft("com.mojang:minecraft:${mcVersion}")
-    @Suppress("UnstableApiUsage")
-    mappings(loom.layered {
-        mappings("net.fabricmc:yarn:${mcVersion}+build.${property("deps.yarn_build")}:v2")
-        if (stonecutter.eval(mcVersion, "1.20.6")) {
-            mappings("dev.architectury:yarn-mappings-patch-neoforge:1.20.5+build.3")
-        } else if (stonecutter.eval(mcVersion, ">=1.21")) {
-            mappings("dev.architectury:yarn-mappings-patch-neoforge:1.21+build.4")
-        }
-    })
-    val mixinExtras = "io.github.llamalad7:mixinextras-%s:${property("deps.mixin_extras")}"
-    if (isFabric) {
-        modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-        modImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.flk")}+kotlin.2.1.0")
-        modImplementation("dev.architectury:architectury-fabric:${property("deps.arch_api")}")
-        val fapi = property("deps.fapi")
-        if (fapi != "[VERSIONED]") {
-            modLocalRuntime("net.fabricmc.fabric-api:fabric-api:$fapi")
-        }
-        ifStable("com.terraformersmc:modmenu:${property("deps.modmenu")}")
-    } else {
-        if (loader == "forge") {
-            "forge"("net.minecraftforge:forge:${mcVersion}-${property("deps.fml")}")
-            compileOnly(annotationProcessor(mixinExtras.format("common"))!!)
-            include(implementation(mixinExtras.format("forge"))!!)
-            modImplementation("dev.architectury:architectury-forge:${property("deps.arch_api")}")
-        } else {
-            "neoForge"("net.neoforged:neoforge:${property("deps.fml")}")
-            modImplementation("dev.architectury:architectury-neoforge:${property("deps.arch_api")}")
-        }
-        implementation("thedarkcolour:kotlinforforge${if (loader == "neoforge") "-neoforge" else ""}:${property("deps.kff")}") {
-            exclude("net.neoforged.fancymodloader")
-        }
-        "forgeRuntimeLibrary"("org.quiltmc.parsers:json:0.2.1")
-        "forgeRuntimeLibrary"("org.quiltmc.parsers:gson:0.2.1")
-    }
-    // Config
-    modImplementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}") {
-        if (!isFabric) {
-            isTransitive = false
-        }
-    }
-}
-
-// Loom config
-loom {
-    if (loader == "forge") forge {
-        mixinConfigs("${mod.id}.client.mixins.json")
-    } else if (loader == "neoforge") neoForge {}
-
-    runConfigs.all {
-        ideConfigGenerated(true)
-        vmArgs("-Dmixin.debug.export=true")
-        runDir = "../../run"
+    modstitch.moddevgradle {
+        modstitchModImplementation("thedarkcolour:kotlinforforge${if (modstitch.isModDevGradleRegular) "-neoforge" else ""}:${property("deps.kff")}")
     }
 
-    decompilers {
-        get("vineflower").apply {
-            options.put("mark-corresponding-synthetics", "1")
-        }
+    // Anything else in the dependencies block will be used for all platforms.
+    modstitchModImplementation("dev.architectury:architectury-${loader}:${property("deps.arch_api")}")
+    modstitchModImplementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}")
+
+    ifFindProperty("deps.dabr") {
+        modstitchModImplementation("nl.enjarai:do-a-barrel-roll:$it")
     }
-}
-
-// Tasks
-val buildAndCollect = tasks.register<Copy>("buildAndCollect") {
-    group = "build"
-    from(tasks.remapJar.get().archiveFile)
-    into(rootProject.layout.buildDirectory.file("libs/${mod.version}"))
-    dependsOn("build")
-}
-
-if (stonecutter.current.isActive) {
-    rootProject.tasks.register("buildActive") {
-        group = "project"
-        dependsOn(buildAndCollect)
-    }
-
-    rootProject.tasks.register("runActive") {
-        group = "project"
-        dependsOn(tasks.named("runClient"))
-    }
-}
-
-// Resources
-tasks.processResources {
-    inputs.property("version", mod.version)
-    inputs.property("mc", mcDep)
-
-    val map = mapOf(
-        "version" to mod.version,
-        "mc" to mcDep,
-        "fml" to if (loader == "neoforge") "1" else "45",
-        "mnd" to if (loader == "neoforge") "" else "mandatory = true"
-    )
-
-    filesMatching("fabric.mod.json") { expand(map) }
-    filesMatching("META-INF/mods.toml") { expand(map) }
-    filesMatching("META-INF/neoforge.mods.toml") { expand(map) }
 }
 
 yamlang {
     targetSourceSets.set(mutableListOf(sourceSets["main"]))
     inputDir.set("assets/${mod.id}/lang")
-}
-
-// Env configuration
-stonecutter {
-    val j21 = eval(mcVersion, ">=1.20.6")
-    java {
-        withSourcesJar()
-        sourceCompatibility = if (j21) JavaVersion.VERSION_21 else JavaVersion.VERSION_17
-        targetCompatibility = if (j21) JavaVersion.VERSION_21 else JavaVersion.VERSION_17
-    }
-
-    kotlin {
-        jvmToolchain(if (j21) 21 else 17)
-    }
 }
 
 // Publishing
@@ -173,15 +160,17 @@ publishMods {
     val curseforgeToken = findProperty("curseforgeToken")
     dryRun = modrinthToken == null || curseforgeToken == null
 
-    file = tasks.remapJar.get().archiveFile
-    additionalFiles.from(tasks.remapSourcesJar.get().archiveFile)
-    displayName =
-        "${mod.name} ${mod.version} for ${loader.replaceFirstChar { it.uppercase() }} ${property("mod.mc_title")}"
-    version = "${mod.version}+mc$mcVersion-$loader"
+    modstitch.onEnable {
+        file = modstitch.finalJarTask.flatMap { it.archiveFile }
+    }
+    //additionalFiles.from(modstitch.namedJarTask.get().archiveFile)
+
+    displayName = "${mod.name} ${mod.version} for ${loader.replaceFirstChar { it.uppercase() }} ${property("mod.mc_title")}"
+    version = "${mod.version}+mc$minecraft-$loader"
     changelog = rootProject.file("CHANGELOG.md").readText()
     type = ALPHA
     modLoaders.add(loader)
-    if (isFabric) {
+    if (loader == "fabric") {
         modLoaders.add("quilt")
     }
 
@@ -190,7 +179,7 @@ publishMods {
         projectId = property("publish.modrinth").toString()
         accessToken = modrinthToken.toString()
         targets.forEach(minecraftVersions::add)
-        if (isFabric) {
+        if (loader == "fabric") {
             requires("fabric-language-kotlin")
             optional("modmenu")
         } else {
@@ -204,7 +193,7 @@ publishMods {
         projectId = property("publish.curseforge").toString()
         accessToken = curseforgeToken.toString()
         targets.forEach(minecraftVersions::add)
-        if (isFabric) {
+        if (loader == "fabric") {
             requires("fabric-language-kotlin")
             optional("modmenu")
         } else {
@@ -212,5 +201,24 @@ publishMods {
         }
         requires("architectury-api")
         requires("yacl")
+    }
+}
+
+val buildAndCollect = tasks.register<Copy>("buildAndCollect") {
+    group = "build"
+    from(modstitch.finalJarTask.get().archiveFile)
+    into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
+    dependsOn("build")
+}
+
+if (stonecutter.current.isActive) {
+    rootProject.tasks.register("buildActive") {
+        group = "project"
+        dependsOn(buildAndCollect)
+    }
+
+    rootProject.tasks.register("runActive") {
+        group = "project"
+        dependsOn(tasks.named("runClient"))
     }
 }

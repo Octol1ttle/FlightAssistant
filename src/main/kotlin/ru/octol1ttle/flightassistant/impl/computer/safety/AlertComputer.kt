@@ -1,26 +1,36 @@
 package ru.octol1ttle.flightassistant.impl.computer.safety
 
-import net.minecraft.client.sound.SoundManager
-import net.minecraft.text.Text
-import net.minecraft.util.Hand
-import net.minecraft.util.Identifier
+import net.minecraft.client.sounds.SoundManager
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.InteractionHand
 import ru.octol1ttle.flightassistant.FlightAssistant
+import ru.octol1ttle.flightassistant.api.alert.Alert
 import ru.octol1ttle.flightassistant.api.alert.AlertCategory
+import ru.octol1ttle.flightassistant.api.alert.AlertCategoryRegistrationCallback
 import ru.octol1ttle.flightassistant.api.alert.AlertData
 import ru.octol1ttle.flightassistant.api.computer.Computer
-import ru.octol1ttle.flightassistant.api.computer.ComputerAccess
-import ru.octol1ttle.flightassistant.api.event.AlertCategoryRegistrationCallback
-import ru.octol1ttle.flightassistant.api.util.*
+import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.util.ChangeTrackingArrayList
+import ru.octol1ttle.flightassistant.api.util.FATickCounter
+import ru.octol1ttle.flightassistant.api.util.extensions.applyVolume
+import ru.octol1ttle.flightassistant.api.util.extensions.getHighestPriority
+import ru.octol1ttle.flightassistant.api.util.extensions.pause
+import ru.octol1ttle.flightassistant.api.util.extensions.unpause
 import ru.octol1ttle.flightassistant.impl.alert.AlertSoundInstance
+import ru.octol1ttle.flightassistant.impl.alert.autoflight.AutoThrustOffAlert
+import ru.octol1ttle.flightassistant.impl.alert.autoflight.AutopilotOffAlert
 import ru.octol1ttle.flightassistant.impl.alert.elytra.ElytraDurabilityCriticalAlert
 import ru.octol1ttle.flightassistant.impl.alert.elytra.ElytraDurabilityLowAlert
+import ru.octol1ttle.flightassistant.impl.alert.fault.DisplayFaultAlert
 import ru.octol1ttle.flightassistant.impl.alert.fault.computer.AlertComputerFaultAlert
 import ru.octol1ttle.flightassistant.impl.alert.fault.computer.ComputerFaultAlert
-import ru.octol1ttle.flightassistant.impl.alert.fault.DisplayFaultAlert
 import ru.octol1ttle.flightassistant.impl.alert.firework.FireworkExplosiveAlert
 import ru.octol1ttle.flightassistant.impl.alert.firework.FireworkNoResponseAlert
 import ru.octol1ttle.flightassistant.impl.alert.firework.FireworkSlowResponseAlert
 import ru.octol1ttle.flightassistant.impl.alert.flight_controls.ProtectionsLostAlert
+import ru.octol1ttle.flightassistant.impl.alert.flight_plan.DepartureElevationDisagreeAlert
+import ru.octol1ttle.flightassistant.impl.alert.gpws.DontSinkAlert
 import ru.octol1ttle.flightassistant.impl.alert.gpws.PullUpAlert
 import ru.octol1ttle.flightassistant.impl.alert.gpws.SinkRateAlert
 import ru.octol1ttle.flightassistant.impl.alert.gpws.TerrainAheadAlert
@@ -33,91 +43,111 @@ import ru.octol1ttle.flightassistant.impl.alert.stall.FullStallAlert
 import ru.octol1ttle.flightassistant.impl.alert.thrust.NoThrustSourceAlert
 import ru.octol1ttle.flightassistant.impl.alert.thrust.ReverseThrustNotSupportedAlert
 import ru.octol1ttle.flightassistant.impl.alert.thrust.ThrustLockedAlert
-import ru.octol1ttle.flightassistant.impl.computer.AirDataComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FireworkComputer
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.PitchComputer
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.ThrustComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.HeadingComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.PitchComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.RollComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.ThrustComputer
+import ru.octol1ttle.flightassistant.impl.computer.data.AirDataComputer
+import ru.octol1ttle.flightassistant.impl.computer.data.HudDisplayDataComputer
 import ru.octol1ttle.flightassistant.impl.display.HudDisplayHost
 
-class AlertComputer(private val soundManager: SoundManager) : Computer() {
+class AlertComputer(computers: ComputerBus, private val soundManager: SoundManager) : Computer(computers) {
     internal var alertsFaulted: Boolean = false
-    val categories: ArrayList<AlertCategory> = ArrayList()
+    val categories: MutableList<AlertCategory> = ArrayList()
+    private val alertLists: HashMap<AlertData, ChangeTrackingArrayList<Alert>> = HashMap()
     private val sounds: HashMap<AlertData, AlertSoundInstance> = HashMap()
 
     override fun invokeEvents() {
         registerBuiltin()
-        AlertCategoryRegistrationCallback.EVENT.invoker().register(this::register)
+        AlertCategoryRegistrationCallback.EVENT.invoker().register(computers, this::register)
     }
 
     private fun registerBuiltin() {
         register(
-            AlertCategory(Text.translatable("alerts.flightassistant.alert"))
-                .add(AlertComputerFaultAlert())
+            AlertCategory(Component.translatable("alert.flightassistant.alert"))
+                .add(AlertComputerFaultAlert(computers))
         )
         register(
-            AlertCategory(Text.translatable("alerts.flightassistant.autoflight"))
-                .add(ComputerFaultAlert(PitchComputer.ID, Text.translatable("alerts.flightassistant.autoflight.pitch_fault")))
+            AlertCategory(Component.translatable("alert.flightassistant.autoflight"))
+                .add(ComputerFaultAlert(computers, AutoFlightComputer.ID, Component.translatable("alert.flightassistant.autoflight.fault")))
+                .add(ComputerFaultAlert(computers, PitchComputer.ID, Component.translatable("alert.flightassistant.autoflight.pitch_fault")))
+                .add(ComputerFaultAlert(computers, HeadingComputer.ID, Component.translatable("alert.flightassistant.autoflight.heading_fault")))
+                .add(ComputerFaultAlert(computers, RollComputer.ID, Component.translatable("alert.flightassistant.autoflight.roll_fault")))
+                .add(AutopilotOffAlert(computers))
+                .add(AutoThrustOffAlert(computers))
         )
         register(
-            AlertCategory(Text.translatable("alerts.flightassistant.elytra"))
-                .add(ComputerFaultAlert(ElytraStatusComputer.ID, Text.translatable("alerts.flightassistant.elytra.fault")))
-                .add(ElytraDurabilityLowAlert())
-                .add(ElytraDurabilityCriticalAlert())
+            AlertCategory(Component.translatable("alert.flightassistant.elytra"))
+                .add(ComputerFaultAlert(computers, ElytraStatusComputer.ID, Component.translatable("alert.flightassistant.elytra.fault")))
+                .add(ElytraDurabilityCriticalAlert(computers))
+                .add(ElytraDurabilityLowAlert(computers))
         )
         register(
-            AlertCategory(Text.translatable("alerts.flightassistant.hud"))
-                .addAll(HudDisplayHost.identifiers().map { DisplayFaultAlert(it) })
+            AlertCategory(Component.translatable("alert.flightassistant.fault.hud"))
+                .add(ComputerFaultAlert(computers, HudDisplayDataComputer.ID, Component.translatable("alert.flightassistant.fault.hud.data")))
+                .addAll(HudDisplayHost.identifiers().map { DisplayFaultAlert(computers, it) })
         )
         register(
-            AlertCategory(Text.translatable("alerts.flightassistant.firework"))
-                .add(ComputerFaultAlert(FireworkComputer.ID, Text.translatable("alerts.flightassistant.firework.fault")))
-                .add(FireworkExplosiveAlert(Hand.MAIN_HAND))
-                .add(FireworkExplosiveAlert(Hand.OFF_HAND))
-                .add(FireworkSlowResponseAlert())
-                .add(FireworkNoResponseAlert())
+            AlertCategory(Component.translatable("alert.flightassistant.firework"))
+                .add(ComputerFaultAlert(computers, FireworkComputer.ID, Component.translatable("alert.flightassistant.firework.fault")))
+                .add(FireworkExplosiveAlert(computers, InteractionHand.MAIN_HAND))
+                .add(FireworkExplosiveAlert(computers, InteractionHand.OFF_HAND))
+                .add(FireworkNoResponseAlert(computers))
+                .add(FireworkSlowResponseAlert(computers))
         )
         register(
-            AlertCategory(Text.translatable("alerts.flightassistant.flight_controls"))
-                .add(ComputerFaultAlert(PitchComputer.ID, Text.translatable("alerts.flightassistant.flight_controls.pitch_fault"), listOf(
-                    Text.translatable("alerts.flightassistant.flight_controls.pitch_fault.use_manual_pitch"),
+            AlertCategory(Component.translatable("alert.flightassistant.flight_controls"))
+                .add(
+                    ComputerFaultAlert(
+                        computers, PitchComputer.ID, Component.translatable("alert.flightassistant.flight_controls.pitch_fault"), listOf(
+                            Component.translatable("alert.flightassistant.flight_controls.pitch_fault.use_manual_pitch"),
                 )))
-                .add(ProtectionsLostAlert())
+                .add(ProtectionsLostAlert(computers))
         )
         register(
-            AlertCategory(Text.translatable("alerts.flightassistant.gpws"))
-                .add(ComputerFaultAlert(GroundProximityComputer.ID, Text.translatable("alerts.flightassistant.gpws.fault")))
-                .add(PullUpAlert())
-                .add(SinkRateAlert())
-                .add(TerrainAheadAlert())
+            AlertCategory(Component.translatable("alert.flightassistant.flight_plan"))
+                .add(ComputerFaultAlert(computers, FlightPlanComputer.ID, Component.translatable("alerts.flightassistant.flight_plan.fault")))
+                .add(DepartureElevationDisagreeAlert(computers))
         )
         register(
-            AlertCategory(Text.translatable("alerts.flightassistant.navigation"))
-                .add(ComputerFaultAlert(AirDataComputer.ID, Text.translatable("alerts.flightassistant.navigation.air_data_fault"), data = AlertData.MASTER_WARNING))
-                .add(ComputerFaultAlert(ChunkStatusComputer.ID, Text.translatable("alerts.flightassistant.navigation.chunk_status_fault")))
-                .add(ComputerFaultAlert(VoidProximityComputer.ID, Text.translatable("alerts.flightassistant.navigation.void_proximity_fault")))
-                .add(SlowChunkLoadingAlert())
-                .add(NoChunksLoadedAlert())
-                .add(ApproachingVoidDamageAltitudeAlert())
-                .add(ReachedVoidDamageAltitudeAlert())
+            AlertCategory(Component.translatable("alert.flightassistant.gpws"))
+                .add(ComputerFaultAlert(computers, GroundProximityComputer.ID, Component.translatable("alert.flightassistant.gpws.fault")))
+                .add(PullUpAlert(computers))
+                .add(SinkRateAlert(computers))
+                .add(TerrainAheadAlert(computers))
+                .add(DontSinkAlert(computers))
         )
         register(
-            AlertCategory(Text.translatable("alerts.flightassistant.stall"))
-                .add(ComputerFaultAlert(StallComputer.ID, Text.translatable("alerts.flightassistant.stall.detection_fault")))
-                .add(ApproachingStallAlert())
-                .add(FullStallAlert())
+            AlertCategory(Component.translatable("alert.flightassistant.navigation"))
+                .add(ComputerFaultAlert(computers, AirDataComputer.ID, Component.translatable("alert.flightassistant.navigation.air_data_fault"), data = AlertData.MASTER_WARNING))
+                .add(ComputerFaultAlert(computers, ChunkStatusComputer.ID, Component.translatable("alert.flightassistant.navigation.chunk_status_fault")))
+                .add(ComputerFaultAlert(computers, VoidProximityComputer.ID, Component.translatable("alert.flightassistant.navigation.void_proximity_fault")))
+                .add(ReachedVoidDamageAltitudeAlert(computers))
+                .add(ApproachingVoidDamageAltitudeAlert(computers))
+                .add(NoChunksLoadedAlert(computers))
+                .add(SlowChunkLoadingAlert(computers))
         )
         register(
-            AlertCategory(Text.translatable("alerts.flightassistant.thrust"))
-                .add(ComputerFaultAlert(ThrustComputer.ID, Text.translatable("alerts.flightassistant.thrust.fault")))
-                .add(ThrustLockedAlert())
-                .add(NoThrustSourceAlert())
-                .add(ReverseThrustNotSupportedAlert())
+            AlertCategory(Component.translatable("alert.flightassistant.stall"))
+                .add(ComputerFaultAlert(computers, StallComputer.ID, Component.translatable("alert.flightassistant.stall.detection_fault")))
+                .add(FullStallAlert(computers))
+                .add(ApproachingStallAlert(computers))
+        )
+        register(
+            AlertCategory(Component.translatable("alert.flightassistant.thrust"))
+                .add(ComputerFaultAlert(computers, ThrustComputer.ID, Component.translatable("alert.flightassistant.thrust.fault")))
+                .add(ThrustLockedAlert(computers))
+                .add(NoThrustSourceAlert(computers))
+                .add(ReverseThrustNotSupportedAlert(computers))
         )
     }
 
     fun register(category: AlertCategory) {
         if (categories.contains(category)) {
-            throw IllegalArgumentException("Already registered alert category: ${category.javaClass.name}")
+            throw IllegalArgumentException("Already registered alert category: ${category.categoryText.string}")
         }
 
         categories.add(category)
@@ -128,7 +158,9 @@ class AlertComputer(private val soundManager: SoundManager) : Computer() {
             if (category.activeAlerts.isEmpty()) {
                 continue
             }
-            category.ignoredAlerts.add(category.activeAlerts.removeAt(0))
+            val alert: Alert = category.activeAlerts.removeAt(0)
+            category.ignoredAlerts.add(alert)
+            alert.onHide()
             break
         }
     }
@@ -143,56 +175,75 @@ class AlertComputer(private val soundManager: SoundManager) : Computer() {
         }
     }
 
-    override fun tick(computers: ComputerAccess) {
-        updateAlerts(computers)
-        if (computers.data.player.isDead || !computers.data.flying) {
-            stopInactiveAlerts(true)
+    override fun tick() {
+        updateAlerts()
+        if (computers.data.player.isDeadOrDying || !computers.data.flying) {
+            tickSoundsAndStopInactive(true)
             return
         }
-        stopInactiveAlerts()
-        startNewSounds(computers)
+        tickSoundsAndStopInactive()
+        startNewSounds()
         stopOutPrioritizedAlerts()
     }
 
-    private fun updateAlerts(computers: ComputerAccess) {
+    private fun updateAlerts() {
         for (category: AlertCategory in categories) {
             category.updateActiveAlerts(computers)
         }
 
         categories.sortBy { it.getHighestPriority() ?: Int.MAX_VALUE }
+
+        alertLists.values.forEach(ChangeTrackingArrayList<*>::startTracking)
+
+        for (alert: Alert in categories.flatMap { it.activeAlerts } ) {
+            alertLists.computeIfAbsent(alert.data) { return@computeIfAbsent ChangeTrackingArrayList() }.add(alert)
+        }
     }
 
-    private fun stopInactiveAlerts(force: Boolean = false) {
+    private fun tickSoundsAndStopInactive(force: Boolean = false) {
         val iterator = sounds.entries.iterator()
         while (iterator.hasNext()) {
             val entry = iterator.next()
-            if (!force && categories.any { category -> category.activeAlerts.any { it.data == entry.key } }) {
-                continue
+            repeat(FATickCounter.ticksPassed) {
+                entry.value.tick()
+                soundManager.applyVolume(entry.value)
             }
 
-            entry.value.setRepeat(false, soundManager)
-            if (entry.value.fadeOut(FATickCounter.ticksPassed)) {
-                iterator.remove()
+            if (force || alertLists[entry.key]?.isEmpty() != false) {
+                entry.value.setLooping(false, soundManager)
+                if (entry.value.fadeOut(FATickCounter.ticksPassed)) {
+                    iterator.remove()
+                }
+                soundManager.applyVolume(entry.value)
             }
         }
     }
 
-    private fun startNewSounds(computers: ComputerAccess) {
-        val activeDatas: List<AlertData> = categories.flatMap { it.activeAlerts.map { alert -> alert.data } }.sortedBy { it.priority }
-        val highestPriority: List<AlertData> = activeDatas.getHighestPriority()
+    private fun startNewSounds() {
+        val newDatas: List<AlertData> = alertLists.filterValues { list -> list.hasNewElements { it.getAlertMethod().audio() } || list.any { !sounds.containsKey(it.data) && it.getAlertMethod().audio() } }.keys.sortedBy { it.priority }
+        val newHighestPriorityDatas: List<AlertData> = newDatas.getHighestPriority()
+        val activeHighestPriority: Int = sounds.keys.minByOrNull { it.priority }?.priority ?: Int.MAX_VALUE
 
         var anyStartedThisTick = false
-        for (data: AlertData in highestPriority) {
-            if (!sounds.containsKey(data)) {
+        for (data: AlertData in newHighestPriorityDatas) {
+            if (data.priority > activeHighestPriority) {
+                break
+            }
+
+            val existing: AlertSoundInstance? = sounds[data]
+            if (existing == null || (!existing.isLooping && existing.age > 60)) {
+                if (existing != null) {
+                    soundManager.stop(existing)
+                }
+
                 val instance = AlertSoundInstance(computers.data.player, data)
                 sounds[data] = instance
                 if (!anyStartedThisTick) {
                     soundManager.play(instance)
-                } else if (instance.isRepeatable) {
+                } else if (instance.isLooping) {
+                    instance.silence()
                     soundManager.play(instance)
-                    if (instance.isRepeatable) {
-                        soundManager.pause(instance)
-                    }
+                    soundManager.pause(instance)
                 }
 
                 anyStartedThisTick = true
@@ -205,13 +256,13 @@ class AlertComputer(private val soundManager: SoundManager) : Computer() {
         for (entry in sounds.entries.sortedBy { it.key.priority }) {
             if (!interrupt) {
                 interrupt = true
-                if (entry.value.isRepeatable) {
-                    soundManager.resume(entry.value)
+                if (entry.value.isLooping) {
+                    soundManager.unpause(entry.value)
                 }
                 continue
             }
 
-            if (entry.value.isRepeatable) {
+            if (entry.value.isLooping) {
                 soundManager.pause(entry.value)
             } else {
                 entry.value.fadeOut(FATickCounter.ticksPassed)
@@ -227,6 +278,6 @@ class AlertComputer(private val soundManager: SoundManager) : Computer() {
     }
 
     companion object {
-        val ID: Identifier = FlightAssistant.id("alert")
+        val ID: ResourceLocation = FlightAssistant.id("alert")
     }
 }

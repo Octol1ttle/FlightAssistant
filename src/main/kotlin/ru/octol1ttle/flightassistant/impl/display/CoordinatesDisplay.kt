@@ -1,25 +1,39 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.util.Identifier
+import kotlin.math.roundToInt
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
-import ru.octol1ttle.flightassistant.api.computer.ComputerAccess
-import ru.octol1ttle.flightassistant.api.display.*
-import ru.octol1ttle.flightassistant.api.util.*
+import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.display.Display
+import ru.octol1ttle.flightassistant.api.display.HudFrame
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.builtin.DirectCoordinatesLateralMode
 
-class CoordinatesDisplay : Display() {
+class CoordinatesDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
         return FAConfig.display.showCoordinates
     }
 
-    override fun render(drawContext: DrawContext, computers: ComputerAccess) {
-        with(drawContext) {
-            val x: Int = HudFrame.left + 10
+    override fun render(guiGraphics: GuiGraphics) {
+        with(guiGraphics) {
+            val x: Int = HudFrame.left + 5
             val y: Int = HudFrame.bottom - 19
 
-            drawText("X: ${computers.data.position.x.toInt()}${getDirectionSignX(computers.data.heading)}", x, y, primaryColor)
-            drawText("Z: ${computers.data.position.z.toInt()}${getDirectionSignZ(computers.data.heading)}", x, y + fontHeight, primaryColor)
+            val xText = "X: ${computers.hudData.lerpedPosition.x.roundToInt()}${getDirectionSignX(computers.data.heading)}"
+            val zText = "Z: ${computers.hudData.lerpedPosition.z.roundToInt()}${getDirectionSignZ(computers.data.heading)}"
+            drawString(xText, x, y, primaryColor)
+            drawString(zText, x, y + lineHeight, primaryColor)
+
+            val color: Int
+            val active: AutoFlightComputer.LateralMode? = computers.autoflight.activeLateralMode
+            if (FAConfig.display.showAutomationModes && computers.autoflight.getHeadingInput() != null && active is DirectCoordinatesLateralMode) {
+                color = if (active == computers.autoflight.selectedLateralMode) primaryAdvisoryColor else secondaryAdvisoryColor
+                drawString(active.targetX.toString(), x + textWidth(xText) + 3, y, color)
+                drawString(active.targetX.toString(), x + textWidth(zText) + 3, y + lineHeight, color)
+            }
         }
     }
 
@@ -47,17 +61,17 @@ class CoordinatesDisplay : Display() {
         return ""
     }
 
-    override fun renderFaulted(drawContext: DrawContext) {
-        with(drawContext) {
+    override fun renderFaulted(guiGraphics: GuiGraphics) {
+        with(guiGraphics) {
             val x: Int = HudFrame.left + 10
             val y: Int = HudFrame.bottom - 19
 
-            drawText("X", x, y, warningColor)
-            drawText("Z", x, y + fontHeight, warningColor)
+            drawString("X", x, y, warningColor)
+            drawString("Z", x, y + lineHeight, warningColor)
         }
     }
 
     companion object {
-        val ID: Identifier = FlightAssistant.id("coordinates")
+        val ID: ResourceLocation = FlightAssistant.id("coordinates")
     }
 }

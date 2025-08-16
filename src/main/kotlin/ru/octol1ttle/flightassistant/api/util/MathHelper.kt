@@ -1,17 +1,22 @@
 package ru.octol1ttle.flightassistant.api.util
 
-import kotlin.math.*
+import kotlin.math.PI
+import kotlin.math.min
 
 fun degrees(value: Float): Float {
-    return (value * (180 / PI)).toFloat()
+    return (value * (180.0f / PI)).toFloat()
 }
 
-fun furtherFromZero(value: Float): Float {
-    return if (value < 0.0f) {
-        floor(value)
-    } else {
-        ceil(value)
-    }
+fun degrees(value: Double): Double {
+    return (value * (180.0 / PI))
+}
+
+fun radians(value: Float): Float {
+    return (value * (PI / 180.0)).toFloat()
+}
+
+fun radians(value: Double): Double {
+    return (value * (PI / 180.0))
 }
 
 fun Float.requireFinite(): Float {
@@ -48,4 +53,31 @@ fun Double.requireIn(range: ClosedRange<Double>): Double {
     }
 
     return this
+}
+
+fun findShortestPath(from: Float, to: Float, valueRange: Float): Float {
+    var diff: Float = (to - from) % valueRange
+
+    if (diff >= valueRange * 0.5) {
+        diff -= valueRange
+    }
+    if (diff < -valueRange * 0.5) {
+        diff += valueRange
+    }
+
+    return diff
+}
+
+fun inverseMin(a: Float, b: Float): Float? {
+    if (a == 0.0f && b == 0.0f) {
+        return null
+    }
+    if (a == 0.0f) {
+        return 1.0f / b
+    }
+    if (b == 0.0f) {
+        return 1.0f / a
+    }
+
+    return 1.0f / min(a, b)
 }

@@ -1,13 +1,14 @@
 package ru.octol1ttle.flightassistant.api.alert
 
-import net.minecraft.client.gui.DrawContext
-import ru.octol1ttle.flightassistant.api.computer.ComputerAccess
+import net.minecraft.client.gui.GuiGraphics
 
 interface ECAMAlert {
     /**
      * Renders the text of this alert
      *
+     * @param firstLineX The X coordinate value that should be used only for the first line.
+     * @param otherLinesX The X coordinate value that should be used for the second line and onwards.
      * @return the amount of lines rendered
      */
-    fun render(drawContext: DrawContext, computers: ComputerAccess, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int
+    fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int
 }

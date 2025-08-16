@@ -1,45 +1,48 @@
 package ru.octol1ttle.flightassistant.impl.alert.fault.computer
 
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.api.alert.Alert
 import ru.octol1ttle.flightassistant.api.alert.AlertData
 import ru.octol1ttle.flightassistant.api.alert.ECAMAlert
-import ru.octol1ttle.flightassistant.api.computer.ComputerAccess
-import ru.octol1ttle.flightassistant.api.util.advisoryColor
-import ru.octol1ttle.flightassistant.api.util.drawText
+import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.util.extensions.drawString
+import ru.octol1ttle.flightassistant.api.util.extensions.primaryAdvisoryColor
 import ru.octol1ttle.flightassistant.impl.computer.ComputerHost
 
-class ComputerFaultAlert(private val identifier: Identifier, private val alertText: Text, private val extraTexts: Collection<Text>? = null, override val data: AlertData = AlertData.MASTER_CAUTION) : Alert(), ECAMAlert {
-    override val priorityOffset: Int = 20
+class ComputerFaultAlert(
+    computers: ComputerBus,
+                         private val identifier: ResourceLocation,
+                         private val alertText: Component,
+                         private val extraTexts: Collection<Component>? = null,
+                         override val data: AlertData = AlertData.MASTER_CAUTION
+): Alert(computers), ECAMAlert {
+    override val priorityOffset: Int = 25
 
-    override fun shouldActivate(computers: ComputerAccess): Boolean {
+    override fun shouldActivate(): Boolean {
         return ComputerHost.isFaulted(identifier)
     }
 
-    override fun render(drawContext: DrawContext, computers: ComputerAccess, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         val color: Int = data.colorSupplier.invoke()
         var i = 0
-        i += drawContext.drawText(alertText, firstLineX, firstLineY, color)
+        i += guiGraphics.drawString(alertText, firstLineX, firstLineY, color)
         var y: Int = firstLineY + 11
 
         if (extraTexts != null) {
             for (text in extraTexts) {
-                i += drawContext.drawText(text, otherLinesX, y, advisoryColor)
+                i += guiGraphics.drawString(text, otherLinesX, y, primaryAdvisoryColor)
                 y += 10
             }
         }
 
-        i += drawResetText(drawContext, otherLinesX, y)
+        i +=
+            if (ComputerHost.getFaultCount(identifier) == 1) {
+                guiGraphics.drawString(Component.translatable("alert.flightassistant.fault.computer.reset"), otherLinesX, y, primaryAdvisoryColor)
+            } else {
+                0
+            }
         return i
-    }
-
-    private fun drawResetText(drawContext: DrawContext, x: Int, y: Int): Int {
-        return if (ComputerHost.getFaultCount(identifier) == 1) {
-            drawContext.drawText(Text.translatable("alerts.flightassistant.fault.computer.reset"), x, y, advisoryColor)
-        } else {
-            0
-        }
     }
 }

@@ -1,70 +1,75 @@
 package ru.octol1ttle.flightassistant.impl.display
 
 import kotlin.math.roundToInt
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
-import ru.octol1ttle.flightassistant.api.computer.ComputerAccess
-import ru.octol1ttle.flightassistant.api.display.*
-import ru.octol1ttle.flightassistant.api.util.*
+import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.display.Display
+import ru.octol1ttle.flightassistant.api.display.HudFrame
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.builtin.SpeedReferenceVerticalMode
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.builtin.SpeedThrustMode
 
-class SpeedDisplay : Display() {
+class SpeedDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
         return FAConfig.display.showSpeedReading || FAConfig.display.showSpeedScale
     }
 
-    override fun render(drawContext: DrawContext, computers: ComputerAccess) {
-        with(drawContext) {
-            val trueX: Int = HudFrame.left
-            val trueY: Int = centerYI
+    override fun render(guiGraphics: GuiGraphics) {
+        with(guiGraphics) {
             if (FAConfig.display.showSpeedReading) {
-                renderSpeedReading(trueX, trueY, computers)
+                renderSpeedReading(HudFrame.leftF, centerYF)
             }
             if (FAConfig.display.showSpeedScale) {
-                renderSpeedScale(trueX, trueY, computers)
+                renderSpeedScale(HudFrame.left, centerY)
+            }
+            if (FAConfig.display.showAutomationModes) {
+                renderSpeedTarget(HudFrame.left, HudFrame.top - 9)
             }
         }
     }
 
-    private fun DrawContext.renderSpeedReading(trueX: Int, trueY: Int, computers: ComputerAccess) {
-        matrices.push()
-        val (x: Int, y: Int) = scaleMatrix(READING_MATRIX_SCALE, trueX, trueY)
+    private fun GuiGraphics.renderSpeedReading(x: Float, y: Float) {
+        pose().push()
+        fusedTranslateScale(x * 1.005f, y, READING_MATRIX_SCALE)
 
-        val speed: Double = computers.data.forwardVelocity.length() * 20
+        val speed: Double = computers.hudData.lerpedForwardVelocity.length() * 20
         val color: Int =
             if (speed <= 0.0) warningColor
             else primaryColor
 
         val text: String = speed.roundToInt().toString()
-        val width: Int = getTextWidth(text) + 4
+        val width: Int = textWidth(text) + 5
         val halfHeight = 6
-        val textY: Int = y - 4
+        val textY: Int = -4
 
-        drawBorder(x - width, y - halfHeight, width + 1, halfHeight * 2 - 1, color)
-        drawRightAlignedText(text, x - 1, textY, color)
+        renderOutline(-width, -halfHeight, width, halfHeight * 2 - 1, color)
+        drawRightAlignedString(text, -2, textY, color)
 
-        matrices.pop()
+        pose().pop()
     }
 
-    private fun DrawContext.renderSpeedScale(x: Int, y: Int, computers: ComputerAccess) {
-        val speed: Double = computers.data.forwardVelocity.length() * 20
+    private fun GuiGraphics.renderSpeedScale(x: Int, y: Int) {
+        val speed: Double = computers.hudData.lerpedForwardVelocity.length() * 20
         val color: Int =
             if (speed <= 0.0) warningColor
             else primaryColor
 
         val minY: Int = HudFrame.top
-        val maxY: Int = (y + fontHeight * (speed + 1)).toInt().coerceIn(minY - 1..HudFrame.bottom)
+        val maxY: Int = (y + lineHeight * (speed + 1)).toInt().coerceIn(minY - 1..HudFrame.bottom)
 
-        drawVerticalLine(x, minY, maxY, color)
+        vLine(x, minY, maxY, color)
 
-        enableScissor(0, minY, scaledWindowWidth, maxY + 1)
+        enableScissor(0, minY, guiWidth(), maxY + 1)
 
-        enableScissor(0, minY, scaledWindowWidth, (if (FAConfig.display.showSpeedReading) y - 6 * READING_MATRIX_SCALE else maxY).toInt() + 1)
-        drawHorizontalLine(x - 20, x, y, color)
-        drawHorizontalLine(x - 35, x, minY, color)
-        for (i: Int in speed.toInt()..speed.toInt() + 100) {
+        enableScissor(0, minY, guiWidth(), (if (FAConfig.display.showSpeedReading) y - 6 * READING_MATRIX_SCALE else maxY).toInt() + 1)
+        hLine(x - 30, x, y, color)
+        hLine(x - 35, x, minY, color)
+        for (i: Int in speed.roundToInt()..speed.roundToInt() + 100) {
             if (!drawSpeedLine(x, y, i, speed, color)) {
                 break
             }
@@ -74,10 +79,10 @@ class SpeedDisplay : Display() {
         enableScissor(
             0,
             (if (FAConfig.display.showSpeedReading) y + 5 * READING_MATRIX_SCALE else minY).toInt(),
-            scaledWindowWidth,
+            guiWidth(),
             maxY + 1
         )
-        drawHorizontalLine(x - 35, x, maxY, color)
+        hLine(x - 35, x, maxY, color)
         for (i: Int in speed.roundToInt() downTo 0) {
             if (!drawSpeedLine(x, y, i, speed, color)) {
                 break
@@ -88,30 +93,46 @@ class SpeedDisplay : Display() {
         disableScissor()
     }
 
-    private fun DrawContext.drawSpeedLine(x: Int, y: Int, speed: Int, currentSpeed: Double, color: Int): Boolean {
-        val textY: Int = (y + fontHeight * (currentSpeed - speed)).toInt()
+    private fun GuiGraphics.drawSpeedLine(x: Int, y: Int, speed: Int, currentSpeed: Double, color: Int): Boolean {
+        val textY: Int = (y + lineHeight * (currentSpeed - speed)).toInt()
         if (textY < HudFrame.top - 100 || textY > HudFrame.bottom + 100) {
             return false
         }
-        drawHorizontalLine(x - 5, x, textY, color)
+        hLine(x - 5, x, textY, color)
         if (speed % 5 == 0) {
-            drawRightAlignedText(speed.toString(), x - 6, textY - 3, color)
+            drawRightAlignedString(speed.toString(), x - 6, textY - 3, color)
         }
 
         return true
     }
 
-    override fun renderFaulted(drawContext: DrawContext) {
-        with(drawContext) {
-            drawRightAlignedText(
-                Text.translatable("short.flightassistant.speed"),
-                HudFrame.left, centerYI - 5, warningColor
+    private fun GuiGraphics.renderSpeedTarget(x: Int, y: Int) {
+        val color: Int
+        val active: AutoFlightComputer.ThrustMode? = computers.autoflight.activeThrustMode
+        if (computers.autoflight.getThrustInput() != null && active is SpeedThrustMode) {
+            color = if (active == computers.autoflight.selectedThrustMode) primaryAdvisoryColor else secondaryAdvisoryColor
+            drawRightAlignedString(active.target.toString(), x, y, color)
+        } else {
+            val active: AutoFlightComputer.VerticalMode? = computers.autoflight.activeVerticalMode
+            if (computers.autoflight.getPitchInput() != null && active is SpeedReferenceVerticalMode) {
+                color = if (active == computers.autoflight.selectedVerticalMode) primaryAdvisoryColor else secondaryAdvisoryColor
+                drawRightAlignedString(active.targetSpeed.toString(), x, y, color)
+            }
+        }
+    }
+
+    override fun renderFaulted(guiGraphics: GuiGraphics) {
+        with(guiGraphics) {
+            drawRightAlignedString(
+                Component.translatable("short.flightassistant.speed"),
+                HudFrame.left, centerY - 5, warningColor
             )
         }
     }
 
     companion object {
+        @Deprecated("Increase GUI scale by 1 instead")
         private const val READING_MATRIX_SCALE: Float = 1.5f
-        val ID: Identifier = FlightAssistant.id("speed")
+        val ID: ResourceLocation = FlightAssistant.id("speed")
     }
 }

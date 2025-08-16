@@ -1,14 +1,16 @@
 package ru.octol1ttle.flightassistant.api.alert
 
-import net.minecraft.text.Text
+import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.FlightAssistant
-import ru.octol1ttle.flightassistant.api.computer.ComputerAccess
-import ru.octol1ttle.flightassistant.api.util.alert
+import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 
-class AlertCategory(val categoryText: Text) {
-    private val registeredAlerts: ArrayList<Alert> = ArrayList()
-    val activeAlerts: ArrayList<Alert> = ArrayList()
-    val ignoredAlerts: ArrayList<Alert> = ArrayList()
+/**
+ * A class that represents a category of alerts.
+ */
+class AlertCategory(val categoryText: Component) {
+    private val registeredAlerts: MutableList<Alert> = ArrayList()
+    val activeAlerts: MutableList<Alert> = ArrayList()
+    val ignoredAlerts: MutableList<Alert> = ArrayList()
 
     fun add(alert: Alert): AlertCategory {
         if (registeredAlerts.contains(alert)) {
@@ -26,10 +28,10 @@ class AlertCategory(val categoryText: Text) {
         return this
     }
 
-    fun updateActiveAlerts(computers: ComputerAccess) {
+    fun updateActiveAlerts(computers: ComputerBus) {
         for (alert: Alert in registeredAlerts) {
             try {
-                if (alert.shouldActivate(computers)) {
+                if (alert.shouldActivate()) {
                     if (!activeAlerts.contains(alert) && !ignoredAlerts.contains(alert)) {
                         activeAlerts.add(alert)
                     }
@@ -39,7 +41,7 @@ class AlertCategory(val categoryText: Text) {
                 }
             } catch (t: Throwable) {
                 computers.alert.alertsFaulted = true
-                FlightAssistant.logger.atError().setCause(t).log("Exception ticking alert of type: {}", alert.javaClass.name)
+                FlightAssistant.logger.error("Exception ticking alert of type: ${alert.javaClass.name}", t)
             }
         }
 
@@ -50,7 +52,7 @@ class AlertCategory(val categoryText: Text) {
         return if (activeAlerts.isEmpty()) null else activeAlerts[0].priority
     }
 
-    fun getFirstData(): AlertData? {
-        return if (activeAlerts.isEmpty()) null else activeAlerts[0].data
+    fun getFirstData(filter: ((Alert) -> Boolean)? = null): AlertData? {
+        return if (filter != null) activeAlerts.firstOrNull(filter)?.data else activeAlerts.firstOrNull()?.data
     }
 }

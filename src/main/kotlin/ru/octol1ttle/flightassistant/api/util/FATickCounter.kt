@@ -1,10 +1,13 @@
 package ru.octol1ttle.flightassistant.api.util
 
-import net.minecraft.client.network.ClientPlayerEntity
-import net.minecraft.util.Util
+import kotlin.random.Random
+import kotlin.random.nextInt
+import net.minecraft.Util
+import net.minecraft.client.player.LocalPlayer
 
 object FATickCounter {
-    private var lastPlayerAge: Int = 0
+    val worldLoadWaitTime = Random.Default.nextInt(10..60) // TODO: wait for chunk loading instead
+    private var lastPlayerTickCount: Int = 0
     private var lastMillis: Long = 0
 
     var totalTicks: Int = 0
@@ -15,22 +18,22 @@ object FATickCounter {
         private set
     var timePassed: Float = 0.0f
         private set
-    var tickDelta: Float = 0.0f
+    var partialTick: Float = 0.0f
         private set
 
-    fun tick(player: ClientPlayerEntity, tickDelta: Float, paused: Boolean) {
+    fun tick(player: LocalPlayer, partialTick: Float, paused: Boolean) {
         if (!paused) {
-            if (player.age < lastPlayerAge) {
-                ticksSinceWorldLoad = 0
+            if (player.tickCount < lastPlayerTickCount) {
+                ticksSinceWorldLoad = player.tickCount
             }
-            ticksPassed = if (player.age > lastPlayerAge) player.age - lastPlayerAge else 0
-            lastPlayerAge = player.age
+            ticksPassed = if (player.tickCount >= lastPlayerTickCount) player.tickCount - lastPlayerTickCount else player.tickCount
+            lastPlayerTickCount = player.tickCount
             totalTicks += ticksPassed
             ticksSinceWorldLoad += ticksPassed
-            this.tickDelta = tickDelta
+            this.partialTick = partialTick
         }
 
-        val millis: Long = Util.getMeasuringTimeMs()
+        val millis: Long = Util.getMillis()
         timePassed = (millis - lastMillis) / 1000.0f
         lastMillis = millis
     }

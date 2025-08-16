@@ -1,25 +1,26 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
-import ru.octol1ttle.flightassistant.api.computer.ComputerAccess
-import ru.octol1ttle.flightassistant.api.display.*
-import ru.octol1ttle.flightassistant.api.util.*
+import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.display.Display
+import ru.octol1ttle.flightassistant.api.display.HudFrame
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
 
-class ElytraDurabilityDisplay : Display() {
+class ElytraDurabilityDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
         return FAConfig.display.showElytraDurability
     }
 
-    override fun render(drawContext: DrawContext, computers: ComputerAccess) {
-        with(drawContext) {
-            val x: Int = centerXI
+    override fun render(guiGraphics: GuiGraphics) {
+        with(guiGraphics) {
+            val x: Int = (HudFrame.left + (HudFrame.width - HudFrame.height) * 0.25f).toInt()
             val y: Int = HudFrame.bottom + 1
 
-            val text: Text =
+            val text: Component =
                 computers.elytra.formatDurability(FAConfig.display.elytraDurabilityUnits, computers.data.player)
                     ?: return
 
@@ -30,19 +31,21 @@ class ElytraDurabilityDisplay : Display() {
                 else -> primaryColor
             }
 
-            drawRightAlignedText(Text.translatable("short.flightassistant.elytra"), x - 15, y + 2, color)
-            drawBorder(x - 14, y, 29, 11, color)
-            drawMiddleAlignedText(text, x, y + 2, color)
+            drawRightAlignedString(Component.translatable("short.flightassistant.elytra"), x - 15, y + 2, color)
+            renderOutline(x - 14, y, 29, 11, color)
+            drawMiddleAlignedString(text, x, y + 2, color)
         }
     }
 
-    override fun renderFaulted(drawContext: DrawContext) {
-        with(drawContext) {
-            drawMiddleAlignedText(Text.translatable("short.flightassistant.elytra_durability"), centerXI, HudFrame.bottom + 1, warningColor)
+    override fun renderFaulted(guiGraphics: GuiGraphics) {
+        with(guiGraphics) {
+            val x: Int = (HudFrame.left + (HudFrame.width - HudFrame.height) * 0.25f).toInt()
+            val y: Int = HudFrame.bottom + 1
+            drawMiddleAlignedString(Component.translatable("short.flightassistant.elytra_durability"), x, y, warningColor)
         }
     }
 
     companion object {
-        val ID: Identifier = FlightAssistant.id("elytra_durability")
+        val ID: ResourceLocation = FlightAssistant.id("elytra_durability")
     }
 }

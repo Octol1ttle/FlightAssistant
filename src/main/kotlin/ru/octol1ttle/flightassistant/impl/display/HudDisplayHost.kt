@@ -1,75 +1,92 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.util.Identifier
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
-import ru.octol1ttle.flightassistant.api.SystemHost
+import ru.octol1ttle.flightassistant.api.ModuleController
+import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.display.Display
+import ru.octol1ttle.flightassistant.api.display.HudDisplayRegistrationCallback
 import ru.octol1ttle.flightassistant.api.display.HudFrame
-import ru.octol1ttle.flightassistant.api.event.HudDisplayRegistrationCallback
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.RenderMatrices
-import ru.octol1ttle.flightassistant.api.util.updateViewport
+import ru.octol1ttle.flightassistant.api.util.ScreenSpace
+import ru.octol1ttle.flightassistant.api.util.extensions.centerX
+import ru.octol1ttle.flightassistant.api.util.extensions.centerY
+import ru.octol1ttle.flightassistant.api.util.extensions.drawMiddleAlignedString
+import ru.octol1ttle.flightassistant.api.util.extensions.primaryColor
 import ru.octol1ttle.flightassistant.config.FAConfig
-import ru.octol1ttle.flightassistant.impl.computer.ComputerHost
-import ru.octol1ttle.flightassistant.impl.computer.ComputerHost.get
 
-internal object HudDisplayHost: SystemHost {
-    private val displays: MutableMap<Identifier, Display> = HashMap()
+internal object HudDisplayHost: ModuleController<Display> {
+    private val displays: MutableMap<ResourceLocation, Display> = HashMap()
 
-    override fun isEnabled(identifier: Identifier): Boolean {
-        return displays[identifier]?.enabled ?: throw IllegalArgumentException("No display was found with identifier: $identifier")
+    override val modulesResettable: Boolean = false
+
+    override fun get(identifier: ResourceLocation): Display {
+        return displays[identifier] ?: throw IllegalArgumentException("No display was found with identifier: $identifier")
     }
 
-    override fun isFaulted(identifier: Identifier): Boolean {
-        return displays[identifier]?.faulted ?: throw IllegalArgumentException("No display was found with identifier: $identifier")
+    override fun isEnabled(identifier: ResourceLocation): Boolean {
+        return get(identifier).enabled
     }
 
-    override fun toggleEnabled(identifier: Identifier): Boolean {
-        val display: Display = displays[identifier] ?: throw IllegalArgumentException("No display was found with identifier: $identifier")
-        display.enabled = !display.enabled
-        return display.enabled
+    override fun isFaulted(identifier: ResourceLocation): Boolean {
+        return get(identifier).faulted
     }
 
-    fun countFaults(identifier: Identifier): Int {
+    override fun setEnabled(identifier: ResourceLocation, enabled: Boolean): Boolean {
+        val display: Display = get(identifier)
+
+        val oldEnabled: Boolean = display.enabled
+        display.enabled = enabled
+        return oldEnabled
+    }
+
+    fun countFaults(identifier: ResourceLocation): Int {
         return get(identifier).faultCount
     }
 
-    override fun identifiers(): Set<Identifier> {
+    override fun identifiers(): Set<ResourceLocation> {
         return displays.keys
     }
 
-    private fun register(identifier: Identifier, display: Display) {
+    private fun register(identifier: ResourceLocation, module: Display) {
+        if (FlightAssistant.initComplete) {
+            throw IllegalStateException("Initialization is already complete, but trying to register a display with identifier: $identifier")
+        }
         if (displays.containsKey(identifier)) {
             throw IllegalArgumentException("Already registered display with identifier: $identifier")
         }
 
-        displays[identifier] = display
+        displays[identifier] = module
     }
 
-    private fun registerBuiltin() {
-        register(AlertDisplay.ID, AlertDisplay())
-        register(AltitudeDisplay.ID, AltitudeDisplay())
-        register(AttitudeDisplay.ID, AttitudeDisplay())
-        register(AutomationModesDisplay.ID, AutomationModesDisplay())
-        register(CoordinatesDisplay.ID, CoordinatesDisplay())
-        register(ElytraDurabilityDisplay.ID, ElytraDurabilityDisplay())
-        register(FlightPathDisplay.ID, FlightPathDisplay())
-        register(HeadingDisplay.ID, HeadingDisplay())
-        register(RadarAltitudeDisplay.ID, RadarAltitudeDisplay())
-        register(SpeedDisplay.ID, SpeedDisplay())
-        register(VelocityComponentsDisplay.ID, VelocityComponentsDisplay())
+    private fun registerBuiltin(computers: ComputerBus) {
+        register(AlertDisplay.ID, AlertDisplay(computers))
+        register(AltitudeDisplay.ID, AltitudeDisplay(computers))
+        register(AttitudeDisplay.ID, AttitudeDisplay(computers))
+        register(AutomationModesDisplay.ID, AutomationModesDisplay(computers))
+        register(CoordinatesDisplay.ID, CoordinatesDisplay(computers))
+        register(ElytraDurabilityDisplay.ID, ElytraDurabilityDisplay(computers))
+        register(FlightDirectorsDisplay.ID, FlightDirectorsDisplay(computers))
+        register(FlightPathDisplay.ID, FlightPathDisplay(computers))
+        register(HeadingDisplay.ID, HeadingDisplay(computers))
+        register(RadarAltitudeDisplay.ID, RadarAltitudeDisplay(computers))
+        register(SpeedDisplay.ID, SpeedDisplay(computers))
+        register(StatusDisplay.ID, StatusDisplay(computers))
+        register(VelocityComponentsDisplay.ID, VelocityComponentsDisplay(computers))
     }
 
-    internal fun sendRegistrationEvent() {
-        registerBuiltin()
-        HudDisplayRegistrationCallback.EVENT.invoker().register(this::register)
+    internal fun sendRegistrationEvent(computers: ComputerBus) {
+        registerBuiltin(computers)
+        HudDisplayRegistrationCallback.EVENT.invoker().register(computers, this::register)
         logRegisterComplete()
     }
 
     private fun logRegisterComplete() {
         val namespaces = ArrayList<String>()
-        for (id: Identifier in displays.keys) {
+        for (id: ResourceLocation in displays.keys) {
             if (!namespaces.contains(id.namespace)) {
                 namespaces.add(id.namespace)
             }
@@ -81,34 +98,40 @@ internal object HudDisplayHost: SystemHost {
         )
     }
 
-    fun render(drawContext: DrawContext) {
+    fun render(guiGraphics: GuiGraphics) {
         if (!FAConfig.hudEnabled) {
             return
         }
 
-        HudFrame.update()
-        updateViewport()
+        HudFrame.updateDimensions()
+        ScreenSpace.updateViewport()
 
-        for ((id: Identifier, display: Display) in displays.filter { entry -> entry.value.allowedByConfig() }) {
-            if (!display.enabled || !RenderMatrices.ready || FATickCounter.ticksSinceWorldLoad < 60) {
+        for ((id: ResourceLocation, display: Display) in displays.filter { entry -> entry.value.allowedByConfig() }) {
+            if (FATickCounter.ticksSinceWorldLoad < FATickCounter.worldLoadWaitTime) {
+                with(guiGraphics) {
+                    drawMiddleAlignedString(Component.translatable("misc.flightassistant.waiting_for_world_load"), centerX, centerY - 16, primaryColor)
+                    drawMiddleAlignedString(Component.translatable("misc.flightassistant.waiting_for_world_load.maximum_time"), centerX, centerY + 8, primaryColor)
+                }
+                return
+            }
+
+            if (!display.enabled || !RenderMatrices.ready) {
                 try {
-                    display.renderFaulted(drawContext)
+                    display.renderFaulted(guiGraphics)
                 } catch (t: Throwable) {
-                    FlightAssistant.logger.atError().setCause(t)
-                        .log("Exception rendering already faulted display with identifier: {}", id)
+                    FlightAssistant.logger.error("Exception rendering disabled display with identifier: $id", t)
                 }
                 continue
             }
 
             try {
-                display.render(drawContext, ComputerHost)
+                display.render(guiGraphics)
                 display.faulted = false
             } catch (t: Throwable) {
                 display.faulted = true
                 display.faultCount++
                 display.enabled = false
-                FlightAssistant.logger.atError().setCause(t)
-                    .log("Exception rendering display with identifier: {}", id)
+                FlightAssistant.logger.error("Exception rendering display with identifier: $id", t)
             }
         }
     }

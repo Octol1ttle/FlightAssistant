@@ -1,57 +1,56 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.text.Text
-import net.minecraft.util.Identifier
-import net.minecraft.util.math.Vec3d
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
+import org.joml.Vector3f
 import ru.octol1ttle.flightassistant.FlightAssistant
-import ru.octol1ttle.flightassistant.api.computer.ComputerAccess
-import ru.octol1ttle.flightassistant.api.display.*
-import ru.octol1ttle.flightassistant.api.util.*
+import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.display.Display
+import ru.octol1ttle.flightassistant.api.util.ScreenSpace
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
 
-class FlightPathDisplay : Display() {
+class FlightPathDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
         return FAConfig.display.showFlightPathVector
     }
 
-    override fun render(drawContext: DrawContext, computers: ComputerAccess) {
-        with(drawContext) {
-            val screenSpaceVec: Vec3d = getScreenSpace(computers.data.velocity) ?: return
-            val trueX: Int = screenSpaceVec.x.toInt()
-            val trueY: Int = screenSpaceVec.y.toInt()
-            if (trueX < HudFrame.left - 100 || trueX > HudFrame.right + 100 || trueY < HudFrame.top - 100 || trueY > HudFrame.bottom + 100) {
-                return
-            }
+    override fun render(guiGraphics: GuiGraphics) {
+        with(guiGraphics) {
+            val screenSpaceVec: Vector3f = ScreenSpace.getVector3f(computers.hudData.lerpedVelocity, false) ?: return
+            val trueX: Float = screenSpaceVec.x
+            val trueY: Float = screenSpaceVec.y
 
-            matrices.push()
-            matrices.translate(0, 0, -100)
-            val (x: Int, y: Int) = scaleMatrix(FAConfig.display.flightPathVectorSize, trueX, trueY)
+            pose().push()
+//? if <1.21.6
+            pose().translate(0.0f, 0.0f, -150.0f)
+            fusedTranslateScale(trueX, trueY, FAConfig.display.flightPathVectorSize)
 
             val bodySideSize = 3
-            drawVerticalLine(x - bodySideSize, y - bodySideSize, y + bodySideSize, primaryColor)
-            drawVerticalLine(x + bodySideSize, y - bodySideSize, y + bodySideSize, primaryColor)
-            drawHorizontalLine(x - bodySideSize, x + bodySideSize, y - bodySideSize, primaryColor)
-            drawHorizontalLine(x - bodySideSize, x + bodySideSize, y + bodySideSize, primaryColor)
+            vLine(-bodySideSize, -bodySideSize, bodySideSize, primaryColor)
+            vLine(bodySideSize, -bodySideSize, bodySideSize, primaryColor)
+            hLine(-bodySideSize, bodySideSize, -bodySideSize, primaryColor)
+            hLine(-bodySideSize, bodySideSize, bodySideSize, primaryColor)
 
             val stabilizerSize = 5
-            drawVerticalLine(x, y - bodySideSize - stabilizerSize, y - bodySideSize, primaryColor)
+            vLine(0, -bodySideSize - stabilizerSize, -bodySideSize, primaryColor)
 
             val wingSize = 5
-            drawHorizontalLine(x - bodySideSize - wingSize, x - bodySideSize, y, primaryColor)
-            drawHorizontalLine(x + bodySideSize, x + bodySideSize + wingSize, y, primaryColor)
+            hLine(-bodySideSize - wingSize, -bodySideSize, 0, primaryColor)
+            hLine(bodySideSize, bodySideSize + wingSize, 0, primaryColor)
 
-            matrices.pop()
+            pose().pop()
         }
     }
 
-    override fun renderFaulted(drawContext: DrawContext) {
-        with(drawContext) {
-            drawMiddleAlignedText(Text.translatable("short.flightassistant.flight_path"), centerXI, centerYI + 16, warningColor)
+    override fun renderFaulted(guiGraphics: GuiGraphics) {
+        with(guiGraphics) {
+            drawMiddleAlignedString(Component.translatable("short.flightassistant.flight_path"), centerX, centerY + 16, warningColor)
         }
     }
 
     companion object {
-        val ID: Identifier = FlightAssistant.id("flight_path")
+        val ID: ResourceLocation = FlightAssistant.id("flight_path")
     }
 }

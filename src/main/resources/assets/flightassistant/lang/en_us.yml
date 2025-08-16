@@ -1,10 +1,17 @@
-alerts.flightassistant:
+alert.flightassistant: # TODO: get rid of alert categories, more flexible alert sorting & registration
   alert:
     .: ALERT
     fault: SYS FAULT (SOME ALERTS LOST)
   autoflight:
     .: AUTO FLT
+    fault: SYS FAULT
     pitch_fault: PITCH CTL FAULT
+    heading_fault: HDG CTL FAULT # TODO: it's a yaw controller
+    roll_fault: ROLL CTL FAULT
+    autopilot_off:
+      .: AP OFF
+      push_to_silence: ' -AP DISC KEY: PUSH TO SILENCE'
+    auto_thrust_off: A/THR OFF
   elytra:
     .: ELYTRA
     fault: STATUS FAULT
@@ -12,19 +19,22 @@ alerts.flightassistant:
     critical_durability: CRIT DURABILITY
   fault:
     computer:
-      reset: ' -SYSTEM: ON/RESET'
+      reset: ' -SYSTEM: OFF THEN ON'
     hud:
       .: HUD
-      reset: ' -DISPLAY: ON/RESET'
+      reset: ' -DISPLAY: OFF THEN ON'
+      data: DATA SYS FAULT
       flightassistant:altitude: ALT DSPL FAULT
       flightassistant:attitude: ATT DSPL FAULT
       flightassistant:automation_modes: AUTO MODE DSPL FAULT
       flightassistant:coordinates: COORD DSPL FAULT
-      flightassistant:elytra_durability: E/DURA DSPL FAULT
+      flightassistant:elytra_durability: EL/DURA DSPL FAULT
+      flightassistant:flight_directors: FLT DIR DSPL FAULT
       flightassistant:flight_path: F/PATH DSPL FAULT
       flightassistant:heading: HDG DSPL FAULT
       flightassistant:radar_altitude: R/ALT DSPL FAULT
       flightassistant:speed: SPD DSPL FAULT
+      flightassistant:status: STATUS DSPL FAULT
       flightassistant:velocity_components: G/S & V/S DSPL FAULT
   firework:
     .: FRWK
@@ -41,13 +51,20 @@ alerts.flightassistant:
       use_manual_pitch: ' -MAN PITCH OVRD: USE'
     protections_lost:
       .: PROTECT LOST
-      enable_air_data: ' -AIR DATA: ON'
-      enable_pitch: ' -PITCH SYS: ON'
+      enable_air_data: ' -AIR DATA: OFF THEN ON'
+      enable_pitch: ' -PITCH SYS: OFF THEN ON'
+      enable_prot_sys: ' -PROT SYS: OFF THEN ON'
       max_pitch: ' MAX PITCH: 55* UP'
-      max_descent_rate: ' MAX DESCENT RATE: 8 BPS'
+      min_pitch: ' MIN PITCH: 35* DOWN'
+      maneuver_with_care: ' MANEUVER WITH CARE'
+  flight_plan:
+    .: F/PLAN
+    fault: SYS FAULT
+    departure_elevation_disagree: DEPART ELEV DISAGREE
   gpws:
     .: GPWS
     fault: FAULT
+    dont_sink: DON'T SINK
     sink_rate: SINK RATE
     terrain_ahead: TERRAIN AHEAD
     pull_up: PULL UP
@@ -75,13 +92,13 @@ alerts.flightassistant:
       set_forward: ' -THR: SET FORWARD'
 
 config.flightassistant:
-  categories:
+  category:
     global: Global options
     no_elytra: Not flying (no elytra)
     has_elytra: Not flying (with elytra)
     flying: Flying
     safety: Alerts & flight protections
-  options:
+  option:
     global:
       mod_enabled: Enable FlightAssistant
       hud_enabled: Enable HUD
@@ -95,7 +112,10 @@ config.flightassistant:
       colors:
         .: Colors
         primary: Primary color
-        advisory: Advisory color
+        secondary: Secondary color
+        advisory:
+          primary: Primary advisory color
+          secondary: Secondary advisory color
         caution: Caution color
         warning: Warning color
       attitude:
@@ -106,13 +126,11 @@ config.flightassistant:
           horizon_only: Horizon only
           disabled: Disabled
         degree_step: Line degree step
-        horizon_outside_frame: Draw horizon outside frame
         pitch_outside_frame: Draw pitch lines outside frame
       heading:
         .: Heading display
         show_reading: Show heading reading
-        show_scale: Show heading scale on horizon line
-        scale_step: Heading degree step
+        show_scale: Show heading scale
       speed:
         .: Speed display
         show_reading: Show speed reading
@@ -140,7 +158,9 @@ config.flightassistant:
         .: Miscellaneous
         coordinates: Show coordinates
         alerts: Show alerts
+        status_messages: Show status messages
         automation_modes: Show automation modes
+        flight_directors: Show flight directors
     safety:
       alert_volume: Alert sound volume
       consider_invulnerability: Disable alerts and protections when invulnerable
@@ -149,6 +169,10 @@ config.flightassistant:
         warning: Warning only
         caution: Caution only
         disabled: Disabled
+      alert_method:
+        screen_and_audio: Screen & audio
+        screen_only: Screen only
+        audio_only: Audio only
       elytra:
         .: Elytra
         durability_alert_mode: Elytra durability alert mode
@@ -157,36 +181,45 @@ config.flightassistant:
       stall:
         .: Stall
         alert_mode: Stall alert mode
+        alert_method: Stall alert method
         limit_pitch: Limit pitch to prevent stalls
-        auto_thrust: Automatically use thrust to recover from stalls
+        auto_thrust: Automatically increase thrust to recover from stalls
       void:
         .: Void damage altitude
         alert_mode: Void damage altitude alert mode
         limit_pitch: Limit pitch above the void
-        auto_thrust: Automatically use thrust to escape the void
+        auto_thrust: Automatically increase thrust to escape the void
         auto_pitch: Automatically raise pitch to escape the void
       gpws:
         .: Ground Proximity Warning System
         sink_rate:
           alert_mode: Sink rate alert mode
+          alert_method: Sink rate alert method
           limit_pitch: Limit pitch when sink rate is excessive
+          auto_thrust: Automatically reduce thrust when sink rate is excessive
           auto_pitch: Automatically raise pitch to recover from excessive sink rate
         obstacle:
           alert_mode: Terrain alert mode
+          alert_method: Terrain alert method
           limit_pitch: Limit pitch when terrain is detected
+          auto_thrust: Automatically reduce thrust when terrain is detected
           auto_pitch: Automatically raise pitch to escape from terrain
       firework:
         .: Fireworks
+        explosive_alert: Alert when holding explosive fireworks
         lock_explosive: Lock explosive fireworks
 
 menu.flightassistant:
-  .: Flight Configuration
-  flight_plan: Flight Plan
+  .: FlightAssistant setup screen
+  config: Mod configuration
   system:
-    .: System Status
+    .: System management
+    manage_computers: Manage computers
+    manage_displays: Manage displays
     fault: FAULT
     'off': 'OFF'
-    on_reset: ON/RESET
+    'off_reset': 'OFF/RESET'
+    'on': 'ON'
     name:
       hud:
         flightassistant:alert: Alert display
@@ -195,13 +228,16 @@ menu.flightassistant:
         flightassistant:automation_modes: Automation modes display
         flightassistant:coordinates: Coordinates display
         flightassistant:elytra_durability: Elytra durability display
+        flightassistant:flight_directors: Flight directors display
         flightassistant:flight_path: Flight path display
         flightassistant:heading: Heading display
         flightassistant:radar_altitude: Radar altitude display
-        flightassistant:speed: Speed
+        flightassistant:speed: Speed display
+        flightassistant:status: Status display
         flightassistant:velocity_components: G/S & V/S display
       computer:
         flightassistant:air_data: Air data computer
+        flightassistant:hud_display_data: HUD display data computer
         flightassistant:alert: Alert computer
         flightassistant:chunk_status: Chunk status computer
         flightassistant:elytra_status: Elytra status computer
@@ -209,48 +245,146 @@ menu.flightassistant:
         flightassistant:ground_proximity: Ground proximity computer
         flightassistant:stall: Stall computer
         flightassistant:void_proximity: Void proximity computer
+        flightassistant:auto_flight: Auto flight computer
         flightassistant:firework: Firework computer
+        flightassistant:flight_plan: Flight plan computer
+        flightassistant:heading: Heading computer
         flightassistant:pitch: Pitch computer
+        flightassistant:roll: Roll computer
         flightassistant:thrust: Thrust computer
+  autoflight:
+    .: Select autoflight modes
+    disabled: 'OFF'
+    enabled: 'ON'
+    flight_directors: 'FLT DIR %s'
+    auto_thrust: 'A/THR %s'
+    autopilot: 'AP %s'
+    thrust:
+      mode: 'Thrust mode: '
+      speed: SPEED
+      vertical_profile: V.PROF
+      flight_plan: F-PLAN
+    vertical:
+      mode: 'Vertical mode: '
+      pitch: PITCH
+      altitude: ALT
+      flight_plan: F-PLAN
+    lateral:
+      mode: 'Lateral mode: '
+      heading: HDG
+      coordinates: COORDS
+      flight_plan: F-PLAN
+    target:
+      speed: 'Target speed: '
+      climb_thrust: 'Target climb/cruise thrust %: '
+      descend_thrust: 'Target descend thrust %: '
+      pitch: 'Target pitch: '
+      altitude: 'Target altitude: '
+      heading: 'Target heading: '
+      coordinates: 'Target coordinates: '
+  fms:
+    .: Flight planning
+    departure:
+      .: Departure
+      takeoff_thrust: 'Takeoff thrust %: '
+      minimum_climb_speed: 'Minimum climb speed: '
+    enroute:
+      .: Enroute
+      add_waypoint: Add waypoint
+      direct_to: Direct-to
+      unsaved_changes: UNSAVED CHANGES
+    arrival: Arrival
+    save: Save
+    discard_changes: Discard changes
+    coordinates: 'Coordinates: '
+    elevation: 'Elevation: '
 
 mode.flightassistant:
   thrust:
-    manual: MAN THR %s
-    manual_toga: MAN TOGA
-    locked: THR LK %s
+    override: THR OVRD # TODO: single key to override all
+    manual:
+      .: MAN THR
+      reverse: MAN REV
+      toga: MAN TOGA
+    locked: THR LK
     locked_toga: TOGA LK
+    idle: THR IDLE
     toga: THR TOGA
-  pitch:
+    speed: SPEED
+    climb: THR CLB
+    descend: THR DES
+    takeoff: THR TO # TODO: fix confusion with TOGA somehow
+  vertical:
+    override: PITCH OVRD # TODO: single key to override all
     void_protection: VOID PROT
     void_escape: VOID ESC
     stall_protection: STALL PROT
     terrain_protection: TERR PROT
     terrain_escape: TERR ESC
+    pitch: PITCH
+    altitude:
+      climb: CLIMB
+      descend: DESCEND
+      hold: ALT HOLD
+    speed_reference: SPD REF
+  lateral:
+    heading: HDG
+    direct_coordinates: DIR NAV
+    track_navigation: TRK NAV
 
+# TODO: stop using this
 short.flightassistant:
   alert: ALERT
   altitude: ALT
   attitude: ATT
+  auto_thrust: A/T
+  autopilot: AP
   automation_modes: AUTO/MODE
-  elytra: E
-  elytra_durability: E/DURA
-  flight_path: F/PTH
+  distance: DIST
+  elytra: EL
+  elytra_durability: EL/DURA
+  flight_directors: FLT DIR
+  flight_directors_alt: FD
+  flight_path: F/PATH
   ground: GRND
   ground_speed: 'G/S%s'
   heading: HDG
   infinite: INFN
   radar_altitude: R/ALT
   speed: SPD
+  status: STATUS
+  time: TIME
   vertical_speed: 'V/S%s'
   void: VOID
 
-keys.flightassistant:
+status.flightassistant:
+  thrust: 'THR: %s'
+  firework_count: 'FRWK CNT: %s'
+  flight_phase:
+    on_ground: ON GROUND
+    takeoff: TAKEOFF
+    climb: CLIMB
+
+misc.flightassistant:
+  waiting_for_world_load:
+    .: WAITING FOR WORLD LOAD
+    maximum_time: (MAX 3 SECONDS)
+
+key.flightassistant:
   .: FlightAssistant
-  open_flight_configuration: Open flight configuration screen
+  toggle_enabled: Toggle mod enabled
+  open_flightassistant_setup: Open FlightAssistant setup screen
+  autopilot_disconnect: Disconnect autopilot
   manual_pitch_override: Manual pitch override (hold)
   hide_current_alert: Hide currently active alert
   show_hidden_alert: Show last hidden alert
-  decrease_thrust: Decrease thrust
-  increase_thrust: Increase thrust
-  set_idle: Set thrust to idle (0%)
-  set_toga: Set thrust to TOGA (100%)
+  thrust:
+    .: 'FlightAssistant: Thrust'
+    decrease_thrust: Decrease thrust
+    increase_thrust: Increase thrust
+    set_idle: Set thrust to idle (0%)
+    set_toga: Set thrust to TOGA (100%)
+
+# Other mods
+menu.flightassistant.system.name.computer.do_a_barrel_roll:roll: DaBR Roll Computer
+menu.flightassistant.system.name.computer.do_a_barrel_roll:thrust: DaBR Thrust Computer

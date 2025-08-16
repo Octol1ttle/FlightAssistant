@@ -4,12 +4,10 @@ import com.google.gson.GsonBuilder
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder
 import dev.isxander.yacl3.platform.YACLPlatform
-import net.minecraft.client.network.ClientPlayerEntity
-import net.minecraft.item.Items
+import net.minecraft.client.player.LocalPlayer
 import ru.octol1ttle.flightassistant.FlightAssistant.MOD_ID
 import ru.octol1ttle.flightassistant.FlightAssistant.id
 import ru.octol1ttle.flightassistant.FlightAssistant.mc
-import ru.octol1ttle.flightassistant.api.util.fallFlying
 import ru.octol1ttle.flightassistant.config.options.DisplayOptions
 import ru.octol1ttle.flightassistant.config.options.DisplayOptionsStorage
 import ru.octol1ttle.flightassistant.config.options.GlobalOptions
@@ -52,26 +50,35 @@ object FAConfig {
             }
             .build()
 
-    internal val global: GlobalOptions = GLOBAL_HANDLER.instance()
-    internal val hudEnabled: Boolean get() = global.modEnabled && global.hudEnabled
-    internal val safetyEnabled: Boolean get() = global.modEnabled && global.safetyEnabled
-    internal val displaysStorage: DisplayOptionsStorage = DISPLAY_HANDLER.instance()
+    internal val global: GlobalOptions
+        get() = GLOBAL_HANDLER.instance()
+    internal val hudEnabled: Boolean
+        get() = global.modEnabled && global.hudEnabled
+    private val safetyEnabled: Boolean
+        get() = global.modEnabled && global.safetyEnabled
+    internal val displaysStorage: DisplayOptionsStorage
+        get() = DISPLAY_HANDLER.instance()
 
     val display: DisplayOptions
         get() {
-            val player: ClientPlayerEntity = checkNotNull(mc.player)
+            val player: LocalPlayer = checkNotNull(mc.player)
 
-            if (player.fallFlying) {
+            if (player.isFallFlying) {
                 return displaysStorage.flying
             }
 
-            if (!player.abilities.allowFlying && player.
-//? if >=1.21 {
-                /*equippedItems
-*///?} else
-                itemsEquipped
-                    .any { stack -> stack.item == Items.ELYTRA }) {
-                return displaysStorage.notFlyingHasElytra
+            if (!player.abilities.mayfly) {
+//? if >=1.21.2 {
+                /*for (slot: net.minecraft.world.entity.EquipmentSlot in net.minecraft.world.entity.EquipmentSlot.VALUES) {
+                    if (player.getItemBySlot(slot).has(net.minecraft.core.component.DataComponents.GLIDER)) {
+                        return displaysStorage.notFlyingHasElytra
+                    }
+                }
+*///?} else {
+                if (player.allSlots.any { stack -> stack.item is net.minecraft.world.item.ElytraItem }) {
+                    return displaysStorage.notFlyingHasElytra
+                }
+//?}
             }
 
             return displaysStorage.notFlyingNoElytra
@@ -79,6 +86,9 @@ object FAConfig {
 
     val safety: SafetyOptions
         get() = if (safetyEnabled) SAFETY_HANDLER.instance() else SafetyOptions.DISABLED
+
+    internal val safetyConfig
+        get() = SAFETY_HANDLER.instance()
 
     fun load() {
         GLOBAL_HANDLER.load()

@@ -1,28 +1,26 @@
 package ru.octol1ttle.flightassistant.impl.alert.thrust
 
-import net.minecraft.client.gui.DrawContext
-import net.minecraft.text.Text
+import net.minecraft.client.gui.GuiGraphics
+import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.api.alert.Alert
 import ru.octol1ttle.flightassistant.api.alert.AlertData
 import ru.octol1ttle.flightassistant.api.alert.ECAMAlert
-import ru.octol1ttle.flightassistant.api.computer.ComputerAccess
-import ru.octol1ttle.flightassistant.api.util.advisoryColor
-import ru.octol1ttle.flightassistant.api.util.cautionColor
-import ru.octol1ttle.flightassistant.api.util.drawText
-import ru.octol1ttle.flightassistant.api.util.thrust
+import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
+import ru.octol1ttle.flightassistant.api.util.extensions.drawString
+import ru.octol1ttle.flightassistant.api.util.extensions.primaryAdvisoryColor
 
-class ThrustLockedAlert : Alert(), ECAMAlert {
-    override val data: AlertData
-        get() = AlertData.THRUST_LOCKED
+class ThrustLockedAlert(computers: ComputerBus) : Alert(computers), ECAMAlert {
+    override val data: AlertData = AlertData.THRUST_LOCKED
 
-    override fun shouldActivate(computers: ComputerAccess): Boolean {
+    override fun shouldActivate(): Boolean {
         return computers.thrust.thrustLocked
     }
 
-    override fun render(drawContext: DrawContext, computers: ComputerAccess, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         var i = 0
-        i += drawContext.drawText(Text.translatable("alerts.flightassistant.thrust.locked"), firstLineX, firstLineY, cautionColor)
-        i += drawContext.drawText(Text.translatable("alerts.flightassistant.thrust.locked.use_keys"), otherLinesX, firstLineY + 11, advisoryColor)
+        i += guiGraphics.drawString(Component.translatable("alert.flightassistant.thrust.locked"), firstLineX, firstLineY, cautionColor)
+        i += guiGraphics.drawString(Component.translatable("alert.flightassistant.thrust.locked.use_keys"), otherLinesX, firstLineY + 11, primaryAdvisoryColor)
         return i
     }
 }

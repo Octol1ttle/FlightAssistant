@@ -1,64 +1,61 @@
 package ru.octol1ttle.flightassistant
 
 import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.math.Axis
 import dev.architectury.event.events.client.ClientLifecycleEvent
-import net.minecraft.client.MinecraftClient
-import net.minecraft.sound.SoundEvent
-import net.minecraft.util.Identifier
-import net.minecraft.util.math.RotationAxis
+import net.minecraft.client.Minecraft
+import net.minecraft.resources.ResourceLocation
 import org.joml.Matrix4f
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ru.octol1ttle.flightassistant.api.event.FixedHudRenderCallback
-import ru.octol1ttle.flightassistant.api.event.WorldRenderCallback
 import ru.octol1ttle.flightassistant.api.util.RenderMatrices
+import ru.octol1ttle.flightassistant.api.util.event.FixedGuiRenderCallback
+import ru.octol1ttle.flightassistant.api.util.event.LevelRenderCallback
 import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.computer.ComputerHost
 import ru.octol1ttle.flightassistant.impl.display.HudDisplayHost
 
-object FlightAssistant  {
+object FlightAssistant {
     const val MOD_ID: String = "flightassistant"
-    internal val mc: MinecraftClient = MinecraftClient.getInstance()
+    internal val mc: Minecraft = Minecraft.getInstance()
     internal val logger: Logger = LoggerFactory.getLogger("FlightAssistant")
+    internal var initComplete: Boolean = false
 
     internal fun init() {
         logger.info("Initializing (stage 1)")
         FAConfig.load()
-        FAKeyBindings.setup()
+        FAKeyMappings.setup()
         ClientLifecycleEvent.CLIENT_STARTED.register {
             logger.info("Initializing (stage 2)")
-            HudDisplayHost.sendRegistrationEvent()
+            HudDisplayHost.sendRegistrationEvent(ComputerHost)
             ComputerHost.sendRegistrationEvent()
+            initComplete = true
         }
-        WorldRenderCallback.EVENT.register { tickDelta, camera, projectionMatrix, positionMatrix ->
-            FAKeyBindings.checkPressed(ComputerHost)
+        LevelRenderCallback.EVENT.register { partialTick, camera, projectionMatrix, frustumMatrix ->
+            FAKeyMappings.checkPressed(ComputerHost)
 
-            ComputerHost.tick(tickDelta)
+            ComputerHost.tick(partialTick)
 
             RenderMatrices.projectionMatrix.set(projectionMatrix)
-            RenderMatrices.worldSpaceMatrix.set(positionMatrix)
+            RenderMatrices.worldSpaceMatrix.set(frustumMatrix)
             RenderMatrices.modelViewMatrix.set(RenderSystem.getModelViewMatrix())
 
             RenderMatrices.worldSpaceNoRollMatrix.set(Matrix4f().apply {
-                rotate(RotationAxis.POSITIVE_X.rotationDegrees(camera.pitch))
-                rotate(RotationAxis.POSITIVE_Y.rotationDegrees(camera.yaw + 180.0f))
+                rotate(Axis.XP.rotationDegrees(camera.xRot))
+                rotate(Axis.YP.rotationDegrees(camera.yRot + 180.0f))
             })
 
             RenderMatrices.ready = true
         }
-        FixedHudRenderCallback.EVENT.register { context, _ ->
+        FixedGuiRenderCallback.EVENT.register { context, _ ->
             HudDisplayHost.render(context)
         }
     }
 
-    internal fun id(path: String): Identifier {
+    internal fun id(path: String): ResourceLocation {
 //? if >=1.21 {
-        /*return Identifier.of(MOD_ID, path)
+        /*return ResourceLocation.fromNamespaceAndPath(MOD_ID, path)
 *///?} else
-        return Identifier(MOD_ID, path)
-    }
-
-    internal fun soundEvent(name: String): SoundEvent {
-        return SoundEvent.of(id(name))
+        return ResourceLocation(MOD_ID, path)
     }
 }
