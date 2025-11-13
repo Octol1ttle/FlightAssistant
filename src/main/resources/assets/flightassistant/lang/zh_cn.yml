@@ -55,7 +55,7 @@ alert.flightassistant:
       enable_air_data: ' -大气数据：重启'
       enable_pitch: ' -俯仰系统：重启'
       enable_prot_sys: ' -保护系统：重启'
-      max_pitch: ' 最大俯仰角：55° 向上'
+      max_pitch: ' 最大俯仰角：45° 向上'
       min_pitch: ' 最小俯仰角：35° 向下'
       maneuver_with_care: ' 谨慎操作'
   flight_plan:
