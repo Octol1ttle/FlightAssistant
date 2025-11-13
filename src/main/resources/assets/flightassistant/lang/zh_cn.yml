@@ -1,4 +1,4 @@
-alert.flightassistant: # TODO: get rid of alert categories, more flexible alert sorting & registration
+alert.flightassistant:
   alert:
     .: 警报
     fault: 系统故障（部分警报丢失）
@@ -11,7 +11,7 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
     autopilot_off:
       .: 自动驾驶 关闭
       push_to_silence: ' -自动驾驶断开键：按下以静音'
-    auto_thrust_off: 自动推力关闭
+    auto_thrust_off: 自动推力 关闭
   elytra:
     .: 鞘翅
     fault: 状态故障
@@ -24,31 +24,32 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
       .: HUD
       reset: ' -显示：重启'
       data: 数据系统故障
-      flightassistant:altitude: 高度显示故障
-      flightassistant:attitude: 姿态显示故障
-      flightassistant:automation_modes: 自动模式显示故障
-      flightassistant:coordinates: 坐标显示故障
-      flightassistant:elytra_durability: 鞘翅耐久度显示故障
-      flightassistant:flight_directors: 飞行方向显示故障
-      flightassistant:flight_path: 飞行路径显示故障
-      flightassistant:heading: 航向显示故障
-      flightassistant:radar_altitude: 雷达高度显示故障
-      flightassistant:speed: 速度显示故障
-      flightassistant:status: 状态显示故障
-      flightassistant:velocity_components: 地速和垂直速度显示故障
+      'flightassistant:altitude': 高度显示故障
+      'flightassistant:attitude': 姿态显示故障
+      'flightassistant:automation_modes': 自动模式显示故障
+      'flightassistant:coordinates': 坐标显示故障
+      'flightassistant:course_deviation': 航向偏离显示故障
+      'flightassistant:elytra_durability': 鞘翅耐久度显示故障
+      'flightassistant:flight_directors': 飞行指示器显示故障
+      'flightassistant:flight_path': 飞行路径显示故障
+      'flightassistant:heading': 航向显示故障
+      'flightassistant:radar_altitude': 雷达高度显示故障
+      'flightassistant:speed': 速度显示故障
+      'flightassistant:status': 状态显示故障
+      'flightassistant:velocity_components': 地速与垂直速度显示故障
   firework:
     .: 烟花
     fault: 系统故障
     explosive:
-      main_hand: 主手烟花具爆炸性
-      off_hand: 副手烟花具爆炸性
+      main_hand: 主手烟花含烟火之星
+      off_hand: 副手烟花含烟火之星
     slow_response: 响应缓慢
     no_response: 无响应
   flight_controls:
     .: 飞行控制
     pitch_fault:
       .: 俯仰限制故障
-      use_manual_pitch: ' -手动俯仰控制：启动'
+      use_automation_override: ' -自动化覆盖：启用'
     protections_lost:
       .: 丧失保护功能
       enable_air_data: ' -大气数据：重启'
@@ -60,13 +61,21 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
   flight_plan:
     .: 飞行计划
     fault: 系统故障
-    departure_elevation_disagree: 起飞高度不一致
+    departure_elevation_disagree: 离场高度不符
+    arrival_elevation_disagree:
+      .: 进场高度不符
+      glide_slope_unreliable: ' 下滑道不可靠'
+      autopilot_do_not_use: ' -自动驾驶：请勿使用'
+    obstacles_on_path: 航路上存在障碍物
+    descent_too_steep: 下降率过高
   gpws:
     .: 近地警告系统
     fault: 故障
-    dont_sink: 关闭下降率警报
-    sink_rate: 下降率过高
+    minimums_reached: 达到规定的最低高度
+    dont_sink: 停止下降
+    sink_rate: 下降速率过快
     terrain_ahead: 前方地形
+    below_glide_slope: 下滑道偏离过大
     pull_up: 拉起
   stall:
     .: 失速
@@ -90,7 +99,6 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
     reverse_not_supported:
       .: 不支持反推
       set_forward: ' -推力：正前方'
-
 config.flightassistant:
   category:
     global: 全局选项
@@ -103,7 +111,7 @@ config.flightassistant:
       mod_enabled: 开启 FlightAssistant
       hud_enabled: 开启 HUD
       safety_enabled: 开启安全功能（警报和保护）
-      automations_allowed_in_overlays: 允许自动化（自动驾驶 和飞行保护）在 GUI 中运行（如背包和暂停界面）
+      automations_allowed_in_overlays: 允许自动化（自动驾驶和飞行保护）在 GUI 中运行（如背包和暂停界面）
     display:
       frame:
         .: 显示框架
@@ -116,7 +124,7 @@ config.flightassistant:
         advisory:
           primary: 主提示颜色
           secondary: 副提示颜色
-        caution: 提示颜色
+        caution: 注意颜色
         warning: 危险颜色
       attitude:
         .: 姿态
@@ -150,7 +158,7 @@ config.flightassistant:
         .: 鞘翅耐久度
         show: 显示鞘翅耐久度
         units:
-          .: 鞘翅耐久度单位
+          .: 耐久度单位
           raw: Minecraft 原版
           percentage: 百分比
           time: 时间（大约）
@@ -161,9 +169,10 @@ config.flightassistant:
         status_messages: 显示状态消息
         automation_modes: 显示自动化模式
         flight_directors: 显示飞行指示器
+        course_deviation: 显示航向偏离状态
     safety:
       alert_volume: 警报音量
-      consider_invulnerability: 在无敌时禁用警报和保护
+      consider_invulnerability: 无敌时禁用警报和保护
       alert_mode:
         warning_and_caution: 警报与提示
         warning: 仅警报
@@ -177,7 +186,7 @@ config.flightassistant:
         .: 鞘翅
         durability_alert_mode: 鞘翅耐久度警报模式
         auto_open: 自动打开鞘翅
-        close_underwater: 在水下时自动关闭鞘翅
+        close_underwater: 在水下自动关闭鞘翅
       stall:
         .: 失速
         alert_mode: 失速警报模式
@@ -203,102 +212,126 @@ config.flightassistant:
           alert_method: 地形警报方法
           limit_pitch: 检测到地形时限制俯仰角
           auto_thrust: 检测到地形时自动减少推力
-          auto_pitch: 自动抬升俯仰角逃离地形
+          auto_pitch: 自动提升俯仰角逃离地形
+        altitude_loss_with_toga:
+          enabled: 起飞/复飞期间高度损失警报
+          alert_method: 起飞/复飞期间高度损失警报方法
+        below_glide_slope:
+          alert_mode: 下滑道偏离过大警报模式
+          alert_method: 下滑道偏离过大警报方法
       firework:
         .: 烟花
         explosive_alert: 手持含烟火之星的烟花时发出警报
         lock_explosive: 锁定含烟火之星的烟花
-
+        lock_obstacles: 靠近障碍物时锁定烟花
 menu.flightassistant:
   .: FlightAssistant 配置界面
   config: 模组配置
   system:
     .: 系统管理
-    manage_computers: 管理计算器
-    manage_displays: 管理显示
+    manage_computers: 计算器管理
+    manage_displays: 显示管理
     fault: 故障
-    'off': '关闭'
-    'off_reset': '开启/重置'
-    'on': '开启'
+    'off': 关闭
+    'off_reset': 关闭/重置
+    'on': 开启
     name:
       hud:
-        flightassistant:alert: 显示警报
-        flightassistant:altitude: 显示高度
-        flightassistant:attitude: 显示姿态
-        flightassistant:automation_modes: 显示自动化模式
-        flightassistant:coordinates: 显示坐标
-        flightassistant:elytra_durability: 显示鞘翅耐久度
-        flightassistant:flight_directors: 显示飞行指示器
-        flightassistant:flight_path: 显示飞行路径
-        flightassistant:heading: 显示航向
-        flightassistant:radar_altitude: 显示雷达高度
-        flightassistant:speed: 显示速度
-        flightassistant:status: 显示状态
-        flightassistant:velocity_components: 显示地速与垂直速度
+        'flightassistant:alert': 显示警报
+        'flightassistant:altitude': 显示高度
+        'flightassistant:attitude': 显示姿态
+        'flightassistant:automation_modes': 显示自动化模式
+        'flightassistant:coordinates': 显示坐标
+        'flightassistant:course_deviation': 显示航向偏离
+        'flightassistant:elytra_durability': 显示鞘翅耐久度
+        'flightassistant:flight_directors': 显示飞行指引器
+        'flightassistant:flight_path': 显示飞行路径
+        'flightassistant:heading': 显示航向
+        'flightassistant:radar_altitude': 显示雷达高度
+        'flightassistant:speed': 显示速度
+        'flightassistant:status': 显示状态
+        'flightassistant:velocity_components': 显示地速和垂直速度
       computer:
-        flightassistant:air_data: 大气数据计算器
-        flightassistant:hud_display_data: HUD 显示数据计算器
-        flightassistant:alert: 警报计算器
-        flightassistant:chunk_status: 区块状态计算器
-        flightassistant:elytra_status: 鞘翅状态计算器
-        flightassistant:flight_protections: 飞行保护计算器
-        flightassistant:ground_proximity: 近地警报计算器
-        flightassistant:stall: 失速计算器
-        flightassistant:void_proximity: 虚空邻近计算器
-        flightassistant:auto_flight: 自动飞行计算器
-        flightassistant:firework: 烟花计算器
-        flightassistant:flight_plan: 飞行计划计算器
-        flightassistant:heading: 航向计算器
-        flightassistant:pitch: 俯仰计算器
-        flightassistant:roll: 翻滚计算器
-        flightassistant:thrust: 推力计算器
+        'flightassistant:air_data': 大气数据计算器
+        'flightassistant:hud_display_data': HUD显示数据计算器
+        'flightassistant:alert': 警报计算器
+        'flightassistant:chunk_status': 区块状态计算器
+        'flightassistant:elytra_status': 鞘翅状态计算器
+        'flightassistant:flight_protections': 飞行保护计算器
+        'flightassistant:ground_proximity': 近地警报计算器
+        'flightassistant:stall': 失速计算器
+        'flightassistant:void_proximity': 虚空邻近计算器
+        'flightassistant:auto_flight': 自动飞行计算器
+        'flightassistant:firework': 烟花计算器
+        'flightassistant:flight_plan': 飞行计划计算器
+        'flightassistant:heading': 航向计算器
+        'flightassistant:pitch': 俯仰计算器
+        'flightassistant:roll': 翻滚计算器
+        'flightassistant:thrust': 推力计算器
+        'do_a_barrel_roll:roll': 桶滚 翻滚计算器
+        'do_a_barrel_roll:thrust': 桶滚 推力计算器
   autoflight:
     .: 选择自动飞行模式
-    disabled: '关闭'
-    enabled: '开启'
-    flight_directors: '飞行指示器 %s'
-    auto_thrust: '自动推力 %s'
-    autopilot: '自动驾驶 %s'
+    disabled: 关闭
+    enabled: 开启
+    flight_directors: 飞行指示器 %s
+    auto_thrust: 自动推力 %s
+    autopilot: 自动驾驶 %s
     thrust:
-      mode: '推力模式: '
+      mode: '推力模式： '
       speed: 速度
       vertical_profile: 垂直廓线
       flight_plan: 飞行计划
     vertical:
-      mode: '垂直模式: '
+      mode: '垂直模式： '
       pitch: 俯仰
       altitude: 高度
       flight_plan: 飞行计划
     lateral:
-      mode: '横向模式: '
+      mode: '横向模式： '
       heading: 航向
       coordinates: 坐标
       flight_plan: 飞行计划
     target:
-      speed: '目标速度: '
-      climb_thrust: '目标爬升/巡航推力 %: '
-      descend_thrust: '目标下降推力 %: '
-      pitch: '目标俯仰: '
+      speed: '目标速度： '
+      climb_thrust: '目标爬升/巡航推力（%）： '
+      descend_thrust: '目标下降推力（%）： '
+      pitch: '目标俯仰： '
       altitude: '目标高度： '
-      heading: '目标航向: '
-      coordinates: '目标坐标: '
+      heading: '目标航向： '
+      coordinates: '目标坐标： '
   fms:
     .: 飞行计划
     departure:
-      .: 起飞
-      takeoff_thrust: '起飞推力 %: '
-      minimum_climb_speed: '最小爬升速度: '
+      .: 出发
+      takeoff_thrust: '起飞推力（%）：'
+      minimum_climb_speed: '最小爬升速度：'
     enroute:
       .: 航路
+      legend:
+        hover: 悬停以显示图例
+        origin: '%s - 起始航点'
+        target: '%s - 目标航点'
+        'direct-to': '%s - 直飞航点'
+      delete_all: 删除全部
       add_waypoint: 添加航点
       direct_to: 直飞
       unsaved_changes: 未保存的更改
-    arrival: 到达
+    arrival:
+      .: 到达
+      minimums:
+        .: '最低高度：'
+        absolute: 绝对
+        relative: 相对
+      landing_thrust: '着陆推力 %：'
+      go_around_altitude: '复飞高度：'
+      approach_re_entry_waypoint_index: '进近重新进入航点索引：'
     save: 保存
+    load: 加载
+    error: 发生错误！请检查日志以获取详细信息
     discard_changes: 放弃更改
-    coordinates: '坐标: '
-    elevation: '海拔: '
-
+    coordinates: '坐标：'
+    elevation: '海拔：'
 mode.flightassistant:
   thrust:
     override: 推力超控
@@ -314,6 +347,7 @@ mode.flightassistant:
     climb: 推力 爬升
     descend: 推力 下降
     takeoff: 推力 起飞
+    landing: 推力 着陆
   vertical:
     override: 俯仰超控
     void_protection: 虚空保护
@@ -323,16 +357,22 @@ mode.flightassistant:
     terrain_escape: 地形逃离
     pitch: 俯仰
     altitude:
-      climb: 爬升
-      descend: 下降
       hold: 高度保持
-    speed_reference: 速度参考
+      cruise: 巡航高度
+      open:
+        climb: 开放爬升
+        descend: 开放下降
+      managed:
+        climb: 爬升
+        descend: 下降
+    glide_slope: 下滑道
+    go_around: 复飞高度
   lateral:
     heading: 航向
     direct_coordinates: 直飞导航
-    track_navigation: 跟踪导航
-
-# TODO: stop using this
+    track_navigation: 航迹导航
+    localizer: 航向台
+    go_around: 复飞航向
 short.flightassistant:
   alert: 警报
   altitude: 高度
@@ -347,44 +387,47 @@ short.flightassistant:
   flight_directors_alt: 飞行指示器
   flight_path: 飞行路径
   ground: 地面距离
-  ground_speed: '地速 %s'
+  ground_speed: 地速 %s
   heading: 航向
+  lateral_deviation: 横向偏差
   infinite: 无限
   radar_altitude: 雷达高度
   speed: 速度
   status: 状态
   time: 时间
-  vertical_speed: '垂直速度 %s'
+  vertical_deviation: 纵向偏差
+  vertical_speed: 垂直速度 %s
   void: 虚空
-
 status.flightassistant:
   thrust: '推力: %s'
   firework_count: '烟花数量: %s'
-  flight_phase:
-    on_ground: 在地面
-    takeoff: 起飞
-    climb: 爬升
-
+  flight_plan:
+    phase:
+      takeoff: 起飞
+      climb: 爬升
+      cruise: 巡航
+      descend: 下降
+      approach: 进近
+      landing: 着陆
+      go_around: 复飞
+    waypoint_distance: '距离航点: %s'
+    waypoint_time: '到达航点时间: %s'
 misc.flightassistant:
   waiting_for_world_load:
     .: 等待世界加载
     maximum_time: (最多 3 秒)
-
-key.flightassistant:
-  .: FlightAssistant
-  toggle_enabled: 切换模组启用状态
-  open_flightassistant_setup: 打开 FlightAssistant 设置界面
-  autopilot_disconnect: 断开自动驾驶
-  manual_pitch_override: 手动俯仰接管（按住）
-  hide_current_alert: 隐藏当前显示的警报
-  show_hidden_alert: 显示上次隐藏的警报
-  thrust:
-    .: 'FlightAssistant: 推力'
-    decrease_thrust: 减少推力
-    increase_thrust: 增加推力
-    set_idle: 将推力设置为怠速（0%）
-    set_toga: 将推力设置为 TOGA（100%）
-
-# Other mods
-menu.flightassistant.system.name.computer.do_a_barrel_roll:roll: 桶滚 翻滚计算器
-menu.flightassistant.system.name.computer.do_a_barrel_roll:thrust: 桶滚 推力计算器
+key:
+  flightassistant:
+    .: FlightAssistant
+    toggle_enabled: 模组开启/关闭
+    open_flightassistant_setup: 打开 FlightAssistant 配置界面
+    autopilot_disconnect: 断开自动驾驶
+    global_automation_override: 手动接管全局（长按）
+    hide_current_alert: 隐藏当前显示的警报
+    show_hidden_alert: 显示上次隐藏的警报
+    thrust:
+      .: 'FlightAssistant：推力'
+      decrease_thrust: 减少推力
+      increase_thrust: 增加推力
+      set_idle: 将推力设置为怠速（0%）
+      set_toga: 将推力设置为 TOGA（100%）
