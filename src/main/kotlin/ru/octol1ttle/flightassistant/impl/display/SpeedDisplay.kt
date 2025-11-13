@@ -11,8 +11,6 @@ import ru.octol1ttle.flightassistant.api.display.HudFrame
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.builtin.SpeedReferenceVerticalMode
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.builtin.SpeedThrustMode
 
 class SpeedDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
@@ -37,7 +35,7 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
         pose().push()
         fusedTranslateScale(x * 1.005f, y, READING_MATRIX_SCALE)
 
-        val speed: Double = computers.hudData.lerpedForwardVelocity.length() * 20
+        val speed: Double = computers.hudData.lerpedForwardVelocity.perSecond().length()
         val color: Int =
             if (speed <= 0.0) warningColor
             else primaryColor
@@ -54,7 +52,7 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
     }
 
     private fun GuiGraphics.renderSpeedScale(x: Int, y: Int) {
-        val speed: Double = computers.hudData.lerpedForwardVelocity.length() * 20
+        val speed: Double = computers.hudData.lerpedForwardVelocity.perSecond().length()
         val color: Int =
             if (speed <= 0.0) warningColor
             else primaryColor
@@ -109,15 +107,16 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
     private fun GuiGraphics.renderSpeedTarget(x: Int, y: Int) {
         val color: Int
         val active: AutoFlightComputer.ThrustMode? = computers.autoflight.activeThrustMode
-        if (computers.autoflight.getThrustInput() != null && active is SpeedThrustMode) {
+        if (computers.autoflight.getThrustInput() != null && active is AutoFlightComputer.FollowsSpeedMode) {
             color = if (active == computers.autoflight.selectedThrustMode) primaryAdvisoryColor else secondaryAdvisoryColor
-            drawRightAlignedString(active.target.toString(), x, y, color)
-        } else {
-            val active: AutoFlightComputer.VerticalMode? = computers.autoflight.activeVerticalMode
-            if (computers.autoflight.getPitchInput() != null && active is SpeedReferenceVerticalMode) {
-                color = if (active == computers.autoflight.selectedVerticalMode) primaryAdvisoryColor else secondaryAdvisoryColor
-                drawRightAlignedString(active.targetSpeed.toString(), x, y, color)
-            }
+            drawRightAlignedString(active.targetSpeed.toString(), x, y, color)
+            return
+        }
+
+        val activeVertical: AutoFlightComputer.VerticalMode? = computers.autoflight.activeVerticalMode
+        if (computers.autoflight.getPitchInput() != null && activeVertical is AutoFlightComputer.FollowsSpeedMode) {
+            color = if (activeVertical == computers.autoflight.selectedVerticalMode) primaryAdvisoryColor else secondaryAdvisoryColor
+            drawRightAlignedString(activeVertical.targetSpeed.toString(), x, y, color)
         }
     }
 

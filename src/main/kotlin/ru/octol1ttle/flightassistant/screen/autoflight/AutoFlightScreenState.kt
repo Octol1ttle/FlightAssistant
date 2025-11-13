@@ -3,7 +3,12 @@ package ru.octol1ttle.flightassistant.screen.autoflight
 import dev.isxander.yacl3.api.NameableEnum
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.builtin.*
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.DirectCoordinatesLateralMode
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.HeadingLateralMode
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.PitchVerticalMode
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.SelectedAltitudeVerticalMode
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.SpeedThrustMode
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.VerticalProfileThrustMode
 
 class AutoFlightScreenState {
     var thrustMode: ThrustMode = ThrustMode.SPEED

@@ -13,17 +13,15 @@ import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 class DaBRThrustComputer(computers: ComputerBus) : Computer(computers), ThrustSource {
     override val priority: ThrustSource.Priority = ThrustSource.Priority.HIGH
     override val supportsReverse: Boolean = true
-    override val optimumClimbPitch: Float = 30.0f
-    override val altitudeHoldPitch: Float = 4.65f
 
     override fun subscribeToEvents() {
         ThrustEvents.MODIFY_THRUST_INPUT.register({
-
-            if (!computers.thrust.isDisabledOrFaulted()) {
+            if (computers.data.automationsAllowed() && !computers.thrust.isDisabledOrFaulted()) {
                 // TODO: config option *sigh*
                 computers.thrust.tickTarget(sign(it).toFloat())
                 return@register computers.thrust.current.toDouble()
             }
+
             return@register it
         }, 10)
     }

@@ -1,7 +1,7 @@
 package ru.octol1ttle.flightassistant.api.autoflight.thrust
 
 /**
- * Defines a source of thrust to be used by the [ru.octol1ttle.flightassistant.impl.computer.autoflight.ThrustComputer]
+ * Defines a source of thrust to be used by the [ru.octol1ttle.flightassistant.impl.computer.autoflight.base.ThrustComputer]
  */
 interface ThrustSource {
     /**
@@ -15,16 +15,6 @@ interface ThrustSource {
      * Defines whether this thrust source supports reverse thrust.
      */
     val supportsReverse: Boolean
-
-    /**
-     * Defines the optimum climb pitch which should be used when this thrust source is active.
-     */
-    val optimumClimbPitch: Float
-
-    /**
-     * Defines the pitch which should be used for holding altitude when this thrust source is active.
-     */
-    val altitudeHoldPitch: Float
 
     /**
      * @return whether this thrust source can be used right now. For example, there are fireworks in the player's hand that can be used.

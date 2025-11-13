@@ -11,6 +11,8 @@ import ru.octol1ttle.flightassistant.api.util.FATickCounter.totalTicks
 import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
 import ru.octol1ttle.flightassistant.api.util.extensions.centerX
 import ru.octol1ttle.flightassistant.api.util.extensions.drawHighlightedCenteredText
+import ru.octol1ttle.flightassistant.config.FAConfig
+import ru.octol1ttle.flightassistant.config.options.SafetyOptions
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
 
 class DontSinkAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
@@ -19,7 +21,11 @@ class DontSinkAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
     private var age: Int = 0
 
     override fun shouldActivate(): Boolean {
-        if (computers.plan.currentPhase == FlightPlanComputer.FlightPhase.TAKEOFF && !computers.data.fallDistanceSafe && computers.data.velocity.y < 0) {
+        if (!FAConfig.safety.altitudeLossAlert) {
+            return false
+        }
+        if ((computers.plan.currentPhase == FlightPlanComputer.FlightPhase.TAKEOFF || computers.plan.currentPhase == FlightPlanComputer.FlightPhase.GO_AROUND)
+            && !computers.data.fallDistanceSafe && computers.data.velocityPerSecond.y <= -1.0) {
             age += FATickCounter.ticksPassed
         } else {
             age = 0
@@ -31,5 +37,9 @@ class DontSinkAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
     override fun render(guiGraphics: GuiGraphics, y: Int): Boolean {
         guiGraphics.drawHighlightedCenteredText(Component.translatable("alert.flightassistant.gpws.dont_sink"), guiGraphics.centerX, y, cautionColor, totalTicks % 40 >= 20)
         return true
+    }
+
+    override fun getAlertMethod(): SafetyOptions.AlertMethod {
+        return FAConfig.safety.altitudeLossAlertMethod
     }
 }

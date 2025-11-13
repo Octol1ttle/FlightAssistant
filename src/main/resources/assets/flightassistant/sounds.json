@@ -9,6 +9,21 @@
             "flightassistant:autopilot_off"
         ]
     },
+    "below_glide_slope": {
+        "sounds": [
+            "flightassistant:below_glide_slope"
+        ]
+    },
+    "below_glide_slope_warning": {
+        "sounds": [
+            "flightassistant:below_glide_slope_warning"
+        ]
+    },
+    "caution_terrain": {
+        "sounds": [
+            "flightassistant:caution_terrain"
+        ]
+    },
     "dont_sink": {
         "sounds": [
             "flightassistant:dont_sink"
@@ -27,6 +42,11 @@
     "master_warning": {
         "sounds": [
             "flightassistant:master_warning"
+        ]
+    },
+    "minimums_reached": {
+        "sounds": [
+            "flightassistant:minimums_reached"
         ]
     },
     "pull_up": {

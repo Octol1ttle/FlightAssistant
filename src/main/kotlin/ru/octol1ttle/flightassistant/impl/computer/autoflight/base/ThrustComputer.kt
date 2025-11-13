@@ -15,8 +15,9 @@ import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.extensions.filterWorking
+import ru.octol1ttle.flightassistant.api.util.extensions.formatRoot
 import ru.octol1ttle.flightassistant.api.util.extensions.getActiveHighestPriority
-import ru.octol1ttle.flightassistant.api.util.requireIn
+import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 import ru.octol1ttle.flightassistant.impl.display.StatusDisplay
 
 class ThrustComputer(computers: ComputerBus) : Computer(computers) {
@@ -51,7 +52,7 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
         noThrustSource = false
         reverseUnsupported = false
 
-        if (finalInput?.active == true && !FAKeyMappings.isHoldingThrust()) {
+        if (finalInput?.status == ControlInput.Status.ACTIVE && !FAKeyMappings.isHoldingThrust()) {
             setTarget(finalInput.target, finalInput)
             activeInput = finalInput
             thrustLocked = false
@@ -68,10 +69,10 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
         }
 
         noThrustSource = thrustSource == null && activeInput?.target != 0.0f
-        current.requireIn(-1.0f..1.0f)
+        current.throwIfNotInRange(-1.0f..1.0f)
 
         val active: Boolean = !noThrustSource && !reverseUnsupported
-        activeInput = activeInput?.copy(active = active)
+        activeInput = activeInput?.copy(status = if (active) activeInput!!.status else ControlInput.Status.UNAVAILABLE)
 
         if (computers.data.automationsAllowed()) {
             thrustSource?.tickThrust(current.coerceIn((if (thrustSource.supportsReverse) -1.0f else 0.0f)..1.0f))
@@ -85,7 +86,7 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
     fun setTarget(target: Float, input: ControlInput? = null) {
         val oldThrust: Float = current
         if (oldThrust != target || input == null) {
-            current = target.requireIn(-1.0f..1.0f)
+            current = target.throwIfNotInRange(-1.0f..1.0f)
             ThrustChangeCallback.EVENT.invoker().onThrustChange(oldThrust, current, input)
             lastChangeAutomatic = input != null
         }
@@ -97,29 +98,11 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
         }
     }
 
-    fun getOptimumClimbPitch(): Float {
-        val thrustSource: ThrustSource? = getThrustSource()
-        if (thrustSource != null) {
-            return thrustSource.optimumClimbPitch
-        }
-
-        return 55.0f
-    }
-
-    fun getAltitudeHoldPitch(): Float {
-        val thrustSource: ThrustSource? = getThrustSource()
-        if (thrustSource != null) {
-            return thrustSource.altitudeHoldPitch
-        }
-
-        return 5.0f
-    }
-
-    override fun <Response> processQuery(query: ComputerQuery<Response>) {
+    override fun <Response> handleQuery(query: ComputerQuery<Response>) {
         if (query is StatusDisplay.StatusMessageQuery) {
             // TODO: show actual thrust output and requested thrust (both by user and autoflight)
             if (getThrustSource() != null || current != 0.0f) {
-                query.respond(Component.translatable("status.flightassistant.thrust", "%.1f".format(current * 100) + "%"))
+                query.respond(Component.translatable("status.flightassistant.thrust", "%.1f".formatRoot(current * 100) + "%"))
             }
         }
     }

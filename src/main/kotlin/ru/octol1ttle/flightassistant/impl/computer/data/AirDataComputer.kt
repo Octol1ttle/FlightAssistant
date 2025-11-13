@@ -1,25 +1,25 @@
 package ru.octol1ttle.flightassistant.impl.computer.data
 
 import kotlin.math.asin
+import kotlin.math.atan2
 import kotlin.math.max
 import net.minecraft.client.Minecraft
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.player.LocalPlayer
-import net.minecraft.core.Direction
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.tags.DamageTypeTags
 import net.minecraft.util.Mth
 import net.minecraft.world.damagesource.DamageSource
-import net.minecraft.world.level.ClipContext
-import net.minecraft.world.phys.BlockHitResult
-import net.minecraft.world.phys.HitResult
 import net.minecraft.world.phys.Vec3
+import ru.octol1ttle.flightassistant.FAKeyMappings
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.degrees
 import ru.octol1ttle.flightassistant.api.util.extensions.bottomY
-import ru.octol1ttle.flightassistant.api.util.requireIn
+import ru.octol1ttle.flightassistant.api.util.extensions.getLerpedDeltaMovement
+import ru.octol1ttle.flightassistant.api.util.extensions.perSecond
+import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 import ru.octol1ttle.flightassistant.config.FAConfig
 
 class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Computer(computers) {
@@ -32,53 +32,59 @@ class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Compu
 
     val position: Vec3
         get() = player.position()
+    val x: Double
+        get() = position.x
+    val z: Double
+        get() = position.z
     val altitude: Double
         get() = position.y
     val voidY: Int
         get() = level.bottomY - 64
-    var groundY: Double? = null
-        private set(value) {
-            field = value?.requireIn(level.bottomY.toDouble()..Double.MAX_VALUE)
-        }
 
     private val fallDistance: Double
         get() =
-            if (groundY == null || groundY!! == Double.MAX_VALUE) Double.MAX_VALUE
+            if (computers.gpws.groundY == null || computers.gpws.groundY!! == Double.MAX_VALUE) Double.MAX_VALUE
 //? if >=1.21.5 {
-            /*else max(player.fallDistance, altitude - groundY!!)
+            /*else max(player.fallDistance, altitude - computers.gpws.groundY!!)
 *///?} else
-            else max(player.fallDistance.toDouble(), altitude - groundY!!)
+            else max(player.fallDistance.toDouble(), altitude - computers.gpws.groundY!!)
 
     val fallDistanceSafe: Boolean
         get() = player.isInWater || fallDistance <= player.maxFallDistance || isInvulnerableTo(player.damageSources().fall())
 
     val velocity: Vec3
         get() = player.deltaMovement
+    val velocityPerSecond: Vec3
+        get() = velocity.perSecond()
     var forwardVelocity: Vec3 = Vec3.ZERO
+        private set
+    var forwardVelocityPerSecond: Vec3 = Vec3.ZERO
         private set
     var forwardAcceleration: Double = 0.0
         private set
 
     val pitch: Float
-        get() = -player.xRot.requireIn(-90.0f..90.0f)
+        get() = -player.xRot.throwIfNotInRange(-90.0f..90.0f)
     val yaw: Float
-        get() = Mth.wrapDegrees(player.yRot).requireIn(-180.0f..180.0f)
+        get() = Mth.wrapDegrees(player.yRot).throwIfNotInRange(-180.0f..180.0f)
     val heading: Float
-        get() = (yaw + 180.0f).requireIn(0.0f..360.0f)
+        get() = (yaw + 180.0f).throwIfNotInRange(0.0f..360.0f)
 
     val flightPitch: Float
         get() = degrees(asin(velocity.normalize().y).toFloat())
-
-    val isCurrentChunkLoaded: Boolean
-        get() = level.chunkSource.hasChunk(player.chunkPosition().x, player.chunkPosition().z)
+    val flightYaw: Float
+        get() = degrees(atan2(-velocity.x, velocity.z).toFloat())
 
     override fun tick() {
-        groundY = computeGroundLevel()
         forwardVelocity = computeForwardVector(velocity)
-        forwardAcceleration = forwardVelocity.length() - computeForwardVector(player.getDeltaMovementLerped(0.0f)).length()
+        forwardVelocityPerSecond = forwardVelocity.perSecond()
+        forwardAcceleration = forwardVelocity.length() - computeForwardVector(player.getLerpedDeltaMovement(0.0f)).length()
     }
 
     fun automationsAllowed(checkFlying: Boolean = true): Boolean {
+        if (FAKeyMappings.globalAutomationOverride.isDown) {
+            return false
+        }
         return (!checkFlying || flying) && (FAConfig.global.automationsAllowedInOverlays || (mc.screen == null && mc.overlay == null))
     }
 
@@ -94,27 +100,6 @@ class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Compu
                 || player.abilities.mayfly && source.`is`(DamageTypeTags.IS_FALL)
     }
 
-    private fun computeGroundLevel(): Double? {
-        if (!isCurrentChunkLoaded) {
-            return groundY
-        }
-
-        val minY: Double = level.bottomY.toDouble().coerceAtLeast(altitude - 2500)
-        val result: BlockHitResult = level.clip(
-            ClipContext(
-                position,
-                position.with(Direction.Axis.Y, minY),
-                ClipContext.Block.COLLIDER,
-                ClipContext.Fluid.ANY,
-                player
-            )
-        )
-        if (result.type == HitResult.Type.MISS) {
-            return if (result.location.y > level.bottomY) Double.MAX_VALUE else null
-        }
-        return result.location.y
-    }
-
     fun computeForwardVector(vector: Vec3): Vec3 {
         val normalizedLookAngle: Vec3 = player.lookAngle.normalize()
         val normalizedVector: Vec3 = vector.normalize()
@@ -122,8 +107,8 @@ class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Compu
     }
 
     override fun reset() {
-        groundY = null
         forwardVelocity = Vec3.ZERO
+        forwardVelocityPerSecond = Vec3.ZERO
         forwardAcceleration = 0.0
     }
 

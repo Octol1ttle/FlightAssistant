@@ -12,7 +12,6 @@ import ru.octol1ttle.flightassistant.api.display.HudFrame
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.builtin.SelectedAltitudeVerticalMode
 
 class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
@@ -90,7 +89,7 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
 
         if (FAConfig.display.showVerticalSpeed) {
             enableScissor(0, HudFrame.top, guiWidth(), HudFrame.bottom)
-            fill(x - 3, y, x - 1, (y - 2 * (computers.hudData.lerpedVelocity.y * 20)).toInt(), secondaryColor)
+            fill(x - 3, y, x - 1, (y - 2 * computers.hudData.lerpedVelocity.perSecond().y).toInt(), secondaryColor)
             disableScissor()
         }
     }
@@ -111,9 +110,9 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
     private fun GuiGraphics.renderAltitudeTarget(x: Int, y: Int) {
         val color: Int
         val active: AutoFlightComputer.VerticalMode? = computers.autoflight.activeVerticalMode
-        if (computers.autoflight.getPitchInput() != null && active is SelectedAltitudeVerticalMode) {
+        if (computers.autoflight.getPitchInput() != null && active is AutoFlightComputer.FollowsAltitudeMode) {
             color = if (active == computers.autoflight.selectedVerticalMode) primaryAdvisoryColor else secondaryAdvisoryColor
-            drawString(active.target.toString(), x, y, color)
+            drawString(active.targetAltitude.toString(), x, y, color)
         }
     }
 

@@ -9,7 +9,8 @@ import ru.octol1ttle.flightassistant.api.computer.Computer
  * If there are no such inputs, the returned list contains all inputs with the highest priority in the list.
  */
 fun List<ControlInput>.getActiveHighestPriority(): List<ControlInput> {
-    val activeInput: List<ControlInput> = this.filter { it.active && it.priority.value == this[0].priority.value }
+    // TODO
+    val activeInput: List<ControlInput> = this.filter { it.status == ControlInput.Status.ACTIVE && it.priority.value == this[0].priority.value }
     if (activeInput.any()) {
         return activeInput
     }

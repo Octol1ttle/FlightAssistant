@@ -37,15 +37,14 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
         val thrustUnusable: Boolean = computers.thrust.noThrustSource || computers.thrust.reverseUnsupported
 
         val input: ControlInput? = computers.thrust.activeInput
+        if ((input != null && FAKeyMappings.isHoldingThrust()) || FAKeyMappings.globalAutomationOverride.isDown) {
+            thrustDisplay.render(guiGraphics, Component.translatable("mode.flightassistant.thrust.override").setColor(cautionColor), ControlInput.Status.ACTIVE, cautionColor)
+            return
+        }
+
         if (input != null) {
-            if (FAKeyMappings.isHoldingThrust()) {
-                thrustDisplay.render(guiGraphics, Component.translatable("mode.flightassistant.thrust.override").setColor(cautionColor), false, cautionColor)
-            } else {
-                thrustDisplay.render(
-                    guiGraphics, input.text, input.active,
-                    if (thrustUnusable || input.active && input.priority < ControlInput.Priority.NORMAL) cautionColor else null
-                )
-            }
+            thrustDisplay.render(guiGraphics, input.text, input.status,
+                if (thrustUnusable || input.status == ControlInput.Status.ACTIVE && input.priority < ControlInput.Priority.NORMAL) cautionColor else null)
             return
         }
 
@@ -54,7 +53,7 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
                 guiGraphics,
                 if (computers.thrust.current == 1.0f) Component.translatable("mode.flightassistant.thrust.locked_toga").setColor(primaryColor)
                 else Component.translatable("mode.flightassistant.thrust.locked").setColor(primaryColor),
-                false,
+                ControlInput.Status.ACTIVE,
                 if (FATickCounter.totalTicks % 20 >= 10) cautionColor else emptyColor
             )
 
@@ -67,17 +66,17 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
                 if (computers.thrust.current == 1.0f) Component.translatable("mode.flightassistant.thrust.manual.toga").setColor(secondaryColor)
                 else if (computers.thrust.current < 0.0f) Component.translatable("mode.flightassistant.thrust.manual.reverse")
                 else Component.translatable("mode.flightassistant.thrust.manual"),
-                false, if (thrustUnusable) cautionColor else secondaryColor
+                ControlInput.Status.ACTIVE, if (thrustUnusable) cautionColor else null
             )
             return
         }
 
-        thrustDisplay.render(guiGraphics, null, true)
+        thrustDisplay.render(guiGraphics, null, ControlInput.Status.ACTIVE)
     }
 
     private fun renderPitchMode(guiGraphics: GuiGraphics) {
-        if (computers.pitch.manualOverride) {
-            pitchDisplay.render(guiGraphics, Component.translatable("mode.flightassistant.vertical.override").setColor(cautionColor), false, cautionColor)
+        if (FAKeyMappings.globalAutomationOverride.isDown) {
+            pitchDisplay.render(guiGraphics, Component.translatable("mode.flightassistant.vertical.override").setColor(cautionColor), ControlInput.Status.ACTIVE, cautionColor)
             return
         }
         renderInput(guiGraphics, pitchDisplay, computers.pitch.activeInput)
@@ -85,9 +84,9 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
 
     private fun renderInput(guiGraphics: GuiGraphics, display: ModeDisplay, input: ControlInput?) {
         if (input != null) {
-            display.render(guiGraphics, input.text, input.active, if (input.active && input.priority < ControlInput.Priority.NORMAL) cautionColor else null)
+            display.render(guiGraphics, input.text, input.status, if (input.status == ControlInput.Status.ACTIVE && input.priority < ControlInput.Priority.NORMAL) cautionColor else null)
         } else {
-            display.render(guiGraphics, null, true)
+            display.render(guiGraphics, null, ControlInput.Status.ACTIVE)
         }
     }
 
@@ -103,13 +102,14 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
             text.appendWithSeparation(Component.translatable("short.flightassistant.autopilot"))
         }
 
-        automationStatusDisplay.render(
-            guiGraphics,
-            if (text.siblings.isNotEmpty()) text else null,
-            true,
+        val color =
             if (computers.autoflight.autopilotAlert) warningColor
             else if (computers.autoflight.autoThrustAlert) cautionColor
             else null
+        automationStatusDisplay.render(
+            guiGraphics,
+            if (text.siblings.isNotEmpty() || color != null) text else null, ControlInput.Status.ACTIVE,
+            if (FATickCounter.totalTicks % 20 >= 10 || color == null) color else emptyColor
         )
     }
 
@@ -131,7 +131,7 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
         private var lastText: Component? = null
         private var textChangedAt: Int = 0
 
-        fun render(guiGraphics: GuiGraphics, text: Component?, active: Boolean = true, borderColor: Int? = null) {
+        fun render(guiGraphics: GuiGraphics, text: Component?, status: ControlInput.Status = ControlInput.Status.ACTIVE, borderColor: Int? = null) {
             val farLeft: Int = HudFrame.left + 1
             val farRight: Int = HudFrame.right - 1
             val farWidth: Int = farRight - farLeft
@@ -142,13 +142,19 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
 
             val y: Int = HudFrame.top - 9
 
-            if (active && !Objects.equals(text, lastText)) {
+            if (status == ControlInput.Status.ACTIVE && !Objects.equals(text, lastText)) {
                 textChangedAt = FATickCounter.totalTicks
                 lastText = text
             }
 
             if (text != null) {
-                guiGraphics.drawMiddleAlignedString(text, (leftX + rightX) / 2, y, if (active) primaryColor else secondaryColor)
+                val color = when (status) {
+                    ControlInput.Status.ACTIVE -> primaryColor
+                    ControlInput.Status.ARMED -> primaryAdvisoryColor
+                    ControlInput.Status.UNAVAILABLE -> cautionColor
+                    ControlInput.Status.DISABLED -> return
+                }
+                guiGraphics.drawMiddleAlignedString(text, (leftX + rightX) / 2, y, color)
                 if (borderColor != null || FATickCounter.totalTicks <= textChangedAt + 100) {
                     guiGraphics.renderOutline(leftX, y - 2, rightX - leftX, 11, borderColor ?: secondaryColor)
                 }

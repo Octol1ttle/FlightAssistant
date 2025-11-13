@@ -2,11 +2,14 @@ package ru.octol1ttle.flightassistant.api.util
 
 import kotlin.random.Random
 import kotlin.random.nextInt
+import net.minecraft.SharedConstants
 import net.minecraft.Util
 import net.minecraft.client.player.LocalPlayer
 
 object FATickCounter {
-    val worldLoadWaitTime = Random.Default.nextInt(10..60) // TODO: wait for chunk loading instead
+    const val TICK_TIME: Float = 1.0f / SharedConstants.TICKS_PER_SECOND;
+
+    val worldLoadWaitTime = Random.nextInt(10..60) // TODO: wait for chunk loading instead
     private var lastPlayerTickCount: Int = 0
     private var lastMillis: Long = 0
 

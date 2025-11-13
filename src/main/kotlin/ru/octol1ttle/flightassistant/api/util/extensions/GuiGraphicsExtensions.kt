@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.api.util.extensions
 
 import com.mojang.blaze3d.vertex.PoseStack
 import java.awt.Color
+import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
@@ -30,6 +31,8 @@ val GuiGraphics.centerY: Int
     get() = centerYF.toInt()
 
 const val emptyColor: Int = 0
+
+val whiteColor: Int = ChatFormatting.WHITE.color!! or (255 shl 24)
 
 val primaryColor: Int
     get() = FAConfig.display.primaryColor.rgb
@@ -146,3 +149,10 @@ fun org.joml.Matrix3x2fStack.push() {
 fun org.joml.Matrix3x2fStack.pop() {
     popMatrix()
 }
+
+//? if >=1.21.9 {
+/*fun GuiGraphics.renderOutline(x: Int, y: Int, width: Int, height: Int, color: Int) {
+    submitOutline(x, y, width, height, color)
+    renderDeferredElements()
+}
+*///?}

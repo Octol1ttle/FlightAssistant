@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.impl.alert.flight_plan
 import kotlin.math.abs
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
+import net.minecraft.world.level.levelgen.Heightmap
 import ru.octol1ttle.flightassistant.api.alert.Alert
 import ru.octol1ttle.flightassistant.api.alert.AlertData
 import ru.octol1ttle.flightassistant.api.alert.ECAMAlert
@@ -15,7 +16,16 @@ class DepartureElevationDisagreeAlert(computers: ComputerBus) : Alert(computers)
     override val data: AlertData = AlertData.MASTER_CAUTION
 
     override fun shouldActivate(): Boolean {
-        return computers.plan.currentPhase == FlightPlanComputer.FlightPhase.TAKEOFF && abs((computers.data.groundY ?: Double.MAX_VALUE) - computers.plan.departureData.elevation) > 5
+        if (computers.plan.currentPhase != FlightPlanComputer.FlightPhase.TAKEOFF) {
+            return false
+        }
+        val x = computers.plan.departureData.coordinatesX
+        val z = computers.plan.departureData.coordinatesZ
+        if (!computers.chunk.isLoaded(x, z)) {
+            return false
+        }
+        val actualElevation: Int = computers.data.level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z)
+        return abs(actualElevation - computers.plan.departureData.elevation) > 2
     }
 
     override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {

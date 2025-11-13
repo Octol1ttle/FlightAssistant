@@ -11,7 +11,8 @@ import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.RenderMatrices
 import ru.octol1ttle.flightassistant.api.util.degrees
-import ru.octol1ttle.flightassistant.api.util.requireIn
+import ru.octol1ttle.flightassistant.api.util.extensions.getLerpedDeltaMovement
+import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 
 class HudDisplayDataComputer(computers: ComputerBus, private val mc: Minecraft) : Computer(computers) {
     val player: LocalPlayer
@@ -31,11 +32,11 @@ class HudDisplayDataComputer(computers: ComputerBus, private val mc: Minecraft) 
         get() = lerpedPosition.y
 
     val roll: Float
-        get() = degrees(atan2(-RenderMatrices.worldSpaceMatrix.m10(), RenderMatrices.worldSpaceMatrix.m11())).requireIn(-180.0f..180.0f)
+        get() = degrees(atan2(-RenderMatrices.worldSpaceMatrix.m10(), RenderMatrices.worldSpaceMatrix.m11())).throwIfNotInRange(-180.0f..180.0f)
 
-    override fun tick() {
+    override fun renderTick() {
         lerpedPosition = player.getPosition(FATickCounter.partialTick)
-        lerpedVelocity = player.getDeltaMovementLerped(FATickCounter.partialTick)
+        lerpedVelocity = player.getLerpedDeltaMovement(FATickCounter.partialTick)
         lerpedForwardVelocity = computers.data.computeForwardVector(lerpedVelocity)
     }
 

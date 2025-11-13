@@ -11,8 +11,8 @@
         "gui.GuiMixinLegacy",
         "gui.GuiMixinNew",
         "level_renderer.LevelRendererMixinLegacy",
-        "level_renderer.LevelRendererMixinNew",
         "level_renderer.LevelRendererMixinNewest",
+        "level_renderer.LevelRendererMixinNewestest",
         "level_renderer.LevelRendererMixinOld",
         "sound.SoundEngineMixin",
         "sound.SoundManagerMixin"

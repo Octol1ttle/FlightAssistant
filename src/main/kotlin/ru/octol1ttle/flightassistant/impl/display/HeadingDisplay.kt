@@ -13,7 +13,6 @@ import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.api.util.findShortestPath
 import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.builtin.HeadingLateralMode
 
 class HeadingDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
@@ -41,7 +40,7 @@ class HeadingDisplay(computers: ComputerBus) : Display(computers) {
         val headingInt: Int = computers.data.heading.roundToInt()
 
         renderOutline(x - 11, y, 23, 11, primaryColor)
-        drawMiddleAlignedString("%03d".format(headingInt), x, y + 2, primaryColor)
+        drawMiddleAlignedString("%03d".formatRoot(headingInt), x, y + 2, primaryColor)
     }
 
     private fun GuiGraphics.renderHeadingScale(x: Int, y: Int) {
@@ -108,8 +107,8 @@ class HeadingDisplay(computers: ComputerBus) : Display(computers) {
 
     private fun GuiGraphics.renderHeadingTarget(x: Int, y: Int) {
         val active: AutoFlightComputer.LateralMode? = computers.autoflight.activeLateralMode
-        if (computers.autoflight.getHeadingInput() != null && active is HeadingLateralMode) {
-            drawMiddleAlignedString("%03d".format(active.target), x, y, primaryAdvisoryColor)
+        if (computers.autoflight.getHeadingInput() != null && active is AutoFlightComputer.FollowsHeadingMode) {
+            drawMiddleAlignedString("%03d".formatRoot(active.targetHeading), x, y, primaryAdvisoryColor)
         }
     }
 

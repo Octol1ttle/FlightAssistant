@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.api.display
 import net.minecraft.client.gui.GuiGraphics
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 
+// TODO: displays should also be allowed to have state. adjust the comment below too
 /**
  *
  * A class responsible for presenting data on the HUD. Should *not* be used for computing data, do this in a [ru.octol1ttle.flightassistant.api.computer.Computer] instead

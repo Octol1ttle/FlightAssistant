@@ -77,8 +77,8 @@ object ScreenSpace {
         return pos.z > -1 && pos.z < 1
     }
 
-    fun getX(heading: Float, useNoRollMatrix: Boolean = true): Int? {
-        val vec: Vector3f = fromWorldSpace(Vec3.directionFromRotation(0.0f, heading - 180.0f), useNoRollMatrix)
+    fun getX(heading: Float): Int? {
+        val vec: Vector3f = fromWorldSpace(Vec3.directionFromRotation(0.0f, heading - 180.0f), true)
         if (!isVisible(vec)) {
             return null
         }
@@ -86,8 +86,8 @@ object ScreenSpace {
         return vec.x.toInt()
     }
 
-    fun getY(pitch: Float, useNoRollMatrix: Boolean = true): Int? {
-        val vec: Vector3f = fromWorldSpace(Vec3.directionFromRotation(-pitch, mc.entityRenderDispatcher.camera.yRot), useNoRollMatrix)
+    fun getY(pitch: Float): Int? {
+        val vec: Vector3f = fromWorldSpace(Vec3.directionFromRotation(-pitch, mc.entityRenderDispatcher.camera!!.yRot), true)
         if (!isVisible(vec)) {
             return null
         }

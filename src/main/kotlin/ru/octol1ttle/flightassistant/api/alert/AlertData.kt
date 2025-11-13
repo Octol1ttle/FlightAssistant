@@ -40,39 +40,64 @@ class AlertData(@Deprecated("Waiting for an enhanced priority system (.defineOrd
                 soundEvent("terrain_ahead"),
                 LoopType.CONSTANT_VOLUME
             ) { FAConfig.display.cautionColor.rgb }
-        val DONT_SINK =
+        // TODO: fix hack
+        val BELOW_GLIDE_SLOPE_WARNING =
             AlertData(
                 500,
+                soundEvent("below_glide_slope_warning"),
+                LoopType.CONSTANT_VOLUME
+            ) { FAConfig.display.warningColor.rgb }
+        val BELOW_GLIDE_SLOPE =
+            AlertData(
+                600,
+                soundEvent("below_glide_slope"),
+                LoopType.CONSTANT_VOLUME
+            ) { FAConfig.display.cautionColor.rgb }
+        val DONT_SINK =
+            AlertData(
+                700,
                 soundEvent("dont_sink"),
                 LoopType.CONSTANT_VOLUME
             ) { FAConfig.display.cautionColor.rgb }
         val FORCE_AUTOPILOT_OFF =
             AlertData(
-                600,
+                800,
                 soundEvent("autopilot_off"),
                 LoopType.CONSTANT_VOLUME
             ) { FAConfig.display.warningColor.rgb }
         val PLAYER_AUTOPILOT_OFF =
             AlertData(
-                600,
+                900,
                 soundEvent("autopilot_off"),
                 LoopType.NONE
             ) { FAConfig.display.warningColor.rgb }
         val MASTER_WARNING =
             AlertData(
-                700,
+                1000,
                 soundEvent("master_warning"),
                 LoopType.FADE_OUT
             ) { FAConfig.display.warningColor.rgb }
+        val CAUTION_TERRAIN =
+            AlertData(
+                1100,
+                soundEvent("caution_terrain"),
+                LoopType.NONE
+            ) { FAConfig.display.cautionColor.rgb }
+        val MINIMUMS_REACHED =
+            AlertData(
+                1200,
+                soundEvent("minimums_reached"),
+                LoopType.NONE
+            ) { FAConfig.display.cautionColor.rgb }
         val THRUST_LOCKED =
             AlertData(
-                800,
+                1300,
                 soundEvent("thrust_locked"),
                 LoopType.CONSTANT_VOLUME
             ) { FAConfig.display.cautionColor.rgb }
         val MASTER_CAUTION =
             AlertData(
-                900,
+                1400,
                 soundEvent("master_caution"),
                 LoopType.NONE
             ) { FAConfig.display.cautionColor.rgb }

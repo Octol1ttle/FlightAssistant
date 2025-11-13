@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
+import ru.octol1ttle.flightassistant.FlightAssistant.profiler
 import ru.octol1ttle.flightassistant.api.ModuleController
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.display.Display
@@ -68,6 +69,7 @@ internal object HudDisplayHost: ModuleController<Display> {
         register(AttitudeDisplay.ID, AttitudeDisplay(computers))
         register(AutomationModesDisplay.ID, AutomationModesDisplay(computers))
         register(CoordinatesDisplay.ID, CoordinatesDisplay(computers))
+        register(CourseDeviationDisplay.ID, CourseDeviationDisplay(computers))
         register(ElytraDurabilityDisplay.ID, ElytraDurabilityDisplay(computers))
         register(FlightDirectorsDisplay.ID, FlightDirectorsDisplay(computers))
         register(FlightPathDisplay.ID, FlightPathDisplay(computers))
@@ -103,6 +105,8 @@ internal object HudDisplayHost: ModuleController<Display> {
             return
         }
 
+        profiler.push("flightassistant:hud_display_host")
+
         HudFrame.updateDimensions()
         ScreenSpace.updateViewport()
 
@@ -115,6 +119,7 @@ internal object HudDisplayHost: ModuleController<Display> {
                 return
             }
 
+            profiler.push(id.toString())
             if (!display.enabled || !RenderMatrices.ready) {
                 try {
                     display.renderFaulted(guiGraphics)
@@ -133,6 +138,8 @@ internal object HudDisplayHost: ModuleController<Display> {
                 display.enabled = false
                 FlightAssistant.logger.error("Exception rendering display with identifier: $id", t)
             }
+            profiler.pop()
         }
+        profiler.pop()
     }
 }

@@ -18,6 +18,10 @@ import ru.octol1ttle.flightassistant.impl.display.HudDisplayHost
 object FlightAssistant {
     const val MOD_ID: String = "flightassistant"
     internal val mc: Minecraft = Minecraft.getInstance()
+//? if >=1.21.4 {
+    /*internal val profiler = net.minecraft.util.profiling.Profiler.get()
+*///?} else
+    internal val profiler = mc.profiler
     internal val logger: Logger = LoggerFactory.getLogger("FlightAssistant")
     internal var initComplete: Boolean = false
 

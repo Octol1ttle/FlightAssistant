@@ -50,13 +50,14 @@ class DisplayOptions {
 
     @SerialEntry
     var showFlightPathVector: Boolean = true
-    @SerialEntry
+
+    @SerialEntry @Deprecated("does anyone use this??")
     var flightPathVectorSize: Float = 1.0f
 
     @SerialEntry
     var showElytraDurability: Boolean = true
     @SerialEntry
-    var elytraDurabilityUnits: DurabilityUnits = DurabilityUnits.PERCENTAGE
+    var elytraDurabilityUnits: DurabilityUnits = DurabilityUnits.TIME
 
     @SerialEntry
     var showCoordinates: Boolean = true
@@ -70,8 +71,13 @@ class DisplayOptions {
     var showAlerts: Boolean = true
     @SerialEntry
     var showStatusMessages: Boolean = true
+
     @SerialEntry
     var showAutomationModes: Boolean = true
+    @SerialEntry
+    var showFlightDirectors: Boolean = true
+    @SerialEntry
+    var showCourseDeviation: Boolean = true
 
     internal fun setMinimal(): DisplayOptions {
         this.showAttitude = AttitudeDisplayMode.DISABLED
@@ -79,9 +85,9 @@ class DisplayOptions {
         this.showSpeedReading = false
         this.showSpeedScale = false
         this.showAltitudeScale = false
-        this.showRadarAltitude = false
         this.showFlightPathVector = false
         this.showVerticalSpeed = false
+        this.showCourseDeviation = false
         return this
     }
 
@@ -102,6 +108,8 @@ class DisplayOptions {
         this.showAlerts = false
         this.showStatusMessages = false
         this.showAutomationModes = false
+        this.showFlightDirectors = false
+        this.showCourseDeviation = false
         return this
     }
 

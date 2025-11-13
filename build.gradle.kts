@@ -1,8 +1,9 @@
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
     id("dev.isxander.modstitch.base") version "0.7.0-unstable"
     id("me.modmuss50.mod-publish-plugin")
-    id("me.fallenbreath.yamlang") version "1.4.2"
+    id("me.fallenbreath.yamlang") version "1.5.0"
 }
 
 fun prop(name: String) : String {
@@ -43,6 +44,11 @@ modstitch {
 
     val j21: Boolean = stonecutter.eval(minecraft, ">=1.20.6")
     javaVersion = if (j21) 21 else 17
+
+    java {
+        withSourcesJar()
+    }
+
     kotlin {
         jvmToolchain(if (j21) 21 else 17)
     }
@@ -130,6 +136,8 @@ modstitch {
 // If you want to create proxy configurations for more source sets, such as client source sets,
 // use the modstitch.createProxyConfigurations(sourceSets["client"]) function.
 dependencies {
+    modstitchImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+
     modstitch.loom {
         modstitchModImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fapi")}")
         modstitchModImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.flk")}+kotlin.2.1.0")
@@ -145,7 +153,13 @@ dependencies {
     modstitchModImplementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}")
 
     ifFindProperty("deps.dabr") {
-        modstitchModImplementation("nl.enjarai:do-a-barrel-roll:$it")
+        val legacyPermsApi: Boolean = loader == "fabric" && stonecutter.eval(minecraft, "<1.21.6")
+        modstitchModImplementation("nl.enjarai:do-a-barrel-roll:$it") {
+            if (legacyPermsApi) exclude("me.lucko")
+        }
+        if (legacyPermsApi) {
+            modstitchModImplementation("com.github.Octol1ttle:fabric-permissions-api:v0.2")
+        }
     }
 }
 
@@ -163,12 +177,12 @@ publishMods {
     modstitch.onEnable {
         file = modstitch.finalJarTask.flatMap { it.archiveFile }
     }
-    //additionalFiles.from(modstitch.namedJarTask.get().archiveFile)
+    additionalFiles.from(tasks.named<Jar>("sourcesJar").flatMap { it.archiveFile })
 
     displayName = "${mod.name} ${mod.version} for ${loader.replaceFirstChar { it.uppercase() }} ${property("mod.mc_title")}"
     version = "${mod.version}+mc$minecraft-$loader"
     changelog = rootProject.file("CHANGELOG.md").readText()
-    type = ALPHA
+    type = BETA
     modLoaders.add(loader)
     if (loader == "fabric") {
         modLoaders.add("quilt")

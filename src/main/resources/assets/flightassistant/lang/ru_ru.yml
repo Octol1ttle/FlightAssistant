@@ -32,6 +32,7 @@ alert.flightassistant:
       flightassistant:attitude: ОТКАЗ ИНД ОРИЕНТ
       flightassistant:automation_modes: ОТКАЗ ИНД АВТО РЕЖИМ
       flightassistant:coordinates: ОТКАЗ ИНД КООРД
+      flightassistant:course_deviation: ОТКАД ИНД ОТКЛ КУРС
       flightassistant:elytra_durability: ОТКАЗ ИНД ПРЧН/ЭЛ
       flightassistant:flight_directors: ОТКАЗ ИНД УКАЗ/П
       flightassistant:flight_path: ОТКАЗ ИНД ВЕКТ/П
@@ -52,25 +53,33 @@ alert.flightassistant:
     .: УПР/ПОЛЕТ
     pitch_fault:
       .: ОТКАЗ ОГРАН УГЛА НАКЛ
-      use_manual_pitch: ' -РУЧН УПР УГЛ НАКЛ: ИСПОЛЬЗ'
+      use_automation_override: ' -ПРИНУД ОТКЛ АВТОМАТ: ИСПОЛЬЗ'
     protections_lost:
       .: ЗАЩИТЫ ПОТЕРЯНЫ
       enable_air_data: ' -КОМП ДАННЫХ ПОЛЕТА: ВЫКЛ ЗАТЕМ ВКЛ'
       enable_pitch: ' -КОМП УГЛА НАКЛ: ВЫКЛ ЗАТЕМ ВКЛ'
       enable_prot_sys: ' -КОМП ЗАЩИТ: ВЫКЛ ЗАТЕМ ВКЛ'
-      max_pitch: ' МАКС УГОЛ НАКЛ: 55* ВВЕРХ'
+      max_pitch: ' МАКС УГОЛ НАКЛ: 45* ВВЕРХ'
       min_pitch: ' МИН УГОЛ НАКЛ: 35* ВНИЗ'
       maneuver_with_care: ' МАНЕВРИРУЙ С ОСТОРОЖНОСТЬЮ'
   flight_plan:
     .: ПЛАН/П
     fault: ОТКАЗ СИСТ
     departure_elevation_disagree: НЕСОГЛ ВЫС ВЫЛЕТА
+    arrival_elevation_disagree:
+      .: НЕСОГЛ ВЫС ПРИБЫТИЯ
+      glide_slope_unreliable: ' ГЛИССАДА НЕНАДЕЖН'
+      autopilot_do_not_use: ' -АВТОПИЛОТ: НЕ ИСПОЛЬЗ'
+    obstacles_on_path: ПРЕПЯТСТВИЯ НА ПУТИ
+    descent_too_steep: СПУСК СЛИШКОМ КРУТОЙ
   gpws:
     .: GPWS
     fault: ОТКАЗ
+    minimums_reached: ДОСТИГНУТЫ МИНИМУМЫ
     dont_sink: НЕ ПАДАЙ
     sink_rate: СКОР. СНИЖЕНИЯ
     terrain_ahead: ЗЕМЛЯ ВПЕРЕДИ
+    below_glide_slope: НИЖЕ ГЛИССАДЫ
     pull_up: ТЯНИ ВВЕРХ
   navigation:
     .: НАВИГАЦ
@@ -165,6 +174,7 @@ config.flightassistant:
         status_messages: Отображать сообщения о статусе
         automation_modes: Отображать режимы автоматизации
         flight_directors: Отображать указатели полёта
+        course_deviation: Отображать отклонение от курса
     safety:
       alert_volume: Громкость звуков предупреждений
       consider_invulnerability: Выключать предупреждения и защиты во время неуязвимости
@@ -208,10 +218,17 @@ config.flightassistant:
           limit_pitch: Ограничивать угол наклона при обнаружении рельефа местности
           auto_thrust: Автоматически убавлять тягу при обнаружении рельефа местности
           auto_pitch: Автоматически увеличивать угол наклона для предотвращения столкновения с местностью
+        altitude_loss_with_toga:
+          enabled: Предупреждать о потере высоты при взлёте/уходе на второй круг
+          alert_method: Способ предупреждения о потере высоте при взлёте/уходе на второй круг
+        below_glide_slope:
+          alert_mode: Режим предупреждения о снижении ниже глиссады
+          alert_method: Способ предупреждения о снижении ниже глиссады
       firework:
         .: Фейерверки
         explosive_alert: Предупреждать при взятии взрывоопасных фейерверков
         lock_explosive: Блокировать использование взрывоопасных фейерверков
+        lock_obstacles: Блокировать использование фейерверков рядом с препятствиями
 
 menu.flightassistant:
   .: Настройки FlightAssistant
@@ -231,6 +248,7 @@ menu.flightassistant:
         flightassistant:attitude: Авиагоризонт
         flightassistant:automation_modes: Индикатор режимов автоматизации
         flightassistant:coordinates: Индикатор координат
+        flightassistant:course_deviation: Индикатор отклонения от курса
         flightassistant:elytra_durability: Индикатор прочности элитр
         flightassistant:flight_directors: Индикатор указателей полёта
         flightassistant:flight_path: Индикатор пути полёта
@@ -294,11 +312,27 @@ menu.flightassistant:
       minimum_climb_speed: 'Минимальная скорость набора: '
     enroute:
       .: Маршрут
+      legend:
+        hover: Наведись для легенды
+        origin: '%s - точка "откуда"'
+        target: '%s - точка "куда"'
+        direct-to: '%s - точка "куда" (напрямую)'
+      delete_all: Удалить все
       add_waypoint: Добавить точку
       direct_to: Прямо-на
       unsaved_changes: НЕСОХРАНЕН ИЗМЕНЕНИЯ
-    arrival: Прибытие
+    arrival:
+      .: Прибытие
+      minimums:
+        .: 'Минимумы: '
+        absolute: АБС
+        relative: ОТН
+      landing_thrust: 'Посадочная тяга (%): '
+      go_around_altitude: 'Высота ухода на второй круг: '
+      approach_re_entry_waypoint_index: 'Номер точки для повторного захода на посадку: '
     save: Сохранить
+    load: Загрузить
+    error: Произошла ошибка! Пожалуйста, проверьте журнал игры для подробностей
     discard_changes: Отменить изменения
     coordinates: 'Координаты: '
     elevation: 'Высота: '
@@ -318,6 +352,7 @@ mode.flightassistant:
     climb: ТЯГА НАБОР
     descend: ТЯГА СНИЖ
     takeoff: ТЯГА ВЫЛЕТ
+    landing: ТЯГА ПОСАД
   vertical:
     override: РУЧН УГОЛ
     void_protection: ПУСТ ЗАЩ
@@ -325,15 +360,24 @@ mode.flightassistant:
     stall_protection: СВАЛ ЗАЩ
     terrain_protection: ЗЕМЛ ЗАЩ
     terrain_escape: ЗЕМЛ ИЗБЕЖ
-    selected_pitch: УГОЛ
+    pitch: УГОЛ
     altitude:
-      climb: НАБОР
-      descend: СНИЖ
-      hold: ВЫС
-    speed_reference: СКОР СЛЕД
+      hold: ВЫС УДЕРЖ
+      cruise: ВЫС КРЕЙС
+      open:
+        climb: СВ НАБОР
+        descend: СВ СНИЖ
+      managed:
+        climb: НАБОР
+        descend: СНИЖ
+    glide_slope: ГЛИССАДА
+    go_around: ВТ.КР ВЫС
   lateral:
-    selected_heading: КУРС
-    selected_coordinates: КООРД
+    heading: КУРС
+    direct_coordinates: ПРЯМ КООРД
+    track_navigation: НАВ ТРАЕКТ
+    localizer: ПОСАД.КУРС
+    go_around: ВТ.КР КУРС
 
 short.flightassistant:
   alert: ПРЕДУПР
@@ -351,31 +395,45 @@ short.flightassistant:
   ground: ЗЕМЛ
   ground_speed: 'Г/С%s'
   heading: КУРС
+  lateral_deviation: Г/ОТКЛ
   infinite: БЕСК
   radar_altitude: Р/ВЫС
   speed: СКОР
   status: СТАТУС
   time: ВРЕМ
+  vertical_deviation: В/ОТКЛ
   vertical_speed: 'В/С%s'
   void: ПУСТ
 
 status.flightassistant:
   thrust: 'ТЯГА: %s'
   firework_count: 'ЧИСЛ ФРВК: %s'
+  flight_plan:
+    phase:
+      takeoff: ВЗЛЕТ
+      climb: НАБОР
+      cruise: КРЕЙСЕР
+      descend: СНИЖЕНИЕ
+      approach: ЗАХОД
+      landing: ПОСАДКА
+      go_around: ВТОРОЙ КРУГ
+    waypoint_distance: 'ТОЧК ДИСТ: %s'
+    waypoint_time: 'ТОЧК ВРЕМ: %s'
 
 misc.flightassistant:
   waiting_for_world_load:
     .: ОЖИДАНИЕ ЗАГРУЗКИ МИРА
     maximum_time: (МАКС 3 СЕКУНДЫ)
 
-key.flightassistant:
-  .: FlightAssistant
-  toggle_enabled: Включить/выключить мод
-  open_flight_setup: Открыть экран настройки полёта
-  autopilot_disconnect: Отключить автопилот
-  manual_pitch_override: Принудительное ручное управление углом наклона (зажать)
-  hide_current_alert: Скрыть активное предупреждение
-  show_hidden_alert: Показать скрытое предупреждение
+key.category.flightassistant:
+  main:
+    .: FlightAssistant
+    toggle_enabled: Включить/выключить мод
+    open_flightassistant_setup: Открыть экран настройки FlightAssistant
+    autopilot_disconnect: Отключить автопилот
+    global_automation_override: Принудительное отключение автоматики (зажать)
+    hide_current_alert: Скрыть активное предупреждение
+    show_hidden_alert: Показать скрытое предупреждение
   thrust:
     .: 'FlightAssistant: Тяга'
     decrease_thrust: Снизить тягу

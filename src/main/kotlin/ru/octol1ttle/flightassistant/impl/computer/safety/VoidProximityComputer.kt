@@ -6,26 +6,25 @@ import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
 import ru.octol1ttle.flightassistant.api.autoflight.FlightController
 import ru.octol1ttle.flightassistant.api.autoflight.pitch.PitchControllerRegistrationCallback
-import ru.octol1ttle.flightassistant.api.autoflight.pitch.PitchLimiter
-import ru.octol1ttle.flightassistant.api.autoflight.pitch.PitchLimiterRegistrationCallback
 import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustControllerRegistrationCallback
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
 import ru.octol1ttle.flightassistant.api.util.extensions.bottomY
 import ru.octol1ttle.flightassistant.config.FAConfig
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.PitchComputer
 
-class VoidProximityComputer(computers: ComputerBus) : Computer(computers), PitchLimiter, FlightController {
+class VoidProximityComputer(computers: ComputerBus) : Computer(computers), FlightController {
     var status: Status = Status.ABOVE_GROUND
         private set
 
     override fun subscribeToEvents() {
-        PitchLimiterRegistrationCallback.EVENT.register { it.accept(this) }
         PitchControllerRegistrationCallback.EVENT.register { it.accept(this) }
         ThrustControllerRegistrationCallback.EVENT.register { it.accept(this) }
     }
 
     override fun tick() {
-        status = if (computers.data.groundY != null) {
+        status = if (computers.gpws.groundY != null) {
             Status.ABOVE_GROUND
         } else {
             val heightAboveDamageAltitude: Double = computers.data.altitude - computers.data.voidY
@@ -39,24 +38,23 @@ class VoidProximityComputer(computers: ComputerBus) : Computer(computers), Pitch
         }
     }
 
-    override fun getMinimumPitch(): ControlInput? {
-        if (FAConfig.safety.voidLimitPitch && status != Status.ABOVE_GROUND) {
-            return ControlInput(
-                (-90.0f + (computers.data.level.bottomY - (computers.data.altitude + computers.data.velocity.y * 20)) / 64.0f * 105.0f).toFloat()
-                    .coerceIn(-35.0f..computers.thrust.getOptimumClimbPitch()),
+    override fun <Response> handleQuery(query: ComputerQuery<Response>) {
+        if (query is PitchComputer.MinimumPitchQuery && status != Status.ABOVE_GROUND) {
+            query.respond(ControlInput(
+                (-90.0f + (computers.data.level.bottomY - (computers.data.altitude + computers.data.velocityPerSecond.y)) / 64.0f * 105.0f).toFloat()
+                    .coerceIn(-35.0f..15.0f),
+                Component.translatable("mode.flightassistant.vertical.void_protection"),
                 ControlInput.Priority.HIGH,
-                Component.translatable("mode.flightassistant.vertical.void_protection")
-            )
+                status = ControlInput.Status.fromBooleans(true, enabled = FAConfig.safety.voidLimitPitch)
+            ))
         }
-
-        return null
     }
 
     override fun getPitchInput(): ControlInput? {
-        if (FAConfig.safety.voidAutoPitch && status <= Status.APPROACHING_DAMAGE_ALTITUDE) {
-            return ControlInput(
-                computers.thrust.getOptimumClimbPitch(), ControlInput.Priority.HIGH, Component.translatable("mode.flightassistant.vertical.void_escape"),
-                active = status == Status.REACHED_DAMAGE_ALTITUDE && computers.thrust.current == 1.0f && !computers.thrust.noThrustSource
+        if (status <= Status.APPROACHING_DAMAGE_ALTITUDE) {
+            return ControlInput(90.0f, Component.translatable("mode.flightassistant.vertical.void_escape"), ControlInput.Priority.HIGH,
+                status = ControlInput.Status.fromBooleans(status == Status.REACHED_DAMAGE_ALTITUDE && computers.thrust.current == 1.0f && !computers.thrust.noThrustSource,
+                    enabled = FAConfig.safety.voidAutoPitch)
             )
         }
 
@@ -64,12 +62,12 @@ class VoidProximityComputer(computers: ComputerBus) : Computer(computers), Pitch
     }
 
     override fun getThrustInput(): ControlInput? {
-        if (FAConfig.safety.voidAutoThrust && status <= Status.APPROACHING_DAMAGE_ALTITUDE) {
+        if (status <= Status.APPROACHING_DAMAGE_ALTITUDE) {
             return ControlInput(
                 1.0f,
-                ControlInput.Priority.HIGH,
                 Component.translatable("mode.flightassistant.thrust.toga"),
-                active = status == Status.REACHED_DAMAGE_ALTITUDE
+                ControlInput.Priority.HIGH,
+                status = ControlInput.Status.fromBooleans(status == Status.REACHED_DAMAGE_ALTITUDE, enabled = FAConfig.safety.voidAutoThrust)
             )
         }
 

@@ -250,6 +250,16 @@ object FAConfigScreen {
                 binding(current::showAutomationModes, defaults.showAutomationModes)
                 controller(tickBox())
             }
+            rootOptions.register("misc.flight_directors") {
+                setDisplayName()
+                binding(current::showFlightDirectors, defaults.showFlightDirectors)
+                controller(tickBox())
+            }
+            rootOptions.register("misc.course_deviation") {
+                setDisplayName()
+                binding(current::showCourseDeviation, defaults.showCourseDeviation)
+                controller(tickBox())
+            }
         }
     }
 
@@ -399,6 +409,26 @@ object FAConfigScreen {
                 binding(current::obstacleAutoPitch, defaults.obstacleAutoPitch)
                 controller(tickBox())
             }
+            rootOptions.register("gpws.altitude_loss_with_toga.enabled") {
+                setSafetyName()
+                binding(current::altitudeLossAlert, defaults.altitudeLossAlert)
+                controller(tickBox())
+            }
+            rootOptions.register("gpws.altitude_loss_with_toga.alert_method") {
+                setSafetyName()
+                binding(current::altitudeLossAlertMethod, defaults.altitudeLossAlertMethod)
+                controller(enumSwitch(SafetyOptions.AlertMethod::class.java))
+            }
+            rootOptions.register("gpws.below_glide_slope.alert_mode") {
+                setSafetyName()
+                binding(current::belowGlideSlopeAlertMode, defaults.belowGlideSlopeAlertMode)
+                controller(enumSwitch(SafetyOptions.AlertMode::class.java))
+            }
+            rootOptions.register("gpws.below_glide_slope.alert_method") {
+                setSafetyName()
+                binding(current::belowGlideSlopeAlertMethod, defaults.belowGlideSlopeAlertMethod)
+                controller(enumSwitch(SafetyOptions.AlertMethod::class.java))
+            }
 
             rootOptions.registerLabel(
                 "firework",
@@ -412,6 +442,11 @@ object FAConfigScreen {
             rootOptions.register("firework.lock_explosive") {
                 setSafetyName()
                 binding(current::fireworkLockExplosive, defaults.fireworkLockExplosive)
+                controller(tickBox())
+            }
+            rootOptions.register("firework.lock_obstacles") {
+                setSafetyName()
+                binding(current::fireworkLockObstacles, defaults.fireworkLockObstacles)
                 controller(tickBox())
             }
         }

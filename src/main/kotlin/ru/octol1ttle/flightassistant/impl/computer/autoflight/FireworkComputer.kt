@@ -24,8 +24,6 @@ import ru.octol1ttle.flightassistant.impl.display.StatusDisplay
 class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Computer(computers), ThrustSource {
     override val priority: ThrustSource.Priority = ThrustSource.Priority.LOW
     override val supportsReverse: Boolean = false
-    override val optimumClimbPitch: Float = 55.0f
-    override val altitudeHoldPitch: Float = 2.0f
 
     private var safeFireworkCount: Int = 0
 
@@ -33,30 +31,26 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
     var waitingForResponse: Boolean = false
     var lastActivationTime: Int = 0
 
-    var responseTimes: LimitedFIFOQueue<Int> = LimitedFIFOQueue(5)
+    val responseTimes: LimitedFIFOQueue<Int> = LimitedFIFOQueue(5)
 
     override fun subscribeToEvents() {
         ThrustSourceRegistrationCallback.EVENT.register { it.accept(this) }
         InteractionEvent.RIGHT_CLICK_ITEM.register(InteractionEvent.RightClickItem { player, hand ->
             val stack: ItemStack = player.getItemInHand(hand)
-            if (!player.level().isClientSide()) {
+            if (player.level().isClientSide() && computers.data.flying && stack.item is FireworkRocketItem) {
+                val explosive = FAConfig.safety.fireworkLockExplosive && !isEmptyOrSafe(player, hand)
+                val anyTerrainAhead = FAConfig.safety.fireworkLockObstacles && anyTerrainAhead()
+                if (computers.data.automationsAllowed() && (explosive || anyTerrainAhead)) {
 //? if >=1.21.2 {
-                /*return@RightClickItem net.minecraft.world.InteractionResult.PASS
+                    /*return@RightClickItem net.minecraft.world.InteractionResult.FAIL
 *///?} else
-                return@RightClickItem dev.architectury.event.CompoundEventResult.pass()
+                    return@RightClickItem dev.architectury.event.CompoundEventResult.interruptFalse(stack)
+                }
 
-            }
-
-            if (FAConfig.safety.fireworkLockExplosive && !isEmptyOrSafe(player, hand)) {
-//? if >=1.21.2 {
-                /*return@RightClickItem net.minecraft.world.InteractionResult.FAIL
-*///?} else
-                return@RightClickItem dev.architectury.event.CompoundEventResult.interruptFalse(stack)
-            }
-
-            if (!waitingForResponse && stack.item is FireworkRocketItem) {
-                lastActivationTime = FATickCounter.totalTicks
-                waitingForResponse = true
+                if (!waitingForResponse) {
+                    lastActivationTime = FATickCounter.totalTicks
+                    waitingForResponse = true
+                }
             }
 
 //? if >=1.21.2 {
@@ -120,6 +114,11 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
         return stack.getTagElement("Fireworks")?.getList("Explosions", net.minecraft.nbt.Tag.TAG_COMPOUND.toInt())?.isEmpty() != false
     }
 
+    private fun anyTerrainAhead(): Boolean {
+        val velocity = computers.data.player.forward.scale(FIREWORK_SPEED.toDouble())
+        return computers.gpws.computeObstacleImpactTime(velocity, computers.gpws.cautionThreshold) <= computers.gpws.warningThreshold
+    }
+
     private fun tryActivateFirework(player: Player) {
         if (FATickCounter.totalTicks < lastActivationTime + 10) {
             return
@@ -147,12 +146,12 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
     }
 
     override fun tickThrust(currentThrust: Float) {
-        if (currentThrust > computers.data.forwardVelocity.length() * 20.0f / 30.0f) {
+        if (currentThrust > computers.data.forwardVelocityPerSecond.length() / FIREWORK_SPEED && !anyTerrainAhead()) {
             tryActivateFirework(computers.data.player)
         }
     }
 
-    override fun <Response> processQuery(query: ComputerQuery<Response>) {
+    override fun <Response> handleQuery(query: ComputerQuery<Response>) {
         if (query is StatusDisplay.StatusMessageQuery && computers.thrust.getThrustSource() == this) {
             query.respond(Component.translatable("status.flightassistant.firework_count", safeFireworkCount))
         }
@@ -168,5 +167,7 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
 
     companion object {
         val ID: ResourceLocation = FlightAssistant.id("firework")
+
+        private const val FIREWORK_SPEED: Float = 33.33f
     }
 }

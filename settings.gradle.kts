@@ -19,16 +19,10 @@ pluginManagement {
         maven("https://maven.kikugie.dev/releases")
         maven("https://maven.kikugie.dev/snapshots")
     }
-
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.id == "me.fallenbreath.yamlang") useModule("com.github.Octol1ttle:yamlang:f0b7468")
-        }
-    }
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.7.8"
+    id("dev.kikugie.stonecutter") version "0.7.10"
 }
 
 stonecutter {
@@ -41,9 +35,8 @@ stonecutter {
         }
         mc("1.20.1", "fabric", "forge")
         mc("1.21.1", "fabric", "neoforge")
-        mc("1.21.4", "fabric")
-        mc("1.21.5", "fabric")
         mc("1.21.6", "fabric")
+        mc("1.21.9", "fabric")
     }
 }
 

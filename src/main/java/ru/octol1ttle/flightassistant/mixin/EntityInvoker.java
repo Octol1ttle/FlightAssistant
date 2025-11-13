@@ -9,4 +9,7 @@ public interface EntityInvoker {
     /*@org.spongepowered.asm.mixin.gen.Invoker("isInvulnerableToBase")
     boolean invokeIsInvulnerableToBase(net.minecraft.world.damagesource.DamageSource damageSource);
 *///?}
+
+    @org.spongepowered.asm.mixin.gen.Invoker("isStateClimbable")
+    boolean invokeIsStateClimbable(net.minecraft.world.level.block.state.BlockState state);
 }

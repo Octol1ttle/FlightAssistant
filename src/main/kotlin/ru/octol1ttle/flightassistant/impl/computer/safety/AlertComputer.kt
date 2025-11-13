@@ -29,11 +29,11 @@ import ru.octol1ttle.flightassistant.impl.alert.firework.FireworkExplosiveAlert
 import ru.octol1ttle.flightassistant.impl.alert.firework.FireworkNoResponseAlert
 import ru.octol1ttle.flightassistant.impl.alert.firework.FireworkSlowResponseAlert
 import ru.octol1ttle.flightassistant.impl.alert.flight_controls.ProtectionsLostAlert
+import ru.octol1ttle.flightassistant.impl.alert.flight_plan.ArrivalElevationDisagreeAlert
 import ru.octol1ttle.flightassistant.impl.alert.flight_plan.DepartureElevationDisagreeAlert
-import ru.octol1ttle.flightassistant.impl.alert.gpws.DontSinkAlert
-import ru.octol1ttle.flightassistant.impl.alert.gpws.PullUpAlert
-import ru.octol1ttle.flightassistant.impl.alert.gpws.SinkRateAlert
-import ru.octol1ttle.flightassistant.impl.alert.gpws.TerrainAheadAlert
+import ru.octol1ttle.flightassistant.impl.alert.flight_plan.DescentTooSteepAlert
+import ru.octol1ttle.flightassistant.impl.alert.flight_plan.ObstaclesOnPathAlert
+import ru.octol1ttle.flightassistant.impl.alert.gpws.*
 import ru.octol1ttle.flightassistant.impl.alert.navigation.ApproachingVoidDamageAltitudeAlert
 import ru.octol1ttle.flightassistant.impl.alert.navigation.NoChunksLoadedAlert
 import ru.octol1ttle.flightassistant.impl.alert.navigation.ReachedVoidDamageAltitudeAlert
@@ -103,22 +103,28 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
                 .add(
                     ComputerFaultAlert(
                         computers, PitchComputer.ID, Component.translatable("alert.flightassistant.flight_controls.pitch_fault"), listOf(
-                            Component.translatable("alert.flightassistant.flight_controls.pitch_fault.use_manual_pitch"),
+                            Component.translatable("alert.flightassistant.flight_controls.pitch_fault.use_automation_override"),
                 )))
                 .add(ProtectionsLostAlert(computers))
         )
         register(
             AlertCategory(Component.translatable("alert.flightassistant.flight_plan"))
-                .add(ComputerFaultAlert(computers, FlightPlanComputer.ID, Component.translatable("alerts.flightassistant.flight_plan.fault")))
+                .add(ComputerFaultAlert(computers, FlightPlanComputer.ID, Component.translatable("alert.flightassistant.flight_plan.fault")))
+                .add(ArrivalElevationDisagreeAlert(computers))
                 .add(DepartureElevationDisagreeAlert(computers))
+                .add(ObstaclesOnPathAlert(computers))
+                .add(DescentTooSteepAlert(computers))
         )
         register(
             AlertCategory(Component.translatable("alert.flightassistant.gpws"))
                 .add(ComputerFaultAlert(computers, GroundProximityComputer.ID, Component.translatable("alert.flightassistant.gpws.fault")))
                 .add(PullUpAlert(computers))
+                .add(BelowGlideSlopeWarningAlert(computers))
                 .add(SinkRateAlert(computers))
                 .add(TerrainAheadAlert(computers))
+                .add(BelowGlideSlopeAlert(computers))
                 .add(DontSinkAlert(computers))
+                .add(MinimumsReachedAlert(computers))
         )
         register(
             AlertCategory(Component.translatable("alert.flightassistant.navigation"))
@@ -271,6 +277,7 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
     }
 
     override fun reset() {
+        alertsFaulted = false
         categories.forEach { it.activeAlerts.clear() }
         categories.forEach { it.ignoredAlerts.clear() }
         sounds.values.forEach { soundManager.stop(it) }

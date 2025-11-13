@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.api.util
 
 import kotlin.math.PI
+import kotlin.math.atan2
 import kotlin.math.min
 
 fun degrees(value: Float): Float {
@@ -19,7 +20,7 @@ fun radians(value: Double): Double {
     return (value * (PI / 180.0))
 }
 
-fun Float.requireFinite(): Float {
+fun Float.throwIfNotFinite(): Float {
     require(this.isFinite()) {
         "Float value invalid; expected finite value, got $this"
     }
@@ -27,8 +28,8 @@ fun Float.requireFinite(): Float {
     return this
 }
 
-fun Float.requireIn(range: ClosedFloatingPointRange<Float>): Float {
-    this.requireFinite()
+fun Float.throwIfNotInRange(range: ClosedFloatingPointRange<Float>): Float {
+    this.throwIfNotFinite()
     
     require(range.contains(this)) {
         "Float value invalid; expected [${range.start}; ${range.endInclusive}], got $this"
@@ -37,7 +38,7 @@ fun Float.requireIn(range: ClosedFloatingPointRange<Float>): Float {
     return this
 }
 
-fun Double.requireFinite(): Double {
+fun Double.throwIfNotFinite(): Double {
     require(this.isFinite()) {
         "Double value invalid; expected finite value, got $this"
     }
@@ -45,8 +46,8 @@ fun Double.requireFinite(): Double {
     return this
 }
 
-fun Double.requireIn(range: ClosedRange<Double>): Double {
-    this.requireFinite()
+fun Double.throwIfNotInRange(range: ClosedRange<Double>): Double {
+    this.throwIfNotFinite()
 
     require(range.contains(this)) {
         "Double value invalid; expected [${range.start}; ${range.endInclusive}], got $this"
@@ -61,23 +62,27 @@ fun findShortestPath(from: Float, to: Float, valueRange: Float): Float {
     if (diff >= valueRange * 0.5) {
         diff -= valueRange
     }
-    if (diff < -valueRange * 0.5) {
+    if (diff < valueRange * -0.5) {
         diff += valueRange
     }
 
     return diff
 }
 
-fun inverseMin(a: Float, b: Float): Float? {
-    if (a == 0.0f && b == 0.0f) {
+fun pointsToDirection(targetX: Double, targetZ: Double, originX: Double, originZ: Double): Double {
+    return degrees(atan2(-(targetX - originX), targetZ - originZ))
+}
+
+fun inverseMin(a: Double, b: Double): Double? {
+    if (a == 0.0 && b == 0.0) {
         return null
     }
-    if (a == 0.0f) {
-        return 1.0f / b
+    if (a == 0.0) {
+        return 1.0 / b
     }
-    if (b == 0.0f) {
-        return 1.0f / a
+    if (b == 0.0) {
+        return 1.0 / a
     }
 
-    return 1.0f / min(a, b)
+    return 1.0 / min(a, b)
 }

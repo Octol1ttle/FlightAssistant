@@ -28,6 +28,7 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
       flightassistant:attitude: ATT DSPL FAULT
       flightassistant:automation_modes: AUTO MODE DSPL FAULT
       flightassistant:coordinates: COORD DSPL FAULT
+      flightassistant:course_deviation: CRS DEV DSPL FAULT
       flightassistant:elytra_durability: EL/DURA DSPL FAULT
       flightassistant:flight_directors: FLT DIR DSPL FAULT
       flightassistant:flight_path: F/PATH DSPL FAULT
@@ -48,25 +49,33 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
     .: F/CTL
     pitch_fault:
       .: PITCH LIMIT FAULT
-      use_manual_pitch: ' -MAN PITCH OVRD: USE'
+      use_automation_override: ' -AUTOMATION OVERRIDE: USE'
     protections_lost:
       .: PROTECT LOST
       enable_air_data: ' -AIR DATA: OFF THEN ON'
       enable_pitch: ' -PITCH SYS: OFF THEN ON'
       enable_prot_sys: ' -PROT SYS: OFF THEN ON'
-      max_pitch: ' MAX PITCH: 55* UP'
+      max_pitch: ' MAX PITCH: 45* UP'
       min_pitch: ' MIN PITCH: 35* DOWN'
       maneuver_with_care: ' MANEUVER WITH CARE'
   flight_plan:
     .: F/PLAN
     fault: SYS FAULT
     departure_elevation_disagree: DEPART ELEV DISAGREE
+    arrival_elevation_disagree:
+     .: ARRIVAL ELEV DISAGREE
+     glide_slope_unreliable: ' G/S UNRELIABLE'
+     autopilot_do_not_use: ' -AUTOPILOT: DO NOT USE'
+    obstacles_on_path: OBSTACLES ON PATH
+    descent_too_steep: DESCENT TOO STEEP
   gpws:
     .: GPWS
     fault: FAULT
+    minimums_reached: MINIMUMS REACHED
     dont_sink: DON'T SINK
     sink_rate: SINK RATE
     terrain_ahead: TERRAIN AHEAD
+    below_glide_slope: BELOW G/S
     pull_up: PULL UP
   stall:
     .: STALL
@@ -161,6 +170,7 @@ config.flightassistant:
         status_messages: Show status messages
         automation_modes: Show automation modes
         flight_directors: Show flight directors
+        course_deviation: Show course deviation
     safety:
       alert_volume: Alert sound volume
       consider_invulnerability: Disable alerts and protections when invulnerable
@@ -204,10 +214,17 @@ config.flightassistant:
           limit_pitch: Limit pitch when terrain is detected
           auto_thrust: Automatically reduce thrust when terrain is detected
           auto_pitch: Automatically raise pitch to escape from terrain
+        altitude_loss_with_toga:
+          enabled: Alert about altitude loss during takeoff/go around
+          alert_method: Altitude loss during takeoff/go around alert method
+        below_glide_slope:
+          alert_mode: Below glide slope alert mode
+          alert_method: Below glide slope alert method
       firework:
         .: Fireworks
         explosive_alert: Alert when holding explosive fireworks
         lock_explosive: Lock explosive fireworks
+        lock_obstacles: Lock fireworks near obstacles
 
 menu.flightassistant:
   .: FlightAssistant setup screen
@@ -227,6 +244,7 @@ menu.flightassistant:
         flightassistant:attitude: Attitude display
         flightassistant:automation_modes: Automation modes display
         flightassistant:coordinates: Coordinates display
+        flightassistant:course_deviation: Course deviation display
         flightassistant:elytra_durability: Elytra durability display
         flightassistant:flight_directors: Flight directors display
         flightassistant:flight_path: Flight path display
@@ -290,18 +308,34 @@ menu.flightassistant:
       minimum_climb_speed: 'Minimum climb speed: '
     enroute:
       .: Enroute
+      legend:
+        hover: Hover for legend
+        origin: '%s - FROM waypoint'
+        target: '%s - TO waypoint'
+        direct-to: '%s - DIRECT-TO waypoint'
+      delete_all: Delete all
       add_waypoint: Add waypoint
       direct_to: Direct-to
       unsaved_changes: UNSAVED CHANGES
-    arrival: Arrival
+    arrival:
+      .: Arrival
+      minimums:
+        .: 'Minimums: '
+        absolute: ABS
+        relative: REL
+      landing_thrust: 'Landing thrust %: '
+      go_around_altitude: 'Go around altitude: '
+      approach_re_entry_waypoint_index: 'Approach re-entry waypoint index: '
     save: Save
+    load: Load
+    error: An error occurred! Please check the log for details
     discard_changes: Discard changes
     coordinates: 'Coordinates: '
     elevation: 'Elevation: '
 
 mode.flightassistant:
   thrust:
-    override: THR OVRD # TODO: single key to override all
+    override: THR OVRD
     manual:
       .: MAN THR
       reverse: MAN REV
@@ -314,8 +348,9 @@ mode.flightassistant:
     climb: THR CLB
     descend: THR DES
     takeoff: THR TO # TODO: fix confusion with TOGA somehow
+    landing: THR LAND
   vertical:
-    override: PITCH OVRD # TODO: single key to override all
+    override: PITCH OVRD
     void_protection: VOID PROT
     void_escape: VOID ESC
     stall_protection: STALL PROT
@@ -323,14 +358,22 @@ mode.flightassistant:
     terrain_escape: TERR ESC
     pitch: PITCH
     altitude:
-      climb: CLIMB
-      descend: DESCEND
       hold: ALT HOLD
-    speed_reference: SPD REF
+      cruise: ALT CRZ
+      open:
+        climb: OP CLB
+        descend: OP DES
+      managed:
+        climb: CLIMB
+        descend: DESCEND
+    glide_slope: G/S
+    go_around: GA ALT
   lateral:
     heading: HDG
-    direct_coordinates: DIR NAV
+    direct_coordinates: DIR COORDS
     track_navigation: TRK NAV
+    localizer: LOC
+    go_around: GA HDG
 
 # TODO: stop using this
 short.flightassistant:
@@ -349,35 +392,45 @@ short.flightassistant:
   ground: GRND
   ground_speed: 'G/S%s'
   heading: HDG
+  lateral_deviation: L/DEV
   infinite: INFN
   radar_altitude: R/ALT
   speed: SPD
   status: STATUS
   time: TIME
+  vertical_deviation: V/DEV
   vertical_speed: 'V/S%s'
   void: VOID
 
 status.flightassistant:
   thrust: 'THR: %s'
   firework_count: 'FRWK CNT: %s'
-  flight_phase:
-    on_ground: ON GROUND
-    takeoff: TAKEOFF
-    climb: CLIMB
+  flight_plan:
+    phase:
+      takeoff: TAKEOFF
+      climb: CLIMB
+      cruise: CRUISE
+      descend: DESCEND
+      approach: APPROACH
+      landing: LANDING
+      go_around: GO AROUND
+    waypoint_distance: 'WP DIST: %s'
+    waypoint_time: 'WP TIME: %s'
 
 misc.flightassistant:
   waiting_for_world_load:
     .: WAITING FOR WORLD LOAD
     maximum_time: (MAX 3 SECONDS)
 
-key.flightassistant:
-  .: FlightAssistant
-  toggle_enabled: Toggle mod enabled
-  open_flightassistant_setup: Open FlightAssistant setup screen
-  autopilot_disconnect: Disconnect autopilot
-  manual_pitch_override: Manual pitch override (hold)
-  hide_current_alert: Hide currently active alert
-  show_hidden_alert: Show last hidden alert
+key.category.flightassistant:
+  main:
+    .: FlightAssistant
+    toggle_enabled: Toggle mod enabled
+    open_flightassistant_setup: Open FlightAssistant setup screen
+    autopilot_disconnect: Disconnect autopilot
+    global_automation_override: Global automation override (hold)
+    hide_current_alert: Hide currently active alert
+    show_hidden_alert: Show last hidden alert
   thrust:
     .: 'FlightAssistant: Thrust'
     decrease_thrust: Decrease thrust

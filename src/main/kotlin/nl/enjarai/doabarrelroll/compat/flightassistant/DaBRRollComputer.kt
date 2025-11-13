@@ -22,9 +22,6 @@ class DaBRRollComputer(computers: ComputerBus) : Computer(computers), RollSource
         return (computers.data.player as RollEntity).`doABarrelRoll$setRoll`(getRoll() + diff)
     }
 
-    override fun tick() {
-    }
-
     override fun reset() {
     }
 

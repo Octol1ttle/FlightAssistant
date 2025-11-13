@@ -28,7 +28,7 @@ class PullUpAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
         return if (computers.gpws.groundImpactStatus < computers.gpws.obstacleImpactStatus) {
             FAConfig.safety.sinkRateAlertMethod
         } else if (computers.gpws.groundImpactStatus == computers.gpws.obstacleImpactStatus) {
-            SafetyOptions.AlertMethod.min(FAConfig.safety.sinkRateAlertMethod, FAConfig.safety.obstacleAlertMethod)
+            SafetyOptions.AlertMethod.max(FAConfig.safety.sinkRateAlertMethod, FAConfig.safety.obstacleAlertMethod)
         } else {
             FAConfig.safety.obstacleAlertMethod
         }

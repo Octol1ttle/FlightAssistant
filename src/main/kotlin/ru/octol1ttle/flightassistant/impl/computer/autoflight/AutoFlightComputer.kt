@@ -1,7 +1,9 @@
 package ru.octol1ttle.flightassistant.impl.computer.autoflight
 
 import kotlin.math.abs
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import ru.octol1ttle.flightassistant.FAKeyMappings
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
 import ru.octol1ttle.flightassistant.api.autoflight.FlightController
@@ -36,8 +38,10 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightCo
 
     val activeThrustMode: ThrustMode?
         get() = selectedThrustMode ?: computers.plan.getThrustMode()
+
     val activeVerticalMode: VerticalMode?
         get() = selectedVerticalMode ?: computers.plan.getVerticalMode()
+
     val activeLateralMode: LateralMode?
         get() = selectedLateralMode ?: computers.plan.getLateralMode()
 
@@ -55,7 +59,7 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightCo
             if (computers.data.flying && autopilot) {
                 pitchResistance += abs(pitchDelta)
                 if (pitchResistance < 20.0f) {
-                    output.add(ControlInput(0.0f, ControlInput.Priority.NORMAL))
+                    output.add(ControlInput(0.0f, priority = ControlInput.Priority.NORMAL))
                     return@EntityTurn
                 }
                 setAutoPilot(false, alert = true)
@@ -67,7 +71,7 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightCo
             if (computers.data.flying && autopilot) {
                 headingResistance += abs(headingDelta)
                 if (headingResistance < 40.0f) {
-                    output.add(ControlInput(0.0f, ControlInput.Priority.NORMAL))
+                    output.add(ControlInput(0.0f, priority = ControlInput.Priority.NORMAL))
                     return@EntityTurn
                 }
                 setAutoPilot(false, alert = true)
@@ -78,38 +82,23 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightCo
     }
 
     override fun tick() {
-        if (computers.protections.protectionsLost || !computers.data.isCurrentChunkLoaded) {
-            reset()
+        if (computers.protections.protectionsLost || !computers.chunk.isCurrentLoaded) {
+            if (this.autoThrust) {
+                setAutoThrust(false, alert = true)
+            }
+            if (this.autopilot) {
+                setAutoPilot(false, alert = true)
+            }
             return
         }
 
-        if (computers.pitch.manualOverride) {
+        if (FAKeyMappings.globalAutomationOverride.isDown) {
+            setAutoThrust(false, alert = false)
             setAutoPilot(false, alert = false)
         }
 
         pitchResistance = (pitchResistance - FATickCounter.timePassed * 10.0f).coerceAtLeast(0.0f)
         headingResistance = (headingResistance - FATickCounter.timePassed * 20.0f).coerceAtLeast(0.0f)
-
-        if (autoThrust) {
-            autoThrustAlert = false
-            if (computers.thrust.isDisabledOrFaulted()) {
-                setAutoThrust(false, alert = true)
-            }
-        }
-
-        if (autopilot) {
-            autopilotAlert = false
-
-            val pitchInput: ControlInput? = computers.pitch.activeInput
-            if (computers.pitch.isDisabledOrFaulted() || pitchInput != null && pitchInput.priority < ControlInput.Priority.NORMAL) {
-                setAutoPilot(false, alert = true)
-            }
-
-            val headingInput: ControlInput? = computers.heading.activeInput
-            if (computers.heading.isDisabledOrFaulted() || headingInput != null && headingInput.priority < ControlInput.Priority.NORMAL) {
-                setAutoPilot(false, alert = true)
-            }
-        }
     }
 
     fun setFlightDirectors(flightDirectors: Boolean) {
@@ -135,7 +124,9 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightCo
             return null
         }
 
-        return activeThrustMode?.getControlInput(computers)
+        val mode = activeThrustMode ?: return null
+        val input = mode.getControlInput(computers) ?: return null
+        return input.copy(text = mode.textOverride ?: input.text)
     }
 
     override fun getPitchInput(): ControlInput? {
@@ -143,7 +134,9 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightCo
             return null
         }
 
-        return activeVerticalMode?.getControlInput(computers)?.copy(active = autopilot)
+        val mode = activeVerticalMode ?: return null
+        val input = mode.getControlInput(computers) ?: return null
+        return input.copy(text = mode.textOverride ?: input.text, deltaTimeMultiplier = 1.5f, status = ControlInput.Status.fromBooleans(autopilot))
     }
 
     override fun getHeadingInput(): ControlInput? {
@@ -151,7 +144,9 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightCo
             return null
         }
 
-        return activeLateralMode?.getControlInput(computers)?.copy(active = autopilot)
+        val mode = activeLateralMode ?: return null
+        val input = mode.getControlInput(computers) ?: return null
+        return input.copy(text = mode.textOverride ?: input.text, deltaTimeMultiplier = 1.5f, status = ControlInput.Status.fromBooleans(autopilot))
     }
 
     override fun getRollInput(): ControlInput? {
@@ -159,7 +154,7 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightCo
             return null
         }
 
-        return ControlInput(0.0f, ControlInput.Priority.NORMAL)
+        return ControlInput(0.0f, deltaTimeMultiplier = 2.0f)
     }
 
     override fun reset() {
@@ -177,7 +172,30 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightCo
     }
 
     interface AutoFlightMode {
+        val textOverride: Component?
+
         fun getControlInput(computers: ComputerBus): ControlInput?
+    }
+
+    interface FollowsSpeedMode : AutoFlightMode {
+        val targetSpeed: Int
+    }
+
+    interface FollowsPitchMode : AutoFlightMode {
+        val targetPitch: Float
+    }
+
+    interface FollowsAltitudeMode : AutoFlightMode {
+        val targetAltitude: Int
+    }
+
+    interface FollowsHeadingMode : AutoFlightMode {
+        val targetHeading: Int
+    }
+
+    interface FollowsCoordinatesMode : AutoFlightMode {
+        val targetX: Int
+        val targetZ: Int
     }
 
     interface ThrustMode : AutoFlightMode

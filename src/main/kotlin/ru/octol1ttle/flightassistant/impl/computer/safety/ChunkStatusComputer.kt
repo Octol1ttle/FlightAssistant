@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.impl.computer.safety
 
 import kotlin.math.abs
 import net.minecraft.client.multiplayer.ClientChunkCache
+import net.minecraft.core.SectionPos
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.ChunkPos
 import ru.octol1ttle.flightassistant.FlightAssistant
@@ -9,18 +10,21 @@ import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 
 class ChunkStatusComputer(computers: ComputerBus) : Computer(computers) {
+    val isCurrentLoaded: Boolean
+        get() = computers.data.level.chunkSource.hasChunk(computers.data.player.chunkPosition().x, computers.data.player.chunkPosition().z)
+
     var status: Status = Status.LOADED
         private set
 
     override fun tick() {
         val chunkPos: ChunkPos = computers.data.player.chunkPosition()
-        val world: ClientChunkCache = computers.data.level.chunkSource
+        val chunkCache: ClientChunkCache = computers.data.level.chunkSource
 
         var unloadedClose = 0
         var unloadedFar = false
         for (x: Int in -3..3) {
             for (z: Int in -3..3) {
-                if (!world.hasChunk(chunkPos.x + x, chunkPos.z + z)) {
+                if (!chunkCache.hasChunk(chunkPos.x + x, chunkPos.z + z)) {
                     if (abs(x) <= 1 && abs(z) <= 1) {
                         unloadedClose++
                     } else {
@@ -36,6 +40,10 @@ class ChunkStatusComputer(computers: ComputerBus) : Computer(computers) {
             } else {
                 Status.LOADED
             }
+    }
+
+    fun isLoaded(x: Int, z: Int): Boolean {
+        return computers.data.level.chunkSource.hasChunk(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z))
     }
 
     override fun reset() {

@@ -6,14 +6,15 @@ data class DepartureScreenState(
     var coordinatesX: Int = 0,
     var coordinatesZ: Int = 0,
     var elevation: Int = 0,
-    var takeoffThrustPercent: Int = 100,
-    var minimumClimbSpeed: Int = 15
+    var takeoffThrustPercent: Int = 0
 ) {
-    fun load(flightPlan: FlightPlanComputer) {
-        TODO()
+    fun save(flightPlan: FlightPlanComputer) {
+        flightPlan.departureData = FlightPlanComputer.DepartureData(coordinatesX, coordinatesZ, elevation, takeoffThrustPercent / 100.0f)
     }
 
-    fun save(flightPlan: FlightPlanComputer) {
-        flightPlan.departureData = FlightPlanComputer.DepartureData(coordinatesX, coordinatesZ, elevation, takeoffThrustPercent / 100.0f, minimumClimbSpeed)
+    companion object {
+        fun load(data: FlightPlanComputer.DepartureData): DepartureScreenState {
+            return DepartureScreenState(data.coordinatesX, data.coordinatesZ, data.elevation, (data.takeoffThrust * 100.0f).toInt())
+        }
     }
 }

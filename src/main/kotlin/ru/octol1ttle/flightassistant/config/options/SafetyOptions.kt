@@ -60,9 +60,21 @@ class SafetyOptions {
     var obstacleAutoPitch: Boolean = true
 
     @SerialEntry
+    var altitudeLossAlert: Boolean = true
+    @SerialEntry
+    var altitudeLossAlertMethod: AlertMethod = AlertMethod.SCREEN_AND_AUDIO
+
+    @SerialEntry
+    var belowGlideSlopeAlertMode: AlertMode = AlertMode.WARNING_AND_CAUTION
+    @SerialEntry
+    var belowGlideSlopeAlertMethod: AlertMethod = AlertMethod.SCREEN_AND_AUDIO
+
+    @SerialEntry
     var fireworkExplosiveAlert: Boolean = true
     @SerialEntry
     var fireworkLockExplosive: Boolean = true
+    @SerialEntry
+    var fireworkLockObstacles: Boolean = true
 
     internal fun setDisabled(): SafetyOptions {
         this.alertVolume = 0.0f
@@ -90,8 +102,12 @@ class SafetyOptions {
         this.obstacleAutoThrust = false
         this.obstacleAutoPitch = false
 
+        this.altitudeLossAlert = false
+        this.belowGlideSlopeAlertMode = AlertMode.DISABLED
+
         this.fireworkExplosiveAlert = false
         this.fireworkLockExplosive = false
+        this.fireworkLockObstacles = false
         return this
     }
 
@@ -145,7 +161,7 @@ class SafetyOptions {
         }
 
         companion object {
-            fun min(a: AlertMethod, b: AlertMethod): AlertMethod {
+            fun max(a: AlertMethod, b: AlertMethod): AlertMethod {
                 return if (a <= b) a else b
             }
         }

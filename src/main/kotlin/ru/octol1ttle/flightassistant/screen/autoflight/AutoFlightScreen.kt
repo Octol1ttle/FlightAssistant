@@ -3,7 +3,6 @@ package ru.octol1ttle.flightassistant.screen.autoflight
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
-import net.minecraft.client.gui.components.StringWidget
 import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.CommonComponents
@@ -21,16 +20,10 @@ class AutoFlightScreen(parent: Screen) : FABaseScreen(parent, Component.translat
     private lateinit var autoThrust: TextOnlyButton
     private lateinit var autopilot: TextOnlyButton
 
-    private lateinit var thrustCycler: CycleTextOnlyButton<AutoFlightScreenState.ThrustMode>
-    private lateinit var verticalCycler: CycleTextOnlyButton<AutoFlightScreenState.VerticalMode>
-    private lateinit var lateralCycler: CycleTextOnlyButton<AutoFlightScreenState.LateralMode>
-
     private val refreshableElements: MutableList<GuiEventListener> = ArrayList()
 
     override fun init() {
         super.init()
-
-        this.addRenderableWidget(StringWidget(0, 7, this.width, 9, this.title, this.font))
 
         val baseY: Int = this.height / 3
 
@@ -54,11 +47,11 @@ class AutoFlightScreen(parent: Screen) : FABaseScreen(parent, Component.translat
             })
 
         val thrustMode: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(flightDirectors.baseX - 50, baseY, Component.translatable("menu.flightassistant.autoflight.thrust.mode")))
-        thrustCycler = this.addRenderableWidget(CycleTextOnlyButton(thrustMode.x + thrustMode.width, thrustMode.y, AutoFlightScreenState.ThrustMode.entries, state.thrustMode) { state.thrustMode = it; refreshEditBoxes() })
-        val verticalMode: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(flightDirectors.baseX - 50, baseY + 12, Component.translatable("menu.flightassistant.autoflight.vertical.mode")))
-        verticalCycler = this.addRenderableWidget(CycleTextOnlyButton(verticalMode.x + verticalMode.width, verticalMode.y, AutoFlightScreenState.VerticalMode.entries, state.verticalMode) { state.verticalMode = it; refreshEditBoxes() })
-        val lateralMode: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(flightDirectors.baseX - 50, baseY + 24, Component.translatable("menu.flightassistant.autoflight.lateral.mode")))
-        lateralCycler = this.addRenderableWidget(CycleTextOnlyButton(lateralMode.x + lateralMode.width, lateralMode.y, AutoFlightScreenState.LateralMode.entries, state.lateralMode) { state.lateralMode = it; refreshEditBoxes() })
+        this.addRenderableWidget(CycleTextOnlyButton(thrustMode.x + thrustMode.width, thrustMode.y, AutoFlightScreenState.ThrustMode.entries, state.thrustMode) { state.thrustMode = it; refreshEditBoxes() })
+        val verticalMode: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(flightDirectors.baseX - 50, baseY + 64, Component.translatable("menu.flightassistant.autoflight.vertical.mode")))
+        this.addRenderableWidget(CycleTextOnlyButton(verticalMode.x + verticalMode.width, verticalMode.y, AutoFlightScreenState.VerticalMode.entries, state.verticalMode) { state.verticalMode = it; refreshEditBoxes() })
+        val lateralMode: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(flightDirectors.baseX - 50, baseY + 112, Component.translatable("menu.flightassistant.autoflight.lateral.mode")))
+        this.addRenderableWidget(CycleTextOnlyButton(lateralMode.x + lateralMode.width, lateralMode.y, AutoFlightScreenState.LateralMode.entries, state.lateralMode) { state.lateralMode = it; refreshEditBoxes() })
 
         refreshEditBoxes()
 
@@ -87,7 +80,7 @@ class AutoFlightScreen(parent: Screen) : FABaseScreen(parent, Component.translat
         refreshableElements.clear()
 
         val baseX: Int = flightDirectors.baseX - 50
-        var baseY: Int = this.height / 3 + 48
+        var baseY: Int = this.height / 3 + 15
         val baseWidth = 36
         val baseHeight = 12
 
@@ -96,7 +89,6 @@ class AutoFlightScreen(parent: Screen) : FABaseScreen(parent, Component.translat
                 val string: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(baseX, baseY, Component.translatable("menu.flightassistant.autoflight.target.speed")))
                 refreshableElements.add(string)
                 refreshableElements.add(this.addRenderableWidget(TypeStrictEditBox(string.x + string.width, string.y - 2, baseWidth, baseHeight, state.targetSpeed, { state.targetSpeed = it }, String::toIntOrNullWithFallback) { it >= 0 }))
-                baseY += 16
             }
 
             AutoFlightScreenState.ThrustMode.VERTICAL_PROFILE -> {
@@ -106,29 +98,30 @@ class AutoFlightScreen(parent: Screen) : FABaseScreen(parent, Component.translat
                 val descendString: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(baseX, baseY + 16, Component.translatable("menu.flightassistant.autoflight.target.descend_thrust")))
                 refreshableElements.add(descendString)
                 refreshableElements.add(this.addRenderableWidget(TypeStrictEditBox(descendString.x + descendString.width, descendString.y - 2, baseWidth, baseHeight, state.descendThrustPercent, { state.descendThrustPercent = it }, String::toIntOrNullWithFallback, { it in 0..100 })))
-                baseY += 16 * 2
             }
 
             AutoFlightScreenState.ThrustMode.FLIGHT_PLAN -> Unit
         }
+
+        baseY += 64
 
         when (state.verticalMode) {
             AutoFlightScreenState.VerticalMode.PITCH -> {
                 val string: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(baseX, baseY, Component.translatable("menu.flightassistant.autoflight.target.pitch")))
                 refreshableElements.add(string)
                 refreshableElements.add(this.addRenderableWidget(TypeStrictEditBox(string.x + string.width, string.y - 2, baseWidth, baseHeight, state.targetPitch, { state.targetPitch = it }, String::toFloatOrNullWithFallback, { it in -90.0f..90.0f })))
-                baseY += 16
             }
 
             AutoFlightScreenState.VerticalMode.ALTITUDE -> {
                 val string: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(baseX, baseY, Component.translatable("menu.flightassistant.autoflight.target.altitude")))
                 refreshableElements.add(string)
                 refreshableElements.add(this.addRenderableWidget(TypeStrictEditBox(string.x + string.width, string.y - 2, baseWidth, baseHeight, state.targetAltitude, { state.targetAltitude = it }, String::toIntOrNullWithFallback)))
-                baseY += 16
             }
 
             AutoFlightScreenState.VerticalMode.FLIGHT_PLAN -> Unit
         }
+
+        baseY += 48
 
         when (state.lateralMode) {
             AutoFlightScreenState.LateralMode.HEADING -> {

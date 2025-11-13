@@ -1,9 +1,9 @@
 package ru.octol1ttle.flightassistant.impl.computer
 
-import java.util.function.Function
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.FlightAssistant.mc
+import ru.octol1ttle.flightassistant.FlightAssistant.profiler
 import ru.octol1ttle.flightassistant.api.ModuleController
 import ru.octol1ttle.flightassistant.api.computer.*
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
@@ -119,19 +119,27 @@ internal object ComputerHost : ModuleController<Computer>, ComputerBus {
             return
         }
 
+        profiler.push("flightassistant:computer_host")
         for ((id: ResourceLocation, computer: Computer) in computers) {
-            if (computer.enabled) {
+            profiler.push(id.toString())
+            if (!computer.isDisabledOrFaulted()) {
                 try {
-                    computer.tick()
+                    repeat(FATickCounter.ticksPassed) {
+                        computer.tick()
+                    }
+                    computer.renderTick()
                 } catch (t: Throwable) {
                     onComputerFault(computer)
 
                     FlightAssistant.logger.error("Exception ticking computer with identifier: $id", t)
                 }
             }
+            profiler.pop()
         }
+        profiler.pop()
     }
 
+    @Deprecated("Will be private")
     override fun <C, T> guardedCall(computer: C, call: (C) -> T): T? {
         try {
             return call(computer)
@@ -148,7 +156,7 @@ internal object ComputerHost : ModuleController<Computer>, ComputerBus {
     override fun <Event : ComputerEvent> dispatchEvent(event: Event) {
         for (computer: Computer in computers.values) {
             if (!computer.isDisabledOrFaulted()) {
-                guardedCall(computer) { it.processEvent(event) }
+                guardedCall(computer) { it.handleEvent(event) }
             }
         }
     }
@@ -156,7 +164,7 @@ internal object ComputerHost : ModuleController<Computer>, ComputerBus {
     override fun <Response> dispatchQuery(query: ComputerQuery<Response>): Collection<Response> {
         for (computer: Computer in computers.values) {
             if (!computer.isDisabledOrFaulted()) {
-                guardedCall(computer) { it.processQuery(query) }
+                guardedCall(computer) { it.handleQuery(query) }
             }
         }
 
@@ -164,10 +172,6 @@ internal object ComputerHost : ModuleController<Computer>, ComputerBus {
     }
 
     private fun onComputerFault(computer: Computer) {
-        if (computer.faulted) {
-            computer.enabled = false
-        }
-
         computer.faulted = true
         computer.faultCount++
         computer.reset()

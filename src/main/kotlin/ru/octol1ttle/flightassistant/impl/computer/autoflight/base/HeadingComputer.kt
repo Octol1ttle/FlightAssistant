@@ -13,7 +13,7 @@ import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.extensions.filterWorking
 import ru.octol1ttle.flightassistant.api.util.extensions.getActiveHighestPriority
 import ru.octol1ttle.flightassistant.api.util.findShortestPath
-import ru.octol1ttle.flightassistant.api.util.requireIn
+import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 
 class HeadingComputer(computers: ComputerBus) : Computer(computers) {
     private val controllers: MutableList<FlightController> = ArrayList()
@@ -31,7 +31,6 @@ class HeadingComputer(computers: ComputerBus) : Computer(computers) {
             return
         }
 
-        val heading: Float = computers.data.heading
         val finalInput: ControlInput? = inputs.getActiveHighestPriority().firstOrNull()
         if (finalInput == null) {
             activeInput = null
@@ -39,8 +38,13 @@ class HeadingComputer(computers: ComputerBus) : Computer(computers) {
         }
 
         activeInput = finalInput
-        if (computers.data.automationsAllowed() && finalInput.active) {
-            smoothSetHeading(computers.data.player, heading, finalInput.target.requireIn(0.0f..360.0f), finalInput.deltaTimeMultiplier.requireIn(0.001f..Float.MAX_VALUE))
+    }
+
+    override fun renderTick() {
+        val input = activeInput ?: return
+
+        if (computers.data.automationsAllowed() && input.status == ControlInput.Status.ACTIVE) {
+            smoothSetHeading(computers.data.player, computers.data.heading, input.target.throwIfNotInRange(0.0f..360.0f), input.deltaTimeMultiplier.throwIfNotInRange(0.001f..Float.MAX_VALUE))
         }
     }
 
