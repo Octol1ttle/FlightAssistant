@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.display
 
 import com.mojang.math.Axis
+import kotlin.math.roundToInt
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -16,9 +17,9 @@ import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
 
 class FlightDirectorsDisplay(computers: ComputerBus) : Display(computers) {
-    private val pitchTargetLerper: FloatLerper = FloatLerper()
-    private val headingTargetLerper: FloatLerper = FloatLerper()
-    
+    private val xLerper: FloatLerper = FloatLerper()
+    private val yLerper: FloatLerper = FloatLerper()
+
     override fun allowedByConfig(): Boolean {
         return FAConfig.display.showFlightDirectors
     }
@@ -42,17 +43,15 @@ class FlightDirectorsDisplay(computers: ComputerBus) : Display(computers) {
             enableScissor(HudFrame.left, HudFrame.top, HudFrame.right, HudFrame.bottom)
 
             val pitchInput: ControlInput? = computers.pitch.activeInput
-            val pitchTarget: Float? = pitchTargetLerper.get(pitchInput?.target, FATickCounter.timePassed * 1.5f)
-            if (pitchTarget != null && pitchInput != null && pitchInput.priority >= ControlInput.Priority.NORMAL) {
-                ScreenSpace.getY(pitchTarget)?.let {
+            if (pitchInput != null && pitchInput.priority >= ControlInput.Priority.NORMAL) {
+                yLerper.get(ScreenSpace.getY(pitchInput.target)?.toFloat(), FATickCounter.timePassed * 1.5f)?.roundToInt()?.let {
                     hLine(this.centerX - halfWidth, this.centerX + halfWidth, it.coerceIn(HudFrame.top + 1..<HudFrame.bottom - 1), primaryAdvisoryColor)
                 }
             }
 
             val headingInput: ControlInput? = computers.heading.activeInput
-            val headingTarget: Float? = headingTargetLerper.get(headingInput?.target, FATickCounter.timePassed * 1.5f)
-            if (headingTarget != null && headingInput != null && headingInput.priority >= ControlInput.Priority.NORMAL) {
-                ScreenSpace.getX(headingTarget)?.let {
+            if (headingInput != null && headingInput.priority >= ControlInput.Priority.NORMAL) {
+                xLerper.get(ScreenSpace.getX(headingInput.target)?.toFloat(), FATickCounter.timePassed * 1.5f)?.roundToInt()?.let {
                     vLine(it.coerceIn(HudFrame.left + 1..<HudFrame.right - 1), this.centerY - halfWidth, this.centerY + halfWidth, primaryAdvisoryColor)
                 }
             }
