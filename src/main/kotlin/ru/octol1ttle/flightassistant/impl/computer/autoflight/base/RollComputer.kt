@@ -4,12 +4,12 @@ import kotlin.math.abs
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
-import ru.octol1ttle.flightassistant.api.autoflight.FlightController
-import ru.octol1ttle.flightassistant.api.autoflight.roll.RollControllerRegistrationCallback
 import ru.octol1ttle.flightassistant.api.autoflight.roll.RollSource
 import ru.octol1ttle.flightassistant.api.autoflight.roll.RollSourceRegistrationCallback
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
+import ru.octol1ttle.flightassistant.api.util.DeltaTimeMultiplierValidator
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.extensions.filterWorking
 import ru.octol1ttle.flightassistant.api.util.extensions.getActiveHighestPriority
@@ -18,23 +18,18 @@ import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 
 class RollComputer(computers: ComputerBus) : Computer(computers) {
     private val sources: MutableList<RollSource> = ArrayList()
-    private val controllers: MutableList<FlightController> = ArrayList()
 
     override fun invokeEvents() {
         RollSourceRegistrationCallback.EVENT.invoker().register(sources::add)
-        RollControllerRegistrationCallback.EVENT.invoker().register(controllers::add)
     }
 
     override fun renderTick() {
-        val inputs: List<ControlInput> = controllers.filterWorking().mapNotNull { computers.guardedCall(it, FlightController::getRollInput) }.sortedBy { it.priority.value }
-        if (inputs.isEmpty()) {
-            return
-        }
+        val inputs: List<ControlInput> = computers.dispatchQuery(TargetRollQuery()).sortedBy { it.priority.value }
         val finalInput: ControlInput = inputs.getActiveHighestPriority().firstOrNull() ?: return
 
         if (computers.data.automationsAllowed() && finalInput.status == ControlInput.Status.ACTIVE) {
             val rollSource: RollSource = sources.filterWorking().singleOrNull { computers.guardedCall(it, RollSource::isActive) == true } ?: return
-            smoothSetRoll(rollSource, finalInput.target.throwIfNotInRange(-180.0f..180.0f), finalInput.deltaTimeMultiplier.throwIfNotInRange(0.001f..Float.MAX_VALUE))
+            smoothSetRoll(rollSource, finalInput.target, finalInput.deltaTimeMultiplier)
         }
     }
 
@@ -51,6 +46,14 @@ class RollComputer(computers: ComputerBus) : Computer(computers) {
 
     override fun reset() {
     }
+
+    private class RollValidator : ComputerQuery.Validator<ControlInput> {
+        override fun validate(response: ControlInput) {
+            response.target.throwIfNotInRange(-180.0f..180.0f)
+        }
+    }
+
+    class TargetRollQuery : ComputerQuery<ControlInput>(RollValidator(), DeltaTimeMultiplierValidator())
 
     companion object {
         val ID: ResourceLocation = FlightAssistant.id("roll")

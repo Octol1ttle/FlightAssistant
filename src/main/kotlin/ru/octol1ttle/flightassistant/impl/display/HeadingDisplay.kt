@@ -107,7 +107,7 @@ class HeadingDisplay(computers: ComputerBus) : Display(computers) {
 
     private fun GuiGraphics.renderHeadingTarget(x: Int, y: Int) {
         val active: AutoFlightComputer.LateralMode? = computers.autoflight.activeLateralMode
-        if (computers.autoflight.getHeadingInput() != null && active is AutoFlightComputer.FollowsHeadingMode) {
+        if ((computers.autoflight.flightDirectors || computers.autoflight.autopilot) && active is AutoFlightComputer.FollowsHeadingMode) {
             drawMiddleAlignedString("%03d".formatRoot(active.targetHeading), x, y, primaryAdvisoryColor)
         }
     }

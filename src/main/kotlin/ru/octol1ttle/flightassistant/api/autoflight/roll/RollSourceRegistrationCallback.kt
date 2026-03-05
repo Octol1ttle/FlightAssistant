@@ -4,6 +4,7 @@ import dev.architectury.event.Event
 import dev.architectury.event.EventFactory
 import java.util.function.Consumer
 
+@Deprecated("Respond to ComputerQueries instead")
 fun interface RollSourceRegistrationCallback {
     /**
      * Called during [ru.octol1ttle.flightassistant.api.computer.Computer.invokeEvents].

@@ -5,6 +5,7 @@ import dev.architectury.event.EventFactory
 import java.util.function.Consumer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 
+@Deprecated("Alert categories will be removed in a future release")
 fun interface AlertCategoryRegistrationCallback {
     /**
      * Called when the client has started, after all built-in alert categories have been initialized.

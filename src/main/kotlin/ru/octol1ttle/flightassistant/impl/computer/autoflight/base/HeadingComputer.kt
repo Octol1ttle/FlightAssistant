@@ -5,39 +5,22 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
-import ru.octol1ttle.flightassistant.api.autoflight.FlightController
-import ru.octol1ttle.flightassistant.api.autoflight.heading.HeadingControllerRegistrationCallback
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
+import ru.octol1ttle.flightassistant.api.util.DeltaTimeMultiplierValidator
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
-import ru.octol1ttle.flightassistant.api.util.extensions.filterWorking
 import ru.octol1ttle.flightassistant.api.util.extensions.getActiveHighestPriority
 import ru.octol1ttle.flightassistant.api.util.findShortestPath
 import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 
 class HeadingComputer(computers: ComputerBus) : Computer(computers) {
-    private val controllers: MutableList<FlightController> = ArrayList()
     var activeInput: ControlInput? = null
         private set
 
-    override fun invokeEvents() {
-        HeadingControllerRegistrationCallback.EVENT.invoker().register(controllers::add)
-    }
-
     override fun tick() {
-        val inputs: List<ControlInput> = controllers.filterWorking().mapNotNull { computers.guardedCall(it, FlightController::getHeadingInput) }.sortedBy { it.priority.value }
-        if (inputs.isEmpty()) {
-            activeInput = null
-            return
-        }
-
-        val finalInput: ControlInput? = inputs.getActiveHighestPriority().firstOrNull()
-        if (finalInput == null) {
-            activeInput = null
-            return
-        }
-
-        activeInput = finalInput
+        val inputs: List<ControlInput> = computers.dispatchQuery(TargetHeadingQuery()).sortedBy { it.priority.value }
+        activeInput = inputs.getActiveHighestPriority().firstOrNull()
     }
 
     override fun renderTick() {
@@ -63,6 +46,14 @@ class HeadingComputer(computers: ComputerBus) : Computer(computers) {
     override fun reset() {
         activeInput = null
     }
+
+    private class HeadingValidator : ComputerQuery.Validator<ControlInput> {
+        override fun validate(response: ControlInput) {
+            response.target.throwIfNotInRange(0.0f..360.0f)
+        }
+    }
+
+    class TargetHeadingQuery : ComputerQuery<ControlInput>(HeadingValidator(), DeltaTimeMultiplierValidator())
 
     companion object {
         val ID: ResourceLocation = FlightAssistant.id("heading")

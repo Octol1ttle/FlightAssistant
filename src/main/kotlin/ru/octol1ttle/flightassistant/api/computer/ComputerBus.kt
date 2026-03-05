@@ -13,6 +13,7 @@ import ru.octol1ttle.flightassistant.impl.computer.data.HudDisplayDataComputer
 import ru.octol1ttle.flightassistant.impl.computer.safety.*
 
 interface ComputerBus : ModuleView<Computer> {
+    @Deprecated("Will be private")
     fun <C, T> guardedCall(computer: C, call: (C) -> T): T?
     fun <Event : ComputerEvent> dispatchEvent(event: Event)
     fun <Response> dispatchQuery(query: ComputerQuery<Response>): Collection<Response>

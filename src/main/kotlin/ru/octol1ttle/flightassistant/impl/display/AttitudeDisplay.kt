@@ -173,7 +173,7 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
 
     private fun GuiGraphics.renderPitchTarget(x: Int, y: Int) {
         val active: AutoFlightComputer.VerticalMode? = computers.autoflight.activeVerticalMode
-        if (computers.autoflight.getPitchInput() != null && active is AutoFlightComputer.FollowsPitchMode) {
+        if ((computers.autoflight.flightDirectors || computers.autoflight.autopilot) && active is AutoFlightComputer.FollowsPitchMode) {
             drawRightAlignedString("%.1f".formatRoot(active.targetPitch), x, y, primaryAdvisoryColor)
         }
     }

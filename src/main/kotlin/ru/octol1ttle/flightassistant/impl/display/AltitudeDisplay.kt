@@ -110,7 +110,7 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
     private fun GuiGraphics.renderAltitudeTarget(x: Int, y: Int) {
         val color: Int
         val active: AutoFlightComputer.VerticalMode? = computers.autoflight.activeVerticalMode
-        if (computers.autoflight.getPitchInput() != null && active is AutoFlightComputer.FollowsAltitudeMode) {
+        if ((computers.autoflight.flightDirectors || computers.autoflight.autopilot) && active is AutoFlightComputer.FollowsAltitudeMode) {
             color = if (active == computers.autoflight.selectedVerticalMode) primaryAdvisoryColor else secondaryAdvisoryColor
             drawString(active.targetAltitude.toString(), x, y, color)
         }

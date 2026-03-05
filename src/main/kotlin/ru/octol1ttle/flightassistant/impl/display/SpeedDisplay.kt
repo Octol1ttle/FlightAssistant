@@ -107,14 +107,14 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
     private fun GuiGraphics.renderSpeedTarget(x: Int, y: Int) {
         val color: Int
         val active: AutoFlightComputer.ThrustMode? = computers.autoflight.activeThrustMode
-        if (computers.autoflight.getThrustInput() != null && active is AutoFlightComputer.FollowsSpeedMode) {
+        if ((computers.autoflight.flightDirectors || computers.autoflight.autopilot) && active is AutoFlightComputer.FollowsSpeedMode) {
             color = if (active == computers.autoflight.selectedThrustMode) primaryAdvisoryColor else secondaryAdvisoryColor
             drawRightAlignedString(active.targetSpeed.toString(), x, y, color)
             return
         }
 
         val activeVertical: AutoFlightComputer.VerticalMode? = computers.autoflight.activeVerticalMode
-        if (computers.autoflight.getPitchInput() != null && activeVertical is AutoFlightComputer.FollowsSpeedMode) {
+        if ((computers.autoflight.flightDirectors || computers.autoflight.autopilot) && activeVertical is AutoFlightComputer.FollowsSpeedMode) {
             color = if (activeVertical == computers.autoflight.selectedVerticalMode) primaryAdvisoryColor else secondaryAdvisoryColor
             drawRightAlignedString(activeVertical.targetSpeed.toString(), x, y, color)
         }

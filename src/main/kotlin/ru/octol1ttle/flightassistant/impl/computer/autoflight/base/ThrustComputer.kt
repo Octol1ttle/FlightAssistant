@@ -5,24 +5,23 @@ import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FAKeyMappings
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
-import ru.octol1ttle.flightassistant.api.autoflight.FlightController
 import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustChangeCallback
-import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustControllerRegistrationCallback
 import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustSource
 import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustSourceRegistrationCallback
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
+import ru.octol1ttle.flightassistant.api.util.DeltaTimeMultiplierValidator
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
-import ru.octol1ttle.flightassistant.api.util.extensions.asPercentage
+import ru.octol1ttle.flightassistant.api.util.asPercentage
 import ru.octol1ttle.flightassistant.api.util.extensions.filterWorking
 import ru.octol1ttle.flightassistant.api.util.extensions.getActiveHighestPriority
 import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 import ru.octol1ttle.flightassistant.impl.display.StatusDisplay
 
 class ThrustComputer(computers: ComputerBus) : Computer(computers) {
+    @Deprecated("Fetch every time with AvailableThrustSourceQuery")
     private val sources: MutableList<ThrustSource> = ArrayList()
-    private val controllers: MutableList<FlightController> = ArrayList()
 
     private var lastChangeAutomatic: Boolean = false
 
@@ -40,13 +39,12 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
 
     override fun invokeEvents() {
         ThrustSourceRegistrationCallback.EVENT.invoker().register(sources::add)
-        ThrustControllerRegistrationCallback.EVENT.invoker().register(controllers::add)
     }
 
     override fun tick() {
         val thrustSource: ThrustSource? = getThrustSource()
 
-        val inputs: List<ControlInput> = controllers.filterWorking().mapNotNull { computers.guardedCall(it, FlightController::getThrustInput) }.sortedBy { it.priority.value }
+        val inputs: List<ControlInput> = computers.dispatchQuery(TargetThrustQuery()).sortedBy { it.priority.value }
         val finalInput: ControlInput? = inputs.getActiveHighestPriority().maxByOrNull { it.target }
 
         noThrustSource = false
@@ -69,7 +67,6 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
         }
 
         noThrustSource = thrustSource == null && activeInput?.target != 0.0f
-        current.throwIfNotInRange(-1.0f..1.0f)
 
         val active: Boolean = !noThrustSource && !reverseUnsupported
         activeInput = activeInput?.copy(status = if (active) activeInput!!.status else ControlInput.Status.UNAVAILABLE)
@@ -106,6 +103,14 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
             }
         }
     }
+
+    private class ThrustValidator : ComputerQuery.Validator<ControlInput> {
+        override fun validate(response: ControlInput) {
+            response.target.throwIfNotInRange(-1.0f..1.0f)
+        }
+    }
+
+    class TargetThrustQuery : ComputerQuery<ControlInput>(ThrustValidator(), DeltaTimeMultiplierValidator())
 
     override fun reset() {
         lastChangeAutomatic = false

@@ -5,20 +5,16 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.player.Player
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
-import ru.octol1ttle.flightassistant.api.autoflight.FlightController
-import ru.octol1ttle.flightassistant.api.autoflight.pitch.PitchControllerRegistrationCallback
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
+import ru.octol1ttle.flightassistant.api.util.DeltaTimeMultiplierValidator
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.event.EntityTurnEvents
-import ru.octol1ttle.flightassistant.api.util.extensions.filterWorking
 import ru.octol1ttle.flightassistant.api.util.extensions.getActiveHighestPriority
 import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 
-class PitchComputer(computers: ComputerBus) : Computer(computers), FlightController {
-    private val controllers: MutableList<FlightController> = ArrayList()
-
+class PitchComputer(computers: ComputerBus) : Computer(computers) {
     var minimumPitch: ControlInput? = null
         private set
     var maximumPitch: ControlInput? = null
@@ -27,7 +23,6 @@ class PitchComputer(computers: ComputerBus) : Computer(computers), FlightControl
         private set
 
     override fun subscribeToEvents() {
-        PitchControllerRegistrationCallback.EVENT.register { it.accept(this) }
         EntityTurnEvents.X_ROT.register { mcPitchDelta, output ->
             if (canMoveOrBlockPitch()) {
                 val pitchDelta: Float = -mcPitchDelta
@@ -50,26 +45,11 @@ class PitchComputer(computers: ComputerBus) : Computer(computers), FlightControl
         }
     }
 
-    override fun invokeEvents() {
-        PitchControllerRegistrationCallback.EVENT.invoker().register(controllers::add)
-    }
-
     override fun tick() {
         updateSafePitches()
 
-        val inputs: List<ControlInput> = controllers.filterWorking().mapNotNull { computers.guardedCall(it, FlightController::getPitchInput) }.sortedBy { it.priority.value }
-        if (inputs.isEmpty()) {
-            activeInput = null
-            return
-        }
-
-        val finalInput: ControlInput? = inputs.getActiveHighestPriority().maxByOrNull { it.target }
-        if (finalInput == null) {
-            activeInput = null
-            return
-        }
-
-        activeInput = finalInput
+        val inputs: List<ControlInput> = computers.dispatchQuery(TargetPitchQuery()).sortedBy { it.priority.value }
+        activeInput = inputs.getActiveHighestPriority().maxByOrNull { it.target }
     }
 
     override fun renderTick() {
@@ -105,24 +85,6 @@ class PitchComputer(computers: ComputerBus) : Computer(computers), FlightControl
         }
     }
 
-    override fun getPitchInput(): ControlInput? {
-        if (!computers.data.flying) {
-            return null
-        }
-
-        val max: ControlInput? = maximumPitch
-        if (max != null && computers.data.pitch > max.target) {
-            return max
-        }
-
-        val min: ControlInput? = minimumPitch
-        if (min != null && computers.data.pitch < min.target) {
-            return min
-        }
-
-        return null
-    }
-
     private fun smoothSetPitch(player: Player, current: Float, target: Float, deltaTimeMultiplier: Float) {
         val diff: Float = target - current
 
@@ -135,24 +97,41 @@ class PitchComputer(computers: ComputerBus) : Computer(computers), FlightControl
         player.xRotO -= delta
     }
 
+    override fun <Response> handleQuery(query: ComputerQuery<Response>) {
+        if (!computers.data.flying) {
+            return
+        }
+
+        if (query is TargetPitchQuery) {
+            val max: ControlInput? = maximumPitch
+            if (max != null && computers.data.pitch > max.target) {
+                query.respond(max)
+            }
+
+            val min: ControlInput? = minimumPitch
+            if (min != null && computers.data.pitch < min.target) {
+                query.respond(min)
+            }
+        }
+    }
+
     override fun reset() {
         minimumPitch = null
         maximumPitch = null
         activeInput = null
     }
 
-    class MinimumPitchQuery : ComputerQuery<ControlInput>() {
-        override fun validateResponse(response: ControlInput) {
+    private class PitchValidator : ComputerQuery.Validator<ControlInput> {
+        override fun validate(response: ControlInput) {
             response.target.throwIfNotInRange(-90.0f..90.0f)
-            response.deltaTimeMultiplier.throwIfNotInRange(0.001f..Float.MAX_VALUE)
         }
     }
-    class MaximumPitchQuery : ComputerQuery<ControlInput>() {
-        override fun validateResponse(response: ControlInput) {
-            response.target.throwIfNotInRange(-90.0f..90.0f)
-            response.deltaTimeMultiplier.throwIfNotInRange(0.001f..Float.MAX_VALUE)
-        }
-    }
+
+    abstract class AbstractPitchQuery : ComputerQuery<ControlInput>(PitchValidator(), DeltaTimeMultiplierValidator())
+
+    class TargetPitchQuery : AbstractPitchQuery()
+    class MinimumPitchQuery : AbstractPitchQuery()
+    class MaximumPitchQuery : AbstractPitchQuery()
 
     companion object {
         val ID: ResourceLocation = FlightAssistant.id("pitch")

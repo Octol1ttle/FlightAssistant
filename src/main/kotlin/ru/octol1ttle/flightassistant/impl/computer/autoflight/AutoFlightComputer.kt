@@ -6,18 +6,18 @@ import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FAKeyMappings
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
-import ru.octol1ttle.flightassistant.api.autoflight.FlightController
-import ru.octol1ttle.flightassistant.api.autoflight.heading.HeadingControllerRegistrationCallback
-import ru.octol1ttle.flightassistant.api.autoflight.pitch.PitchControllerRegistrationCallback
-import ru.octol1ttle.flightassistant.api.autoflight.roll.RollControllerRegistrationCallback
 import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustChangeCallback
-import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustControllerRegistrationCallback
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.event.EntityTurnEvents
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.HeadingComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.PitchComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.RollComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.ThrustComputer
 
-class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightController {
+class AutoFlightComputer(computers: ComputerBus) : Computer(computers) {
     var flightDirectors: Boolean = false
         private set
 
@@ -46,10 +46,6 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightCo
         get() = selectedLateralMode ?: computers.plan.getLateralMode()
 
     override fun subscribeToEvents() {
-        ThrustControllerRegistrationCallback.EVENT.register { it.accept(this) }
-        PitchControllerRegistrationCallback.EVENT.register { it.accept(this) }
-        HeadingControllerRegistrationCallback.EVENT.register { it.accept(this) }
-        RollControllerRegistrationCallback.EVENT.register { it.accept(this) }
         ThrustChangeCallback.EVENT.register(ThrustChangeCallback { _, _, input ->
             if (input == null) {
                 setAutoThrust(false, alert = false)
@@ -119,42 +115,36 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers), FlightCo
         this.autopilot = autopilot
     }
 
-    override fun getThrustInput(): ControlInput? {
-        if (!autoThrust) {
-            return null
+    override fun <Response> handleQuery(query: ComputerQuery<Response>) {
+        if (query is ThrustComputer.TargetThrustQuery) {
+            if (!autoThrust) {
+                return
+            }
+
+            val mode = activeThrustMode ?: return
+            val input = mode.getControlInput(computers) ?: return
+            query.respond(input.copy(text = mode.textOverride ?: input.text))
         }
 
-        val mode = activeThrustMode ?: return null
-        val input = mode.getControlInput(computers) ?: return null
-        return input.copy(text = mode.textOverride ?: input.text)
-    }
-
-    override fun getPitchInput(): ControlInput? {
         if (!flightDirectors && !autopilot) {
-            return null
+            return
         }
 
-        val mode = activeVerticalMode ?: return null
-        val input = mode.getControlInput(computers) ?: return null
-        return input.copy(text = mode.textOverride ?: input.text, deltaTimeMultiplier = 1.5f, status = ControlInput.Status.fromBooleans(autopilot))
-    }
-
-    override fun getHeadingInput(): ControlInput? {
-        if (!flightDirectors && !autopilot) {
-            return null
+        if (query is PitchComputer.TargetPitchQuery) {
+            val mode = activeVerticalMode ?: return
+            val input = mode.getControlInput(computers) ?: return
+            query.respond(input.copy(text = mode.textOverride ?: input.text, deltaTimeMultiplier = 1.5f, status = ControlInput.Status.fromBooleans(autopilot)))
         }
 
-        val mode = activeLateralMode ?: return null
-        val input = mode.getControlInput(computers) ?: return null
-        return input.copy(text = mode.textOverride ?: input.text, deltaTimeMultiplier = 1.5f, status = ControlInput.Status.fromBooleans(autopilot))
-    }
-
-    override fun getRollInput(): ControlInput? {
-        if (!autopilot) {
-            return null
+        if (query is HeadingComputer.TargetHeadingQuery) {
+            val mode = activeLateralMode ?: return
+            val input = mode.getControlInput(computers) ?: return
+            query.respond(input.copy(text = mode.textOverride ?: input.text, deltaTimeMultiplier = 1.5f, status = ControlInput.Status.fromBooleans(autopilot)))
         }
 
-        return ControlInput(0.0f, deltaTimeMultiplier = 2.0f)
+        if (query is RollComputer.TargetRollQuery && autopilot) {
+            query.respond(ControlInput(0.0f, deltaTimeMultiplier = 2.0f))
+        }
     }
 
     override fun reset() {
