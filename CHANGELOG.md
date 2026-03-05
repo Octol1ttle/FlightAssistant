@@ -1,31 +1,11 @@
-This is a major update to FlightAssistant.
-Please use [Discord](https://discord.gg/5kcBCvnbTp) or [GitHub](https://github.com/Octol1ttle/FlightAssistant) to discuss this release or report any bugs.
+This is a patch update to FlightAssistant.
 
-**A wiki is now available: https://github.com/Octol1ttle/FlightAssistant/wiki**
+## Fixed issues
 
-## Changes from Beta 1
+- **Fixed an issue where disabling certain flight protections would cause the autopilot to stop controlling pitch**
+- Fixed an issue that caused flight directors to behave incorrectly when the target heading was near the wrapping point (0/360 degrees)
+- Fixed an issue that caused the autothrust's `SPEED` mode to adjust thrust slower than intended
+- Fixed an issue where the thrust reading would be displayed as `0.0%` when it was not exactly at zero.
 
-- Added Chinese localization
-- Changed the default durability display style to Time
-- Made the `BELOW G/S` warning alert show when deviation is more than 2.5 blocks and the player is below minimums
-- Reduced sensitivity of the `DON'T SINK` alert
-- Adjusted the attitude display to account for crosshair offset
-- Adjusted the way vertical deviation is displayed
-- Reduced the maximum recommended pitch to 45 degrees in the `F/CTL PROTECT LOST` alert text
-- Fixed an issue that caused `TERRAIN AHEAD` and `PULL UP` alerts to appear only right before impact
-- Fixed an issue that caused `AUTO FLT AP OFF` and `AUTO FLT A/THR OFF` alerts to not be displayed when they occur due to losing protections and chunk unloading
-- Fixed an issue where DaBR thrust would be overriden even when Global Automation Override is active
-
-If you weren't keeping up with changes in v3, here's a quick overview:
-
-- HUD overhaul
-    - New layout: <img src="https://github.com/Octol1ttle/FlightAssistant/wiki/img/hud/full_screenshot_alt.png">
-    - The HUD data now updates at the render frame rate instead of game tick rate. Numbers and scales will move smoother
-- Commands are gone and replaced with the Setup Screen (see below)
-- Introduced the FlightAssistant Setup Screen
-  - Opened with `Numpad Enter` by default
-  - Used to reset and temporarily disable computers & displays
-  - Used to configure the autopilot
-  - Used to fill out the flight plan
-- Various systems have been reworked and features have been added. For example, the GPWS now dynamically adjusts sensitivity based on surroundings
-- Added Chinese localization
+Consult the [wiki](https://github.com/Octol1ttle/FlightAssistant/wiki) for help.<br>
+Please use the [Discord server](https://discord.gg/5kcBCvnbTp) or [GitHub](https://github.com/Octol1ttle/FlightAssistant) to discuss this release or report any bugs.
