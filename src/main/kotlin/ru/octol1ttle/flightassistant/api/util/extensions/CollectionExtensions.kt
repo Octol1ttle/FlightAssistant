@@ -9,13 +9,14 @@ import ru.octol1ttle.flightassistant.api.computer.Computer
  * If there are no such inputs, the returned list contains all inputs with the highest priority in the list.
  */
 fun List<ControlInput>.getActiveHighestPriority(): List<ControlInput> {
-    // TODO
-    val activeInput: List<ControlInput> = this.filter { it.status == ControlInput.Status.ACTIVE && it.priority.value == this[0].priority.value }
+    // TODO: Disabled inputs should not be submitted in the first place
+    val noDisabled = this.filter { it.status != ControlInput.Status.DISABLED }
+    val activeInput: List<ControlInput> = noDisabled.filter { it.status == ControlInput.Status.ACTIVE && it.priority.value == noDisabled[0].priority.value }
     if (activeInput.any()) {
         return activeInput
     }
 
-    return this.filter { it.priority.value == this[0].priority.value }
+    return noDisabled.filter { it.priority.value == noDisabled[0].priority.value }
 }
 
 /**
