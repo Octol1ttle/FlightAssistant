@@ -21,8 +21,8 @@ data class SpeedThrustMode(override val targetSpeed: Int, override val textOverr
         val currentSpeed: Double = computers.data.forwardVelocityPerSecond.length()
         val acceleration: Double = computers.data.forwardAcceleration * SharedConstants.TICKS_PER_SECOND
 
-        val speedCorrection: Double = (targetSpeed - currentSpeed) * FATickCounter.timePassed.pow(1.5f)
-        val accelerationDamping: Double = -acceleration * FATickCounter.timePassed
+        val speedCorrection: Double = (targetSpeed - currentSpeed) * FATickCounter.TICK_TIME.pow(1.5f)
+        val accelerationDamping: Double = -acceleration * FATickCounter.TICK_TIME
         return ControlInput(
             (currentThrust + speedCorrection + accelerationDamping).toFloat().coerceIn(0.0f..1.0f),
             Component.translatable("mode.flightassistant.thrust.speed")

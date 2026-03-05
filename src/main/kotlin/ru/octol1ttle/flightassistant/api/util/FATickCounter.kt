@@ -7,7 +7,7 @@ import net.minecraft.Util
 import net.minecraft.client.player.LocalPlayer
 
 object FATickCounter {
-    const val TICK_TIME: Float = 1.0f / SharedConstants.TICKS_PER_SECOND;
+    const val TICK_TIME: Float = 1.0f / SharedConstants.TICKS_PER_SECOND
 
     val worldLoadWaitTime = Random.nextInt(10..60) // TODO: wait for chunk loading instead
     private var lastPlayerTickCount: Int = 0
