@@ -64,16 +64,21 @@ fun GuiGraphics.hLineDashed(
     x1: Int, x2: Int, y: Int,
     dashCount: Int, color: Int
 ) {
-    val width: Int = x2 - x1
-    val segmentCount: Int = dashCount * 2 - 1
-    val dashSize: Int = width / segmentCount
-    for (i in 0 until segmentCount) {
-        if (i % 2 != 0) {
-            continue
-        }
-        val dx1: Int = i * dashSize + x1
-        val dx2: Int = if (i == segmentCount - 1) x2 else ((i + 1) * dashSize) + x1
-        hLine(dx1, dx2, y, color)
+    // TODO: Spacing looks wrong on small GUI scales. Determine optimal spacing based on total width
+    val width = x2 - x1
+    if (width <= dashCount) {
+        hLine(x1, x2, y, color)
+        return
+    }
+    val spaces = dashCount - 1
+    var spaceOffset = 3 // the actual space width is (spaceOffset - 1)
+    while ((width - spaces * spaceOffset) % dashCount != 0) {
+        spaceOffset++
+    }
+    val singleWidth = (width - spaces * spaceOffset) / dashCount
+    for (i in 0..<dashCount) {
+        val fromLastDash = (singleWidth + spaceOffset) * i
+        hLine(x1 + fromLastDash, x1 + fromLastDash + singleWidth, y, color)
     }
 }
 
