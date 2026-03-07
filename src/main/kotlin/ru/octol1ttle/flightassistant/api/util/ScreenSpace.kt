@@ -74,7 +74,7 @@ object ScreenSpace {
         if (pos == null) {
             return false
         }
-        return pos.z > -1 && pos.z < 1
+        return pos.x >= 0 && pos.x <= mc.window.guiScaledWidth && pos.y >= 0 && pos.y <= mc.window.guiScaledHeight && pos.z > -1 && pos.z < 1
     }
 
     fun getX(heading: Float): Int? {
