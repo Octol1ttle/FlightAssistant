@@ -71,13 +71,17 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
         ScreenSpace.getY(0.0f)?.let {
             val color = getPitchBarColor(0.0f)
 
-            val leftXEnd: Int = (centerX - halfWidth * 0.025f).toInt()
-            val leftXStart: Int = (leftXEnd - halfWidth * 0.3f).toInt()
+            val center = centerX.toInt()
+            val fromCenter = (halfWidth * 0.025f).toInt()
+            val width = (halfWidth * 0.3f).toInt()
+
+            val leftXEnd: Int = center - fromCenter
+            val leftXStart: Int = leftXEnd - width
             drawRightAlignedString("0", leftXStart - 3, it - 3, color)
             hLine(leftXStart, leftXEnd, it, color)
 
-            val rightXStart: Int = (centerX + halfWidth * 0.025f).toInt()
-            val rightXEnd: Int = (rightXStart + halfWidth * 0.3f).toInt()
+            val rightXStart: Int = center + fromCenter
+            val rightXEnd: Int = rightXStart + width
             hLine(rightXStart, rightXEnd, it, color)
             drawString("0", rightXEnd + 5, it - 3, color)
         }
@@ -87,12 +91,12 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
         val step: Int = FAConfig.display.attitudeDegreeStep
         val nextUp: Int = Mth.roundToward(computers.data.pitch.toInt(), step)
         for (i: Int in nextUp..90 step step) {
-            drawPitchBar(i, centerX, (ScreenSpace.getY(i.toFloat()) ?: break))
+            drawPitchBar(i, centerX, ScreenSpace.getY(i.toFloat()) ?: break)
         }
 
         val nextDown: Int = Mth.quantize(computers.data.pitch.toDouble(), step)
         for (i: Int in nextDown downTo -90 step step) {
-            drawPitchBar(i, centerX, (ScreenSpace.getY(i.toFloat()) ?: break))
+            drawPitchBar(i, centerX, ScreenSpace.getY(i.toFloat()) ?: break)
         }
     }
 
@@ -133,12 +137,16 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
         val y = ScreenSpace.getY(pitch) ?: return
 
         val color: Int = getPitchBarColor(pitch)
-        val leftXEnd: Int = (centerX - halfWidth * 0.025f).toInt()
-        val leftXStart: Int = (leftXEnd - halfWidth * 0.05f).toInt()
+        val center = centerX.toInt()
+        val fromCenter = (halfWidth * 0.025f).toInt()
+        val width = (halfWidth * 0.05f).toInt()
+
+        val leftXEnd: Int = center - fromCenter
+        val leftXStart: Int = leftXEnd - width
         hLineDashed(leftXStart, leftXEnd, y, 2, color)
 
-        val rightXStart: Int = (centerX + halfWidth * 0.025f).toInt()
-        val rightXEnd: Int = (rightXStart + halfWidth * 0.05f).toInt()
+        val rightXStart: Int = center + fromCenter
+        val rightXEnd: Int = rightXStart + width
         hLineDashed(rightXStart, rightXEnd, y, 2, color)
     }
 
@@ -147,14 +155,18 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
 
         val color: Int = getPitchBarColor(pitch.toFloat())
 
-        val leftXEnd: Int = (centerX - halfWidth * 0.05f).toInt()
-        val leftXStart: Int = (leftXEnd - halfWidth * 0.075f).toInt()
+        val center = centerX.toInt()
+        val fromCenter = (halfWidth * 0.05f).toInt()
+        val width = (halfWidth * 0.075f).toInt()
+
+        val leftXEnd: Int = center - fromCenter
+        val leftXStart: Int = leftXEnd - width
         drawRightAlignedString(pitch.toString(), leftXStart - 2, if (pitch > 0) y else y - 4, color)
         vLine(leftXStart, y, y + 5 * pitch.sign, color)
         hLineDashed(leftXStart, leftXEnd, y, if (pitch < 0) 3 else 1, color)
 
-        val rightXStart: Int = (centerX + halfWidth * 0.05f).toInt()
-        val rightXEnd: Int = (rightXStart + halfWidth * 0.075f).toInt()
+        val rightXStart: Int = center + fromCenter
+        val rightXEnd: Int = rightXStart + width
         hLineDashed(rightXStart, rightXEnd, y, if (pitch < 0) 3 else 1, color)
         vLine(rightXEnd, y, y + 5 * pitch.sign, color)
         drawString(pitch.toString(), rightXEnd + 4, if (pitch > 0) y else y - 4, color)
