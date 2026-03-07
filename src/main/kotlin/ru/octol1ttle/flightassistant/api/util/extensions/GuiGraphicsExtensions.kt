@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.api.util.extensions
 
 import com.mojang.blaze3d.vertex.PoseStack
 import java.awt.Color
+import kotlin.math.max
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
@@ -64,14 +65,14 @@ fun GuiGraphics.hLineDashed(
     x1: Int, x2: Int, y: Int,
     dashCount: Int, color: Int
 ) {
-    // TODO: Spacing looks wrong on small GUI scales. Determine optimal spacing based on total width
     val width = x2 - x1
     if (width <= dashCount) {
         hLine(x1, x2, y, color)
         return
     }
     val spaces = dashCount - 1
-    var spaceOffset = 3 // the actual space width is (spaceOffset - 1)
+    // the actual space width is (spaceOffset - 1)
+    var spaceOffset = max(2, width / (dashCount * 2))
     while ((width - spaces * spaceOffset) % dashCount != 0) {
         spaceOffset++
     }
