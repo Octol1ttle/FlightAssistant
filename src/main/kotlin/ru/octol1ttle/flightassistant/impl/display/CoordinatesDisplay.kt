@@ -1,8 +1,8 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import kotlin.math.roundToInt
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.Mth
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.display.Display
@@ -21,8 +21,8 @@ class CoordinatesDisplay(computers: ComputerBus) : Display(computers) {
             val x: Int = HudFrame.left + 5
             val y: Int = HudFrame.bottom - 19
 
-            val xText = "X: ${computers.hudData.lerpedPosition.x.roundToInt()}${getDirectionSignX(computers.data.heading)}"
-            val zText = "Z: ${computers.hudData.lerpedPosition.z.roundToInt()}${getDirectionSignZ(computers.data.heading)}"
+            val xText = "X: ${Mth.floor(computers.hudData.lerpedPosition.x)}${getDirectionSignX(computers.data.heading)}"
+            val zText = "Z: ${Mth.floor(computers.hudData.lerpedPosition.z)}${getDirectionSignZ(computers.data.heading)}"
             drawString(xText, x, y, primaryColor)
             drawString(zText, x, y + lineHeight, primaryColor)
 
