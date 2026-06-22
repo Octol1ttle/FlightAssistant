@@ -20,13 +20,12 @@ class DescentTooSteepAlert(computers: ComputerBus) : Alert(computers), ECAMAlert
             return false
         }
 
-        var lastEnroute: FlightPlanComputer.EnrouteWaypoint? = null
-        for (enroute in computers.plan.enrouteData) {
-            if (lastEnroute == null) {
-                lastEnroute = enroute
+        for ((i, enroute) in computers.plan.enrouteData.withIndex()) {
+            if (i == 0) {
                 continue
             }
 
+            val lastEnroute = computers.plan.enrouteData[i - 1]
             if (degrees(asin(enroute.vec3().subtract(lastEnroute.vec3()).normalize().y)) < -35.0f) {
                 return true
             }
