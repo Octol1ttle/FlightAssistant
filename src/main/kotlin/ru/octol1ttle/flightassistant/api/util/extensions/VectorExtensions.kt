@@ -13,11 +13,11 @@ fun Vec3.toVector2d(): Vector2d {
 }
 
 fun distance2d(x1: Int, z1: Int, x2: Double, z2: Double): Double {
-    return Vector2d.distance(x1.toDouble(), z1.toDouble(), x2, z2)
+    return Vector2d.distance(x1 + 0.5, z1 + 0.5, x2, z2)
 }
 
 fun vec2dFromInts(x: Int, z: Int): Vector2d {
-    return Vector2d(x.toDouble(), z.toDouble())
+    return Vector2d(x + 0.5, z + 0.5)
 }
 
 fun getProgressOnTrack(track: Vector2d, trackStart: Vector2d, position: Vector2d): Double {

@@ -5,7 +5,6 @@ import org.joml.Vector2d
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.extensions.getProgressOnTrack
-import ru.octol1ttle.flightassistant.api.util.extensions.vec2dFromInts
 import ru.octol1ttle.flightassistant.api.util.pointsToDirection
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
 
@@ -21,7 +20,7 @@ data class HeadingLateralMode(override val targetHeading: Int, override val text
 data class DirectCoordinatesLateralMode(override val targetX: Int, override val targetZ: Int, override val textOverride: Component? = null) : AutoFlightComputer.LateralMode, AutoFlightComputer.FollowsCoordinatesMode {
     override fun getControlInput(computers: ComputerBus): ControlInput {
         return ControlInput(
-            pointsToDirection(targetX.toDouble(), targetZ.toDouble(), computers.data.x, computers.data.z).toFloat() + 180.0f,
+            pointsToDirection(targetX + 0.5, targetZ + 0.5, computers.data.x, computers.data.z).toFloat() + 180.0f,
             Component.translatable("mode.flightassistant.lateral.direct_coordinates")
         )
     }
@@ -37,8 +36,8 @@ data class TrackNavigationLateralMode(val originX: Int, val originZ: Int, overri
     }
 
     private fun getTargetCoordinates(computers: ComputerBus): Vector2d {
-        val origin: Vector2d = vec2dFromInts(originX, originZ)
-        val track: Vector2d = vec2dFromInts(targetX, targetZ).sub(origin)
+        val origin = Vector2d(originX + 0.5, originZ + 0.5)
+        val track = Vector2d(targetX + 0.5, targetZ + 0.5).sub(origin)
         val trackProgress: Double = getProgressOnTrack(track, origin, Vector2d(computers.data.x, computers.data.z))
         val closestTrackPoint = Vector2d(originX + trackProgress * track.x, originZ + trackProgress * track.y)
         val trackNormalized: Vector2d = track.normalize()

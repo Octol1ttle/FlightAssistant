@@ -306,7 +306,7 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
         }
 
         fun vec3(): Vec3 {
-            return Vec3(coordinatesX.toDouble(), elevation.toDouble(), coordinatesZ.toDouble())
+            return Vec3(coordinatesX + 0.5, elevation.toDouble(), coordinatesZ + 0.5)
         }
 
         companion object {
@@ -322,7 +322,7 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
         }
 
         fun vec3(): Vec3 {
-            return Vec3(coordinatesX.toDouble(), altitude.toDouble(), coordinatesZ.toDouble())
+            return Vec3(coordinatesX + 0.5, altitude.toDouble(), coordinatesZ + 0.5)
         }
     }
 
@@ -342,7 +342,7 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
         }
 
         fun vec3(): Vec3 {
-            return Vec3(coordinatesX.toDouble(), elevation.toDouble(), coordinatesZ.toDouble())
+            return Vec3(coordinatesX + 0.5, elevation.toDouble(), coordinatesZ + 0.5)
         }
 
         companion object {

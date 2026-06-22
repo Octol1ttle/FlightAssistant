@@ -134,6 +134,7 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
             }
             val result: BlockHitResult = raycast(offset)
             if (result.type == HitResult.Type.BLOCK) {
+                // When Sable sub-levels are in play, the raycast can be millions of blocks away
                 distances.add(computers.data.position.distanceTo(result.location).coerceAtMost(maxRaycastDistance))
             } else {
                 distances.add(maxRaycastDistance)

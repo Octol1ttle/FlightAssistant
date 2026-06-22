@@ -37,7 +37,7 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
         fusedTranslateScale(x, y, READING_MATRIX_SCALE)
 
         val altitude: Double = computers.hudData.lerpedAltitude
-        val text: String = altitude.roundToInt().toString()
+        val text: String = Mth.floor(altitude).toString()
 
         val width: Int = textWidth(text) + 5
         val halfHeight = 6
