@@ -88,21 +88,24 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         if (!computers.chunk.isCurrentLoaded || computers.data.player.noPhysics) {
             return groundY
         }
-        val playerBoundingBox = computers.data.player.boundingBox
-        val minY: Double = computers.data.level.bottomY.toDouble().coerceAtLeast(computers.data.altitude - 2500.0)
-        val diffFromMinY = Vec3(0.0, minY - playerBoundingBox.minY, 0.0)
-        val collisionResult = Entity.collideBoundingBox(computers.data.player, diffFromMinY, playerBoundingBox, computers.data.level, emptyList())
 
-        val groundY = collisionResult.y + playerBoundingBox.minY
-        if (collisionResult.y + playerBoundingBox.maxY == minY || collisionResult == diffFromMinY) {
-            return if (groundY > computers.data.level.bottomY) Double.MAX_VALUE else null
+        val playerBoundingBox = computers.data.player.boundingBox.let {
+            val maxRelevantY = computers.data.level.maxBuildHeight + 1
+            if (it.minY > maxRelevantY) {
+                it.move(0.0, maxRelevantY - it.minY, 0.0)
+            } else {
+                it
+            }
+        }
+        val minY = computers.data.level.bottomY.toDouble()
+        val wantedDelta = Vec3(0.0, minY - playerBoundingBox.minY, 0.0)
+        val allowedDelta = Entity.collideBoundingBox(computers.data.player, wantedDelta, playerBoundingBox, computers.data.level, emptyList())
+
+        if (wantedDelta.y == allowedDelta.y) {
+            return if (playerBoundingBox.minY + allowedDelta.y > computers.data.level.bottomY) Double.MAX_VALUE else null
         }
 
-        val raycast = raycast(Vec3(0.0, minY - computers.data.position.y, 0.0))
-        if (raycast.type == HitResult.Type.BLOCK) {
-            return max(raycast.location.y, groundY)
-        }
-        return groundY
+        return playerBoundingBox.minY + allowedDelta.y
     }
 
     private fun computeIsRecoveryUnsafe(): Boolean {
