@@ -5,6 +5,7 @@ import com.mojang.math.Axis
 import dev.architectury.event.events.client.ClientLifecycleEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.profiling.ProfilerFiller
 import org.joml.Matrix4f
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -26,10 +27,11 @@ private val net.minecraft.client.Camera.yRot: Float
 object FlightAssistant {
     const val MOD_ID: String = "flightassistant"
     internal val mc: Minecraft = Minecraft.getInstance()
+    internal val profiler: ProfilerFiller
 //? if >=1.21.4 {
-    /*internal val profiler = net.minecraft.util.profiling.Profiler.get()
+        /*get() = net.minecraft.util.profiling.Profiler.get()
 *///?} else
-    internal val profiler = mc.profiler
+        get() = mc.profiler
     internal val logger: Logger = LoggerFactory.getLogger("FlightAssistant")
     internal var initComplete: Boolean = false
 
