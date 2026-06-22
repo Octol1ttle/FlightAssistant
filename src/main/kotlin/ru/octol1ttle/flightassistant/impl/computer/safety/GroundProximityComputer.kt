@@ -85,7 +85,7 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
     }
 
     private fun computeGroundY(): Double? {
-        if (!computers.chunk.isCurrentLoaded) {
+        if (!computers.chunk.isCurrentLoaded || computers.data.player.noPhysics) {
             return groundY
         }
         val playerBoundingBox = computers.data.player.boundingBox
