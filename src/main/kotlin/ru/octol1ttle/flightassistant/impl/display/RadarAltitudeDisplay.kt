@@ -20,7 +20,7 @@ class RadarAltitudeDisplay(computers: ComputerBus) : Display(computers) {
 
     override fun render(guiGraphics: GuiGraphics) {
         val groundLevel: Double? = computers.gpws.groundY
-        if (!computers.chunk.isCurrentLoaded || groundLevel != null && groundLevel > computers.hudData.lerpedAltitude) {
+        if (!computers.chunk.isCurrentLoaded || groundLevel != null && groundLevel > computers.data.altitude) {
             renderFaulted(guiGraphics)
             return
         }
