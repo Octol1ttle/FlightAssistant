@@ -134,7 +134,7 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
             }
             val result: BlockHitResult = raycast(offset)
             if (result.type == HitResult.Type.BLOCK) {
-                distances.add(computers.data.position.distanceTo(result.location))
+                distances.add(computers.data.position.distanceTo(result.location).coerceAtMost(maxRaycastDistance))
             } else {
                 distances.add(maxRaycastDistance)
             }
