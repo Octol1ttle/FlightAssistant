@@ -211,7 +211,7 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
             FlightPhase.GO_AROUND -> ConstantThrustMode(1.0f, Component.translatable("mode.flightassistant.thrust.toga"))
             else -> {
                 val target: EnrouteWaypoint = getEnrouteTarget() ?: return null
-                return if (target.speed != 0) SpeedThrustMode(target.speed) else null
+                if (target.speed != 0) SpeedThrustMode(target.speed) else null
             }
         }
     }
@@ -220,7 +220,7 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
         return when (currentPhase) {
             FlightPhase.TAKEOFF -> {
                 val target: EnrouteWaypoint = getEnrouteTarget() ?: return null
-                return if (target.altitude - computers.data.altitude > 10.0) SelectedAltitudeVerticalMode(target.altitude) else null
+                if (target.altitude - computers.data.altitude > 10.0) SelectedAltitudeVerticalMode(target.altitude) else null
             }
             FlightPhase.LANDING -> {
                 val approach = enrouteData.lastOrNull() ?: return null

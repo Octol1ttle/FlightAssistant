@@ -41,7 +41,7 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
 
     var groundY: Double? = null
     val groundOrVoidY: Double
-        get() = if (groundY == null || groundY == Double.MAX_VALUE) computers.data.voidY.toDouble()
+        get() = if (groundY == null) computers.data.voidY.toDouble()
         else groundY!!
 
     override fun tick() {
@@ -86,6 +86,7 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
     }
 
     private fun computeGroundY(): Double? {
+        // TODO: The raycast was not unnecessary... fluids are ignored by collision checks
         if (!computers.chunk.isCurrentLoaded || computers.data.player.noPhysics) {
             return groundY
         }
@@ -106,7 +107,7 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         val allowedDelta = Entity.collideBoundingBox(computers.data.player, wantedDelta, playerBoundingBox, computers.data.level, emptyList())
 
         if (wantedDelta.y == allowedDelta.y) {
-            return if (playerBoundingBox.minY + allowedDelta.y > computers.data.level.bottomY) Double.MAX_VALUE else null
+            return null
         }
 
         return playerBoundingBox.minY + allowedDelta.y
@@ -246,7 +247,7 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         groundImpactStatus = Status.SAFE
         obstacleImpactTime = Double.MAX_VALUE
         obstacleImpactStatus = Status.SAFE
-        groundY = Double.MAX_VALUE
+        groundY = null
     }
 
     enum class Status {
