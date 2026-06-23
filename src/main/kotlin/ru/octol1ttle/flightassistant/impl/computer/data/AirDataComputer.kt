@@ -41,16 +41,18 @@ class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Compu
     val voidY: Int
         get() = level.bottomY - 64
 
-    private val fallDistance: Double
+    private val fallDistance: Double?
         get() =
-            if (computers.gpws.groundY == null || computers.gpws.groundY!! == Double.MAX_VALUE) Double.MAX_VALUE
+            if (computers.gpws.isDisabledOrFaulted()) null
+            else if (computers.gpws.groundY == null) Double.MAX_VALUE
 //? if >=1.21.5 {
             /*else max(player.fallDistance, altitude - computers.gpws.groundY!!)
 *///?} else
             else max(player.fallDistance.toDouble(), altitude - computers.gpws.groundY!!)
 
+    // TODO: consider removing
     val fallDistanceSafe: Boolean
-        get() = player.isInWater || fallDistance <= player.maxFallDistance || isInvulnerableTo(player.damageSources().fall())
+        get() = player.isInWater || fallDistance == null || fallDistance!! <= player.maxFallDistance || isInvulnerableTo(player.damageSources().fall())
 
     val velocity: Vec3
         get() = player.deltaMovement
