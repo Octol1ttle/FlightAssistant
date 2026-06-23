@@ -233,6 +233,7 @@ config.flightassistant:
 menu.flightassistant:
   .: Настройки FlightAssistant
   config: Конфигурация мода
+  wiki: Открыть вики
   system:
     .: Управление системами
     manage_computers: 'Управление компьютерами'

@@ -229,6 +229,7 @@ config.flightassistant:
 menu.flightassistant:
   .: FlightAssistant setup screen
   config: Mod configuration
+  wiki: Open wiki
   system:
     .: System management
     manage_computers: Manage computers

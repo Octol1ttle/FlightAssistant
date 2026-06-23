@@ -7,6 +7,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlinx.serialization.json.Json
 import net.minecraft.ChatFormatting
+import net.minecraft.Util
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
 import net.minecraft.network.chat.CommonComponents
@@ -115,6 +116,10 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.config")) {
             this.minecraft!!.setScreen(FAConfigScreen.generate(this))
         }.pos(10, this.height - 30).width(120).build())
+
+        this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.wiki")) {
+            Util.getPlatform().openUri("https://github.com/Octol1ttle/FlightAssistant/wiki")
+        }.pos(140, this.height - 30).width(80).build())
 
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE) { _: Button? ->
             this.onClose()
