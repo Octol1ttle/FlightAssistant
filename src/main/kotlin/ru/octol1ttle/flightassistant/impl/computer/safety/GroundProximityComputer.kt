@@ -15,6 +15,7 @@ import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
 import ru.octol1ttle.flightassistant.api.util.extensions.bottomY
+import ru.octol1ttle.flightassistant.api.util.extensions.topY
 import ru.octol1ttle.flightassistant.api.util.inverseMin
 import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 import ru.octol1ttle.flightassistant.config.FAConfig
@@ -90,7 +91,7 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         }
 
         val playerBoundingBox = computers.data.player.boundingBox.let {
-            val maxRelevantY = computers.data.level.maxBuildHeight + 1
+            val maxRelevantY = computers.data.level.topY + 1
             if (it.minY > maxRelevantY) {
                 it.move(0.0, maxRelevantY - it.minY, 0.0)
             } else {
