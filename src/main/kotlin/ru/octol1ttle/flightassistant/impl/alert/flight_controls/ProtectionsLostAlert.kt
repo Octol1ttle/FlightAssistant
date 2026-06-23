@@ -27,6 +27,10 @@ class ProtectionsLostAlert(computers: ComputerBus) : Alert(computers), ECAMAlert
             y += 10
             i += guiGraphics.drawString(Component.translatable("alert.flightassistant.flight_controls.protections_lost.enable_air_data"), otherLinesX, y, primaryAdvisoryColor)
         }
+        if (computers.gpws.isDisabledOrFaulted() && computers.gpws.faultCount <= 1) {
+            y += 10
+            i += guiGraphics.drawString(Component.translatable("alert.flightassistant.flight_controls.protections_lost.enable_ground_proximity"), otherLinesX, y, primaryAdvisoryColor)
+        }
         if (computers.pitch.isDisabledOrFaulted() && computers.pitch.faultCount <= 1) {
             y += 10
             i += guiGraphics.drawString(Component.translatable("alert.flightassistant.flight_controls.protections_lost.enable_pitch"), otherLinesX, y, primaryAdvisoryColor)

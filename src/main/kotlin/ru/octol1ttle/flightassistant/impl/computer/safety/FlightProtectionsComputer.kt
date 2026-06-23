@@ -12,8 +12,9 @@ class FlightProtectionsComputer(computers: ComputerBus) : Computer(computers) {
     var protectionsLost: Boolean = false
 
     override fun tick() {
-        if (protectionsLost || this.isDisabledOrFaulted() || computers.data.isDisabledOrFaulted() || computers.pitch.isDisabledOrFaulted()) {
-            this.faulted = true
+        // HACK
+        if (protectionsLost || this.isDisabledOrFaulted() || computers.data.isDisabledOrFaulted() || computers.gpws.isDisabledOrFaulted() || computers.pitch.isDisabledOrFaulted()) {
+            throw Exception("A safety-critical flight computer has faulted")
         }
     }
 
