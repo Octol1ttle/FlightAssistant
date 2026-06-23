@@ -99,6 +99,9 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
             }
         }
         val minY = computers.data.level.bottomY.toDouble()
+        if (playerBoundingBox.minY < minY) {
+            return null
+        }
         val wantedDelta = Vec3(0.0, minY - playerBoundingBox.minY, 0.0)
         val allowedDelta = Entity.collideBoundingBox(computers.data.player, wantedDelta, playerBoundingBox, computers.data.level, emptyList())
 
