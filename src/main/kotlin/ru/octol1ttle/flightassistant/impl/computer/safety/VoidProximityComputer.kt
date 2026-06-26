@@ -53,8 +53,8 @@ class VoidProximityComputer(computers: ComputerBus) : Computer(computers) {
 
         if (query is PitchComputer.MinimumPitchQuery && status != Status.ABOVE_GROUND) {
             query.respond(ControlInput(
-                (-90.0f + (computers.data.level.bottomY - (computers.data.altitude + computers.data.velocityPerSecond.y)) / 64.0f * 105.0f).toFloat()
-                    .coerceIn(-35.0f..15.0f),
+                (-90.0f + (computers.data.level.bottomY - (computers.data.altitude + computers.data.velocityPerSecond.y.coerceAtMost(0.0))) / 64.0f * 105.0f).toFloat()
+                    .coerceIn(-90.0f..15.0f),
                 Component.translatable("mode.flightassistant.vertical.void_protection"),
                 ControlInput.Priority.HIGH,
                 status = ControlInput.Status.fromBooleans(true, enabled = FAConfig.safety.voidLimitPitch)
