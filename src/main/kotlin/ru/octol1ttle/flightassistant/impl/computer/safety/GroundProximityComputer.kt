@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.impl.computer.safety
 
 import kotlin.math.abs
 import kotlin.math.max
+import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.entity.Entity
@@ -81,12 +82,11 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         )
     }
 
-    private fun raycast(offset: Vec3): BlockHitResult {
-        return computers.data.level.clip(ClipContext(computers.data.position, computers.data.position.add(offset), ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, computers.data.player))
+    private fun raycast(offset: Vec3, startPos: Vec3 = computers.data.position): BlockHitResult {
+        return computers.data.level.clip(ClipContext(startPos, computers.data.position.add(offset), ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, computers.data.player))
     }
 
     private fun computeGroundY(): Double? {
-        // TODO: The raycast was not unnecessary... fluids are ignored by collision checks
         if (!computers.chunk.isCurrentLoaded || computers.data.player.noPhysics) {
             return groundY
         }
@@ -105,12 +105,19 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         }
         val wantedDelta = Vec3(0.0, minY - playerBoundingBox.minY, 0.0)
         val allowedDelta = Entity.collideBoundingBox(computers.data.player, wantedDelta, playerBoundingBox, computers.data.level, emptyList())
+        val collisionY = playerBoundingBox.minY + allowedDelta.y
+
+        // Fluids are ignored by collision checks, but not raycasts.
+        val raycast = raycast(wantedDelta, computers.data.position.with(Direction.Axis.Y, playerBoundingBox.minY))
+        if (raycast.type == HitResult.Type.BLOCK) {
+            return max(raycast.location.y, collisionY)
+        }
 
         if (wantedDelta.y == allowedDelta.y) {
             return null
         }
 
-        return playerBoundingBox.minY + allowedDelta.y
+        return collisionY
     }
 
     private fun computeIsRecoveryUnsafe(): Boolean {
