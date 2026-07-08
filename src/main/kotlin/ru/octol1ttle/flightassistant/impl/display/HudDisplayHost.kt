@@ -101,7 +101,7 @@ internal object HudDisplayHost: ModuleController<Display> {
         )
     }
 
-    fun render(guiGraphics: FAGuiGraphics) { FlightAssistant.logger.info("HUD RENDER CALLED!");
+    fun render(guiGraphics: FAGuiGraphics) {
         if (!FAConfig.hudEnabled) {
             return
         }
