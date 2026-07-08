@@ -1,6 +1,6 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
@@ -15,7 +15,7 @@ class ElytraDurabilityDisplay(computers: ComputerBus) : Display(computers) {
         return FAConfig.display.showElytraDurability
     }
 
-    override fun render(guiGraphics: GuiGraphics) {
+    override fun render(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             val x: Int = (HudFrame.left + (HudFrame.width - HudFrame.height) * 0.25f).toInt()
             val y: Int = HudFrame.bottom + 1
@@ -37,7 +37,7 @@ class ElytraDurabilityDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    override fun renderFaulted(guiGraphics: GuiGraphics) {
+    override fun renderFaulted(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             val x: Int = (HudFrame.left + (HudFrame.width - HudFrame.height) * 0.25f).toInt()
             val y: Int = HudFrame.bottom + 1

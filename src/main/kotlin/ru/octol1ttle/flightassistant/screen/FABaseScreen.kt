@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.screen
 
 import kotlin.properties.Delegates
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
@@ -21,7 +22,13 @@ abstract class FABaseScreen(val parent: Screen?, title: Component) : Screen(titl
         this.addRenderableWidget(SmartStringWidget(this.centerX, 7, this.title).middleAligned())
     }
 
-    override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+//? if >=26.2 {
+/*    override fun extractRenderState(guiGraphics: net.minecraft.client.gui.GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
+        this.extractBackground(guiGraphics, mouseX, mouseY, partialTick)
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick)
+    }
+*///?} else {
+    override fun render(guiGraphics: FAGuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
 //? if <1.21.6 {
         this.renderBackground(
             guiGraphics
@@ -30,9 +37,10 @@ abstract class FABaseScreen(val parent: Screen?, title: Component) : Screen(titl
 //?}
         super.render(guiGraphics, mouseX, mouseY, delta)
     }
+//?}
 
     override fun onClose() {
-        this.minecraft!!.setScreen(parent)
+        this.minecraft!!.setScreenSafe(parent)
     }
 
     override fun isPauseScreen(): Boolean = false

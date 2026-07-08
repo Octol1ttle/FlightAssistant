@@ -35,6 +35,24 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
 
     override fun subscribeToEvents() {
         ThrustSourceRegistrationCallback.EVENT.register { it.accept(this) }
+//? if fabric && >=26.2 {
+        net.fabricmc.fabric.api.event.player.UseItemCallback.EVENT.register { player, world, hand ->
+            val stack = player.getItemInHand(hand)
+            if (world.isClientSide() && computers.data.flying && stack.item is FireworkRocketItem) {
+                val explosive = FAConfig.safety.fireworkLockExplosive && !isEmptyOrSafe(player, hand)
+                val anyTerrainAhead = FAConfig.safety.fireworkLockObstacles && anyTerrainAhead()
+                if (computers.data.automationsAllowed() && (explosive || anyTerrainAhead)) {
+                    return@register net.minecraft.world.InteractionResult.FAIL
+                }
+
+                if (!waitingForResponse) {
+                    lastActivationTime = FATickCounter.totalTicks
+                    waitingForResponse = true
+                }
+            }
+            return@register net.minecraft.world.InteractionResult.PASS
+        }
+//?} else {
         InteractionEvent.RIGHT_CLICK_ITEM.register(InteractionEvent.RightClickItem { player, hand ->
             val stack: ItemStack = player.getItemInHand(hand)
             if (player.level().isClientSide() && computers.data.flying && stack.item is FireworkRocketItem) {
@@ -42,9 +60,10 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
                 val anyTerrainAhead = FAConfig.safety.fireworkLockObstacles && anyTerrainAhead()
                 if (computers.data.automationsAllowed() && (explosive || anyTerrainAhead)) {
 //? if >=1.21.2 {
-                    /*return@RightClickItem net.minecraft.world.InteractionResult.FAIL
-*///?} else
+                    /*return@RightClickItem dev.architectury.event.EventResult.interruptFalse()
+*///?} else {
                     return@RightClickItem dev.architectury.event.CompoundEventResult.interruptFalse(stack)
+//?}
                 }
 
                 if (!waitingForResponse) {
@@ -54,10 +73,12 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
             }
 
 //? if >=1.21.2 {
-            /*return@RightClickItem net.minecraft.world.InteractionResult.PASS
-*///?} else
+            /*return@RightClickItem dev.architectury.event.EventResult.pass()
+*///?} else {
             return@RightClickItem dev.architectury.event.CompoundEventResult.pass()
+//?}
         })
+//?}
         FireworkBoostCallback.EVENT.register(FireworkBoostCallback { _, _ ->
             if (waitingForResponse) {
                 waitingForResponse = false

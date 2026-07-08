@@ -1,6 +1,6 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import org.joml.Vector3f
@@ -16,13 +16,13 @@ class FlightPathDisplay(computers: ComputerBus) : Display(computers) {
         return FAConfig.display.showFlightPathVector
     }
 
-    override fun render(guiGraphics: GuiGraphics) {
+    override fun render(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             val screenSpaceVec: Vector3f = ScreenSpace.getVector3f(computers.hudData.lerpedVelocity, false) ?: return
             val trueX: Float = screenSpaceVec.x
             val trueY: Float = screenSpaceVec.y
 
-            pose().push()
+            pushPose()
 //? if <1.21.6
             pose().translate(0.0f, 0.0f, -150.0f)
             fusedTranslateScale(trueX, trueY, FAConfig.display.flightPathVectorSize)
@@ -40,11 +40,11 @@ class FlightPathDisplay(computers: ComputerBus) : Display(computers) {
             hLine(-bodySideSize - wingSize, -bodySideSize, 0, primaryColor)
             hLine(bodySideSize, bodySideSize + wingSize, 0, primaryColor)
 
-            pose().pop()
+            popPose()
         }
     }
 
-    override fun renderFaulted(guiGraphics: GuiGraphics) {
+    override fun renderFaulted(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             drawMiddleAlignedString(Component.translatable("short.flightassistant.flight_path"), centerX, centerY + 16, warningColor)
         }

@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.alert.autoflight
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.api.alert.Alert
@@ -39,7 +41,7 @@ class AutopilotOffAlert(computers: ComputerBus) : Alert(computers), ECAMAlert {
         computers.autoflight.autopilotAlert = false
     }
 
-    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: FAGuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         var i: Int = guiGraphics.drawString(Component.translatable("alert.flightassistant.autoflight.autopilot_off"), firstLineX, firstLineY, warningColor)
         if (computers.autoflight.autopilotAlert) {
             i += guiGraphics.drawString(Component.translatable("alert.flightassistant.autoflight.autopilot_off.push_to_silence"), otherLinesX, firstLineY + 11, primaryAdvisoryColor)

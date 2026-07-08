@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.alert.thrust
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.api.alert.Alert
@@ -17,7 +19,7 @@ class NoThrustSourceAlert(computers: ComputerBus) : Alert(computers), ECAMAlert 
         return computers.thrust.noThrustSource
     }
 
-    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: FAGuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         return guiGraphics.drawString(Component.translatable("alert.flightassistant.thrust.no_source"), firstLineX, firstLineY, cautionColor)
     }
 }

@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.alert.navigation
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.api.alert.Alert
@@ -19,7 +21,7 @@ class ApproachingVoidDamageAltitudeAlert(computers: ComputerBus) : Alert(compute
         return FAConfig.safety.voidAlertMode.caution() && computers.voidProximity.status == VoidProximityComputer.Status.APPROACHING_DAMAGE_ALTITUDE
     }
 
-    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: FAGuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         return guiGraphics.drawString(Component.translatable("alert.flightassistant.navigation.approaching_void_damage_altitude"), firstLineX, firstLineY, cautionColor)
     }
 }

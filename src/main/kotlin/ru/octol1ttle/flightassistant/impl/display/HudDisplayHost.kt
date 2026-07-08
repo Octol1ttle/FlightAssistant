@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
@@ -100,7 +101,7 @@ internal object HudDisplayHost: ModuleController<Display> {
         )
     }
 
-    fun render(guiGraphics: GuiGraphics) {
+    fun render(guiGraphics: FAGuiGraphics) { FlightAssistant.logger.info("HUD RENDER CALLED!");
         if (!FAConfig.hudEnabled) {
             return
         }

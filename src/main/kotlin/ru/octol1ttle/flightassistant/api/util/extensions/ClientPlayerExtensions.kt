@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.api.util.extensions
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.player.AbstractClientPlayer
 import net.minecraft.world.phys.Vec3
 

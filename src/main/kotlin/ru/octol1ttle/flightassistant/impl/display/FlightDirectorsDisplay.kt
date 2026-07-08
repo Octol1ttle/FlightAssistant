@@ -2,7 +2,7 @@ package ru.octol1ttle.flightassistant.impl.display
 
 import com.mojang.math.Axis
 import kotlin.math.roundToInt
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
@@ -24,7 +24,7 @@ class FlightDirectorsDisplay(computers: ComputerBus) : Display(computers) {
         return FAConfig.display.showFlightDirectors
     }
 
-    override fun render(guiGraphics: GuiGraphics) {
+    override fun render(guiGraphics: FAGuiGraphics) {
         if (!computers.autoflight.flightDirectors || computers.hudData.isViewMirrored) {
             return
         }
@@ -32,7 +32,7 @@ class FlightDirectorsDisplay(computers: ComputerBus) : Display(computers) {
         with(guiGraphics) {
             val halfWidth: Int = (HudFrame.width / 10.0f).toInt()
 
-            pose().push()
+            pushPose()
 //? if <1.21.6
             pose().translate(0.0f, 0.0f, -100.0f)
 //? if >=1.21.6 {
@@ -45,23 +45,23 @@ class FlightDirectorsDisplay(computers: ComputerBus) : Display(computers) {
             val pitchInput: ControlInput? = computers.pitch.activeInput
             if (pitchInput != null && pitchInput.priority >= ControlInput.Priority.NORMAL) {
                 yLerper.get(ScreenSpace.getY(pitchInput.target)?.toFloat(), FATickCounter.timePassed * 1.5f)?.roundToInt()?.let {
-                    hLine(this.centerX - halfWidth, this.centerX + halfWidth, it.coerceIn(HudFrame.top + 1..<HudFrame.bottom - 1), primaryAdvisoryColor)
+                    hLine(this.centerX - halfWidth, this.centerX + halfWidth, it.coerceIn(HudFrame.top + 1, HudFrame.bottom - 2), primaryAdvisoryColor)
                 }
             }
 
             val headingInput: ControlInput? = computers.heading.activeInput
             if (headingInput != null && headingInput.priority >= ControlInput.Priority.NORMAL) {
                 xLerper.get(ScreenSpace.getX(headingInput.target)?.toFloat(), FATickCounter.timePassed * 1.5f)?.roundToInt()?.let {
-                    vLine(it.coerceIn(HudFrame.left + 1..<HudFrame.right - 1), this.centerY - halfWidth, this.centerY + halfWidth, primaryAdvisoryColor)
+                    vLine(it.coerceIn(HudFrame.left + 1, HudFrame.right - 2), this.centerY - halfWidth, this.centerY + halfWidth, primaryAdvisoryColor)
                 }
             }
 
             disableScissor()
-            pose().pop()
+            popPose()
         }
     }
 
-    override fun renderFaulted(guiGraphics: GuiGraphics) {
+    override fun renderFaulted(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             drawMiddleAlignedString(Component.translatable("short.flightassistant.flight_directors"), centerX, HudFrame.top + 30, warningColor)
         }

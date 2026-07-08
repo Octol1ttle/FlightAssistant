@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.impl.alert
 
 import kotlin.math.max
 import kotlin.math.min
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.resources.sounds.AbstractSoundInstance
 import net.minecraft.client.resources.sounds.SoundInstance
 import net.minecraft.client.sounds.SoundManager

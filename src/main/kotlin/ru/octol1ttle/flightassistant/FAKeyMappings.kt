@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant
 
 import com.mojang.blaze3d.platform.InputConstants
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.KeyMapping
 import org.lwjgl.glfw.GLFW
 import ru.octol1ttle.flightassistant.FlightAssistant.mc
@@ -68,7 +69,7 @@ object FAKeyMappings {
 
         while (openFlightAssistantSetup.consumeClick()) {
             mc.execute {
-                mc.setScreen(FlightAssistantSetupScreen())
+                mc.setScreenSafe(FlightAssistantSetupScreen())
             }
         }
 

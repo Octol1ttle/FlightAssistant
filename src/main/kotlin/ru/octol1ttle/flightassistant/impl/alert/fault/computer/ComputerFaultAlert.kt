@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.alert.fault.computer
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -24,7 +26,7 @@ class ComputerFaultAlert(
         return ComputerHost.isFaulted(identifier)
     }
 
-    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: FAGuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         val color: Int = data.colorSupplier.invoke()
         var i = 0
         i += guiGraphics.drawString(alertText, firstLineX, firstLineY, color)

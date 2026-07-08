@@ -3,7 +3,8 @@ package ru.octol1ttle.flightassistant
 //? if !fabric {
 
 /*//? if neoforge {
-/^import net.minecraft.client.Minecraft
+/^import ru.octol1ttle.flightassistant.api.util.extensions.*
+import net.minecraft.client.Minecraft
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.ModLoadingContext
 import net.neoforged.fml.common.Mod

@@ -1,7 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.display
 
 import kotlin.math.roundToInt
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
@@ -18,7 +18,7 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
         return FAConfig.display.showAltitudeReading || FAConfig.display.showAltitudeScale
     }
 
-    override fun render(guiGraphics: GuiGraphics) {
+    override fun render(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             if (FAConfig.display.showAltitudeReading) {
                 renderAltitudeReading(HudFrame.rightF, centerYF)
@@ -32,8 +32,8 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    private fun GuiGraphics.renderAltitudeReading(x: Float, y: Float) {
-        pose().push()
+    private fun FAGuiGraphics.renderAltitudeReading(x: Float, y: Float) {
+        pushPose()
         fusedTranslateScale(x, y, READING_MATRIX_SCALE)
 
         val altitude: Double = computers.hudData.lerpedAltitude
@@ -46,10 +46,10 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
         val textY: Int = -4
         drawString(text, 3, textY, primaryColor)
 
-        pose().pop()
+        popPose()
     }
 
-    private fun GuiGraphics.renderAltitudeScale(x: Int, y: Int) {
+    private fun FAGuiGraphics.renderAltitudeScale(x: Int, y: Int) {
         val altitude: Double = computers.hudData.lerpedAltitude
 
         val minY: Int = HudFrame.top
@@ -94,20 +94,22 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    private fun GuiGraphics.drawAltitudeLine(x: Int, y: Int, altitude: Int, currentAltitude: Double): Boolean {
+    private fun FAGuiGraphics.drawAltitudeLine(x: Int, y: Int, altitude: Int, currentAltitude: Double): Boolean {
         val textY: Int = (y + 2 * (currentAltitude - altitude)).toInt()
         if (textY < HudFrame.top - 100 || textY > HudFrame.bottom + 100) {
             return false
         }
-        hLine(x + 5, x, textY, primaryColor)
-        if (altitude % 20 == 0) {
-            drawString(altitude.toString(), x + 8, textY - 3, primaryColor)
+        if (textY < y - 10 || textY > y + 10) {
+            hLine(x + 5, x, textY, primaryColor)
+            if (altitude % 20 == 0) {
+                drawString(altitude.toString(), x + 8, textY - 3, primaryColor)
+            }
         }
 
         return true
     }
 
-    private fun GuiGraphics.renderAltitudeTarget(x: Int, y: Int) {
+    private fun FAGuiGraphics.renderAltitudeTarget(x: Int, y: Int) {
         val color: Int
         val active: AutoFlightComputer.VerticalMode? = computers.autoflight.activeVerticalMode
         if ((computers.autoflight.flightDirectors || computers.autoflight.autopilot) && active is AutoFlightComputer.FollowsAltitudeMode) {
@@ -116,7 +118,7 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    override fun renderFaulted(guiGraphics: GuiGraphics) {
+    override fun renderFaulted(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             drawString(Component.translatable("short.flightassistant.altitude"), HudFrame.right, centerY - 5, warningColor)
         }

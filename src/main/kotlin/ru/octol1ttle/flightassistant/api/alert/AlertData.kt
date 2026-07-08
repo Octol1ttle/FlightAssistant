@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.api.alert
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.sounds.SoundEvent
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.config.FAConfig

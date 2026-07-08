@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.api.util
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.SharedConstants
 import net.minecraft.util.Mth
 

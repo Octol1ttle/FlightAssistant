@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.impl.computer.autoflight.modes
 
 import kotlin.math.abs
 import kotlin.math.pow
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.SharedConstants
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput

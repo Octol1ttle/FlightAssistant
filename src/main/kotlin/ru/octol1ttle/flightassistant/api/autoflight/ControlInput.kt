@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.api.autoflight
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.network.chat.Component
 
 /**

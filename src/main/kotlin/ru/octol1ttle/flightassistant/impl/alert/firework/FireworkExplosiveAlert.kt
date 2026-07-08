@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.alert.firework
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
@@ -19,7 +21,7 @@ class FireworkExplosiveAlert(computers: ComputerBus, private val hand: Interacti
         return FAConfig.safety.fireworkExplosiveAlert && !computers.firework.isEmptyOrSafe(computers.data.player, hand)
     }
 
-    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: FAGuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         return guiGraphics.drawString(Component.translatable("alert.flightassistant.firework.explosive.${hand.toString().lowercase()}"), firstLineX, firstLineY, cautionColor)
     }
 }

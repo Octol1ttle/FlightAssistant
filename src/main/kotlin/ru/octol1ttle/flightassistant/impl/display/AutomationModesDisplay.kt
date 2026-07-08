@@ -2,7 +2,7 @@ package ru.octol1ttle.flightassistant.impl.display
 
 import java.util.Objects
 import kotlin.math.roundToInt
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.resources.ResourceLocation
@@ -26,14 +26,14 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
         return FAConfig.display.showAutomationModes
     }
 
-    override fun render(guiGraphics: GuiGraphics) {
+    override fun render(guiGraphics: FAGuiGraphics) {
         renderThrustMode(guiGraphics)
         renderPitchMode(guiGraphics)
         renderInput(guiGraphics, headingDisplay, computers.heading.activeInput)
         renderAutomaticsMode(guiGraphics)
     }
 
-    private fun renderThrustMode(guiGraphics: GuiGraphics) {
+    private fun renderThrustMode(guiGraphics: FAGuiGraphics) {
         val thrustUnusable: Boolean = computers.thrust.noThrustSource || computers.thrust.reverseUnsupported
 
         val input: ControlInput? = computers.thrust.activeInput
@@ -74,7 +74,7 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
         thrustDisplay.render(guiGraphics, null, ControlInput.Status.ACTIVE)
     }
 
-    private fun renderPitchMode(guiGraphics: GuiGraphics) {
+    private fun renderPitchMode(guiGraphics: FAGuiGraphics) {
         if (FAKeyMappings.globalAutomationOverride.isDown) {
             pitchDisplay.render(guiGraphics, Component.translatable("mode.flightassistant.vertical.override").setColor(cautionColor), ControlInput.Status.ACTIVE, cautionColor)
             return
@@ -82,7 +82,7 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
         renderInput(guiGraphics, pitchDisplay, computers.pitch.activeInput)
     }
 
-    private fun renderInput(guiGraphics: GuiGraphics, display: ModeDisplay, input: ControlInput?) {
+    private fun renderInput(guiGraphics: FAGuiGraphics, display: ModeDisplay, input: ControlInput?) {
         if (input != null) {
             display.render(guiGraphics, input.text, input.status, if (input.status == ControlInput.Status.ACTIVE && input.priority < ControlInput.Priority.NORMAL) cautionColor else null)
         } else {
@@ -90,7 +90,7 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    private fun renderAutomaticsMode(guiGraphics: GuiGraphics) {
+    private fun renderAutomaticsMode(guiGraphics: FAGuiGraphics) {
         val text: MutableComponent = Component.empty()
         if (computers.autoflight.flightDirectors) {
             text.appendWithSeparation(Component.translatable("short.flightassistant.flight_directors_alt"))
@@ -113,7 +113,7 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
         )
     }
 
-    override fun renderFaulted(guiGraphics: GuiGraphics) {
+    override fun renderFaulted(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             val x: Int = centerX
             val y: Int = HudFrame.top - 9
@@ -131,7 +131,7 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
         private var lastText: Component? = null
         private var textChangedAt: Int = 0
 
-        fun render(guiGraphics: GuiGraphics, text: Component?, status: ControlInput.Status = ControlInput.Status.ACTIVE, borderColor: Int? = null) {
+        fun render(guiGraphics: FAGuiGraphics, text: Component?, status: ControlInput.Status = ControlInput.Status.ACTIVE, borderColor: Int? = null) {
             val farLeft: Int = HudFrame.left + 1
             val farRight: Int = HudFrame.right - 1
             val farWidth: Int = farRight - farLeft

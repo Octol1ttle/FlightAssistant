@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.api.util.extensions
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.SharedConstants
 import net.minecraft.world.phys.Vec3
 import org.joml.Vector2d

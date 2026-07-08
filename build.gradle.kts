@@ -45,17 +45,17 @@ tasks.withType<Jar> {
 }
 
 modstitch {
-    minecraftVersion = minecraft
+    minecraftVersion = if (project.name == "26.2-fabric") "1.21.11" else minecraft
 
     val j21: Boolean = stonecutter.eval(minecraft, ">=1.20.6")
-    javaVersion = if (j21) 21 else 17
+    javaVersion = if (project.name == "26.2-fabric") 25 else if (j21) 21 else 17
 
     java {
         withSourcesJar()
     }
 
     kotlin {
-        jvmToolchain(if (j21) 21 else 17)
+        jvmToolchain(if (project.name == "26.2-fabric") 25 else if (j21) 21 else 17)
     }
 
     // If parchment doesnt exist for a version yet you can safely
@@ -94,7 +94,7 @@ modstitch {
         configureLoom {
             @Suppress("UnstableApiUsage")
             mixin {
-                useLegacyMixinAp = false
+                useLegacyMixinAp = true
             }
 
             runConfigs.all {
@@ -140,7 +140,18 @@ modstitch {
 // Wondering where the "repositories" block is? Go to "stonecutter.gradle.kts"
 // If you want to create proxy configurations for more source sets, such as client source sets,
 // use the modstitch.createProxyConfigurations(sourceSets["client"]) function.
+tasks.withType<net.fabricmc.loom.task.RemapJarTask>().configureEach {
+    classpath = classpath.filter { !it.name.contains("minecraft-26.2") }
+    if (project.name == "26.2-fabric") {
+        targetNamespace.set("named")
+    }
+}
+
 dependencies {
+    if (project.name == "26.2-fabric") {
+        compileOnly(files("C:/Users/Henrik/AppData/Roaming/PrismLauncher/libraries/com/mojang/minecraft/26.2/minecraft-26.2-client.jar"))
+    }
+
     modstitchImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
     modstitch.loom {
@@ -179,8 +190,12 @@ publishMods {
     val curseforgeToken = findProperty("curseforgeToken")
     dryRun = modrinthToken == null || curseforgeToken == null
 
-    modstitch.onEnable {
-        file = modstitch.finalJarTask.flatMap { it.archiveFile }
+    if (project.name != "26.2-fabric") {
+        modstitch.onEnable {
+            file = modstitch.finalJarTask.flatMap { it.archiveFile }
+        }
+    } else {
+        file = tasks.named<org.gradle.api.tasks.bundling.AbstractArchiveTask>("remapJar").flatMap { it.archiveFile }
     }
     additionalFiles.from(tasks.named<Jar>("sourcesJar").flatMap { it.archiveFile })
 
@@ -225,7 +240,11 @@ publishMods {
 
 val buildAndCollect = tasks.register<Copy>("buildAndCollect") {
     group = "build"
-    from(modstitch.finalJarTask.get().archiveFile)
+    if (project.name != "26.2-fabric") {
+        from(modstitch.finalJarTask.get().archiveFile)
+    } else {
+        from(tasks.named<org.gradle.api.tasks.bundling.AbstractArchiveTask>("remapJar").get().archiveFile)
+    }
     into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
     dependsOn("build")
 }

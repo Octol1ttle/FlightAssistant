@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.config.options
 
 import dev.isxander.yacl3.api.NameableEnum
 import dev.isxander.yacl3.config.v2.api.SerialEntry
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.network.chat.Component
 
 class SafetyOptions {

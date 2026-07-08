@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.computer.safety
 
 import kotlin.math.abs
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.multiplayer.ClientChunkCache
 import net.minecraft.core.SectionPos
 import net.minecraft.resources.ResourceLocation

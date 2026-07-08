@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.screen.components
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.gui.components.ContainerObjectSelectionList
 import ru.octol1ttle.flightassistant.FlightAssistant.mc
 

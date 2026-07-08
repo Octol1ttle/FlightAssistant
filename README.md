@@ -1,5 +1,5 @@
 <p align=center>
-    <img src="images/logo.png" alt="FlightAssistant Logo">
+    <img src="https://raw.githubusercontent.com/Henner4746/FlightAssistant/dev/images/logo.png" alt="FlightAssistant Logo">
 </p>
 
 <p align=center>

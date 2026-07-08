@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.api
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.resources.ResourceLocation
 
 interface ModuleController<T> : ModuleView<T> {

@@ -2,7 +2,7 @@ package ru.octol1ttle.flightassistant.impl.display
 
 import com.mojang.math.Axis
 import kotlin.math.sign
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
@@ -27,7 +27,7 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
         return FAConfig.display.showAttitude != DisplayOptions.AttitudeDisplayMode.DISABLED
     }
 
-    override fun render(guiGraphics: GuiGraphics) {
+    override fun render(guiGraphics: FAGuiGraphics) {
         if (computers.hudData.isViewMirrored) {
             return
         }
@@ -35,7 +35,7 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
         with(guiGraphics) {
             val centerX: Float = centerXF - 0.5f
 
-            pose().push()
+            pushPose()
 //? if <1.21.6
             pose().translate(0.0f, 0.0f, -200.0f)
 //? if >=1.21.6 {
@@ -60,14 +60,14 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
                 disableScissor()
             }
 
-            pose().pop()
+            popPose()
             if (FAConfig.display.showAutomationModes) {
                 renderPitchTarget(this.centerX - 6, centerY - 10)
             }
         }
     }
 
-    private fun GuiGraphics.renderHorizon(centerX: Float) {
+    private fun FAGuiGraphics.renderHorizon(centerX: Float) {
         ScreenSpace.getY(0.0f)?.let {
             val color = getPitchBarColor(0.0f)
 
@@ -87,7 +87,7 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    private fun GuiGraphics.renderPitchBars(centerX: Float) {
+    private fun FAGuiGraphics.renderPitchBars(centerX: Float) {
         val step: Int = FAConfig.display.attitudeDegreeStep
         val nextUp: Int = Mth.roundToward(computers.data.pitch.toInt(), step)
         for (i: Int in nextUp..90 step step) {
@@ -100,7 +100,7 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    private fun GuiGraphics.renderPitchLimits(centerX: Float) {
+    private fun FAGuiGraphics.renderPitchLimits(centerX: Float) {
         val step: Int = FAConfig.display.attitudeDegreeStep / 2
 
         val arrowText: Component = Component.literal("V")
@@ -119,7 +119,7 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
         }
         while (min >= -180) {
             val y: Int = ScreenSpace.getY(min) ?: break
-            pose().push()
+            pushPose()
 
             pose().translate(centerX, y.toFloat() /*? if <1.21.6 {*/, 0.0f /*?}*/) // Rotate around the middle of the arrow
 //? if >=1.21.6 {
@@ -128,12 +128,12 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
             pose().mulPose(Axis.ZN.rotationDegrees(180.0f)) // Flip upside down
             drawMiddleAlignedString(arrowText, 0, -9, if (minInput?.status == ControlInput.Status.ACTIVE) warningColor else cautionColor)
 
-            pose().pop()
+            popPose()
             min -= step
         }
     }
 
-    private fun GuiGraphics.drawPitchReferenceMark(pitch: Float, centerX: Float) {
+    private fun FAGuiGraphics.drawPitchReferenceMark(pitch: Float, centerX: Float) {
         val y = ScreenSpace.getY(pitch) ?: return
 
         val color: Int = getPitchBarColor(pitch)
@@ -150,7 +150,7 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
         hLineDashed(rightXStart, rightXEnd, y, 2, color)
     }
 
-    private fun GuiGraphics.drawPitchBar(pitch: Int, centerX: Float, y: Int) {
+    private fun FAGuiGraphics.drawPitchBar(pitch: Int, centerX: Float, y: Int) {
         if (pitch == 0) return
 
         val color: Int = getPitchBarColor(pitch.toFloat())
@@ -183,14 +183,14 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
             primaryColor
     }
 
-    private fun GuiGraphics.renderPitchTarget(x: Int, y: Int) {
+    private fun FAGuiGraphics.renderPitchTarget(x: Int, y: Int) {
         val active: AutoFlightComputer.VerticalMode? = computers.autoflight.activeVerticalMode
         if ((computers.autoflight.flightDirectors || computers.autoflight.autopilot) && active is AutoFlightComputer.FollowsPitchMode) {
             drawRightAlignedString("%.1f".formatRoot(active.targetPitch), x, y, primaryAdvisoryColor)
         }
     }
 
-    override fun renderFaulted(guiGraphics: GuiGraphics) {
+    override fun renderFaulted(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             drawMiddleAlignedString(Component.translatable("short.flightassistant.attitude"), centerX, centerY - 16, warningColor)
         }

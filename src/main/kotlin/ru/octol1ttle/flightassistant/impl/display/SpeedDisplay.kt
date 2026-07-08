@@ -1,7 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.display
 
 import kotlin.math.roundToInt
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
@@ -17,7 +17,7 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
         return FAConfig.display.showSpeedReading || FAConfig.display.showSpeedScale
     }
 
-    override fun render(guiGraphics: GuiGraphics) {
+    override fun render(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             if (FAConfig.display.showSpeedReading) {
                 renderSpeedReading(HudFrame.leftF, centerYF)
@@ -31,8 +31,8 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    private fun GuiGraphics.renderSpeedReading(x: Float, y: Float) {
-        pose().push()
+    private fun FAGuiGraphics.renderSpeedReading(x: Float, y: Float) {
+        pushPose()
         fusedTranslateScale(x * 1.005f, y, READING_MATRIX_SCALE)
 
         val speed: Double = computers.hudData.lerpedForwardVelocity.perSecond().length()
@@ -48,10 +48,10 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
         renderOutline(-width, -halfHeight, width, halfHeight * 2 - 1, color)
         drawRightAlignedString(text, -2, textY, color)
 
-        pose().pop()
+        popPose()
     }
 
-    private fun GuiGraphics.renderSpeedScale(x: Int, y: Int) {
+    private fun FAGuiGraphics.renderSpeedScale(x: Int, y: Int) {
         val speed: Double = computers.hudData.lerpedForwardVelocity.perSecond().length()
         val color: Int =
             if (speed <= 0.0) warningColor
@@ -91,20 +91,22 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
         disableScissor()
     }
 
-    private fun GuiGraphics.drawSpeedLine(x: Int, y: Int, speed: Int, currentSpeed: Double, color: Int): Boolean {
+    private fun FAGuiGraphics.drawSpeedLine(x: Int, y: Int, speed: Int, currentSpeed: Double, color: Int): Boolean {
         val textY: Int = (y + lineHeight * (currentSpeed - speed)).toInt()
         if (textY < HudFrame.top - 100 || textY > HudFrame.bottom + 100) {
             return false
         }
-        hLine(x - 5, x, textY, color)
-        if (speed % 5 == 0) {
-            drawRightAlignedString(speed.toString(), x - 6, textY - 3, color)
+        if (textY < y - 10 || textY > y + 10) {
+            hLine(x - 5, x, textY, color)
+            if (speed % 5 == 0) {
+                drawRightAlignedString(speed.toString(), x - 6, textY - 3, color)
+            }
         }
 
         return true
     }
 
-    private fun GuiGraphics.renderSpeedTarget(x: Int, y: Int) {
+    private fun FAGuiGraphics.renderSpeedTarget(x: Int, y: Int) {
         val color: Int
         val active: AutoFlightComputer.ThrustMode? = computers.autoflight.activeThrustMode
         if (computers.autoflight.autoThrust && active is AutoFlightComputer.FollowsSpeedMode) {
@@ -120,7 +122,7 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    override fun renderFaulted(guiGraphics: GuiGraphics) {
+    override fun renderFaulted(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             drawRightAlignedString(
                 Component.translatable("short.flightassistant.speed"),

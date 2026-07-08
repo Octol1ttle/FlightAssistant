@@ -7,6 +7,7 @@ import kotlin.math.abs
 import kotlin.math.roundToLong
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.SharedConstants
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -200,8 +201,12 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
     }
 
     fun getFormattedTime(distance: Double): String {
-        val duration: Duration = Duration.ofSeconds((distance / groundSpeeds.average()).roundToLong())
-        return if (computers.data.flying) "${duration.toMinutesPart()}:${"%02d".formatRoot(duration.toSecondsPart())}" else "--:--"
+        val average = groundSpeeds.average()
+        return if (computers.data.flying && average >= 5.0) {
+            val duration: Duration = Duration.ofSeconds((distance / average).roundToLong())
+            "${duration.toMinutesPart()}:${"%02d".formatRoot(duration.toSecondsPart())}"
+        } else
+            "--:--"
     }
 
     fun getThrustMode(): AutoFlightComputer.ThrustMode? {

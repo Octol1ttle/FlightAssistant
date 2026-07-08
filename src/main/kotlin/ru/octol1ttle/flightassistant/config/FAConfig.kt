@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder
 import dev.isxander.yacl3.platform.YACLPlatform
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.player.LocalPlayer
 import ru.octol1ttle.flightassistant.FlightAssistant.MOD_ID
 import ru.octol1ttle.flightassistant.FlightAssistant.id

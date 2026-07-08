@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.computer.autoflight.modes
 
 import kotlin.math.abs
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.network.chat.Component
 import net.minecraft.util.Mth
 import org.joml.Vector2d

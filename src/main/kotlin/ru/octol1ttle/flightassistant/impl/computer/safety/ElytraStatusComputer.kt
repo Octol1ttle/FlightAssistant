@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.impl.computer.safety
 import java.time.Duration
 import kotlin.math.round
 import kotlin.math.roundToInt
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket
 import net.minecraft.resources.ResourceLocation

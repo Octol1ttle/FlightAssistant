@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.alert.fault
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -20,7 +22,7 @@ class DisplayFaultAlert(computers: ComputerBus, val identifier: ResourceLocation
         return HudDisplayHost.isFaulted(identifier)
     }
 
-    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: FAGuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         var i = 0
         i += guiGraphics.drawString(Component.translatable("alert.flightassistant.fault.hud.$identifier"), firstLineX, firstLineY, cautionColor)
         i +=

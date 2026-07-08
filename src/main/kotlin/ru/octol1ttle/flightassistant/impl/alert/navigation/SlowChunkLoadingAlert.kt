@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.alert.navigation
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.api.alert.Alert
@@ -30,7 +32,7 @@ class SlowChunkLoadingAlert(computers: ComputerBus) : Alert(computers), ECAMAler
         return shouldActivate
     }
 
-    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: FAGuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         return guiGraphics.drawString(Component.translatable("alert.flightassistant.navigation.slow_chunk_loading"), firstLineX, firstLineY, cautionColor)
     }
 }

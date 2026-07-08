@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.api.util.extensions
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.resources.sounds.SoundInstance
 import net.minecraft.client.sounds.SoundManager
 import ru.octol1ttle.flightassistant.api.util.SoundExtensions

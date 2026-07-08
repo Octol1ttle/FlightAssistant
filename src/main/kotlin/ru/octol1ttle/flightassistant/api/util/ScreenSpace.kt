@@ -12,7 +12,10 @@ object ScreenSpace {
     private var viewport: IntArray = IntArray(4)
 
     internal fun updateViewport() {
-        GL11.glGetIntegerv(GL11.GL_VIEWPORT, viewport)
+        viewport[0] = 0
+        viewport[1] = 0
+        viewport[2] = mc.window.width
+        viewport[3] = mc.window.height
     }
 
     /**
@@ -43,19 +46,26 @@ object ScreenSpace {
         val displayHeight: Int = mc.window.height
         val target = Vector3f()
 
+        var projMatrix: Matrix4f
+        var worldMatrix: Matrix4f
+        synchronized(RenderMatrices) {
+            projMatrix = Matrix4f(RenderMatrices.projectionMatrix)
+            worldMatrix = Matrix4f(if (useNoRollMatrix) RenderMatrices.worldSpaceNoRollMatrix else RenderMatrices.worldSpaceMatrix)
+        }
+
         val transformedCoordinates: Vector4f =
             Vector4f(deltaPos.x.toFloat(), deltaPos.y.toFloat(), deltaPos.z.toFloat(), 1f).mul(
-                if (useNoRollMatrix) RenderMatrices.worldSpaceNoRollMatrix else RenderMatrices.worldSpaceMatrix
+                worldMatrix
             )
+            
+        if (transformedCoordinates.z > 0.0f) {
+            return Vector3f(0f, 0f, -10f) // Behind camera, will fail isVisible
+        }
 
-        val matrixProj = Matrix4f(RenderMatrices.projectionMatrix)
-        val matrixModel = Matrix4f(RenderMatrices.modelViewMatrix)
-
-        matrixProj.mul(matrixModel)
-            .project(
-                transformedCoordinates.x(), transformedCoordinates.y(), transformedCoordinates.z(), viewport,
-                target
-            )
+        projMatrix.project(
+            transformedCoordinates.x(), transformedCoordinates.y(), transformedCoordinates.z(), viewport,
+            target
+        )
 
         return Vector3f(
             target.x / mc.window.guiScale.toFloat(),
@@ -74,7 +84,7 @@ object ScreenSpace {
         if (pos == null) {
             return false
         }
-        return pos.x >= 0 && pos.x <= mc.window.guiScaledWidth && pos.y >= 0 && pos.y <= mc.window.guiScaledHeight && pos.z > -1 && pos.z < 1
+        return pos.x >= -2000 && pos.x <= mc.window.guiScaledWidth + 2000 && pos.y >= -2000 && pos.y <= mc.window.guiScaledHeight + 2000 && pos.z > -1 && pos.z < 1
     }
 
     fun getX(heading: Float): Int? {
@@ -92,7 +102,7 @@ object ScreenSpace {
     *///?}
 
     fun getY(pitch: Float): Int? {
-        val vec: Vector3f = fromWorldSpace(Vec3.directionFromRotation(-pitch, mc.entityRenderDispatcher.camera!!.yRot), true)
+        val vec: Vector3f = fromWorldSpace(Vec3.directionFromRotation(-pitch, mc.gameRenderer.mainCamera().yRot), true)
         if (!isVisible(vec)) {
             return null
         }

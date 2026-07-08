@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.screen.components
 
 import dev.isxander.yacl3.api.NameableEnum
 import java.util.function.Consumer
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractButton
@@ -24,11 +25,13 @@ class CycleTextOnlyButton<E : NameableEnum>(x: Int, y: Int, private val entries:
         refreshMessage()
     }
 
-//? if >=1.21.11 {
-    /*override fun renderContents(
-*///?} else
-    override fun renderWidget(
-        guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+//? if >=26.2 {
+/*    override fun extractContents(guiGraphics: net.minecraft.client.gui.GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
+*///?} else if >=1.21.11 {
+/*    override fun renderContents(guiGraphics: FAGuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+*///?} else {
+    override fun renderWidget(guiGraphics: FAGuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+//?}
         val message: Component = TextOnlyButton.getMessageComponent(this)
 
         this.width = font.width(message)

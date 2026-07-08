@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.impl.computer.data
 import kotlin.math.asin
 import kotlin.math.atan2
 import kotlin.math.max
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.Minecraft
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.player.LocalPlayer
@@ -87,7 +88,11 @@ class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Compu
         if (FAKeyMappings.globalAutomationOverride.isDown) {
             return false
         }
+        //? if <26.2 {
         return (!checkFlying || flying) && (FAConfig.global.automationsAllowedInOverlays || (mc.screen == null && mc.overlay == null))
+//?} else {
+/*        return (!checkFlying || flying) && (FAConfig.global.automationsAllowedInOverlays || (mc.gui.screen() == null && mc.gui.overlay() == null))
+*///?}
     }
 
     fun isInvulnerableTo(source: DamageSource): Boolean {

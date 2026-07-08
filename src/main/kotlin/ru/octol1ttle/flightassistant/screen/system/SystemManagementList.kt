@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.screen.system
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.Button
@@ -31,15 +32,18 @@ class SystemManagementList(y0: Int, y1: Int, width: Int, baseKey: String, contro
 
         val children = listOf(this.displayName, faultText, offText, toggleButton)
 
-//? if >=1.21.9 {
-        /*override fun renderContent(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
+//? if >=26.2 {
+/*        override fun extractContent(guiGraphics: net.minecraft.client.gui.GuiGraphicsExtractor, mouseX: Int, mouseY: Int, hovered: Boolean, partialTick: Float) {
+            val top = contentY
+*///?} else if >=1.21.9 {
+/*        override fun renderContent(guiGraphics: FAGuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
             val top = contentY
 *///?} else {
-        override fun render(guiGraphics: GuiGraphics, index: Int, top: Int, left: Int, width: Int, height: Int, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
-    //?}
+        override fun render(guiGraphics: FAGuiGraphics, index: Int, top: Int, left: Int, width: Int, height: Int, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
+//?}
             displayName.x = this.xOffset
             displayName.y = top
-            displayName.render(guiGraphics, mouseX, mouseY, partialTick)
+            displayName.renderCompat(guiGraphics, mouseX, mouseY, partialTick)
 
             toggleButton.x = this.listWidth - toggleButton.width - 5
             toggleButton.y = top - toggleButton.height / 4 - 1
@@ -47,17 +51,17 @@ class SystemManagementList(y0: Int, y1: Int, width: Int, baseKey: String, contro
                 if (controller.isEnabled(identifier))
                     if (controller.modulesResettable) OFF_RESET_TEXT else OFF_TEXT
                 else ON_TEXT
-            toggleButton.render(guiGraphics, mouseX, mouseY, partialTick)
+            toggleButton.renderCompat(guiGraphics, mouseX, mouseY, partialTick)
 
             offText.x = toggleButton.x - 10 - font.width(OFF_TEXT)
             offText.y = top
             offText.setColor((if (controller.isEnabled(identifier)) ChatFormatting.DARK_GRAY else ChatFormatting.WHITE).color!!)
-            offText.render(guiGraphics, mouseX, mouseY, partialTick)
+            offText.renderCompat(guiGraphics, mouseX, mouseY, partialTick)
 
             faultText.x = offText.x - offText.width / 2 - font.width(FAULT_TEXT)
             faultText.y = top
             faultText.setColor(if (controller.isFaulted(identifier)) cautionColor else ChatFormatting.DARK_GRAY.color!!)
-            faultText.render(guiGraphics, mouseX, mouseY, partialTick)
+            faultText.renderCompat(guiGraphics, mouseX, mouseY, partialTick)
         }
 
         override fun children(): List<GuiEventListener> {

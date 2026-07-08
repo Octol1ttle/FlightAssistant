@@ -1,7 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.display
 
 import kotlin.math.roundToInt
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
@@ -16,7 +16,7 @@ class VelocityComponentsDisplay(computers: ComputerBus) : Display(computers) {
         return FAConfig.display.showGroundSpeed || FAConfig.display.showVerticalSpeed
     }
 
-    override fun render(guiGraphics: GuiGraphics) {
+    override fun render(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             val x: Int = HudFrame.right - 5
             var y: Int = HudFrame.bottom - 10
@@ -42,7 +42,7 @@ class VelocityComponentsDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    override fun renderFaulted(guiGraphics: GuiGraphics) {
+    override fun renderFaulted(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             val x: Int = HudFrame.right - 25
             var y: Int = HudFrame.bottom - 10

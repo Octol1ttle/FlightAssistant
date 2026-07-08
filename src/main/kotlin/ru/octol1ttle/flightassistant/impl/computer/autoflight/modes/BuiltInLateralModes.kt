@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.impl.computer.autoflight.modes
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.network.chat.Component
 import org.joml.Vector2d
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput

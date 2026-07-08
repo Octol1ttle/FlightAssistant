@@ -2,7 +2,8 @@ package ru.octol1ttle.flightassistant.api.display
 
 import com.mojang.blaze3d.platform.Window
 import kotlin.math.roundToInt
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import ru.octol1ttle.flightassistant.FlightAssistant.mc
 import ru.octol1ttle.flightassistant.config.FAConfig
 
@@ -44,7 +45,7 @@ object HudFrame {
         right = rightF.toInt()
     }
 
-    fun scissor(guiGraphics: GuiGraphics) {
+    fun scissor(guiGraphics: FAGuiGraphics) {
         guiGraphics.enableScissor(left, top, right, bottom + 1)
     }
 }

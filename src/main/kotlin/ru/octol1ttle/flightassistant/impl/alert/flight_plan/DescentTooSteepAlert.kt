@@ -1,6 +1,8 @@
 package ru.octol1ttle.flightassistant.impl.alert.flight_plan
 
 import kotlin.math.asin
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.api.alert.Alert
@@ -40,7 +42,7 @@ class DescentTooSteepAlert(computers: ComputerBus) : Alert(computers), ECAMAlert
         return false
     }
 
-    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: FAGuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         return guiGraphics.drawString(Component.translatable("alert.flightassistant.flight_plan.descent_too_steep"), firstLineX, firstLineY, cautionColor)
     }
 }

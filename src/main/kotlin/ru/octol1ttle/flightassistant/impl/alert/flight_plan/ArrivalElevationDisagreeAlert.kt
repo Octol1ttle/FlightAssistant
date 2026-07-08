@@ -1,6 +1,8 @@
 package ru.octol1ttle.flightassistant.impl.alert.flight_plan
 
 import kotlin.math.abs
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.level.levelgen.Heightmap
@@ -29,7 +31,7 @@ class ArrivalElevationDisagreeAlert(computers: ComputerBus) : Alert(computers), 
         return abs(actualElevation - computers.plan.arrivalData.elevation) > 2
     }
 
-    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: FAGuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         var i = 0
         i += guiGraphics.drawString(Component.translatable("alert.flightassistant.flight_plan.arrival_elevation_disagree"), firstLineX, firstLineY, cautionColor)
         var y = firstLineY + 1

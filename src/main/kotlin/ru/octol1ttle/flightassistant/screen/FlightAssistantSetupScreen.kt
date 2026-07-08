@@ -6,6 +6,7 @@ import java.io.FileWriter
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlinx.serialization.json.Json
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.ChatFormatting
 import net.minecraft.Util
 import net.minecraft.client.gui.GuiGraphics
@@ -36,14 +37,14 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
 
         this.addRenderableWidget(SmartStringWidget(this.centerX, this.centerY - 80, Component.translatable("menu.flightassistant.system")).middleAligned())
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.system.manage_displays")) {
-            this.minecraft!!.setScreen(
+            this.minecraft!!.setScreenSafe(
                 SystemManagementScreen(
                     this,
                 Component.translatable("menu.flightassistant.system.manage_displays"), "menu.flightassistant.system.name.hud", HudDisplayHost)
             )
         }.pos(this.centerX - 105, this.centerY - 65).width(100).build())
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.system.manage_computers")) {
-            this.minecraft!!.setScreen(
+            this.minecraft!!.setScreenSafe(
                 SystemManagementScreen(
                     this,
                 Component.translatable("menu.flightassistant.system.manage_computers"), "menu.flightassistant.system.name.computer", ComputerHost)
@@ -51,18 +52,18 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
         }.pos(this.centerX + 5, this.centerY - 65).width(100).build())
 
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.autoflight")) {
-            this.minecraft!!.setScreen(AutoFlightScreen(this))
+            this.minecraft!!.setScreenSafe(AutoFlightScreen(this))
         }.pos(this.centerX - 80, this.centerY - 30).width(160).build())
 
         this.addRenderableWidget(SmartStringWidget(this.centerX, this.centerY + 5, Component.translatable("menu.flightassistant.fms")).middleAligned())
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.departure")) {
-            this.minecraft!!.setScreen(DepartureScreen(this))
+            this.minecraft!!.setScreenSafe(DepartureScreen(this))
         }.pos(this.centerX - 130, this.centerY + 20).width(80).build())
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.enroute")) {
-            this.minecraft!!.setScreen(EnrouteScreen(this))
+            this.minecraft!!.setScreenSafe(EnrouteScreen(this))
         }.pos(this.centerX - 40, this.centerY + 20).width(80).build())
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.arrival")) {
-            this.minecraft!!.setScreen(ArrivalScreen(this))
+            this.minecraft!!.setScreenSafe(ArrivalScreen(this))
         }.pos(this.centerX + 50, this.centerY + 20).width(80).build())
 
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.save")) {
@@ -114,7 +115,7 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
         }.pos(this.centerX + 10, this.centerY + 50).width(80).build())
 
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.config")) {
-            this.minecraft!!.setScreen(FAConfigScreen.generate(this))
+            this.minecraft!!.setScreenSafe(FAConfigScreen.generate(this))
         }.pos(10, this.height - 30).width(120).build())
 
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.wiki")) {
@@ -126,12 +127,21 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
         }.pos(this.width - 90, this.height - 30).width(80).build())
     }
 
-    override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+//? if >=26.2 {
+/*    override fun extractRenderState(guiGraphics: net.minecraft.client.gui.GuiGraphicsExtractor, mouseX: Int, mouseY: Int, delta: Float) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, delta)
+
+        if (saveLoadError) {
+            guiGraphics.drawMiddleAlignedString(Component.translatable("menu.flightassistant.fms.error"), this.centerX, this.centerY + 75, ChatFormatting.RED.color!!, true)
+        }
+*///?} else {
+    override fun render(guiGraphics: FAGuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         super.render(guiGraphics, mouseX, mouseY, delta)
 
         if (saveLoadError) {
             guiGraphics.drawMiddleAlignedString(Component.translatable("menu.flightassistant.fms.error"), this.centerX, this.centerY + 75, ChatFormatting.RED.color!!, true)
         }
+//?}
     }
 
     companion object {

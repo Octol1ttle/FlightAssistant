@@ -52,15 +52,19 @@ class EnrouteWaypointsList(y0: Int, y1: Int, width: Int, val columns: Float, val
 
         private var lastFlightPlanActive: FlightPlanComputer.EnrouteWaypoint.Active? = state.active
 
-//? if >=1.21.9 {
-        /*override fun renderContent(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
+//? if >=26.2 {
+/*        override fun extractContent(guiGraphics: net.minecraft.client.gui.GuiGraphicsExtractor, mouseX: Int, mouseY: Int, hovered: Boolean, partialTick: Float) {
+            val top = contentY
+            val index = list.children().indexOf(this)
+*///?} else if >=1.21.9 {
+/*        override fun renderContent(guiGraphics: FAGuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
             val top = contentY
             val index = list.children().indexOf(this)
 *///?} else {
-        override fun render(guiGraphics: GuiGraphics, index: Int, top: Int, left: Int, width: Int, height: Int, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
+        override fun render(guiGraphics: FAGuiGraphics, index: Int, top: Int, left: Int, width: Int, height: Int, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
 //?}
             this.index = index
-            this.hovering = hovering
+            this.hovering = hovered
 
             val flightPlanWaypoint: FlightPlanComputer.EnrouteWaypoint? = state.flightPlanWaypoint
             if (flightPlanWaypoint != null) {
@@ -93,7 +97,7 @@ class EnrouteWaypointsList(y0: Int, y1: Int, width: Int, val columns: Float, val
                 editBox.setBordered(false)
                 editBox.x = (columnWidth * (i + 1)).toInt()
                 editBox.y = top
-                editBox.render(guiGraphics, mouseX, mouseY, partialTick)
+                editBox.renderCompat(guiGraphics, mouseX, mouseY, partialTick)
             }
 
             val hasExtraSpace: Boolean = columns > 7
@@ -102,7 +106,7 @@ class EnrouteWaypointsList(y0: Int, y1: Int, width: Int, val columns: Float, val
                 button.x = buttonX
                 buttonX += button.width + 3
                 button.y = top
-                button.render(guiGraphics, mouseX, mouseY, partialTick)
+                button.renderCompat(guiGraphics, mouseX, mouseY, partialTick)
             }
 
             val distance: Double = distance2d(state.coordinatesX, state.coordinatesZ, computers.data.x, computers.data.z)

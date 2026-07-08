@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.config
 
 import dev.isxander.yacl3.api.ConfigCategory
 import dev.isxander.yacl3.dsl.*
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.FlightAssistant

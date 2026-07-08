@@ -3,6 +3,7 @@ package ru.octol1ttle.flightassistant.api.display
 import dev.architectury.event.Event
 import dev.architectury.event.EventFactory
 import java.util.function.BiConsumer
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 

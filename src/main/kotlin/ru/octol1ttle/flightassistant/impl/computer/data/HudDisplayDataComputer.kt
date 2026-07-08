@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.computer.data
 
 import kotlin.math.atan2
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.Minecraft
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.resources.ResourceLocation

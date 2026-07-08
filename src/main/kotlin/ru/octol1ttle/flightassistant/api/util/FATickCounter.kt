@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.api.util
 
 import kotlin.random.Random
 import kotlin.random.nextInt
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.SharedConstants
 import net.minecraft.Util
 import net.minecraft.client.player.LocalPlayer

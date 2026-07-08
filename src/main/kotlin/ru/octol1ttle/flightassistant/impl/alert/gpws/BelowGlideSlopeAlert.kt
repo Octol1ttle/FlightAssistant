@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.alert.gpws
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.api.alert.Alert
@@ -30,7 +32,7 @@ class BelowGlideSlopeAlert(computers: ComputerBus) : Alert(computers), CenteredA
         return glideSlopeDeviation > 5.0
     }
 
-    override fun render(guiGraphics: GuiGraphics, y: Int): Boolean {
+    override fun render(guiGraphics: FAGuiGraphics, y: Int): Boolean {
         guiGraphics.drawHighlightedCenteredText(Component.translatable("alert.flightassistant.gpws.below_glide_slope"), guiGraphics.centerX, y, cautionColor, totalTicks % 40 >= 20)
         return true
     }

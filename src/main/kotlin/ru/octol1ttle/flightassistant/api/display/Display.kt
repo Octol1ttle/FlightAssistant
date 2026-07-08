@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.api.display
 
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 
 // TODO: displays should also be allowed to have state. adjust the comment below too
@@ -17,6 +18,6 @@ abstract class Display(val computers: ComputerBus) {
         internal set
 
     abstract fun allowedByConfig(): Boolean
-    abstract fun render(guiGraphics: GuiGraphics)
-    abstract fun renderFaulted(guiGraphics: GuiGraphics)
+    abstract fun render(guiGraphics: FAGuiGraphics)
+    abstract fun renderFaulted(guiGraphics: FAGuiGraphics)
 }

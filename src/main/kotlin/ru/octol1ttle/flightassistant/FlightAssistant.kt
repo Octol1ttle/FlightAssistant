@@ -45,23 +45,23 @@ object FlightAssistant {
             ComputerHost.sendRegistrationEvent()
             initComplete = true
         }
-        LevelRenderCallback.EVENT.register { partialTick, camera, projectionMatrix, frustumMatrix ->
-            FAKeyMappings.checkPressed(ComputerHost)
+        LevelRenderCallback.EVENT.register { _, camera, projectionMatrix, frustumMatrix ->
+            synchronized(RenderMatrices) {
+                RenderMatrices.projectionMatrix.set(projectionMatrix)
+                RenderMatrices.worldSpaceMatrix.set(frustumMatrix)
+                // RenderMatrices.modelViewMatrix.set(RenderSystem.getModelViewMatrix())
 
-            ComputerHost.tick(partialTick)
+                RenderMatrices.worldSpaceNoRollMatrix.set(Matrix4f().apply {
+                    rotate(Axis.XP.rotationDegrees(camera.xRot))
+                    rotate(Axis.YP.rotationDegrees(camera.yRot + 180.0f))
+                })
 
-            RenderMatrices.projectionMatrix.set(projectionMatrix)
-            RenderMatrices.worldSpaceMatrix.set(frustumMatrix)
-            RenderMatrices.modelViewMatrix.set(RenderSystem.getModelViewMatrix())
-
-            RenderMatrices.worldSpaceNoRollMatrix.set(Matrix4f().apply {
-                rotate(Axis.XP.rotationDegrees(camera.xRot))
-                rotate(Axis.YP.rotationDegrees(camera.yRot + 180.0f))
-            })
-
-            RenderMatrices.ready = true
+                RenderMatrices.ready = true
+            }
         }
-        FixedGuiRenderCallback.EVENT.register { context, _ ->
+        FixedGuiRenderCallback.EVENT.register { context, partialTick ->
+            FAKeyMappings.checkPressed(ComputerHost)
+            ComputerHost.tick(partialTick)
             HudDisplayHost.render(context)
         }
     }

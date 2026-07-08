@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.api.util.event
 
 import dev.architectury.event.Event
 import dev.architectury.event.EventFactory
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.Camera
 import org.joml.Matrix3f
 import org.joml.Matrix4f

@@ -2,6 +2,7 @@ package ru.octol1ttle.flightassistant.impl.computer.safety
 
 import kotlin.math.abs
 import kotlin.math.max
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation

@@ -1,7 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.display
 
 import kotlin.math.roundToInt
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
@@ -19,7 +19,7 @@ class HeadingDisplay(computers: ComputerBus) : Display(computers) {
         return FAConfig.display.showHeadingReading || FAConfig.display.showHeadingScale
     }
 
-    override fun render(guiGraphics: GuiGraphics) {
+    override fun render(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             if (FAConfig.display.showHeadingReading) {
                 renderHeadingReading()
@@ -33,7 +33,7 @@ class HeadingDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    private fun GuiGraphics.renderHeadingReading() {
+    private fun FAGuiGraphics.renderHeadingReading() {
         val x: Int = centerX
         val y: Int = HudFrame.bottom + 1
 
@@ -43,7 +43,7 @@ class HeadingDisplay(computers: ComputerBus) : Display(computers) {
         drawMiddleAlignedString("%03d".formatRoot(headingInt), x, y + 2, primaryColor)
     }
 
-    private fun GuiGraphics.renderHeadingScale(x: Int, y: Int) {
+    private fun FAGuiGraphics.renderHeadingScale(x: Int, y: Int) {
         val left: Int = (x - HudFrame.height * 0.5f).toInt()
         val right: Int = (x + HudFrame.height * 0.5f).toInt()
 
@@ -70,16 +70,19 @@ class HeadingDisplay(computers: ComputerBus) : Display(computers) {
         disableScissor()
     }
 
-    private fun GuiGraphics.drawHeadingLine(x: Int, y: Int, left: Int, right: Int, heading: Int, currentHeading: Float, isLeft: Boolean): Boolean {
+    private fun FAGuiGraphics.drawHeadingLine(x: Int, y: Int, left: Int, right: Int, heading: Int, currentHeading: Float, isLeft: Boolean): Boolean {
         val textX: Int = (x + 2 * findShortestPath(currentHeading, heading.toFloat(), 360.0f)).toInt()
         if (textX < left - 100 || textX > right + 100) {
             return false
         }
 
         val wrappedHeading: Int = if (heading > 0) heading % 360 else 360 + heading % 360
-        vLine(textX, y, y + 3, primaryColor)
-        if (wrappedHeading % 30 == 0) {
-            drawMiddleAlignedString((if (wrappedHeading == 0) 360 else wrappedHeading).toString(), textX, y + 4, primaryColor)
+
+        if (textX < x - 12 || textX > x + 12) {
+            vLine(textX, y, y + 3, primaryColor)
+            if (wrappedHeading % 30 == 0) {
+                drawMiddleAlignedString((if (wrappedHeading == 0) 360 else wrappedHeading).toString(), textX, y + 4, primaryColor)
+            }
         }
 
         if (wrappedHeading % 90 == 0) {
@@ -105,14 +108,14 @@ class HeadingDisplay(computers: ComputerBus) : Display(computers) {
         return true
     }
 
-    private fun GuiGraphics.renderHeadingTarget(x: Int, y: Int) {
+    private fun FAGuiGraphics.renderHeadingTarget(x: Int, y: Int) {
         val active: AutoFlightComputer.LateralMode? = computers.autoflight.activeLateralMode
         if ((computers.autoflight.flightDirectors || computers.autoflight.autopilot) && active is AutoFlightComputer.FollowsHeadingMode) {
             drawMiddleAlignedString("%03d".formatRoot(active.targetHeading), x, y, primaryAdvisoryColor)
         }
     }
 
-    override fun renderFaulted(guiGraphics: GuiGraphics) {
+    override fun renderFaulted(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             drawMiddleAlignedString(Component.translatable("short.flightassistant.heading"), centerX, HudFrame.bottom + 1, warningColor)
         }

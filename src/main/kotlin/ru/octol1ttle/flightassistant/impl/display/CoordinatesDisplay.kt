@@ -1,6 +1,6 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import ru.octol1ttle.flightassistant.FlightAssistant
@@ -16,7 +16,7 @@ class CoordinatesDisplay(computers: ComputerBus) : Display(computers) {
         return FAConfig.display.showCoordinates
     }
 
-    override fun render(guiGraphics: GuiGraphics) {
+    override fun render(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             val x: Int = HudFrame.left + 5
             val y: Int = HudFrame.bottom - 19
@@ -60,7 +60,7 @@ class CoordinatesDisplay(computers: ComputerBus) : Display(computers) {
         return ""
     }
 
-    override fun renderFaulted(guiGraphics: GuiGraphics) {
+    override fun renderFaulted(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             val x: Int = HudFrame.left + 10
             val y: Int = HudFrame.bottom - 19

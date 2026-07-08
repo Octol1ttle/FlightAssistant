@@ -1,5 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.alert.flight_controls
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.api.alert.Alert
@@ -18,7 +20,7 @@ class ProtectionsLostAlert(computers: ComputerBus) : Alert(computers), ECAMAlert
         return computers.protections.isDisabledOrFaulted()
     }
 
-    override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
+    override fun render(guiGraphics: FAGuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {
         var i = 0
         i += guiGraphics.drawString(Component.translatable("alert.flightassistant.flight_controls.protections_lost"), firstLineX, firstLineY, cautionColor)
 

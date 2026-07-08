@@ -1,7 +1,7 @@
 package ru.octol1ttle.flightassistant.impl.display
 
 import kotlin.math.roundToInt
-import net.minecraft.client.gui.GuiGraphics
+import ru.octol1ttle.flightassistant.api.util.extensions.FAGuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FlightAssistant
@@ -16,14 +16,14 @@ class CourseDeviationDisplay(computers: ComputerBus) : Display(computers) {
         return FAConfig.display.showCourseDeviation
     }
 
-    override fun render(guiGraphics: GuiGraphics) {
+    override fun render(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             renderLateralDeviation()
             renderVerticalDeviation()
         }
     }
 
-    private fun GuiGraphics.renderLateralDeviation() {
+    private fun FAGuiGraphics.renderLateralDeviation() {
         val deviation = (computers.plan.getLateralDeviation(computers.hudData.lerpedPosition) ?: return).coerceIn(-22.5, 22.5)
         val pixelsPerBlock = 2
 
@@ -34,7 +34,7 @@ class CourseDeviationDisplay(computers: ComputerBus) : Display(computers) {
         renderOutline((centerX - deviation * pixelsPerBlock - 4).roundToInt(), HudFrame.bottom - 11, 9, 9, secondaryAdvisoryColor)
     }
 
-    private fun GuiGraphics.renderVerticalDeviation() {
+    private fun FAGuiGraphics.renderVerticalDeviation() {
         val deviation = (computers.plan.getVerticalDeviation(computers.hudData.lerpedPosition) ?: return).coerceIn(-11.25, 11.25)
         val pixelsPerBlock = 4
 
@@ -45,7 +45,7 @@ class CourseDeviationDisplay(computers: ComputerBus) : Display(computers) {
         renderOutline(HudFrame.right - 17, (centerY - deviation * pixelsPerBlock - 5).roundToInt(), 9, 9, secondaryAdvisoryColor)
     }
 
-    override fun renderFaulted(guiGraphics: GuiGraphics) {
+    override fun renderFaulted(guiGraphics: FAGuiGraphics) {
         with(guiGraphics) {
             drawMiddleAlignedString(Component.translatable("short.flightassistant.lateral_deviation"), centerX, HudFrame.bottom - 10, warningColor)
             drawRightAlignedString(Component.translatable("short.flightassistant.vertical_deviation"), HudFrame.right - 10, centerY - 5, warningColor)

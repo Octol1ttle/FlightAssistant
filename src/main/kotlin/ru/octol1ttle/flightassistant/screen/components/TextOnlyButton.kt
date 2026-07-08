@@ -1,5 +1,6 @@
 package ru.octol1ttle.flightassistant.screen.components
 
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.components.Button
@@ -12,11 +13,13 @@ import ru.octol1ttle.flightassistant.api.util.extensions.font
 class TextOnlyButton(val baseX: Int, y: Int, text: Component, onPress: OnPress) : Button(baseX - font.width(text) / 2, y, font.width(text), font.lineHeight, text, onPress, DEFAULT_NARRATION) {
     var color: Int = 0
 
-//? if >=1.21.11 {
-    /*override fun renderContents(
-*///?} else
-    override fun renderWidget(
-        guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+//? if >=26.2 {
+/*    override fun extractContents(guiGraphics: net.minecraft.client.gui.GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
+*///?} else if >=1.21.11 {
+/*    override fun renderContents(guiGraphics: FAGuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+*///?} else {
+    override fun renderWidget(guiGraphics: FAGuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+//?}
         val message: Component = getMessageComponent(this)
 
         this.width = font.width(message)
