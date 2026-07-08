@@ -3,7 +3,7 @@
 </p>
 
 <p align=center>
-    <a href="https://modrinth.com/mod/flightassistant-26-2-port">
+    <a href="https://modrinth.com/mod/flightassistant-unofficial">
         <img src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3.2.0/assets/cozy/available/modrinth_vector.svg"
             alt="Available on Modrinth"></a>
     <a href="https://modrinth.com/mod/fabric-api/">
