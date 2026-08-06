@@ -6,7 +6,9 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.FAKeyMappings
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
-import ru.octol1ttle.flightassistant.api.util.extensions.setScreen
+//? if >=26 {
+/*import ru.octol1ttle.flightassistant.api.util.extensions.setScreen
+*///?}
 import ru.octol1ttle.flightassistant.impl.computer.ComputerHost
 import ru.octol1ttle.flightassistant.screen.components.SmartStringWidget
 

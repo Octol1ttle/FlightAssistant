@@ -18,9 +18,13 @@ import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.degrees
 import ru.octol1ttle.flightassistant.api.util.extensions.bottomY
 import ru.octol1ttle.flightassistant.api.util.extensions.getLerpedDeltaMovement
-import ru.octol1ttle.flightassistant.api.util.extensions.overlay
+//? if >=26 {
+/*import ru.octol1ttle.flightassistant.api.util.extensions.overlay
+*///?}
 import ru.octol1ttle.flightassistant.api.util.extensions.perSecond
-import ru.octol1ttle.flightassistant.api.util.extensions.screen
+//? if >=26 {
+/*import ru.octol1ttle.flightassistant.api.util.extensions.screen
+*///?}
 import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 import ru.octol1ttle.flightassistant.config.FAConfig
 

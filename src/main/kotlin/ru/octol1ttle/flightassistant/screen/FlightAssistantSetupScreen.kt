@@ -16,9 +16,13 @@ import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.tinyfd.TinyFileDialogs
 import ru.octol1ttle.flightassistant.FlightAssistant
-import ru.octol1ttle.flightassistant.api.util.extensions.color
+//? if >=26 {
+/*import ru.octol1ttle.flightassistant.api.util.extensions.color
+*///?}
 import ru.octol1ttle.flightassistant.api.util.extensions.drawMiddleAlignedString
-import ru.octol1ttle.flightassistant.api.util.extensions.setScreen
+//? if >=26 {
+/*import ru.octol1ttle.flightassistant.api.util.extensions.setScreen
+*///?}
 import ru.octol1ttle.flightassistant.config.FAConfigScreen
 import ru.octol1ttle.flightassistant.impl.computer.ComputerHost
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer

@@ -10,9 +10,13 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.api.ModuleController
 import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
-import ru.octol1ttle.flightassistant.api.util.extensions.color
+//? if >=26 {
+/*import ru.octol1ttle.flightassistant.api.util.extensions.color
+*///?}
 import ru.octol1ttle.flightassistant.api.util.extensions.font
-import ru.octol1ttle.flightassistant.api.util.extensions.render
+//? if >=26 {
+/*import ru.octol1ttle.flightassistant.api.util.extensions.render
+*///?}
 import ru.octol1ttle.flightassistant.screen.components.FABaseList
 import ru.octol1ttle.flightassistant.screen.components.SmartStringWidget
 

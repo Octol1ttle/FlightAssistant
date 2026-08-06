@@ -11,7 +11,9 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Component.literal
 import net.minecraft.network.chat.Component.translatable
 import net.minecraft.network.chat.Style
-import ru.octol1ttle.flightassistant.api.util.extensions.color
+//? if >=26 {
+/*import ru.octol1ttle.flightassistant.api.util.extensions.color
+*///?}
 import ru.octol1ttle.flightassistant.api.util.extensions.drawMiddleAlignedString
 import ru.octol1ttle.flightassistant.api.util.extensions.primaryAdvisoryColor
 import ru.octol1ttle.flightassistant.api.util.extensions.setColor
