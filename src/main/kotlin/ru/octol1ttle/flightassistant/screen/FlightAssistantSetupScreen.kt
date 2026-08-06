@@ -16,7 +16,9 @@ import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.tinyfd.TinyFileDialogs
 import ru.octol1ttle.flightassistant.FlightAssistant
+import ru.octol1ttle.flightassistant.api.util.extensions.color
 import ru.octol1ttle.flightassistant.api.util.extensions.drawMiddleAlignedString
+import ru.octol1ttle.flightassistant.api.util.extensions.setScreen
 import ru.octol1ttle.flightassistant.config.FAConfigScreen
 import ru.octol1ttle.flightassistant.impl.computer.ComputerHost
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
@@ -126,6 +128,15 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
         }.pos(this.width - 90, this.height - 30).width(80).build())
     }
 
+    //? if >=26 {
+    /*override fun extractRenderState(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, delta)
+
+        if (saveLoadError) {
+            guiGraphics.drawMiddleAlignedString(Component.translatable("menu.flightassistant.fms.error"), this.centerX, this.centerY + 75, ChatFormatting.RED.color!!, true)
+        }
+    }
+*///?} else {
     override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         super.render(guiGraphics, mouseX, mouseY, delta)
 
@@ -133,6 +144,7 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
             guiGraphics.drawMiddleAlignedString(Component.translatable("menu.flightassistant.fms.error"), this.centerX, this.centerY + 75, ChatFormatting.RED.color!!, true)
         }
     }
+    //?}
 
     companion object {
         val PLANS_PATH: Path = YACLPlatform.getConfigDir().resolve("${FlightAssistant.MOD_ID}/plans")

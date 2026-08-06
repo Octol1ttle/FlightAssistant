@@ -1,8 +1,8 @@
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("dev.isxander.modstitch.base") version "0.7.0-unstable"
-    id("fabric-loom") version "1.14.6" apply false
+    id("dev.isxander.modstitch.base") version "0.8.5"
+    id("fabric-loom") version "1.15.5" apply false
     id("me.modmuss50.mod-publish-plugin")
     id("me.fallenbreath.yamlang") version "1.5.0"
 }
@@ -29,6 +29,13 @@ val minecraftVersionRange = prop("mod.mc_version_range")
 
 // See https://stonecutter.kikugie.dev/stonecutter/guide/comments#condition-constants
 val loader: String = name.split("-")[1]
+
+// Minecraft 26.x (unobfuscated) requires Java 25, 1.20.6+ requires Java 21, older requires Java 17
+val javaVersionTarget: Int = when {
+    stonecutter.eval(minecraft, ">=26") -> 25
+    stonecutter.eval(minecraft, ">=1.20.6") -> 21
+    else -> 17
+}
 stonecutter {
     constants {
         match(loader, "fabric", "neoforge", "forge")
@@ -47,15 +54,14 @@ tasks.withType<Jar> {
 modstitch {
     minecraftVersion = minecraft
 
-    val j21: Boolean = stonecutter.eval(minecraft, ">=1.20.6")
-    javaVersion = if (j21) 21 else 17
+    javaVersion = javaVersionTarget
 
     java {
         withSourcesJar()
     }
 
     kotlin {
-        jvmToolchain(if (j21) 21 else 17)
+        jvmToolchain(javaVersionTarget)
     }
 
     // If parchment doesnt exist for a version yet you can safely
@@ -81,6 +87,8 @@ modstitch {
             put("fml", if (loader == "neoforge") "1" else "45")
             put("mnd", if (loader == "neoforge") "type = \"required\"" else "mandatory = true")
             put("refmap", if (loader == "forge") refmapString else "")
+            put("flmin", if (loader == "fabric") ">=${prop("deps.fabric_loader")}" else "")
+            put("javamin", ">=$javaVersionTarget")
         }
 
         overwriteProjectVersionAndGroup = false
@@ -145,7 +153,7 @@ dependencies {
 
     modstitch.loom {
         modstitchModImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fapi")}")
-        modstitchModImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.flk")}+kotlin.2.1.0")
+        modstitchModImplementation("net.fabricmc:fabric-language-kotlin:${property("deps.flk")}+${property("deps.flk_kotlin")}")
         modstitchModImplementation("com.terraformersmc:modmenu:${property("deps.modmenu")}")
     }
 
@@ -171,6 +179,23 @@ dependencies {
 yamlang {
     targetSourceSets.set(mutableListOf(sourceSets["main"]))
     inputDir.set("assets/${mod.id}/lang")
+}
+
+// Modstitch's source configuration overrides stonecutter's automatic wiring of
+// the preprocessed (chiseled) sources into the compile source set, so we wire
+// them up explicitly here. The generated (preprocessed) sources fully replace
+// the shared raw sources under src/main.
+sourceSets["main"].apply {
+    // Kotlin srcDirs must also include the generated Java dir so Kotlin/Java
+    // joint compilation sees the Java classes (e.g. mixin invokers, interfaces).
+    kotlin.setSrcDirs(listOf(
+        layout.buildDirectory.dir("generated/stonecutter/main/kotlin"),
+        layout.buildDirectory.dir("generated/stonecutter/main/java"),
+    ))
+    java.setSrcDirs(listOf(layout.buildDirectory.dir("generated/stonecutter/main/java")))
+}
+tasks.matching { it.name == "compileKotlin" || it.name == "compileJava" || it.name == "sourcesJar" || it.name == "processResources" }.configureEach {
+    dependsOn(tasks.named("stonecutterGenerate"))
 }
 
 // Publishing

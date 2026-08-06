@@ -52,12 +52,18 @@ class EnrouteWaypointsList(y0: Int, y1: Int, width: Int, val columns: Float, val
 
         private var lastFlightPlanActive: FlightPlanComputer.EnrouteWaypoint.Active? = state.active
 
+//? if >=26 {
+        /*override fun extractContent(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
+            val top = contentY
+            val index = list.children().indexOf(this)
+*///?} else {
 //? if >=1.21.9 {
         /*override fun renderContent(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
             val top = contentY
             val index = list.children().indexOf(this)
 *///?} else {
         override fun render(guiGraphics: GuiGraphics, index: Int, top: Int, left: Int, width: Int, height: Int, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
+//?}
 //?}
             this.index = index
             this.hovering = hovering

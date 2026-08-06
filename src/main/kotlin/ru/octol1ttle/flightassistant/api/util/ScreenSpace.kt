@@ -5,14 +5,18 @@ import org.jetbrains.annotations.Contract
 import org.joml.Matrix4f
 import org.joml.Vector3f
 import org.joml.Vector4f
-import org.lwjgl.opengl.GL11
 import ru.octol1ttle.flightassistant.FlightAssistant.mc
 
 object ScreenSpace {
     private var viewport: IntArray = IntArray(4)
 
     internal fun updateViewport() {
-        GL11.glGetIntegerv(GL11.GL_VIEWPORT, viewport)
+        // The HUD is now extracted during the CPU render-state phase (26.x), where the
+        // GL viewport is stale. Project against the actual framebuffer size instead.
+        viewport[0] = 0
+        viewport[1] = 0
+        viewport[2] = mc.window.width
+        viewport[3] = mc.window.height
     }
 
     /**
@@ -52,10 +56,24 @@ object ScreenSpace {
         val matrixModel = Matrix4f(RenderMatrices.modelViewMatrix)
 
         matrixProj.mul(matrixModel)
-            .project(
-                transformedCoordinates.x(), transformedCoordinates.y(), transformedCoordinates.z(), viewport,
-                target
-            )
+
+        // On 26.x the projection matrix uses a reversed-Z depth range. Points that are at
+        // or behind the camera plane (clip.w <= 0) get mirrored back into the visible depth
+        // window, so the generic z-range check below can no longer reject them. Reject them
+        // here explicitly, otherwise e.g. both pitch-limit arrows end up drawn at once.
+        val clipW: Float =
+            matrixProj.m03() * transformedCoordinates.x +
+                matrixProj.m13() * transformedCoordinates.y +
+                matrixProj.m23() * transformedCoordinates.z +
+                matrixProj.m33() * transformedCoordinates.w
+        if (clipW <= 0.0f) {
+            return Vector3f(-1.0f, -1.0f, 2.0f)
+        }
+
+        matrixProj.project(
+            transformedCoordinates.x(), transformedCoordinates.y(), transformedCoordinates.z(), viewport,
+            target
+        )
 
         return Vector3f(
             target.x / mc.window.guiScale.toFloat(),

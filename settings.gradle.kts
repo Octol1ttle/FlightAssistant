@@ -38,6 +38,7 @@ stonecutter {
         mc("1.21.6", "fabric")
         mc("1.21.9", "fabric")
         mc("1.21.11", "fabric")
+        mc("26.2", "fabric")
     }
 }
 

@@ -10,7 +10,9 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.api.ModuleController
 import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
+import ru.octol1ttle.flightassistant.api.util.extensions.color
 import ru.octol1ttle.flightassistant.api.util.extensions.font
+import ru.octol1ttle.flightassistant.api.util.extensions.render
 import ru.octol1ttle.flightassistant.screen.components.FABaseList
 import ru.octol1ttle.flightassistant.screen.components.SmartStringWidget
 
@@ -31,12 +33,17 @@ class SystemManagementList(y0: Int, y1: Int, width: Int, baseKey: String, contro
 
         val children = listOf(this.displayName, faultText, offText, toggleButton)
 
+//? if >=26 {
+        /*override fun extractContent(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
+            val top = contentY
+*///?} else {
 //? if >=1.21.9 {
         /*override fun renderContent(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
             val top = contentY
 *///?} else {
         override fun render(guiGraphics: GuiGraphics, index: Int, top: Int, left: Int, width: Int, height: Int, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
     //?}
+//?}
             displayName.x = this.xOffset
             displayName.y = top
             displayName.render(guiGraphics, mouseX, mouseY, partialTick)
