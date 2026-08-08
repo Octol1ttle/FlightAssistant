@@ -52,6 +52,9 @@ object FlightAssistant {
 
             RenderMatrices.projectionMatrix.set(projectionMatrix)
             RenderMatrices.worldSpaceMatrix.set(frustumMatrix)
+            //? if >=26 {
+            /*RenderMatrices.modelViewMatrix.identity()
+*///?} else
             RenderMatrices.modelViewMatrix.set(RenderSystem.getModelViewMatrix())
 
             RenderMatrices.worldSpaceNoRollMatrix.set(Matrix4f().apply {

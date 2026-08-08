@@ -47,11 +47,19 @@ class DepartureScreen(parent: Screen) : FABaseScreen(parent, Component.translata
         super.onClose()
     }
 
+    //? if >=26 {
+    /*override fun extractRenderState(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+        discardChanges.active = state != DepartureScreenState.load(computers.plan.departureData)
+
+        super.extractRenderState(guiGraphics, mouseX, mouseY, delta)
+    }
+*///?} else {
     override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         discardChanges.active = state != DepartureScreenState.load(computers.plan.departureData)
 
         super.render(guiGraphics, mouseX, mouseY, delta)
     }
+    //?}
 
     companion object {
         private var state: DepartureScreenState = DepartureScreenState()

@@ -11,6 +11,9 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.Component.literal
 import net.minecraft.network.chat.Component.translatable
 import net.minecraft.network.chat.Style
+//? if >=26 {
+/*import ru.octol1ttle.flightassistant.api.util.extensions.color
+*///?}
 import ru.octol1ttle.flightassistant.api.util.extensions.drawMiddleAlignedString
 import ru.octol1ttle.flightassistant.api.util.extensions.primaryAdvisoryColor
 import ru.octol1ttle.flightassistant.api.util.extensions.setColor
@@ -65,6 +68,23 @@ class EnrouteScreen(parent: Screen) : FABaseScreen(parent, Component.translatabl
         }.pos(this.width - 90, this.height - 30).width(80).build())
     }
 
+    //? if >=26 {
+    /*override fun extractRenderState(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+        deleteAll.active = state.waypoints.isNotEmpty()
+
+        val hasUnsavedChanges: Boolean = !state.equals(EnrouteScreenState.load(computers.plan.enrouteData))
+        save.active = hasUnsavedChanges
+        discardChanges.active = hasUnsavedChanges
+        done.active = !hasUnsavedChanges
+
+        super.extractRenderState(guiGraphics, mouseX, mouseY, delta)
+
+        if (hasUnsavedChanges) {
+            val text: Component = Component.translatable("menu.flightassistant.fms.enroute.unsaved_changes")
+            guiGraphics.drawMiddleAlignedString(text, this.width / 4, 7, ChatFormatting.YELLOW.color!!, true)
+        }
+    }
+*///?} else {
     override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
         deleteAll.active = state.waypoints.isNotEmpty()
 
@@ -80,6 +100,7 @@ class EnrouteScreen(parent: Screen) : FABaseScreen(parent, Component.translatabl
             guiGraphics.drawMiddleAlignedString(text, this.width / 4, 7, ChatFormatting.YELLOW.color!!, true)
         }
     }
+    //?}
 
     companion object {
         private const val Y0: Int = 30

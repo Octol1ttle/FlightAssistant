@@ -41,10 +41,15 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
                 val explosive = FAConfig.safety.fireworkLockExplosive && !isEmptyOrSafe(player, hand)
                 val anyTerrainAhead = FAConfig.safety.fireworkLockObstacles && anyTerrainAhead()
                 if (computers.data.automationsAllowed() && (explosive || anyTerrainAhead)) {
+//? if >=26 {
+                    /*return@RightClickItem dev.architectury.event.EventResult.interruptFalse()
+*///?} else {
 //? if >=1.21.2 {
                     /*return@RightClickItem net.minecraft.world.InteractionResult.FAIL
-*///?} else
+*///?} else {
                     return@RightClickItem dev.architectury.event.CompoundEventResult.interruptFalse(stack)
+//?}
+//?}
                 }
 
                 if (!waitingForResponse) {
@@ -53,10 +58,15 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
                 }
             }
 
+//? if >=26 {
+            /*return@RightClickItem dev.architectury.event.EventResult.pass()
+*///?} else {
 //? if >=1.21.2 {
             /*return@RightClickItem net.minecraft.world.InteractionResult.PASS
-*///?} else
+*///?} else {
             return@RightClickItem dev.architectury.event.CompoundEventResult.pass()
+//?}
+//?}
         })
         FireworkBoostCallback.EVENT.register(FireworkBoostCallback { _, _ ->
             if (waitingForResponse) {

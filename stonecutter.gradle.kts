@@ -1,11 +1,11 @@
 plugins {
-    kotlin("jvm") version "2.2.0" apply false
-    kotlin("plugin.serialization") version "2.2.0" apply false
+    kotlin("jvm") version "2.4.10" apply false
+    kotlin("plugin.serialization") version "2.4.10" apply false
     id("dev.kikugie.stonecutter")
     id("me.modmuss50.mod-publish-plugin") version "0.8.4" apply false
 }
 
-stonecutter active "1.20.1-fabric" /* [SC] DO NOT EDIT */
+stonecutter active "26.2-fabric" /* [SC] DO NOT EDIT */
 
 allprojects {
     repositories {
