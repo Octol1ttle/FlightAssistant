@@ -8,6 +8,9 @@ import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.narration.NarratableEntry
 import net.minecraft.network.chat.Component
+//? if >=26.1 {
+/*import net.minecraft.client.gui.components.render
+*///?}
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
@@ -52,7 +55,11 @@ class EnrouteWaypointsList(y0: Int, y1: Int, width: Int, val columns: Float, val
 
         private var lastFlightPlanActive: FlightPlanComputer.EnrouteWaypoint.Active? = state.active
 
-//? if >=1.21.9 {
+//? if >=26.1 {
+        /*override fun extractContent(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
+            val top = contentY
+            val index = list.children().indexOf(this)
+*///?} else if >=1.21.9 {
         /*override fun renderContent(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
             val top = contentY
             val index = list.children().indexOf(this)

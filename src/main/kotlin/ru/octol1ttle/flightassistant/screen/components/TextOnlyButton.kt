@@ -7,12 +7,15 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentUtils
 import net.minecraft.network.chat.Style
 import net.minecraft.util.Mth
+import ru.octol1ttle.flightassistant.api.util.extensions.drawString
 import ru.octol1ttle.flightassistant.api.util.extensions.font
 
 class TextOnlyButton(val baseX: Int, y: Int, text: Component, onPress: OnPress) : Button(baseX - font.width(text) / 2, y, font.width(text), font.lineHeight, text, onPress, DEFAULT_NARRATION) {
     var color: Int = 0
 
-//? if >=1.21.11 {
+//? if >=26.1 {
+    /*override fun extractContents(
+*///?} else if >=1.21.11 {
     /*override fun renderContents(
 *///?} else
     override fun renderWidget(

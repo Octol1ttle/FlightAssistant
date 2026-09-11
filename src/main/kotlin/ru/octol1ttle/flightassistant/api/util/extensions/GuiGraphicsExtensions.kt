@@ -13,6 +13,36 @@ import ru.octol1ttle.flightassistant.config.FAConfig
 
 internal val font: Font = mc.font
 
+//? if >=26.1 {
+/*fun GuiGraphics.hLine(x1: Int, x2: Int, y: Int, color: Int) {
+    val minX: Int = minOf(x1, x2)
+    val maxX: Int = maxOf(x1, x2)
+    fill(minX, y, maxX + 1, y + 1, color)
+}
+
+fun GuiGraphics.vLine(x: Int, y1: Int, y2: Int, color: Int) {
+    val minY: Int = minOf(y1, y2)
+    val maxY: Int = maxOf(y1, y2)
+    fill(x, minY, x + 1, maxY + 1, color)
+}
+
+fun GuiGraphics.drawString(font: Font, text: String, x: Int, y: Int, color: Int) {
+    this.text(font, text, x, y, color)
+}
+
+fun GuiGraphics.drawString(font: Font, text: String, x: Int, y: Int, color: Int, shadow: Boolean) {
+    this.text(font, text, x, y, color, shadow)
+}
+
+fun GuiGraphics.drawString(font: Font, text: Component, x: Int, y: Int, color: Int) {
+    this.text(font, text, x, y, color)
+}
+
+fun GuiGraphics.drawString(font: Font, text: Component, x: Int, y: Int, color: Int, shadow: Boolean) {
+    this.text(font, text, x, y, color, shadow)
+}
+*///?}
+
 val lineHeight: Int
     get() = font.lineHeight
 
@@ -156,13 +186,19 @@ fun org.joml.Matrix3x2fStack.pop() {
     popMatrix()
 }
 
-//? if >=1.21.9 {
+//? if >=26.1 {
 /*fun GuiGraphics.renderOutline(x: Int, y: Int, width: Int, height: Int, color: Int) {
-//? if >=1.21.11 {
-    /^renderOutline(
-^///?} else
-    submitOutline(
-        x, y, width, height, color)
+    outline(x, y, width, height, color)
+}
+*///?}
+//? if >=1.21.11 && <26.1 {
+/*fun GuiGraphics.renderOutline(x: Int, y: Int, width: Int, height: Int, color: Int) {
+    renderOutline(x, y, width, height, color)
+}
+*///?}
+//? if >=1.21.9 && <1.21.11 {
+/*fun GuiGraphics.renderOutline(x: Int, y: Int, width: Int, height: Int, color: Int) {
+    submitOutline(x, y, width, height, color)
     renderDeferredElements()
 }
 *///?}

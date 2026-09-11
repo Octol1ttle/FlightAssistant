@@ -21,6 +21,15 @@ abstract class FABaseScreen(val parent: Screen?, title: Component) : Screen(titl
         this.addRenderableWidget(SmartStringWidget(this.centerX, 7, this.title).middleAligned())
     }
 
+//? if >=26.1 {
+    /*override fun extractRenderState(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+        this.render(guiGraphics, mouseX, mouseY, delta)
+    }
+
+    open fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, delta)
+    }
+*///?} else {
     override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
 //? if <1.21.6 {
         this.renderBackground(
@@ -30,6 +39,7 @@ abstract class FABaseScreen(val parent: Screen?, title: Component) : Screen(titl
 //?}
         super.render(guiGraphics, mouseX, mouseY, delta)
     }
+//?}
 
     override fun onClose() {
         this.minecraft!!.setScreen(parent)
