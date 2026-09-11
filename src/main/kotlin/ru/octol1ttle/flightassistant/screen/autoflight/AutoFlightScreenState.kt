@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.DirectCoordinatesLateralMode
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.HeadingLateralMode
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.HoldingPatternLateralMode
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.PitchVerticalMode
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.SelectedAltitudeVerticalMode
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.SpeedThrustMode
@@ -24,6 +25,9 @@ class AutoFlightScreenState {
     var targetHeading: Int = 360
     var targetCoordinatesX: Int = 0
     var targetCoordinatesZ: Int = 0
+    var holdFixX: Int = 0
+    var holdFixZ: Int = 0
+    var holdInboundCourse: Int = 360
 
     fun apply(autoFlight: AutoFlightComputer) {
         autoFlight.selectedThrustMode = when (thrustMode) {
@@ -39,6 +43,7 @@ class AutoFlightScreenState {
         autoFlight.selectedLateralMode = when (lateralMode) {
             LateralMode.HEADING -> HeadingLateralMode(targetHeading)
             LateralMode.COORDINATES -> DirectCoordinatesLateralMode(targetCoordinatesX, targetCoordinatesZ)
+            LateralMode.HOLD -> HoldingPatternLateralMode(holdFixX, holdFixZ, holdInboundCourse.toFloat())
             LateralMode.FLIGHT_PLAN -> null
         }
     }
@@ -66,6 +71,7 @@ class AutoFlightScreenState {
     enum class LateralMode(@JvmField val displayName: Component) : NameableEnum {
         HEADING(Component.translatable("menu.flightassistant.autoflight.lateral.heading")),
         COORDINATES(Component.translatable("menu.flightassistant.autoflight.lateral.coordinates")),
+        HOLD(Component.translatable("menu.flightassistant.autoflight.lateral.hold")),
         FLIGHT_PLAN(Component.translatable("menu.flightassistant.autoflight.lateral.flight_plan"));
 
         override fun getDisplayName(): Component {
