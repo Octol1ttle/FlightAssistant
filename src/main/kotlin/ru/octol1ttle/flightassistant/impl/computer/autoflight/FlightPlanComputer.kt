@@ -120,7 +120,7 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
         return enrouteData.singleOrNull { it.active == EnrouteWaypoint.Active.ORIGIN }
     }
 
-    private fun getEnrouteTarget(): EnrouteWaypoint? {
+    fun getEnrouteTarget(): EnrouteWaypoint? {
         return enrouteData.singleOrNull { it.active == EnrouteWaypoint.Active.TARGET }
     }
 

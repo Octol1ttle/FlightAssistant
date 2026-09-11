@@ -72,10 +72,12 @@ class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Compu
     val heading: Float
         get() = (yaw + 180.0f).throwIfNotInRange(0.0f..360.0f)
 
+    // Normalizing a near-zero velocity amplifies noise into a wildly unstable direction,
+    // so fall back to the player's actual look direction when barely moving.
     val flightPitch: Float
-        get() = degrees(asin(velocity.normalize().y).toFloat())
+        get() = if (velocity.lengthSqr() < MIN_VELOCITY_LENGTH_SQR) pitch else degrees(asin(velocity.normalize().y).toFloat())
     val flightYaw: Float
-        get() = degrees(atan2(-velocity.x, velocity.z).toFloat())
+        get() = if (velocity.lengthSqr() < MIN_VELOCITY_LENGTH_SQR) yaw else degrees(atan2(-velocity.x, velocity.z).toFloat())
 
     override fun tick() {
         forwardVelocity = computeForwardVector(velocity)
@@ -116,5 +118,6 @@ class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Compu
 
     companion object {
         val ID: ResourceLocation = FlightAssistant.id("air_data")
+        private const val MIN_VELOCITY_LENGTH_SQR: Double = 0.0025 // 0.05 blocks/tick
     }
 }

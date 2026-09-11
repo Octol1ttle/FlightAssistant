@@ -11,6 +11,7 @@ import net.minecraft.network.chat.MutableComponent
 import net.minecraft.network.chat.Style
 import net.minecraft.util.Mth
 import ru.octol1ttle.flightassistant.api.util.extensions.appendWithSeparation
+import ru.octol1ttle.flightassistant.api.util.extensions.drawString
 import ru.octol1ttle.flightassistant.api.util.extensions.font
 import ru.octol1ttle.flightassistant.api.util.extensions.whiteColor
 
@@ -24,7 +25,9 @@ class CycleTextOnlyButton<E : NameableEnum>(x: Int, y: Int, private val entries:
         refreshMessage()
     }
 
-//? if >=1.21.11 {
+//? if >=26.1 {
+    /*override fun extractContents(
+*///?} else if >=1.21.11 {
     /*override fun renderContents(
 *///?} else
     override fun renderWidget(

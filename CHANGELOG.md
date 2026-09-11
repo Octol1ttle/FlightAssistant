@@ -3,6 +3,14 @@ Please use [Discord](https://discord.gg/5kcBCvnbTp) or [GitHub](https://github.c
 
 **A wiki is now available: https://github.com/Octol1ttle/FlightAssistant/wiki**
 
+## 3.1.0
+
+- Added support for Minecraft 26.1
+- Added a keybind to toggle Auto Thrust on its own, independent of the rest of the autopilot
+- Added a keybind to toggle Flight Directors, Auto Thrust, and Autopilot together with one press
+- Added a holding pattern autopilot mode: enter it with a keybind to hold at the waypoint you're currently flying to (or at your present position if there isn't one), or configure a fix and inbound course manually in the Autoflight setup screen
+- Fixed the attitude display's pitch-limit indicators sometimes appearing far more than intended, especially at low speed
+
 ## Changes from Beta 1
 
 - Added Chinese localization

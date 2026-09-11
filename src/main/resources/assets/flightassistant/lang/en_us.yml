@@ -292,6 +292,7 @@ menu.flightassistant:
       mode: 'Lateral mode: '
       heading: HDG
       coordinates: COORDS
+      hold: HOLD
       flight_plan: F-PLAN
     target:
       speed: 'Target speed: '
@@ -301,6 +302,8 @@ menu.flightassistant:
       altitude: 'Target altitude: '
       heading: 'Target heading: '
       coordinates: 'Target coordinates: '
+      hold_fix: 'Hold fix coordinates: '
+      hold_course: 'Hold inbound course: '
   fms:
     .: Flight planning
     departure:
@@ -373,6 +376,7 @@ mode.flightassistant:
     heading: HDG
     direct_coordinates: DIR COORDS
     track_navigation: TRK NAV
+    holding_pattern: HOLD
     localizer: LOC
     go_around: GA HDG
 
@@ -429,6 +433,9 @@ key.category.flightassistant:
     toggle_enabled: Toggle mod enabled
     open_flightassistant_setup: Open FlightAssistant setup screen
     autopilot_disconnect: Disconnect autopilot
+    toggle_auto_thrust: Toggle Auto Thrust
+    toggle_all_autopilot: Toggle all autopilot functionality
+    toggle_holding_pattern: Enter/exit holding pattern
     global_automation_override: Global automation override (hold)
     hide_current_alert: Hide currently active alert
     show_hidden_alert: Show last hidden alert

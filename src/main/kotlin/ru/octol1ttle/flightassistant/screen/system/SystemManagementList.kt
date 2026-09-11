@@ -8,6 +8,9 @@ import net.minecraft.client.gui.components.events.GuiEventListener
 import net.minecraft.client.gui.narration.NarratableEntry
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+//? if >=26.1 {
+/*import net.minecraft.client.gui.components.render
+*///?}
 import ru.octol1ttle.flightassistant.api.ModuleController
 import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
 import ru.octol1ttle.flightassistant.api.util.extensions.font
@@ -31,7 +34,10 @@ class SystemManagementList(y0: Int, y1: Int, width: Int, baseKey: String, contro
 
         val children = listOf(this.displayName, faultText, offText, toggleButton)
 
-//? if >=1.21.9 {
+//? if >=26.1 {
+        /*override fun extractContent(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
+            val top = contentY
+*///?} else if >=1.21.9 {
         /*override fun renderContent(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, hovering: Boolean, partialTick: Float) {
             val top = contentY
 *///?} else {

@@ -144,6 +144,24 @@ class AutoFlightScreen(parent: Screen) : FABaseScreen(parent, Component.translat
                 refreshableElements.add(this.addRenderableWidget(TypeStrictEditBox(xEditBox.x + xEditBox.width + 4, xEditBox.y, xEditBox.width, xEditBox.height, state.targetCoordinatesZ, { state.targetCoordinatesZ = it }, String::toIntOrNullWithFallback)))
             }
 
+            AutoFlightScreenState.LateralMode.HOLD -> {
+                val string: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(baseX, baseY, Component.translatable("menu.flightassistant.autoflight.target.hold_fix")))
+                refreshableElements.add(string)
+                val xEditBox: TypeStrictEditBox<Int> = this.addRenderableWidget(TypeStrictEditBox(string.x + string.width, string.y - 2, baseWidth + 4, baseHeight, state.holdFixX, { state.holdFixX = it }, String::toIntOrNullWithFallback))
+                refreshableElements.add(xEditBox)
+                refreshableElements.add(this.addRenderableWidget(TypeStrictEditBox(xEditBox.x + xEditBox.width + 4, xEditBox.y, xEditBox.width, xEditBox.height, state.holdFixZ, { state.holdFixZ = it }, String::toIntOrNullWithFallback)))
+
+                val courseString: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(baseX, baseY + 16, Component.translatable("menu.flightassistant.autoflight.target.hold_course")))
+                refreshableElements.add(courseString)
+                refreshableElements.add(
+                    this.addRenderableWidget(
+                        TypeStrictEditBox(
+                            courseString.x + courseString.width, courseString.y - 2, baseWidth, baseHeight, state.holdInboundCourse, { state.holdInboundCourse = it },
+                            String::toIntOrNullWithFallback, { it in 0..360 })
+                    )
+                )
+            }
+
             AutoFlightScreenState.LateralMode.FLIGHT_PLAN -> Unit
         }
     }
