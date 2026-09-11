@@ -1,8 +1,8 @@
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("dev.isxander.modstitch.base") version "0.7.0-unstable"
-    id("fabric-loom") version "1.14.6" apply false
+    id("dev.isxander.modstitch.base") version "0.8.5"
+    id("fabric-loom") version "1.17.20" apply false
     id("me.modmuss50.mod-publish-plugin")
     id("me.fallenbreath.yamlang") version "1.5.0"
 }
@@ -47,15 +47,17 @@ tasks.withType<Jar> {
 modstitch {
     minecraftVersion = minecraft
 
+    val j25: Boolean = stonecutter.eval(minecraft, ">=26.1")
     val j21: Boolean = stonecutter.eval(minecraft, ">=1.20.6")
-    javaVersion = if (j21) 21 else 17
+    val javaVersionNumber: Int = if (j25) 25 else if (j21) 21 else 17
+    javaVersion = javaVersionNumber
 
     java {
         withSourcesJar()
     }
 
     kotlin {
-        jvmToolchain(if (j21) 21 else 17)
+        jvmToolchain(javaVersionNumber)
     }
 
     // If parchment doesnt exist for a version yet you can safely
