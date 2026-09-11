@@ -43,18 +43,21 @@ object FlightAssistant {
             ComputerHost.sendRegistrationEvent()
             initComplete = true
         }
-        LevelRenderCallback.EVENT.register { partialTick, camera, projectionMatrix, frustumMatrix ->
+        LevelRenderCallback.EVENT.register { partialTick, cameraXRot, cameraYRot, projectionMatrix, frustumMatrix ->
             FAKeyMappings.checkPressed(ComputerHost)
 
             ComputerHost.tick(partialTick)
 
             RenderMatrices.projectionMatrix.set(projectionMatrix)
             RenderMatrices.worldSpaceMatrix.set(frustumMatrix)
+//? if >=26.1 {
+            /*RenderMatrices.modelViewMatrix.identity()
+*///?} else
             RenderMatrices.modelViewMatrix.set(RenderSystem.getModelViewMatrix())
 
             RenderMatrices.worldSpaceNoRollMatrix.set(Matrix4f().apply {
-                rotate(Axis.XP.rotationDegrees(camera.xRot))
-                rotate(Axis.YP.rotationDegrees(camera.yRot + 180.0f))
+                rotate(Axis.XP.rotationDegrees(cameraXRot))
+                rotate(Axis.YP.rotationDegrees(cameraYRot + 180.0f))
             })
 
             RenderMatrices.ready = true
