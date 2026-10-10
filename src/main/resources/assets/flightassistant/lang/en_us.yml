@@ -36,7 +36,6 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
       flightassistant:radar_altitude: R/ALT DSPL FAULT
       flightassistant:speed: SPD DSPL FAULT
       flightassistant:status: STATUS DSPL FAULT
-      flightassistant:velocity_components: G/S & V/S DSPL FAULT
   firework:
     .: FRWK
     fault: SYS FAULT
@@ -254,7 +253,6 @@ menu.flightassistant:
         flightassistant:radar_altitude: Radar altitude display
         flightassistant:speed: Speed display
         flightassistant:status: Status display
-        flightassistant:velocity_components: G/S & V/S display
       computer:
         flightassistant:air_data: Air data computer
         flightassistant:hud_display_data: HUD display data computer
@@ -400,7 +398,7 @@ short.flightassistant:
   flight_directors_alt: FD
   flight_path: F/PATH
   ground: GRND
-  ground_speed: 'G/S%s'
+  ground_speed: 'GS'
   heading: HDG
   lateral_deviation: L/DEV
   infinite: INFN

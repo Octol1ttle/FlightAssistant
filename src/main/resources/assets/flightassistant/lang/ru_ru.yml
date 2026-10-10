@@ -40,7 +40,6 @@ alert.flightassistant:
       flightassistant:radar_altitude: ОТКАЗ ИНД Р/ВЫС
       flightassistant:speed: ОТКАЗ ИНД СКОР
       flightassistant:status: ОТКАЗ ИНД СТАТУС
-      flightassistant:velocity_components: ОТКАЗ ИНД Г/С И В/C
   firework:
     .: ФРВК
     fault: ОТКАЗ СИСТ
@@ -258,7 +257,6 @@ menu.flightassistant:
         flightassistant:radar_altitude: Радиовысотомер
         flightassistant:speed: Индикатор скорости
         flightassistant:status: Индикатор статуса
-        flightassistant:velocity_components: Индикатор Г/С и В/С
       computer:
         flightassistant:air_data: Компьютер данных полёта
         flightassistant:hud_display_data: Компьютер данных индикаторов HUD
@@ -403,7 +401,7 @@ short.flightassistant:
   flight_directors_alt: УК
   flight_path: ПУТЬ/П
   ground: ЗЕМЛ
-  ground_speed: 'Г/С%s'
+  ground_speed: 'ГС'
   heading: КУРС
   lateral_deviation: Г/ОТКЛ
   infinite: БЕСК

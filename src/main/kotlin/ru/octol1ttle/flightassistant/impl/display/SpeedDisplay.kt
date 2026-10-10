@@ -1,6 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import kotlin.math.roundToInt
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -11,6 +10,7 @@ import ru.octol1ttle.flightassistant.api.display.HudFrame
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
+import kotlin.math.roundToInt
 
 class SpeedDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
@@ -27,6 +27,9 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
             }
             if (FAConfig.display.showAutomationModes) {
                 renderSpeedTarget(HudFrame.left, HudFrame.top - 9)
+            }
+            if (FAConfig.display.showGroundSpeed) {
+                renderGroundSpeed(HudFrame.left, HudFrame.bottom + 2)
             }
         }
     }
@@ -118,6 +121,14 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
             color = if (activeVertical == computers.autoflight.selectedVerticalMode) primaryAdvisoryColor else secondaryAdvisoryColor
             drawRightAlignedString(activeVertical.targetSpeed.toString(), x, y, color)
         }
+    }
+
+    private fun GuiGraphics.renderGroundSpeed(x: Int, y: Int) {
+        val text = computers.hudData.lerpedVelocity.perSecond().horizontalDistance().roundToInt().toString()
+        val width = textWidth(text)
+        drawRightAlignedString(text, x - 1, y + 2, primaryColor)
+        renderOutline(x - width - 4, y, width + 5, 11, primaryColor)
+        drawRightAlignedString(Component.translatable("short.flightassistant.ground_speed"), x - width - 5, y + 2, primaryColor)
     }
 
     override fun renderFaulted(guiGraphics: GuiGraphics) {

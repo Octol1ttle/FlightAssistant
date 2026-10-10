@@ -77,7 +77,6 @@ internal object HudDisplayHost: ModuleController<Display> {
         register(RadarAltitudeDisplay.ID, RadarAltitudeDisplay(computers))
         register(SpeedDisplay.ID, SpeedDisplay(computers))
         register(StatusDisplay.ID, StatusDisplay(computers))
-        register(VelocityComponentsDisplay.ID, VelocityComponentsDisplay(computers))
     }
 
     internal fun sendRegistrationEvent(computers: ComputerBus) {

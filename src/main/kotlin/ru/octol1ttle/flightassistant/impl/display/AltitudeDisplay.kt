@@ -1,6 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import kotlin.math.roundToInt
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -9,9 +8,11 @@ import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.display.Display
 import ru.octol1ttle.flightassistant.api.display.HudFrame
+import ru.octol1ttle.flightassistant.api.util.FATickCounter.totalTicks
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
+import kotlin.math.roundToInt
 
 class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
@@ -28,6 +29,9 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
             }
             if (FAConfig.display.showAutomationModes) {
                 renderAltitudeTarget(HudFrame.right + 2, HudFrame.top - 9)
+            }
+            if (FAConfig.display.showVerticalSpeed) {
+                renderVerticalSpeed(HudFrame.right, centerY)
             }
         }
     }
@@ -86,12 +90,6 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
         disableScissor()
 
         disableScissor()
-
-        if (FAConfig.display.showVerticalSpeed) {
-            enableScissor(0, HudFrame.top, guiWidth(), HudFrame.bottom)
-            fill(x - 3, y, x - 1, (y - 2 * computers.hudData.lerpedVelocity.perSecond().y).toInt(), secondaryColor)
-            disableScissor()
-        }
     }
 
     private fun GuiGraphics.drawAltitudeLine(x: Int, y: Int, altitude: Int, currentAltitude: Double): Boolean {
@@ -114,6 +112,26 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
             color = if (active == computers.autoflight.selectedVerticalMode) primaryAdvisoryColor else secondaryAdvisoryColor
             drawString(active.targetAltitude.toString(), x, y, color)
         }
+    }
+
+    private fun GuiGraphics.renderVerticalSpeed(x: Int, y: Int) {
+        enableScissor(0, HudFrame.top, guiWidth(), HudFrame.bottom)
+
+        val verticalSpeed = computers.hudData.lerpedVelocity.perSecond().y
+        val color = if (verticalSpeed < -10.0) warningColor else whiteColor
+        val speedY = (y - 2 * verticalSpeed).toInt()
+
+        val vSpeedInt = verticalSpeed.roundToInt()
+        if (vSpeedInt != 0) {
+            val textY = (speedY - 4).coerceIn(HudFrame.top, HudFrame.bottom - 7)
+            drawRightAlignedString(vSpeedInt.toString(), x - 4, textY, color)
+        }
+
+        if (speedY <= HudFrame.bottom || totalTicks % 20 >= 10) {
+            fill(x - 3, y, x - 1, speedY, color)
+        }
+
+        disableScissor()
     }
 
     override fun renderFaulted(guiGraphics: GuiGraphics) {
