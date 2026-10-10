@@ -1,19 +1,13 @@
 package ru.octol1ttle.flightassistant.impl.computer.autoflight.modes
 
-import kotlin.math.abs
-import kotlin.math.pow
 import net.minecraft.SharedConstants
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
-
-data class ConstantThrustMode(val target: Float, override val textOverride: Component) : AutoFlightComputer.ThrustMode {
-    override fun getControlInput(computers: ComputerBus): ControlInput {
-        return ControlInput(target)
-    }
-}
+import kotlin.math.abs
+import kotlin.math.pow
 
 data class SpeedThrustMode(override val targetSpeed: Int, override val textOverride: Component? = null) : AutoFlightComputer.ThrustMode, AutoFlightComputer.FollowsSpeedMode {
     override fun getControlInput(computers: ComputerBus): ControlInput {
