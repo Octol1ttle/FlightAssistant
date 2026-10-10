@@ -20,13 +20,14 @@ import ru.octol1ttle.flightassistant.api.util.extensions.bottomY
 import ru.octol1ttle.flightassistant.api.util.extensions.getLerpedDeltaMovement
 import ru.octol1ttle.flightassistant.api.util.extensions.perSecond
 import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
+import ru.octol1ttle.flightassistant.compat.dragonsurvival.DragonSurvivalCompat
 import ru.octol1ttle.flightassistant.config.FAConfig
 
 class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Computer(computers) {
     val player: LocalPlayer
         get() = checkNotNull(mc.player)
     val flying: Boolean
-        get() = player.isFallFlying
+        get() = player.isFallFlying || DragonSurvivalCompat.isDragonFlying(player)
     val level: ClientLevel
         get() = checkNotNull(mc.level)
 
