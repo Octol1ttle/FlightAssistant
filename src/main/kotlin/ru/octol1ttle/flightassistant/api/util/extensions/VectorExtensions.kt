@@ -12,6 +12,10 @@ fun Vec3.toVector2d(): Vector2d {
     return Vector2d(this.x, this.z)
 }
 
+fun distance2d(x1: Int, z1: Int, x2: Int, z2: Int): Double {
+    return Vector2d.distance(x1 + 0.5, z1 + 0.5, x2 + 0.5, z2 + 0.5)
+}
+
 fun distance2d(x1: Int, z1: Int, x2: Double, z2: Double): Double {
     return Vector2d.distance(x1 + 0.5, z1 + 0.5, x2, z2)
 }

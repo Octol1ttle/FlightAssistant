@@ -1,6 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.alert.flight_plan
 
-import kotlin.math.asin
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.api.alert.Alert
@@ -10,29 +9,14 @@ import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.degrees
 import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
 import ru.octol1ttle.flightassistant.api.util.extensions.drawString
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
+import kotlin.math.asin
 
 class DescentTooSteepAlert(computers: ComputerBus) : Alert(computers), ECAMAlert {
     override val data: AlertData = AlertData.MASTER_CAUTION
 
     override fun shouldActivate(): Boolean {
-        if (computers.plan.enrouteData.isEmpty()) {
-            return false
-        }
-
-        for ((i, enroute) in computers.plan.enrouteData.withIndex()) {
-            if (i == 0) {
-                continue
-            }
-
-            val lastEnroute = computers.plan.enrouteData[i - 1]
-            if (degrees(asin(enroute.vec3().subtract(lastEnroute.vec3()).normalize().y)) < -35.0f) {
-                return true
-            }
-        }
-
-        if (!computers.plan.arrivalData.isDefault()) {
-            if (degrees(asin(computers.plan.arrivalData.vec3().subtract(computers.plan.enrouteData.last().vec3()).normalize().y)) < -35.0f) {
+        computers.plan.waypoints.zipWithNext().forEach { (a, b) ->
+            if (degrees(asin(b.vec3().subtract(a.vec3()).normalize().y)) < -35.0f) {
                 return true
             }
         }

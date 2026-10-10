@@ -1,8 +1,6 @@
 package ru.octol1ttle.flightassistant.api.util.extensions
 
 import com.mojang.blaze3d.vertex.PoseStack
-import java.awt.Color
-import kotlin.math.max
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphics
@@ -10,6 +8,8 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.FormattedText
 import ru.octol1ttle.flightassistant.FlightAssistant.mc
 import ru.octol1ttle.flightassistant.config.FAConfig
+import java.awt.Color
+import kotlin.math.max
 
 internal val font: Font = mc.font
 
@@ -34,6 +34,7 @@ val GuiGraphics.centerY: Int
 const val emptyColor: Int = 0
 
 val whiteColor: Int = ChatFormatting.WHITE.color!! or (255 shl 24)
+val grayColor: Int = ChatFormatting.GRAY.color!! or (255 shl 24)
 
 val primaryColor: Int
     get() = FAConfig.display.primaryColor.rgb

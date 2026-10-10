@@ -53,6 +53,7 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
     protections_lost:
       .: PROTECT LOST
       enable_air_data: ' -AIR DATA: OFF THEN ON'
+      enable_ground_proximity: ' -GND PROX: OFF THEN ON'
       enable_pitch: ' -PITCH SYS: OFF THEN ON'
       enable_prot_sys: ' -PROT SYS: OFF THEN ON'
       max_pitch: ' MAX PITCH: 45* UP'
@@ -71,7 +72,6 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
   gpws:
     .: GPWS
     fault: FAULT
-    minimums_reached: MINIMUMS REACHED
     dont_sink: DON'T SINK
     sink_rate: SINK RATE
     terrain_ahead: TERRAIN AHEAD
@@ -303,36 +303,46 @@ menu.flightassistant:
       coordinates: 'Target coordinates: '
   fms:
     .: Flight planning
-    departure:
-      .: Departure
-      takeoff_thrust: 'Takeoff thrust %: '
-      minimum_climb_speed: 'Minimum climb speed: '
-    enroute:
-      .: Enroute
-      legend:
-        hover: Hover for legend
-        origin: '%s - FROM waypoint'
-        target: '%s - TO waypoint'
-        direct-to: '%s - DIRECT-TO waypoint'
-      delete_all: Delete all
-      add_waypoint: Add waypoint
-      direct_to: Direct-to
-      unsaved_changes: UNSAVED CHANGES
-    arrival:
-      .: Arrival
-      minimums:
-        .: 'Minimums: '
-        absolute: ABS
-        relative: REL
-      landing_thrust: 'Landing thrust %: '
-      go_around_altitude: 'Go around altitude: '
-      approach_re_entry_waypoint_index: 'Approach re-entry waypoint index: '
+    waypoints: Waypoints
+    delete: Delete
+    delete_all: Delete all
+    add_waypoint: Add waypoint
+    direct_to: Direct-to
+    unsaved_changes: UNSAVED CHANGES
+    distance_time_mode:
+      .: 'Dist./time: '
+      auto: Auto
+      remaining: Remaining
+      between_waypoints: Between waypoints
+    problems:
+      .: INVALID FLIGHT PLAN
+      adjacent_with_same_position: 'There are adjacent waypoints with the same position (X: %s | Z: %s)'
+      no_approach_start: No approach start waypoint is set
+      not_enough_waypoints: At least two waypoints are required
+    phase:
+      takeoff: Takeoff
+      climb: Climb
+      cruise: Cruise
+      descend: Descend
+      approach: Approach
+      landing: Landing
+      go_around: Go around
+    phase_marker:
+      takeoff:
+        .: T/O
+        tooltip: Set as takeoff point
+      approach:
+        .: APPR
+        tooltip: Set as approach start point
+      land:
+        .: LAND
+        tooltip: Set as landing point
+    reset_takeoff_landing: Reset takeoff & landing
+    apply: Apply
+    undo: Undo
     save: Save
     load: Load
     error: An error occurred! Please check the log for details
-    discard_changes: Discard changes
-    coordinates: 'Coordinates: '
-    elevation: 'Elevation: '
 
 mode.flightassistant:
   thrust:
@@ -348,8 +358,6 @@ mode.flightassistant:
     speed: SPEED
     climb: THR CLB
     descend: THR DES
-    takeoff: THR TO # TODO: fix confusion with TOGA somehow
-    landing: THR LAND
   vertical:
     override: PITCH OVRD
     void_protection: VOID PROT
@@ -374,7 +382,6 @@ mode.flightassistant:
     direct_coordinates: DIR COORDS
     track_navigation: TRK NAV
     localizer: LOC
-    go_around: GA HDG
 
 # TODO: stop using this
 short.flightassistant:
@@ -385,6 +392,7 @@ short.flightassistant:
   autopilot: AP
   automation_modes: AUTO/MODE
   distance: DIST
+  elevation: ELEV
   elytra: EL
   elytra_durability: EL/DURA
   flight_directors: FLT DIR

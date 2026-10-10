@@ -83,12 +83,6 @@ class AlertData(@Deprecated("Waiting for an enhanced priority system (.defineOrd
                 soundEvent("caution_terrain"),
                 LoopType.NONE
             ) { FAConfig.display.cautionColor.rgb }
-        val MINIMUMS_REACHED =
-            AlertData(
-                1200,
-                soundEvent("minimums_reached"),
-                LoopType.NONE
-            ) { FAConfig.display.cautionColor.rgb }
         val THRUST_LOCKED =
             AlertData(
                 1300,

@@ -29,19 +29,19 @@ class AutoFlightScreen(parent: Screen) : FABaseScreen(parent, Component.translat
 
         flightDirectors = this.addRenderableWidget(
             TextOnlyButton(
-                this.centerX - 80, baseY - 20, Component.translatable("menu.flightassistant.autoflight.flight_directors.disabled")
+                this.centerX - 80, baseY - 20, Component.translatable("menu.flightassistant.autoflight.disabled")
             ) {
                 computers.autoflight.setFlightDirectors(!computers.autoflight.flightDirectors)
             })
         autoThrust = this.addRenderableWidget(
             TextOnlyButton(
-                this.centerX, baseY - 20, Component.translatable("menu.flightassistant.autoflight.auto_thrust.disabled")
+                this.centerX, baseY - 20, Component.translatable("menu.flightassistant.autoflight.disabled")
             ) {
                 computers.autoflight.setAutoThrust(!computers.autoflight.autoThrust, false)
             })
         autopilot = this.addRenderableWidget(
             TextOnlyButton(
-                this.centerX + 80, baseY - 20, Component.translatable("menu.flightassistant.autoflight.autopilot.disabled")
+                this.centerX + 80, baseY - 20, Component.translatable("menu.flightassistant.autoflight.disabled")
             ) {
                 computers.autoflight.setAutoPilot(!computers.autoflight.autopilot, false)
             })

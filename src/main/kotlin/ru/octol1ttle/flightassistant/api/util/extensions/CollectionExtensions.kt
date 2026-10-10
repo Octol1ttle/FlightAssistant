@@ -37,9 +37,3 @@ fun List<AlertData>.getHighestPriority(): List<AlertData> {
 fun <T> List<T>.filterWorking(): List<T> {
     return this.filter { it !is Computer || !it.isDisabledOrFaulted() }
 }
-
-fun <T> MutableList<T>.swap(index1: Int, index2: Int) {
-    val entry1: T = this[index1]
-    this[index1] = this[index2]
-    this[index2] = entry1
-}

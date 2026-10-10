@@ -1,6 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.alert.flight_plan
 
-import kotlin.math.abs
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.level.levelgen.Heightmap
@@ -12,21 +11,21 @@ import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
 import ru.octol1ttle.flightassistant.api.util.extensions.drawString
 import ru.octol1ttle.flightassistant.api.util.extensions.primaryAdvisoryColor
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
+import kotlin.math.abs
 
 class ArrivalElevationDisagreeAlert(computers: ComputerBus) : Alert(computers), ECAMAlert {
     override val data: AlertData = AlertData.MASTER_CAUTION
 
     override fun shouldActivate(): Boolean {
-        if (computers.plan.currentPhase < FlightPlanComputer.FlightPhase.APPROACH) {
-            return false
-        }
-        val x = computers.plan.arrivalData.coordinatesX
-        val z = computers.plan.arrivalData.coordinatesZ
+        val landing = computers.plan.waypoints.singleOrNull { it.phaseMarker == FlightPlanComputer.Waypoint.PhaseMarker.LANDING } ?: return false
+        val x = landing.posX
+        val z = landing.posZ
         if (!computers.chunk.isLoaded(x, z)) {
             return false
         }
+
         val actualElevation: Int = computers.data.level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z)
-        return abs(actualElevation - computers.plan.arrivalData.elevation) > 2
+        return abs(actualElevation - landing.altitude) > 2
     }
 
     override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {

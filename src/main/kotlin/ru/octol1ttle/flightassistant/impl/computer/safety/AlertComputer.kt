@@ -124,7 +124,6 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
                 .add(TerrainAheadAlert(computers))
                 .add(BelowGlideSlopeAlert(computers))
                 .add(DontSinkAlert(computers))
-                .add(MinimumsReachedAlert(computers))
         )
         register(
             AlertCategory(Component.translatable("alert.flightassistant.navigation"))

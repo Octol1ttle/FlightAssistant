@@ -32,7 +32,7 @@ alert.flightassistant:
       flightassistant:attitude: ОТКАЗ ИНД ОРИЕНТ
       flightassistant:automation_modes: ОТКАЗ ИНД АВТО РЕЖИМ
       flightassistant:coordinates: ОТКАЗ ИНД КООРД
-      flightassistant:course_deviation: ОТКАД ИНД ОТКЛ КУРС
+      flightassistant:course_deviation: ОТКАЗ ИНД ОТКЛ КУРС
       flightassistant:elytra_durability: ОТКАЗ ИНД ПРЧН/ЭЛ
       flightassistant:flight_directors: ОТКАЗ ИНД УКАЗ/П
       flightassistant:flight_path: ОТКАЗ ИНД ВЕКТ/П
@@ -57,6 +57,7 @@ alert.flightassistant:
     protections_lost:
       .: ЗАЩИТЫ ПОТЕРЯНЫ
       enable_air_data: ' -КОМП ДАННЫХ ПОЛЕТА: ВЫКЛ ЗАТЕМ ВКЛ'
+      enable_ground_proximity: ' -КОМП БЛИЗ ЗЕМЛ: ВЫКЛ ЗАТЕМ ВКЛ'
       enable_pitch: ' -КОМП УГЛА НАКЛ: ВЫКЛ ЗАТЕМ ВКЛ'
       enable_prot_sys: ' -КОМП ЗАЩИТ: ВЫКЛ ЗАТЕМ ВКЛ'
       max_pitch: ' МАКС УГОЛ НАКЛ: 45* ВВЕРХ'
@@ -75,7 +76,6 @@ alert.flightassistant:
   gpws:
     .: GPWS
     fault: ОТКАЗ
-    minimums_reached: ДОСТИГНУТЫ МИНИМУМЫ
     dont_sink: НЕ ПАДАЙ
     sink_rate: СКОР. СНИЖЕНИЯ
     terrain_ahead: ЗЕМЛЯ ВПЕРЕДИ
@@ -307,36 +307,46 @@ menu.flightassistant:
       coordinates: 'Целевые координаты: '
   fms:
     .: План полёта
-    departure:
-      .: Вылет
-      takeoff_thrust: 'Взлётная тяга (%): '
-      minimum_climb_speed: 'Минимальная скорость набора: '
-    enroute:
-      .: Маршрут
-      legend:
-        hover: Наведись для легенды
-        origin: '%s - точка "откуда"'
-        target: '%s - точка "куда"'
-        direct-to: '%s - точка "куда" (напрямую)'
-      delete_all: Удалить все
-      add_waypoint: Добавить точку
-      direct_to: Прямо-на
-      unsaved_changes: НЕСОХРАНЕН ИЗМЕНЕНИЯ
-    arrival:
-      .: Прибытие
-      minimums:
-        .: 'Минимумы: '
-        absolute: АБС
-        relative: ОТН
-      landing_thrust: 'Посадочная тяга (%): '
-      go_around_altitude: 'Высота ухода на второй круг: '
-      approach_re_entry_waypoint_index: 'Номер точки для повторного захода на посадку: '
+    waypoints: Точки маршрута
+    delete: Удалить
+    delete_all: Удалить все
+    add_waypoint: Добавить точку
+    direct_to: Прямо-на
+    unsaved_changes: НЕСОХРАНЕН ИЗМЕНЕНИЯ
+    distance_time_mode:
+      .: 'Дист./время: '
+      auto: Авто
+      remaining: Оставшееся
+      between_waypoints: Между точками
+    problems:
+      .: НЕВЕРНЫЙ ПЛАН ПОЛЕТА
+      adjacent_with_same_position: 'Соседние точки маршрута имеют одинаковые координаты (X: %s | Z: %s)'
+      no_approach_start: Не задана точка начала захода на посадку
+      not_enough_waypoints: Требуется как минимум две точки маршрута
+    phase:
+      takeoff: Взлёт
+      climb: Набор высоты
+      cruise: Крейсерский полёт
+      descend: Снижение
+      approach: Заход на посадку
+      landing: Посадка
+      go_around: Уход на второй круг
+    phase_marker:
+      takeoff:
+        .: ВЗЛ
+        tooltip: Установить как точку взлёта
+      approach:
+        .: ЗХД
+        tooltip: Установить как точку начала захода на посадку
+      land:
+        .: ПОС
+        tooltip: Установить как точку посадки
+    reset_takeoff_landing: Сбросить точки взлёта и посадки
+    apply: Применить
+    undo: Откатить
     save: Сохранить
     load: Загрузить
     error: Произошла ошибка! Пожалуйста, проверьте журнал игры для подробностей
-    discard_changes: Отменить изменения
-    coordinates: 'Координаты: '
-    elevation: 'Высота: '
 
 mode.flightassistant:
   thrust:
@@ -352,8 +362,6 @@ mode.flightassistant:
     speed: СКОР
     climb: ТЯГА НАБОР
     descend: ТЯГА СНИЖ
-    takeoff: ТЯГА ВЫЛЕТ
-    landing: ТЯГА ПОСАД
   vertical:
     override: РУЧН УГОЛ
     void_protection: ПУСТ ЗАЩ
@@ -378,7 +386,6 @@ mode.flightassistant:
     direct_coordinates: ПРЯМ КООРД
     track_navigation: НАВ ТРАЕКТ
     localizer: ПОСАД.КУРС
-    go_around: ВТ.КР КУРС
 
 short.flightassistant:
   alert: ПРЕДУПР
@@ -388,6 +395,7 @@ short.flightassistant:
   autopilot: АП
   automation_modes: АВТО/РЕЖИМ
   distance: ДИСТ
+  elevation: ВЫС
   elytra: ЭЛ
   elytra_durability: ПРЧН/ЭЛ
   flight_directors: УКАЗАТ

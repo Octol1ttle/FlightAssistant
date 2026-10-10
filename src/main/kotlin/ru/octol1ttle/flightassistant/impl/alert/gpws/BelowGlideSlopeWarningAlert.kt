@@ -27,13 +27,8 @@ class BelowGlideSlopeWarningAlert(computers: ComputerBus) : Alert(computers), Ce
         }
 
         val glideSlopeDeviation = computers.plan.getVerticalDeviation(computers.data.position)!!
-        val minimums = computers.plan.getMinimums()
-        if (minimums != null && computers.data.altitude < minimums && glideSlopeDeviation > 2.5) {
-            return true
-        }
-
         val altitudeAboveGround = computers.data.altitude - computers.gpws.groundOrVoidY
-        return altitudeAboveGround < glideSlopeDeviation
+        return glideSlopeDeviation > 5.0 || altitudeAboveGround < glideSlopeDeviation
     }
 
     override fun render(guiGraphics: GuiGraphics, y: Int): Boolean {

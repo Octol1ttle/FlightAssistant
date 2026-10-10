@@ -1,10 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.computer.autoflight
 
-import dev.isxander.yacl3.api.NameableEnum
-import java.time.Duration
-import java.util.UUID
-import kotlin.math.abs
-import kotlin.math.roundToLong
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.SharedConstants
@@ -24,6 +19,9 @@ import ru.octol1ttle.flightassistant.api.util.extensions.getProgressOnTrack
 import ru.octol1ttle.flightassistant.api.util.extensions.toVector2d
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.*
 import ru.octol1ttle.flightassistant.impl.display.StatusDisplay
+import java.time.Duration
+import java.util.*
+import kotlin.math.roundToLong
 
 class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
     var currentPhase: FlightPhase = FlightPhase.UNKNOWN
@@ -31,172 +29,145 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
     var groundSpeeds: LimitedFIFOQueue<Double> = LimitedFIFOQueue(SharedConstants.TICKS_PER_SECOND * 5)
         private set
 
-    var departureData: DepartureData = DepartureData.DEFAULT
-    var enrouteData: MutableList<EnrouteWaypoint> = ArrayList()
+    var waypoints: MutableList<Waypoint> = ArrayList()
         private set
-    var arrivalData: ArrivalData = ArrivalData.DEFAULT
+    var tracking: ActiveSegment? = null
 
     override fun tick() {
-        updateEnrouteData()
+        tryAdvanceTarget()
         currentPhase = updateFlightPhase()
         groundSpeeds.add(computers.data.velocityPerSecond.horizontalDistance())
     }
 
     private fun updateFlightPhase(): FlightPhase {
+        if (waypoints.isEmpty()) {
+            return FlightPhase.UNKNOWN
+        }
+
         if (!computers.data.flying) {
-            if (!departureData.isDefault() && distance2d(departureData.coordinatesX, departureData.coordinatesZ, computers.data.x, computers.data.z) < 20) {
-                getEnrouteOrigin()?.active = null
-                getEnrouteTarget()?.active = null
-                enrouteData.firstOrNull()?.active = EnrouteWaypoint.Active.TARGET
+            val takeoff = waypoints.singleOrNull { it.phaseMarker == Waypoint.PhaseMarker.TAKEOFF }
+            if (takeoff != null && isCloseTo(takeoff)) {
+                tracking = ActiveSegment.Leg(takeoff, 1)
                 return FlightPhase.TAKEOFF
             }
             return FlightPhase.UNKNOWN
         }
 
-        if (currentPhase == FlightPhase.TAKEOFF) {
-            if (enrouteData.isNotEmpty() && enrouteData.first().altitude - computers.data.altitude <= 10.0) {
-                return FlightPhase.CLIMB
-            }
-            return FlightPhase.TAKEOFF
-        }
+        val target: Waypoint = getEnrouteTarget() ?: return FlightPhase.UNKNOWN
+        val targetIndex: Int = waypoints.indexOf(target)
 
-        val target: EnrouteWaypoint? = getEnrouteTarget()
-        if (target == null) {
-            if (enrouteData.isEmpty() || arrivalData.isDefault()) {
-                return FlightPhase.UNKNOWN
-            }
-            if (currentPhase == FlightPhase.GO_AROUND && (abs(computers.data.altitude - arrivalData.goAroundAltitude) > 5.0 || enrouteData.size > arrivalData.approachReEntryWaypointIndex)) {
+        val approach = waypoints.indexOfFirst { it.phaseMarker == Waypoint.PhaseMarker.APPROACH }
+        val landing = waypoints.indexOfFirst { it.phaseMarker == Waypoint.PhaseMarker.LANDING }
+
+        if (approach != -1 && landing != -1) {
+            if (targetIndex > landing) {
                 return FlightPhase.GO_AROUND
             }
-            if (currentPhase == FlightPhase.APPROACH || currentPhase == FlightPhase.LANDING) {
-                if (computers.thrust.current == 1.0f) {
-                    return FlightPhase.GO_AROUND
-                }
+            if ((currentPhase == FlightPhase.APPROACH || currentPhase == FlightPhase.LANDING)
+                && computers.thrust.activeInput == null && computers.thrust.current == 1.0f) {
+                tracking =
+                    if (landing + 1 < waypoints.size) ActiveSegment.Direct(landing + 1)
+                    else ActiveSegment.Direct(approach)
+                // FIXME: HACK
+                computers.thrust.setTarget(0.99f, null)
+                return FlightPhase.GO_AROUND
+            }
+            if (targetIndex == landing) {
                 return FlightPhase.LANDING
             }
-            return FlightPhase.UNKNOWN
+            if (targetIndex >= approach) {
+                return FlightPhase.APPROACH
+            }
         }
 
         val cruiseAltitude: Int = getCruiseAltitude() ?: return FlightPhase.UNKNOWN
-        val firstCruise: Int = enrouteData.indexOfFirst { it.altitude == cruiseAltitude }
-        val lastCruise: Int = enrouteData.indexOfLast { it.altitude == cruiseAltitude }
+        val firstCruise: Int = waypoints.indexOfFirst { it.altitude == cruiseAltitude }
+        val lastCruise: Int = waypoints.indexOfLast { it.altitude == cruiseAltitude }
 
-        val targetIndex: Int = enrouteData.indexOf(target)
         if (targetIndex <= firstCruise) {
             return FlightPhase.CLIMB
         }
         if (targetIndex <= lastCruise) {
             return FlightPhase.CRUISE
         }
-        if (targetIndex < enrouteData.size - 1 || arrivalData.isDefault()) {
-            return FlightPhase.DESCEND
-        }
 
-        return FlightPhase.APPROACH
+        return FlightPhase.DESCEND
     }
 
-    private fun updateEnrouteData() {
-        if (currentPhase == FlightPhase.GO_AROUND && computers.thrust.current < 1.0f && abs(computers.data.altitude - arrivalData.goAroundAltitude) <= 5.0) {
-            val approachReEntryWaypoint = enrouteData.getOrNull(arrivalData.approachReEntryWaypointIndex)
-            approachReEntryWaypoint?.active = EnrouteWaypoint.Active.TARGET
-        }
-
-        val target: EnrouteWaypoint = getEnrouteTarget() ?: return
+    private fun tryAdvanceTarget() {
+        val target: Waypoint = getEnrouteTarget() ?: return
 
         if (isCloseTo(target)) {
-            val targetIndex: Int = enrouteData.indexOf(target)
-            val next: EnrouteWaypoint? = if (targetIndex + 1 >= enrouteData.size) null else enrouteData[targetIndex + 1]
-            getEnrouteOrigin()?.active = null
-            if (next != null) {
-                target.active = EnrouteWaypoint.Active.ORIGIN
-                next.active = EnrouteWaypoint.Active.TARGET
-            } else {
-                target.active = null
+            val targetIndex: Int = waypoints.indexOf(target)
+            val last = waypoints.size - 1
+            if (targetIndex >= last) {
+                val landing = waypoints.indexOfFirst { it.phaseMarker == Waypoint.PhaseMarker.LANDING }
+                if (landing != -1 && landing < last) {
+                    tracking = ActiveSegment.Leg(target, waypoints.indexOfFirst { it.phaseMarker == Waypoint.PhaseMarker.APPROACH })
+                    return
+                }
+
+                tracking = null
+                return
             }
+
+            tracking = ActiveSegment.Leg(target, targetIndex + 1)
         }
     }
 
-    private fun getEnrouteOrigin(): EnrouteWaypoint? {
-        return enrouteData.singleOrNull { it.active == EnrouteWaypoint.Active.ORIGIN }
+    private fun getEnrouteOrigin(): Waypoint? {
+        (tracking as? ActiveSegment.Leg)?.let { return it.origin }
+        return null
     }
 
-    private fun getEnrouteTarget(): EnrouteWaypoint? {
-        return enrouteData.singleOrNull { it.active == EnrouteWaypoint.Active.TARGET }
-    }
-
-    private fun isCloseTo(target: EnrouteWaypoint): Boolean {
-        return getDistanceToTarget(target) < computers.data.velocityPerSecond.horizontalDistance() * 3.0
-    }
-
-    fun getMinimums(): Double? {
-        if (computers.plan.arrivalData.isDefault()) {
-            return null
+    private fun getEnrouteTarget(): Waypoint? {
+        return when (val tracking = this.tracking) {
+            is ActiveSegment.Direct -> waypoints[tracking.index]
+            is ActiveSegment.Leg -> waypoints[tracking.targetIndex]
+            null -> null
         }
+    }
 
-        return if (computers.plan.arrivalData.minimumsType == ArrivalData.MinimumsType.ABSOLUTE) computers.plan.arrivalData.minimums.toDouble()
-        else computers.gpws.groundOrVoidY + computers.plan.arrivalData.minimums
+    private fun isCloseTo(target: Waypoint): Boolean {
+        val threshold =
+            if (target.phaseMarker == Waypoint.PhaseMarker.LANDING) 5.0
+            else computers.data.velocityPerSecond.horizontalDistance().coerceAtLeast(10.0)
+        return getDistanceToTarget(target) < threshold
     }
 
     fun getCruiseAltitude(): Int? {
-        return enrouteData.maxOfOrNull { it.altitude }
+        return waypoints.maxOfOrNull { it.altitude }
     }
 
     fun getLateralDeviation(position: Vec3): Double? {
-        if (enrouteData.isEmpty()) {
+        if (waypoints.isEmpty()) {
             return null
         }
-        val origin: Vec3
-        val target: Vec3
-        when (currentPhase) {
-            FlightPhase.TAKEOFF -> {
-                origin = departureData.vec3()
-                target = enrouteData.first().vec3()
-            }
-            FlightPhase.LANDING -> {
-                origin = enrouteData.last().vec3()
-                target = arrivalData.vec3()
-            }
-            else -> {
-                origin = getEnrouteOrigin()?.vec3() ?: return null
-                target = getEnrouteTarget()!!.vec3()
-            }
-        }
+
+        val origin: Vec3 = getEnrouteOrigin()?.vec3() ?: return null
+        val target: Vec3 = getEnrouteTarget()!!.vec3()
 
         val origin2d = origin.toVector2d()
         val track = target.toVector2d().sub(origin2d)
         val toEntity = position.toVector2d().sub(origin2d)
-        val cross = track.x * toEntity.y - track.y * toEntity.x
+        val cross = track.x * toEntity.y - track.y * toEntity.y
         return cross / track.length()
     }
 
     fun getVerticalDeviation(position: Vec3): Double? {
-        if (enrouteData.isEmpty()) {
+        if (waypoints.isEmpty()) {
             return null
         }
-        val origin: Vec3
-        val target: Vec3
-        when (currentPhase) {
-            FlightPhase.TAKEOFF -> {
-                origin = departureData.vec3()
-                target = enrouteData.first().vec3()
-            }
-            FlightPhase.LANDING -> {
-                origin = enrouteData.last().vec3()
-                target = arrivalData.vec3()
-            }
-            else -> {
-                origin = getEnrouteOrigin()?.vec3() ?: return null
-                target = getEnrouteTarget()!!.vec3()
-            }
-        }
+        val origin: Vec3 = getEnrouteOrigin()?.vec3() ?: return null
+        val target: Vec3 = getEnrouteTarget()!!.vec3()
 
         val track = target.toVector2d().sub(origin.toVector2d())
         val trackProgress = getProgressOnTrack(track, origin.toVector2d(), Vector2d(position.x, position.z))
         return Mth.lerp(trackProgress, origin.y, target.y) - position.y
     }
 
-    fun getDistanceToTarget(target: EnrouteWaypoint): Double {
-        return distance2d(target.coordinatesX, target.coordinatesZ, computers.data.x, computers.data.z)
+    fun getDistanceToTarget(target: Waypoint): Double {
+        return distance2d(target.posX, target.posZ, computers.data.x, computers.data.z)
     }
 
     fun getFormattedTime(distance: Double): String {
@@ -209,66 +180,35 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
     }
 
     fun getThrustMode(): AutoFlightComputer.ThrustMode? {
-        return when (currentPhase) {
-            FlightPhase.TAKEOFF -> ConstantThrustMode(departureData.takeoffThrust, Component.translatable("mode.flightassistant.thrust.takeoff"))
-            FlightPhase.LANDING -> ConstantThrustMode(arrivalData.landingThrust, Component.translatable("mode.flightassistant.thrust.landing"))
-            FlightPhase.GO_AROUND -> ConstantThrustMode(1.0f, Component.translatable("mode.flightassistant.thrust.toga"))
-            else -> {
-                val target: EnrouteWaypoint = getEnrouteTarget() ?: return null
-                if (target.speed != 0) SpeedThrustMode(target.speed) else null
-            }
-        }
+        val target: Waypoint = getEnrouteTarget() ?: return null
+        return if (target.speed != 0) SpeedThrustMode(target.speed) else null
     }
 
     fun getVerticalMode(): AutoFlightComputer.VerticalMode? {
-        return when (currentPhase) {
-            FlightPhase.TAKEOFF -> {
-                val target: EnrouteWaypoint = getEnrouteTarget() ?: return null
-                if (target.altitude - computers.data.altitude > 10.0) SelectedAltitudeVerticalMode(target.altitude) else null
-            }
-            FlightPhase.LANDING -> {
-                val approach = enrouteData.lastOrNull() ?: return null
-                ManagedAltitudeVerticalMode(approach.coordinatesX, approach.coordinatesZ, approach.altitude, arrivalData.coordinatesX, arrivalData.coordinatesZ, arrivalData.elevation, Component.translatable("mode.flightassistant.vertical.glide_slope"))
-            }
-            FlightPhase.GO_AROUND -> {
-                SelectedAltitudeVerticalMode(arrivalData.goAroundAltitude, Component.translatable("mode.flightassistant.vertical.go_around"))
-            }
-            else -> {
-                val origin: EnrouteWaypoint? = getEnrouteOrigin()
-                val target: EnrouteWaypoint = getEnrouteTarget() ?: return null
-                if (origin != null) ManagedAltitudeVerticalMode(origin.coordinatesX, origin.coordinatesZ, origin.altitude, target.coordinatesX, target.coordinatesZ, target.altitude)
-                else SelectedAltitudeVerticalMode(target.altitude)
-            }
-        }
+        val origin: Waypoint? = getEnrouteOrigin()
+        val target: Waypoint = getEnrouteTarget() ?: return null
+        val textOverride =
+            if (target.phaseMarker == Waypoint.PhaseMarker.LANDING) Component.translatable("mode.flightassistant.vertical.glide_slope")
+            else null
+        return if (origin != null) ManagedAltitudeVerticalMode(origin.posX, origin.posZ, origin.altitude, target.posX, target.posZ, target.altitude, textOverride)
+        else SelectedAltitudeVerticalMode(target.altitude, textOverride)
     }
 
     fun getLateralMode(): AutoFlightComputer.LateralMode? {
-        return when (currentPhase) {
-            FlightPhase.TAKEOFF -> {
-                val target: EnrouteWaypoint = getEnrouteTarget() ?: return null
-                TrackNavigationLateralMode(departureData.coordinatesX, departureData.coordinatesZ, target.coordinatesX, target.coordinatesZ)
-            }
-            FlightPhase.LANDING -> {
-                val approach = enrouteData.lastOrNull() ?: return null
-                TrackNavigationLateralMode(approach.coordinatesX, approach.coordinatesZ, arrivalData.coordinatesX, arrivalData.coordinatesZ, Component.translatable("mode.flightassistant.lateral.localizer"))
-            }
-            FlightPhase.GO_AROUND -> {
-                HeadingLateralMode(computers.data.heading.toInt(), Component.translatable("mode.flightassistant.lateral.go_around"))
-            }
-            else -> {
-                val origin: EnrouteWaypoint? = getEnrouteOrigin()
-                val target: EnrouteWaypoint = getEnrouteTarget() ?: return null
-                if (origin != null) TrackNavigationLateralMode(origin.coordinatesX, origin.coordinatesZ, target.coordinatesX, target.coordinatesZ)
-                else DirectCoordinatesLateralMode(target.coordinatesX, target.coordinatesZ)
-            }
-        }
+        val origin: Waypoint? = getEnrouteOrigin()
+        val target: Waypoint = getEnrouteTarget() ?: return null
+        val textOverride =
+            if (target.phaseMarker == Waypoint.PhaseMarker.LANDING) Component.translatable("mode.flightassistant.lateral.localizer")
+            else null
+        return if (origin != null) TrackNavigationLateralMode(origin.posX, origin.posZ, target.posX, target.posZ, textOverride)
+        else DirectCoordinatesLateralMode(target.posX, target.posZ)
     }
 
     override fun <Response> handleQuery(query: ComputerQuery<Response>) {
         // TODO: config
-        if (query is StatusDisplay.StatusMessageQuery && currentPhase != FlightPhase.UNKNOWN && (!departureData.isDefault() || enrouteData.isNotEmpty())) {
+        if (query is StatusDisplay.StatusMessageQuery && currentPhase != FlightPhase.UNKNOWN) {
             query.respond(Component.translatable("status.flightassistant.flight_plan.phase.${currentPhase.name.lowercase()}"))
-            val target: EnrouteWaypoint? = getEnrouteTarget()
+            val target: Waypoint? = getEnrouteTarget()
             if (target != null) {
                 val distance: Double = getDistanceToTarget(target)
                 query.respond(Component.translatable("status.flightassistant.flight_plan.waypoint_distance", distance.roundToLong().toString()))
@@ -277,15 +217,14 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
         }
     }
 
-    fun load(plan: FlightPlan) {
-        departureData = plan.departure
-        enrouteData = ArrayList(plan.enroute)
-        arrivalData = plan.arrival
+    fun load(waypoints: List<Waypoint>) {
+        this.waypoints = ArrayList(waypoints)
     }
 
     override fun reset() {
         currentPhase = FlightPhase.UNKNOWN
         groundSpeeds.clear()
+        tracking = null
     }
 
     companion object {
@@ -303,59 +242,22 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
         GO_AROUND
     }
 
-    @Serializable
-    data class DepartureData(val coordinatesX: Int = 0, val coordinatesZ: Int = 0, val elevation: Int = 0, val takeoffThrust: Float = 0.0f) {
-        fun isDefault(): Boolean {
-            return this == DEFAULT
-        }
-
-        fun vec3(): Vec3 {
-            return Vec3(coordinatesX + 0.5, elevation.toDouble(), coordinatesZ + 0.5)
-        }
-
-        companion object {
-            val DEFAULT: DepartureData = DepartureData()
-        }
+    sealed class ActiveSegment {
+        data class Direct(val index: Int) : ActiveSegment()
+        data class Leg(val origin: Waypoint, val targetIndex: Int) : ActiveSegment()
     }
 
     @Serializable
-    data class EnrouteWaypoint(val coordinatesX: Int = 0, val coordinatesZ: Int = 0, val altitude: Int = 0, val speed: Int = 0, @Transient var active: Active? = null, @Transient val uuid: UUID = UUID.randomUUID()) {
-        enum class Active {
-            ORIGIN,
-            TARGET
-        }
-
+    data class Waypoint(val posX: Int = 0, val posZ: Int = 0, val altitude: Int = 0, val speed: Int = 0, val phaseMarker: PhaseMarker = PhaseMarker.NONE, @Transient val uuid: UUID = UUID.randomUUID()) {
         fun vec3(): Vec3 {
-            return Vec3(coordinatesX + 0.5, altitude.toDouble(), coordinatesZ + 0.5)
-        }
-    }
-
-    @Serializable
-    data class ArrivalData(val coordinatesX: Int = 0, val coordinatesZ: Int = 0, val elevation: Int = 0, val landingThrust: Float = 0.0f, val minimums: Int = 0, val minimumsType: MinimumsType = MinimumsType.ABSOLUTE, val goAroundAltitude: Int = 0, val approachReEntryWaypointIndex: Int = 0) {
-        enum class MinimumsType(@JvmField val displayName: Component) : NameableEnum {
-            ABSOLUTE(Component.translatable("menu.flightassistant.fms.arrival.minimums.absolute")),
-            RELATIVE(Component.translatable("menu.flightassistant.fms.arrival.minimums.relative"));
-
-            override fun getDisplayName(): Component {
-                return this.displayName
-            }
+            return Vec3(posX + 0.5, altitude.toDouble(), posZ + 0.5)
         }
 
-        fun isDefault(): Boolean {
-            return this == DEFAULT
+        enum class PhaseMarker {
+            NONE,
+            TAKEOFF,
+            APPROACH,
+            LANDING
         }
-
-        fun vec3(): Vec3 {
-            return Vec3(coordinatesX + 0.5, elevation.toDouble(), coordinatesZ + 0.5)
-        }
-
-        companion object {
-            val DEFAULT: ArrivalData = ArrivalData()
-        }
-    }
-
-    @Serializable
-    data class FlightPlan(val departure: DepartureData, val enroute: List<EnrouteWaypoint>, val arrival: ArrivalData) {
-        constructor(flightPlan: FlightPlanComputer) : this(flightPlan.departureData, flightPlan.enrouteData, flightPlan.arrivalData)
     }
 }

@@ -27,7 +27,7 @@ class BelowGlideSlopeAlert(computers: ComputerBus) : Alert(computers), CenteredA
         }
 
         val glideSlopeDeviation = computers.plan.getVerticalDeviation(computers.data.position)!!
-        return glideSlopeDeviation > 5.0
+        return glideSlopeDeviation > 2.5
     }
 
     override fun render(guiGraphics: GuiGraphics, y: Int): Boolean {

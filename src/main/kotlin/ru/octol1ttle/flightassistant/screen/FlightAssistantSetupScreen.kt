@@ -1,10 +1,6 @@
 package ru.octol1ttle.flightassistant.screen
 
 import dev.isxander.yacl3.platform.YACLPlatform
-import java.io.FileReader
-import java.io.FileWriter
-import java.nio.file.Files
-import java.nio.file.Path
 import kotlinx.serialization.json.Json
 import net.minecraft.ChatFormatting
 import net.minecraft.Util
@@ -19,14 +15,15 @@ import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.util.extensions.drawMiddleAlignedString
 import ru.octol1ttle.flightassistant.config.FAConfigScreen
 import ru.octol1ttle.flightassistant.impl.computer.ComputerHost
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
 import ru.octol1ttle.flightassistant.impl.display.HudDisplayHost
 import ru.octol1ttle.flightassistant.screen.autoflight.AutoFlightScreen
 import ru.octol1ttle.flightassistant.screen.components.SmartStringWidget
-import ru.octol1ttle.flightassistant.screen.fms.arrival.ArrivalScreen
-import ru.octol1ttle.flightassistant.screen.fms.departure.DepartureScreen
-import ru.octol1ttle.flightassistant.screen.fms.enroute.EnrouteScreen
 import ru.octol1ttle.flightassistant.screen.system.SystemManagementScreen
+import ru.octol1ttle.flightassistant.screen.waypoints.WaypointsScreen
+import java.io.FileReader
+import java.io.FileWriter
+import java.nio.file.Files
+import java.nio.file.Path
 
 class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("menu.flightassistant")) {
     private var saveLoadError = false
@@ -55,15 +52,9 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
         }.pos(this.centerX - 80, this.centerY - 30).width(160).build())
 
         this.addRenderableWidget(SmartStringWidget(this.centerX, this.centerY + 5, Component.translatable("menu.flightassistant.fms")).middleAligned())
-        this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.departure")) {
-            this.minecraft!!.setScreen(DepartureScreen(this))
-        }.pos(this.centerX - 130, this.centerY + 20).width(80).build())
-        this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.enroute")) {
-            this.minecraft!!.setScreen(EnrouteScreen(this))
+        this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.waypoints")) {
+            this.minecraft!!.setScreen(WaypointsScreen(this))
         }.pos(this.centerX - 40, this.centerY + 20).width(80).build())
-        this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.arrival")) {
-            this.minecraft!!.setScreen(ArrivalScreen(this))
-        }.pos(this.centerX + 50, this.centerY + 20).width(80).build())
 
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.save")) {
             val patterns = PointerBuffer.create(MemoryUtil.memUTF8(".json"))
@@ -75,7 +66,7 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
 
                 val path = TinyFileDialogs.tinyfd_saveFileDialog(title, PLANS_PATH.resolve("flight_plan.json").toAbsolutePath().toString(), patterns, description)
                 if (path != null) {
-                    FileWriter(path).use { it.write(Json.encodeToString(FlightPlanComputer.FlightPlan(computers.plan))) }
+                    FileWriter(path).use { it.write(Json.encodeToString(computers.plan.waypoints)) }
 
                     FlightAssistant.logger.info("Saved flight plan to $path")
                 }
@@ -98,9 +89,7 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
                 val path = TinyFileDialogs.tinyfd_openFileDialog(title, PLANS_PATH.resolve("flight_plan.json").toAbsolutePath().toString(), patterns, description, false)
                 if (path != null) {
                     FileReader(path).use { computers.plan.load(Json.decodeFromString(it.readText())) }
-                    DepartureScreen.reload(computers.plan.departureData)
-                    EnrouteScreen.reload(computers.plan.enrouteData)
-                    ArrivalScreen.reload(computers.plan.arrivalData)
+                    WaypointsScreen.reload(computers.plan)
 
                     FlightAssistant.logger.info("Loaded flight plan from $path")
                 }

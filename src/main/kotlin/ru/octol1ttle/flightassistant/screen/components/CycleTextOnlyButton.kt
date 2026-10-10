@@ -1,7 +1,6 @@
 package ru.octol1ttle.flightassistant.screen.components
 
 import dev.isxander.yacl3.api.NameableEnum
-import java.util.function.Consumer
 import net.minecraft.ChatFormatting
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractButton
@@ -13,8 +12,9 @@ import net.minecraft.util.Mth
 import ru.octol1ttle.flightassistant.api.util.extensions.appendWithSeparation
 import ru.octol1ttle.flightassistant.api.util.extensions.font
 import ru.octol1ttle.flightassistant.api.util.extensions.whiteColor
+import java.util.function.Consumer
 
-class CycleTextOnlyButton<E : NameableEnum>(x: Int, y: Int, private val entries: List<E>, var selected: E, private val onValueChange: Consumer<E>) : AbstractButton(x, y, 0, font.lineHeight, Component.empty()) {
+class CycleTextOnlyButton<E : NameableEnum>(x: Int, y: Int, private val entries: List<E>, private var selected: E, private val compact: Boolean = false, private val onValueChange: Consumer<E>) : AbstractButton(x, y, 0, font.lineHeight, Component.empty()) {
     private var index: Int
 
     init {
@@ -61,9 +61,12 @@ class CycleTextOnlyButton<E : NameableEnum>(x: Int, y: Int, private val entries:
     }
 
     private fun refreshMessage() {
+        if (compact) {
+            this.message = selected.displayName.copy().withStyle(ACTIVE_STYLE)
+            return
+        }
         val message: MutableComponent = Component.empty()
-        for (i in 0..<this.entries.size) {
-            val entry: E = this.entries[i]
+        for ((i, entry) in this.entries.withIndex()) {
             val entryName: Component = if (i == this.index) entry.displayName.copy().withStyle(ACTIVE_STYLE) else entry.displayName.copy().withStyle(INACTIVE_STYLE)
             message.appendWithSeparation(entryName, SEPARATOR)
         }
