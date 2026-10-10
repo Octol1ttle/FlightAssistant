@@ -415,6 +415,7 @@ short.flightassistant:
 status.flightassistant:
   thrust: 'THR: %s'
   firework_count: 'FRWK CNT: %s'
+  target_distance_time: 'DIST: %s (%s)'
   flight_plan:
     phase:
       takeoff: TAKEOFF
@@ -424,8 +425,6 @@ status.flightassistant:
       approach: APPROACH
       landing: LANDING
       go_around: GO AROUND
-    waypoint_distance: 'WP DIST: %s'
-    waypoint_time: 'WP TIME: %s'
 
 misc.flightassistant:
   waiting_for_world_load:

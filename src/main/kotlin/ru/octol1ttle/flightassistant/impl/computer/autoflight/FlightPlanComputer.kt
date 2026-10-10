@@ -208,12 +208,6 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
         // TODO: config
         if (query is StatusDisplay.StatusMessageQuery && currentPhase != FlightPhase.UNKNOWN) {
             query.respond(Component.translatable("status.flightassistant.flight_plan.phase.${currentPhase.name.lowercase()}"))
-            val target: Waypoint? = getEnrouteTarget()
-            if (target != null) {
-                val distance: Double = getDistanceToTarget(target)
-                query.respond(Component.translatable("status.flightassistant.flight_plan.waypoint_distance", distance.roundToLong().toString()))
-                query.respond(Component.translatable("status.flightassistant.flight_plan.waypoint_time", getFormattedTime(distance)))
-            }
         }
     }
 

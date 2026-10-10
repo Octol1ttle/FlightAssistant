@@ -11,12 +11,15 @@ import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.event.EntityTurnEvents
+import ru.octol1ttle.flightassistant.api.util.extensions.distance2d
 import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.HeadingComputer
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.PitchComputer
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.RollComputer
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.ThrustComputer
+import ru.octol1ttle.flightassistant.impl.display.StatusDisplay
 import kotlin.math.abs
+import kotlin.math.roundToLong
 
 class AutoFlightComputer(computers: ComputerBus) : Computer(computers) {
     var flightDirectors: Boolean = false
@@ -145,6 +148,15 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers) {
 
         if (query is RollComputer.TargetRollQuery && autopilot) {
             query.respond(ControlInput(0.0f, deltaTimeMultiplier = 2.0f))
+        }
+
+        if (query is StatusDisplay.StatusMessageQuery) {
+            val mode = activeLateralMode as? FollowsCoordinatesMode ?: return
+            val distance: Double = distance2d(mode.targetX, mode.targetZ, computers.data.position.x, computers.data.position.z)
+            query.respond(Component.translatable(
+                "status.flightassistant.target_distance_time",
+                distance.roundToLong().toString(), computers.plan.getFormattedTime(distance)
+            ))
         }
     }
 

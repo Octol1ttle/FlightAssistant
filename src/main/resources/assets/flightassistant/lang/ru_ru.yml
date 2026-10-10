@@ -418,6 +418,7 @@ short.flightassistant:
 status.flightassistant:
   thrust: 'ТЯГА: %s'
   firework_count: 'ЧИСЛ ФРВК: %s'
+  target_distance_time: 'ДИСТ: %s (%s)'
   flight_plan:
     phase:
       takeoff: ВЗЛЕТ
@@ -427,8 +428,6 @@ status.flightassistant:
       approach: ЗАХОД
       landing: ПОСАДКА
       go_around: ВТОРОЙ КРУГ
-    waypoint_distance: 'ТОЧК ДИСТ: %s'
-    waypoint_time: 'ТОЧК ВРЕМ: %s'
 
 misc.flightassistant:
   waiting_for_world_load:
