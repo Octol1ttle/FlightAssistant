@@ -113,6 +113,7 @@ config.flightassistant:
       hud_enabled: Enable HUD
       safety_enabled: Enable safety features (alerts and protections)
       automations_allowed_in_overlays: Allow automations (AP & flight prots) to run in GUIs (inventory & pause screen)
+      autopilot_resistance_threshold: Autopilot resistance threshold
     display:
       frame:
         .: Frame

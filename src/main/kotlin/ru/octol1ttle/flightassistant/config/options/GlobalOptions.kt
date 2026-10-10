@@ -14,4 +14,7 @@ class GlobalOptions {
 
     @SerialEntry
     internal var automationsAllowedInOverlays: Boolean = false
+
+    @SerialEntry
+    internal var autopilotResistanceThreshold: Float = 0.5f
 }

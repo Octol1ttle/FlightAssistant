@@ -74,6 +74,12 @@ object FAConfigScreen {
                 binding(current::automationsAllowedInOverlays, defaults.automationsAllowedInOverlays)
                 controller(tickBox())
             }
+
+            rootOptions.register("autopilot_resistance_threshold") {
+                setGlobalName()
+                binding(current::autopilotResistanceThreshold, defaults.autopilotResistanceThreshold)
+                controller(slider(0.1f..2.0f, 0.05f))
+            }
         }
 
     private fun RootDsl.registerDisplayOptions(
