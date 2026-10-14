@@ -118,7 +118,9 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
         enableScissor(0, HudFrame.top, guiWidth(), HudFrame.bottom)
 
         val verticalSpeed = computers.hudData.lerpedVelocity.perSecond().y
-        val color = if (verticalSpeed < -10.0) warningColor else whiteColor
+        val descentWarning = computers.gpws.groundImpactTime < 10.0 && (verticalSpeed < -10.0 || computers.gpws.groundY == null)
+        val color = if (descentWarning) warningColor else whiteColor
+
         val speedY = (y - 2 * verticalSpeed).toInt()
 
         val vSpeedInt = verticalSpeed.roundToInt()
@@ -127,7 +129,7 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
             drawRightAlignedString(vSpeedInt.toString(), x - 4, textY, color)
         }
 
-        if (speedY <= HudFrame.bottom || totalTicks % 20 >= 10) {
+        if (!descentWarning || computers.gpws.groundImpactTime > 5.0 || totalTicks % 20 >= 10) {
             fill(x - 3, y, x - 1, speedY, color)
         }
 

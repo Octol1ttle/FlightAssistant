@@ -1,7 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.computer.safety
 
-import kotlin.math.abs
-import kotlin.math.max
 import net.minecraft.core.Direction
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -22,9 +20,12 @@ import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.PitchComputer
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.ThrustComputer
+import kotlin.math.abs
+import kotlin.math.max
 
 class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
-    private var groundImpactTime: Double = Double.MAX_VALUE
+    var groundImpactTime: Double = Double.MAX_VALUE
+        private set
     var groundImpactStatus: Status = Status.SAFE
         private set
     private var obstacleImpactTime: Double = Double.MAX_VALUE
