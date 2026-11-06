@@ -46,6 +46,8 @@ class AlertSoundInstance(val player: Player, val data: AlertData) :
         }
 
         this.volume = this.actualVolume * FAConfig.alerts.soundVolume
+//? if >=1.21.9
+        /*this.volume *= ru.octol1ttle.flightassistant.FlightAssistant.mc.options.getSoundSourceVolume(SoundSource.MASTER)*/
     }
 
     fun setLooping(looping: Boolean, soundManager: SoundManager) {

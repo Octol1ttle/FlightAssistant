@@ -7,8 +7,7 @@ import net.minecraft.client.gui.components.Tooltip
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.CommonComponents
 import net.minecraft.network.chat.Component
-import ru.octol1ttle.flightassistant.api.util.extensions.drawMiddleAlignedString
-import ru.octol1ttle.flightassistant.api.util.extensions.warningColor
+import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
 import ru.octol1ttle.flightassistant.screen.FABaseScreen
 import ru.octol1ttle.flightassistant.screen.components.CycleTextOnlyButton
