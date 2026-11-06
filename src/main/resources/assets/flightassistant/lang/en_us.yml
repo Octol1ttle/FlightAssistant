@@ -170,7 +170,7 @@ config.flightassistant:
       .: Attitude (artificial horizon)
       show:
         .: Show attitude
-        description: Controls when the attitude indicator is shown. Like most elements in this tab, it can be shown always, when an elytra is equipped, while gliding, or never. It displays a horizon line that tilts and moves with your pitch and roll, helping you stay oriented
+        description: Controls when the attitude indicator is shown. It displays a horizon line that tilts and moves with your pitch and roll, helping you stay oriented
       elements:
         .: Elements
         description: Controls which elements the attitude indicator consists of. The pitch ladder is a set of dashed lines that show how steeply you are climbing or descending, in degrees

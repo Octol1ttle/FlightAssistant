@@ -16,7 +16,7 @@ class TypeStrictEditBox<T>(x: Int, y: Int, width: Int, height: Int, initialValue
             value != null && filter.test(value)
         }
         this.setResponder { onValueChange.accept(convertFunction.invoke(it)!!) }
-        this.moveCursorToStart()
+        this.moveCursorToStart(/*? if >=1.21.1 {*//*false*//*?}*/)
     }
 
     companion object {

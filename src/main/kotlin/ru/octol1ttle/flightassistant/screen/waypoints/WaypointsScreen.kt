@@ -27,6 +27,8 @@ class WaypointsScreen(parent: Screen) : FABaseScreen(parent, Component.translata
 
         val list: WaypointsList = this.addRenderableWidget(WaypointsList(Y0, this.height - Y0, this.width, computers, state))
 
+        val bottom = this.height - Y0 + 5
+
         resetTakeoffLanding = this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.reset_takeoff_landing")) {
             state.waypoints.forEach { it.phaseMarker = FlightPlanComputer.Waypoint.PhaseMarker.NONE }
             list.rebuildEntries()
@@ -39,7 +41,7 @@ class WaypointsScreen(parent: Screen) : FABaseScreen(parent, Component.translata
                 state.syncedWithComputer = false
             }
             list.rebuildEntries()
-        }.bounds(this.centerX - 50, this.height - Y0, 20, 20)
+        }.bounds(this.centerX - 50, bottom, 20, 20)
             .tooltip(Tooltip.create(Component.translatable("menu.flightassistant.fms.add_waypoint")))
             .build())
 
@@ -47,7 +49,7 @@ class WaypointsScreen(parent: Screen) : FABaseScreen(parent, Component.translata
             state.waypoints.clear()
             state.tracking = null
             list.rebuildEntries()
-        }.bounds(this.centerX - 25, this.height - Y0, 20, 20)
+        }.bounds(this.centerX - 25, bottom, 20, 20)
             .tooltip(Tooltip.create(Component.translatable("menu.flightassistant.fms.delete_all")))
             .build())
 
@@ -55,22 +57,22 @@ class WaypointsScreen(parent: Screen) : FABaseScreen(parent, Component.translata
             state.save(computers.plan)
             state.syncedWithComputer = true
             list.rebuildEntries()
-        }.bounds(this.centerX + 5, this.height - Y0, 20, 20)
+        }.bounds(this.centerX + 5, bottom, 20, 20)
             .tooltip(applyTooltip)
             .build())
 
         undo = this.addRenderableWidget(Button.builder(Component.literal("❌")) { _: Button? ->
             state = WaypointsScreenState.load(computers.plan)
             this.rebuildWidgets()
-        }.bounds(this.centerX + 30, this.height - Y0, 20, 20)
+        }.bounds(this.centerX + 30, bottom, 20, 20)
             .tooltip(Tooltip.create(Component.translatable("menu.flightassistant.fms.undo")))
             .build())
 
         done = this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE) { _: Button? ->
             this.onClose()
-        }.pos(this.width - 90, this.height - Y0).width(80).build())
+        }.pos(this.width - 90, bottom).width(80).build())
 
-        val string = this.addRenderableWidget(SmartStringWidget(10, this.height - Y0 + 5, Component.translatable("menu.flightassistant.fms.distance_time_mode")))
+        val string = this.addRenderableWidget(SmartStringWidget(10, bottom + 5, Component.translatable("menu.flightassistant.fms.distance_time_mode")))
         this.addRenderableWidget(CycleTextOnlyButton(string.x + string.width, string.y, WaypointsList.DistanceTimeMode.entries, WaypointsList.distanceTimeMode, true) { WaypointsList.distanceTimeMode = it })
     }
 
