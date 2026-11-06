@@ -1,7 +1,6 @@
 package ru.octol1ttle.flightassistant.impl.display
 
 import com.mojang.math.Axis
-import kotlin.math.roundToInt
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -15,13 +14,14 @@ import ru.octol1ttle.flightassistant.api.util.FloatLerper
 import ru.octol1ttle.flightassistant.api.util.ScreenSpace
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
+import kotlin.math.roundToInt
 
 class FlightDirectorsDisplay(computers: ComputerBus) : Display(computers) {
     private val xLerper: FloatLerper = FloatLerper()
     private val yLerper: FloatLerper = FloatLerper()
 
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showFlightDirectors
+        return FAConfig.hud.showFlightDirectors.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {
@@ -39,8 +39,7 @@ class FlightDirectorsDisplay(computers: ComputerBus) : Display(computers) {
             /*pose().rotateAbout(ru.octol1ttle.flightassistant.api.util.radians(-computers.hudData.roll), centerXF, centerYF)
 *///?} else
             pose().rotateAround(Axis.ZN.rotationDegrees(computers.hudData.roll), centerXF, centerYF, 0.0f)
-
-            enableScissor(HudFrame.left, HudFrame.top, HudFrame.right, HudFrame.bottom)
+            HudFrame.maybeScissor(this)
 
             val pitchInput: ControlInput? = computers.pitch.activeInput
             if (pitchInput != null && pitchInput.priority >= ControlInput.Priority.NORMAL) {
@@ -56,7 +55,7 @@ class FlightDirectorsDisplay(computers: ComputerBus) : Display(computers) {
                 }
             }
 
-            disableScissor()
+            HudFrame.maybeDisableScissor(this)
             pose().pop()
         }
     }

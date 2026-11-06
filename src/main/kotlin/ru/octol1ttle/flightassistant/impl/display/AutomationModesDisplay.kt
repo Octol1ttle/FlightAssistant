@@ -1,7 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import java.util.Objects
-import kotlin.math.roundToInt
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
@@ -15,6 +13,8 @@ import ru.octol1ttle.flightassistant.api.display.HudFrame
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
+import java.util.*
+import kotlin.math.roundToInt
 
 class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
     private val thrustDisplay: ModeDisplay = ModeDisplay(1)
@@ -23,7 +23,7 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
     private val automationStatusDisplay: ModeDisplay = ModeDisplay(4)
 
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showAutomationModes
+        return FAConfig.hud.showAutomationModes.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {

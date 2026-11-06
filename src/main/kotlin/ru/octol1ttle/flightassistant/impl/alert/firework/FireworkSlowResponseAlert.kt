@@ -8,13 +8,14 @@ import ru.octol1ttle.flightassistant.api.alert.ECAMAlert
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
 import ru.octol1ttle.flightassistant.api.util.extensions.drawString
+import ru.octol1ttle.flightassistant.config.FAConfig
 
 class FireworkSlowResponseAlert(computers: ComputerBus) : Alert(computers), ECAMAlert {
     override val priorityOffset: Int = 50
     override val data: AlertData = AlertData.MASTER_CAUTION
 
     override fun shouldActivate(): Boolean {
-        return computers.firework.responseTimes.average() >= 10
+        return FAConfig.alerts.fireworkResponseAlertSeverity.warning() && computers.firework.responseTimes.average() >= 10
     }
 
     override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {

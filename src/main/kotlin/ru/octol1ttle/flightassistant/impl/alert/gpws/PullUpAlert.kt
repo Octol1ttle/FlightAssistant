@@ -11,7 +11,6 @@ import ru.octol1ttle.flightassistant.api.util.extensions.centerX
 import ru.octol1ttle.flightassistant.api.util.extensions.drawHighlightedCenteredText
 import ru.octol1ttle.flightassistant.api.util.extensions.warningColor
 import ru.octol1ttle.flightassistant.config.FAConfig
-import ru.octol1ttle.flightassistant.config.options.SafetyOptions
 import ru.octol1ttle.flightassistant.impl.computer.safety.GroundProximityComputer
 
 // TODO: should not be the same alert for obstacle impact and ground impact
@@ -19,19 +18,11 @@ class PullUpAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
     override val data: AlertData = AlertData.PULL_UP
 
     override fun shouldActivate(): Boolean {
-        val groundImpact: Boolean = FAConfig.safety.sinkRateAlertMode.warning() && computers.gpws.groundImpactStatus <= GroundProximityComputer.Status.WARNING
-        val obstacleImpact: Boolean = FAConfig.safety.obstacleAlertMode.warning() && computers.gpws.obstacleImpactStatus <= GroundProximityComputer.Status.WARNING
+        val groundImpact: Boolean =
+            FAConfig.alerts.sinkRateAlertSeverity.danger() && computers.gpws.groundImpactStatus <= GroundProximityComputer.Status.DANGER
+        val obstacleImpact: Boolean =
+            FAConfig.alerts.obstacleAlertSeverity.danger() && computers.gpws.obstacleImpactStatus <= GroundProximityComputer.Status.DANGER
         return groundImpact || obstacleImpact
-    }
-
-    override fun getAlertMethod(): SafetyOptions.AlertMethod {
-        return if (computers.gpws.groundImpactStatus < computers.gpws.obstacleImpactStatus) {
-            FAConfig.safety.sinkRateAlertMethod
-        } else if (computers.gpws.groundImpactStatus == computers.gpws.obstacleImpactStatus) {
-            SafetyOptions.AlertMethod.max(FAConfig.safety.sinkRateAlertMethod, FAConfig.safety.obstacleAlertMethod)
-        } else {
-            FAConfig.safety.obstacleAlertMethod
-        }
     }
 
     override fun render(guiGraphics: GuiGraphics, y: Int): Boolean {

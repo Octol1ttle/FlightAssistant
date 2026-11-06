@@ -115,12 +115,19 @@ internal object ComputerHost : ModuleController<Computer>, ComputerBus {
     internal fun tick(partialTick: Float) {
         val paused: Boolean = mc.isPaused /*? if >=1.21 {*/ /*|| !(mc as ru.octol1ttle.flightassistant.mixin.ClientLevelRunningNormallyInvoker).invokeIsLevelRunningNormally() *///?}
         FATickCounter.tick(mc.player!!, partialTick, paused)
-        if (paused || FATickCounter.ticksSinceWorldLoad < FATickCounter.worldLoadWaitTime || !FAConfig.global.modEnabled) {
+        if (paused || FATickCounter.ticksSinceWorldLoad < FATickCounter.worldLoadWaitTime) {
             return
         }
 
         profiler.push("flightassistant:computer_host")
         for ((id: ResourceLocation, computer: Computer) in computers) {
+            if (!FAConfig.global.modEnabled) {
+                // Make sure toggling the mod mid-flight works correctly.
+                // For an example of why this is necessary, AlertComputer needs to be reset to stop alert sounds
+                computer.reset()
+                continue
+            }
+
             profiler.push(id.toString())
             if (!computer.isDisabledOrFaulted()) {
                 try {

@@ -9,6 +9,7 @@ import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
 import ru.octol1ttle.flightassistant.api.util.extensions.drawString
+import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.computer.safety.ChunkStatusComputer
 
 class SlowChunkLoadingAlert(computers: ComputerBus) : Alert(computers), ECAMAlert {
@@ -17,6 +18,10 @@ class SlowChunkLoadingAlert(computers: ComputerBus) : Alert(computers), ECAMAler
     private var alertDuration = 0
 
     override fun shouldActivate(): Boolean {
+        if (!FAConfig.alerts.chunkLoadingAlertSeverity.warning()) {
+            return false
+        }
+
         val status: ChunkStatusComputer.Status = computers.chunk.status
         if (status != ChunkStatusComputer.Status.ALL_UNLOADED && alertDuration > 0) {
             alertDuration -= FATickCounter.ticksPassed

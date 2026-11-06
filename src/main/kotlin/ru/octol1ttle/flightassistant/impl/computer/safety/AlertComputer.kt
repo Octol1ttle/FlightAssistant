@@ -17,6 +17,7 @@ import ru.octol1ttle.flightassistant.api.util.extensions.applyVolume
 import ru.octol1ttle.flightassistant.api.util.extensions.getHighestPriority
 import ru.octol1ttle.flightassistant.api.util.extensions.pause
 import ru.octol1ttle.flightassistant.api.util.extensions.unpause
+import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.alert.AlertSoundInstance
 import ru.octol1ttle.flightassistant.impl.alert.autoflight.AutoThrustOffAlert
 import ru.octol1ttle.flightassistant.impl.alert.autoflight.AutopilotOffAlert
@@ -119,7 +120,7 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
             AlertCategory(Component.translatable("alert.flightassistant.gpws"))
                 .add(ComputerFaultAlert(computers, GroundProximityComputer.ID, Component.translatable("alert.flightassistant.gpws.fault")))
                 .add(PullUpAlert(computers))
-                .add(BelowGlideSlopeWarningAlert(computers))
+                .add(BelowGlideSlopeDangerAlert(computers))
                 .add(SinkRateAlert(computers))
                 .add(TerrainAheadAlert(computers))
                 .add(BelowGlideSlopeAlert(computers))
@@ -182,7 +183,7 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
 
     override fun tick() {
         updateAlerts()
-        if (computers.data.player.isDeadOrDying || !computers.data.flying) {
+        if (computers.data.player.isDeadOrDying || !computers.data.flying || !FAConfig.global.alerts.sound()) {
             tickSoundsAndStopInactive(true)
             return
         }
@@ -213,6 +214,9 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
                 entry.value.tick()
                 soundManager.applyVolume(entry.value)
             }
+            if (entry.value.isLooping && !FAConfig.alerts.allowSoundLooping) {
+                entry.value.setLooping(false, soundManager)
+            }
 
             if (force || alertLists[entry.key]?.isEmpty() != false) {
                 entry.value.setLooping(false, soundManager)
@@ -225,7 +229,8 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
     }
 
     private fun startNewSounds() {
-        val newDatas: List<AlertData> = alertLists.filterValues { list -> list.hasNewElements { it.getAlertMethod().audio() } || list.any { !sounds.containsKey(it.data) && it.getAlertMethod().audio() } }.keys.sortedBy { it.priority }
+        val newDatas: List<AlertData> =
+            alertLists.filterValues { list -> list.hasNewElements() || list.any { !sounds.containsKey(it.data) } }.keys.sortedBy { it.priority }
         val newHighestPriorityDatas: List<AlertData> = newDatas.getHighestPriority()
         val activeHighestPriority: Int = sounds.keys.minByOrNull { it.priority }?.priority ?: Int.MAX_VALUE
 

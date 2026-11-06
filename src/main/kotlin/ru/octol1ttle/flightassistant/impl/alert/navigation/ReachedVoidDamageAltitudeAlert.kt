@@ -15,7 +15,7 @@ class ReachedVoidDamageAltitudeAlert(computers: ComputerBus) : Alert(computers),
     override val data: AlertData = AlertData.MASTER_WARNING
 
     override fun shouldActivate(): Boolean {
-        return FAConfig.safety.voidAlertMode.warning() && computers.voidProximity.status == VoidProximityComputer.Status.REACHED_DAMAGE_ALTITUDE
+        return FAConfig.alerts.voidDamageAlertSeverity.danger() && computers.voidProximity.status == VoidProximityComputer.Status.REACHED_DAMAGE_ALTITUDE
     }
 
     override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {

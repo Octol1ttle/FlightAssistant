@@ -15,7 +15,7 @@ class ElytraDurabilityLowAlert(computers: ComputerBus) : Alert(computers), ECAMA
     override val data: AlertData = AlertData.MASTER_CAUTION
 
     override fun shouldActivate(): Boolean {
-        if (!FAConfig.safety.elytraDurabilityAlertMode.caution()) {
+        if (!FAConfig.alerts.elytraDurabilityAlertSeverity.warning()) {
             return false
         }
         val remainingFlightTime: Int = computers.elytra.getRemainingFlightTime(computers.data.player) ?: return false

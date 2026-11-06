@@ -1,7 +1,6 @@
 package ru.octol1ttle.flightassistant.impl.display
 
 import com.mojang.math.Axis
-import kotlin.math.sign
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -16,15 +15,16 @@ import ru.octol1ttle.flightassistant.api.util.FloatLerper
 import ru.octol1ttle.flightassistant.api.util.ScreenSpace
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
-import ru.octol1ttle.flightassistant.config.options.DisplayOptions
+import ru.octol1ttle.flightassistant.config.options.HudOptions
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
+import kotlin.math.sign
 
 class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
     private val minimumLerper: FloatLerper = FloatLerper()
     private val maximumLerper: FloatLerper = FloatLerper()
 
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showAttitude != DisplayOptions.AttitudeDisplayMode.DISABLED
+        return FAConfig.hud.showAttitude.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {
@@ -42,26 +42,20 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
             /*pose().rotateAbout(ru.octol1ttle.flightassistant.api.util.radians(-computers.hudData.roll), centerX, centerYF)
 *///?} else
             pose().rotateAround(Axis.ZN.rotationDegrees(computers.hudData.roll), centerX, centerYF, 0.0f)
+            HudFrame.maybeScissor(this)
 
-            if (!FAConfig.display.drawPitchOutsideFrame) {
-                HudFrame.scissor(this)
-            }
-            if (FAConfig.display.showAttitude <= DisplayOptions.AttitudeDisplayMode.HORIZON_ONLY) {
-                renderHorizon(centerX)
-            }
-            if (FAConfig.display.showAttitude == DisplayOptions.AttitudeDisplayMode.HORIZON_AND_LADDER) {
+            renderHorizon(centerX)
+            if (FAConfig.hud.attitudeElements == HudOptions.AttitudeElements.HORIZON_AND_LADDER) {
                 renderPitchBars(centerX)
                 renderPitchLimits(centerX)
                 drawPitchReferenceMark(47.5f, centerX)
                 drawPitchReferenceMark(-2.2f, centerX)
                 drawPitchReferenceMark(-38.5f, centerX)
             }
-            if (!FAConfig.display.drawPitchOutsideFrame) {
-                disableScissor()
-            }
 
+            HudFrame.maybeDisableScissor(this)
             pose().pop()
-            if (FAConfig.display.showAutomationModes) {
+            if (FAConfig.hud.showAutomationModes.allowed()) {
                 renderPitchTarget(this.centerX - 6, centerY - 10)
             }
         }
@@ -88,7 +82,7 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
     }
 
     private fun GuiGraphics.renderPitchBars(centerX: Float) {
-        val step: Int = FAConfig.display.attitudeDegreeStep
+        val step: Int = FAConfig.hud.attitudeLadderDegreeInterval
         val nextUp: Int = Mth.roundToward(computers.data.pitch.toInt(), step)
         for (i: Int in nextUp..90 step step) {
             drawPitchBar(i, centerX, ScreenSpace.getY(i.toFloat()) ?: break)
@@ -101,7 +95,7 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
     }
 
     private fun GuiGraphics.renderPitchLimits(centerX: Float) {
-        val step: Int = FAConfig.display.attitudeDegreeStep / 2
+        val step: Int = FAConfig.hud.attitudeLadderDegreeInterval / 2
 
         val arrowText: Component = Component.literal("V")
 

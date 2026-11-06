@@ -37,7 +37,10 @@ class VoidProximityComputer(computers: ComputerBus) : Computer(computers) {
                 1.0f,
                 Component.translatable("mode.flightassistant.thrust.toga"),
                 ControlInput.Priority.HIGH,
-                status = ControlInput.Status.fromBooleans(status == Status.REACHED_DAMAGE_ALTITUDE, enabled = FAConfig.safety.voidAutoThrust)
+                status = ControlInput.Status.fromBooleans(
+                    status == Status.REACHED_DAMAGE_ALTITUDE,
+                    enabled = FAConfig.protections.voidAutoRecover
+                )
             ))
         }
 
@@ -46,7 +49,7 @@ class VoidProximityComputer(computers: ComputerBus) : Computer(computers) {
                 90.0f, Component.translatable("mode.flightassistant.vertical.void_escape"), ControlInput.Priority.HIGH,
                 status = ControlInput.Status.fromBooleans(
                     status == Status.REACHED_DAMAGE_ALTITUDE && computers.thrust.current == 1.0f && !computers.thrust.noThrustSource,
-                    enabled = FAConfig.safety.voidAutoPitch
+                    enabled = FAConfig.protections.voidAutoRecover
                 )
             ))
         }
@@ -57,7 +60,7 @@ class VoidProximityComputer(computers: ComputerBus) : Computer(computers) {
                     .coerceIn(-90.0f..15.0f),
                 Component.translatable("mode.flightassistant.vertical.void_protection"),
                 ControlInput.Priority.HIGH,
-                status = ControlInput.Status.fromBooleans(true, enabled = FAConfig.safety.voidLimitPitch)
+                status = ControlInput.Status.fromBooleans(true, enabled = FAConfig.protections.voidLimitPitch)
             ))
         }
     }

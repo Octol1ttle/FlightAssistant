@@ -100,7 +100,7 @@ internal object HudDisplayHost: ModuleController<Display> {
     }
 
     fun render(guiGraphics: GuiGraphics) {
-        if (!FAConfig.hudEnabled) {
+        if (!FAConfig.global.modEnabled || !FAConfig.global.showHud) {
             return
         }
 

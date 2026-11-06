@@ -1,8 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.computer.safety
 
-import java.time.Duration
-import kotlin.math.round
-import kotlin.math.roundToInt
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket
 import net.minecraft.resources.ResourceLocation
@@ -17,8 +14,11 @@ import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.extensions.formatRoot
 import ru.octol1ttle.flightassistant.api.util.extensions.notClimbable
 import ru.octol1ttle.flightassistant.config.FAConfig
-import ru.octol1ttle.flightassistant.config.options.DisplayOptions
+import ru.octol1ttle.flightassistant.config.options.HudOptions
 import ru.octol1ttle.flightassistant.impl.computer.data.AirDataComputer
+import java.time.Duration
+import kotlin.math.round
+import kotlin.math.roundToInt
 
 class ElytraStatusComputer(computers: ComputerBus) : Computer(computers) {
     private var activeElytra: ItemStack? = null
@@ -42,10 +42,6 @@ class ElytraStatusComputer(computers: ComputerBus) : Computer(computers) {
             return
         }
 
-        if (FAConfig.safety.elytraCloseUnderwater && data.flying && data.player.isUnderWater) {
-            sendSwitchState(data)
-        }
-
         val flying: Boolean = data.flying || data.player.abilities.mayfly
         val hasUsableElytra: Boolean =
 //? if >=1.21.4 {
@@ -58,7 +54,7 @@ class ElytraStatusComputer(computers: ComputerBus) : Computer(computers) {
 *///?} else
                 data.player.feetBlockState.notClimbable(data.player)
         val lookingToClutch: Boolean = data.pitch <= -70.0f
-        if (FAConfig.safety.elytraAutoOpen && !flying && !data.fallDistanceSafe && hasUsableElytra && noneClimbable && !lookingToClutch) {
+        if (FAConfig.protections.elytraAutoOpen && !flying && !data.fallDistanceSafe && hasUsableElytra && noneClimbable && !lookingToClutch) {
             sendSwitchState(data)
         }
     }
@@ -100,7 +96,7 @@ class ElytraStatusComputer(computers: ComputerBus) : Computer(computers) {
         return null
     }
 
-    fun formatDurability(units: DisplayOptions.DurabilityUnits, player: Player): Component? {
+    fun formatDurability(units: HudOptions.DurabilityUnits, player: Player): Component? {
         val active: ItemStack = activeElytra ?: return null
         if (!active.isDamageableItem) {
             return Component.translatable("short.flightassistant.infinite")
@@ -117,9 +113,9 @@ class ElytraStatusComputer(computers: ComputerBus) : Computer(computers) {
         )
 
         return when (units) {
-            DisplayOptions.DurabilityUnits.RAW -> Component.literal((active.maxDamage - active.damageValue).toString())
-            DisplayOptions.DurabilityUnits.PERCENTAGE -> Component.literal("${round((active.maxDamage - active.damageValue - 1) * 100 / active.maxDamage.toFloat()).roundToInt()}%")
-            DisplayOptions.DurabilityUnits.TIME -> {
+            HudOptions.DurabilityUnits.RAW -> Component.literal((active.maxDamage - active.damageValue).toString())
+            HudOptions.DurabilityUnits.PERCENTAGE -> Component.literal("${round((active.maxDamage - active.damageValue - 1) * 100 / active.maxDamage.toFloat()).roundToInt()}%")
+            HudOptions.DurabilityUnits.TIME -> {
                 val duration: Duration = Duration.ofSeconds(getRemainingFlightTime(player)!!.toLong())
                 val seconds: Int = when (unbreakingLevel) {
                     0 -> duration.toSecondsPart()

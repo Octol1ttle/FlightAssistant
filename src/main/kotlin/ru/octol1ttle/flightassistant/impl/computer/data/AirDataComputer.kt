@@ -1,8 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.computer.data
 
-import kotlin.math.asin
-import kotlin.math.atan2
-import kotlin.math.max
 import net.minecraft.client.Minecraft
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.player.LocalPlayer
@@ -21,6 +18,9 @@ import ru.octol1ttle.flightassistant.api.util.extensions.getLerpedDeltaMovement
 import ru.octol1ttle.flightassistant.api.util.extensions.perSecond
 import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 import ru.octol1ttle.flightassistant.config.FAConfig
+import kotlin.math.asin
+import kotlin.math.atan2
+import kotlin.math.max
 
 class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Computer(computers) {
     val player: LocalPlayer
@@ -87,11 +87,16 @@ class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Compu
         if (FAKeyMappings.globalAutomationOverride.isDown) {
             return false
         }
-        return (!checkFlying || flying) && (FAConfig.global.automationsAllowedInOverlays || (mc.screen == null && mc.overlay == null))
+        if (!FAConfig.global.allowAutomations) {
+            return false
+        }
+        val isInGUI = mc.screen != null || mc.overlay != null
+        return (flying || !checkFlying) && (!isInGUI || FAConfig.global.allowAutomationsInGUI)
     }
 
     fun isInvulnerableTo(source: DamageSource): Boolean {
-        if (!FAConfig.safety.considerInvulnerability) {
+        @Suppress("RedundantIf", "RedundantSuppression") // amazing language DO NOT COLLAPSE THIS 'if' AND MAKE SURE 'Cleanup Code' DOESN'T DO IT EITHER
+        if (!FAConfig.protections.considerInvulnerability) {
             return false
         }
 //? if >=1.21.2 {

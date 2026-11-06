@@ -11,15 +11,14 @@ import ru.octol1ttle.flightassistant.api.util.extensions.centerX
 import ru.octol1ttle.flightassistant.api.util.extensions.drawHighlightedCenteredText
 import ru.octol1ttle.flightassistant.api.util.extensions.warningColor
 import ru.octol1ttle.flightassistant.config.FAConfig
-import ru.octol1ttle.flightassistant.config.options.SafetyOptions
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
 
-class BelowGlideSlopeWarningAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
+class BelowGlideSlopeDangerAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
     override val data: AlertData
         get() = AlertData.BELOW_GLIDE_SLOPE_WARNING
 
     override fun shouldActivate(): Boolean {
-        if (!FAConfig.safety.belowGlideSlopeAlertMode.warning()) {
+        if (!FAConfig.alerts.belowGlideSlopeAlertSeverity.danger()) {
             return false
         }
         if (computers.plan.currentPhase != FlightPlanComputer.FlightPhase.LANDING) {
@@ -36,7 +35,4 @@ class BelowGlideSlopeWarningAlert(computers: ComputerBus) : Alert(computers), Ce
         return true
     }
 
-    override fun getAlertMethod(): SafetyOptions.AlertMethod {
-        return FAConfig.safety.belowGlideSlopeAlertMethod
-    }
 }

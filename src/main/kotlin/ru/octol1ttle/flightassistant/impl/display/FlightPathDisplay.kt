@@ -7,25 +7,29 @@ import org.joml.Vector3f
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.display.Display
+import ru.octol1ttle.flightassistant.api.display.HudFrame
 import ru.octol1ttle.flightassistant.api.util.ScreenSpace
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
 
 class FlightPathDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showFlightPathVector
+        return FAConfig.hud.showFlightPathVector
     }
 
     override fun render(guiGraphics: GuiGraphics) {
+        if (!computers.data.flying) {
+            return
+        }
+
         with(guiGraphics) {
             val screenSpaceVec: Vector3f = ScreenSpace.getVector3f(computers.hudData.lerpedVelocity, false) ?: return
             val trueX: Float = screenSpaceVec.x
             val trueY: Float = screenSpaceVec.y
 
             pose().push()
-//? if <1.21.6
-            pose().translate(0.0f, 0.0f, -150.0f)
-            fusedTranslateScale(trueX, trueY, FAConfig.display.flightPathVectorSize)
+            pose().translate(trueX, trueY /*? if <1.21.6 {*/, -150.0f /*?}*/)
+            HudFrame.maybeScissor(this)
 
             val bodySideSize = 3
             vLine(-bodySideSize, -bodySideSize, bodySideSize, primaryColor)
@@ -40,6 +44,7 @@ class FlightPathDisplay(computers: ComputerBus) : Display(computers) {
             hLine(-bodySideSize - wingSize, -bodySideSize, 0, primaryColor)
             hLine(bodySideSize, bodySideSize + wingSize, 0, primaryColor)
 
+            HudFrame.maybeDisableScissor(this)
             pose().pop()
         }
     }

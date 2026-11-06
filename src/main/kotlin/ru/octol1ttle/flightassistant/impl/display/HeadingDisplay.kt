@@ -1,6 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import kotlin.math.roundToInt
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -13,21 +12,22 @@ import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.api.util.findShortestPath
 import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
+import kotlin.math.roundToInt
 
 class HeadingDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showHeadingReading || FAConfig.display.showHeadingScale
+        return FAConfig.hud.showHeadingReading.allowed() || FAConfig.hud.showHeadingScale.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {
         with(guiGraphics) {
-            if (FAConfig.display.showHeadingReading) {
+            if (FAConfig.hud.showHeadingReading.allowed()) {
                 renderHeadingReading()
             }
-            if (FAConfig.display.showHeadingScale) {
+            if (FAConfig.hud.showHeadingScale.allowed()) {
                 renderHeadingScale(centerX, HudFrame.bottom + 1)
             }
-            if (FAConfig.display.showAutomationModes) {
+            if (FAConfig.hud.showAutomationModes.allowed()) {
                 renderHeadingTarget(centerX, HudFrame.bottom - 8)
             }
         }

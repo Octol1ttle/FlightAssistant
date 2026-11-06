@@ -38,8 +38,8 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
         InteractionEvent.RIGHT_CLICK_ITEM.register(InteractionEvent.RightClickItem { player, hand ->
             val stack: ItemStack = player.getItemInHand(hand)
             if (player.level().isClientSide() && computers.data.flying && stack.item is FireworkRocketItem) {
-                val explosive = FAConfig.safety.fireworkLockExplosive && !isEmptyOrSafe(player, hand)
-                val anyTerrainAhead = FAConfig.safety.fireworkLockObstacles && anyTerrainAhead()
+                val explosive = FAConfig.protections.fireworkLockExplosive && !isEmptyOrSafe(player, hand)
+                val anyTerrainAhead = FAConfig.protections.fireworkLockObstacle && anyTerrainAhead()
                 if (computers.data.automationsAllowed() && (explosive || anyTerrainAhead)) {
 //? if >=1.21.2 {
                     /*return@RightClickItem net.minecraft.world.InteractionResult.FAIL
@@ -116,7 +116,10 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
 
     private fun anyTerrainAhead(): Boolean {
         val velocity = computers.data.player.forward.scale(FIREWORK_SPEED.toDouble())
-        return computers.gpws.computeObstacleImpactTime(velocity, computers.gpws.cautionThreshold) <= computers.gpws.warningThreshold
+        return computers.gpws.computeObstacleImpactTime(
+            velocity,
+            computers.gpws.warningThreshold
+        ) <= computers.gpws.dangerThreshold
     }
 
     private fun tryActivateFirework(player: Player) {

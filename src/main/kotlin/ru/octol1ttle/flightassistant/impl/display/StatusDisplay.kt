@@ -15,7 +15,7 @@ import ru.octol1ttle.flightassistant.config.FAConfig
 
 class StatusDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showStatusMessages
+        return FAConfig.hud.showStatusMessages.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {

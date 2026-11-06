@@ -14,21 +14,21 @@ import kotlin.math.roundToInt
 
 class SpeedDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showSpeedReading || FAConfig.display.showSpeedScale
+        return FAConfig.hud.showSpeedReading.allowed() || FAConfig.hud.showSpeedScale.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {
         with(guiGraphics) {
-            if (FAConfig.display.showSpeedReading) {
+            if (FAConfig.hud.showSpeedReading.allowed()) {
                 renderSpeedReading(HudFrame.leftF, centerYF)
             }
-            if (FAConfig.display.showSpeedScale) {
+            if (FAConfig.hud.showSpeedScale.allowed()) {
                 renderSpeedScale(HudFrame.left, centerY)
             }
-            if (FAConfig.display.showAutomationModes) {
+            if (FAConfig.hud.showAutomationModes.allowed()) {
                 renderSpeedTarget(HudFrame.left, HudFrame.top - 9)
             }
-            if (FAConfig.display.showGroundSpeed) {
+            if (FAConfig.hud.showGroundSpeed.allowed()) {
                 renderGroundSpeed(HudFrame.left, HudFrame.bottom + 2)
             }
         }
@@ -67,7 +67,12 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
 
         enableScissor(0, minY, guiWidth(), maxY + 1)
 
-        enableScissor(0, minY, guiWidth(), (if (FAConfig.display.showSpeedReading) y - 6 * READING_MATRIX_SCALE else maxY).toInt() + 1)
+        enableScissor(
+            0,
+            minY,
+            guiWidth(),
+            (if (FAConfig.hud.showSpeedReading.allowed()) y - 6 * READING_MATRIX_SCALE else maxY).toInt() + 1
+        )
         hLine(x - 30, x, y, color)
         hLine(x - 35, x, minY, color)
         for (i: Int in speed.roundToInt()..speed.roundToInt() + 100) {
@@ -79,7 +84,7 @@ class SpeedDisplay(computers: ComputerBus) : Display(computers) {
 
         enableScissor(
             0,
-            (if (FAConfig.display.showSpeedReading) y + 5 * READING_MATRIX_SCALE else minY).toInt(),
+            (if (FAConfig.hud.showSpeedReading.allowed()) y + 5 * READING_MATRIX_SCALE else minY).toInt(),
             guiWidth(),
             maxY + 1
         )

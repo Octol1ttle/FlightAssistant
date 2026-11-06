@@ -34,9 +34,9 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
 
     val safeThreshold: Double
         get() = 10.0
-    val cautionThreshold: Double
-        get() = 7.5
     val warningThreshold: Double
+        get() = 7.5
+    val dangerThreshold: Double
         get() = 3.0
     val recoverThreshold: Double
         get() = 0.75
@@ -62,23 +62,24 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         groundImpactTime = computeGroundImpactTime().throwIfNotInRange(0.0..Double.MAX_VALUE)
         groundImpactStatus = computeStatus(groundImpactStatus,
             { computers.data.fallDistanceSafe || computers.data.velocityPerSecond.y > -8.5 || groundImpactTime >= safeThreshold },
-            { computers.data.velocityPerSecond.y <= -10 && groundImpactTime <= cautionThreshold },
-            { groundImpactTime <= warningThreshold },
+            { computers.data.velocityPerSecond.y <= -10 && groundImpactTime <= warningThreshold },
+            { groundImpactTime <= dangerThreshold },
             { groundImpactTime <= recoverThreshold }
         )
 
         val thresholdMultiplier = computeThresholdMultiplier()
         val safe = max(recoverThreshold, safeThreshold * thresholdMultiplier)
-        val caution = max(recoverThreshold, cautionThreshold * thresholdMultiplier)
         val warning = max(recoverThreshold, warningThreshold * thresholdMultiplier)
+        val danger = max(recoverThreshold, dangerThreshold * thresholdMultiplier)
 
         obstacleImpactTime = computeObstacleImpactTime(computers.data.velocityPerSecond, safe).throwIfNotInRange(0.0..Double.MAX_VALUE)
         val damageOnCollision: Double = computers.data.velocity.horizontalDistance() * 10 - 3
         val invulnerable = computers.data.isInvulnerableTo(computers.data.player.damageSources().flyIntoWall())
-        obstacleImpactStatus = computeStatus(obstacleImpactStatus,
+        obstacleImpactStatus = computeStatus(
+            obstacleImpactStatus,
             { invulnerable || damageOnCollision < computers.data.player.health * 0.25f || obstacleImpactTime * 1.2f > groundImpactTime || obstacleImpactTime >= safeThreshold * thresholdMultiplier },
-            { abs(computers.data.yaw - computers.data.flightYaw) < 10.0f && damageOnCollision >= computers.data.player.health * 0.5f && obstacleImpactTime * 1.1f < groundImpactTime && obstacleImpactTime <= caution },
-            { !isRecoveryUnsafe && obstacleImpactTime <= warning },
+            { abs(computers.data.yaw - computers.data.flightYaw) < 10.0f && damageOnCollision >= computers.data.player.health * 0.5f && obstacleImpactTime * 1.1f < groundImpactTime && obstacleImpactTime <= warning },
+            { !isRecoveryUnsafe && obstacleImpactTime <= danger },
             { obstacleImpactTime <= recoverThreshold },
         )
     }
@@ -137,7 +138,7 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
     }
 
     private fun computeThresholdMultiplier(): Double {
-        val maxRaycastDistance = computers.data.velocityPerSecond.length() * cautionThreshold
+        val maxRaycastDistance = computers.data.velocityPerSecond.length() * warningThreshold
 
         val xzOffsets = listOf(-1.0, 0.0, 1.0)
         val yOffsets = listOf(-1.0, 0.0, 1.0)
@@ -168,9 +169,9 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         var status: Status = current
         while (true) {
             val next = when (status) {
-                Status.SAFE -> if (caution()) Status.CAUTION else null
-                Status.CAUTION -> if (caution() && warning()) Status.WARNING else null
-                Status.WARNING -> if (caution() && warning() && recover()) Status.RECOVER else null
+                Status.SAFE -> if (caution()) Status.WARNING else null
+                Status.WARNING -> if (caution() && warning()) Status.DANGER else null
+                Status.DANGER -> if (caution() && warning() && recover()) Status.RECOVER else null
                 Status.RECOVER -> null
             }
             if (next == null) {
@@ -203,8 +204,10 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
             if (computers.data.pitch > 15.0f) {
                 return
             }
-            val sinkRateInputStatus = getControlInputStatus(groundImpactStatus, FAConfig.safety.sinkRateAutoThrust, true)
-            val terrainInputStatus = getControlInputStatus(obstacleImpactStatus, FAConfig.safety.obstacleAutoThrust, true)
+            val sinkRateInputStatus =
+                getControlInputStatus(groundImpactStatus, FAConfig.protections.sinkRateLimitThrust, true)
+            val terrainInputStatus =
+                getControlInputStatus(obstacleImpactStatus, FAConfig.protections.obstacleLimitThrust, true)
             if (sinkRateInputStatus != null || terrainInputStatus != null) {
                 query.respond(ControlInput(
                     0.0f,
@@ -216,8 +219,10 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         }
 
         if (query is PitchComputer.TargetPitchQuery) {
-            val sinkRateInputStatus = getControlInputStatus(groundImpactStatus, FAConfig.safety.sinkRateAutoPitch, false)
-            val terrainInputStatus = getControlInputStatus(obstacleImpactStatus, FAConfig.safety.obstacleAutoPitch, false)
+            val sinkRateInputStatus =
+                getControlInputStatus(groundImpactStatus, FAConfig.protections.sinkRateAutoPitch, false)
+            val terrainInputStatus =
+                getControlInputStatus(obstacleImpactStatus, FAConfig.protections.obstacleAutoPitch, false)
             if (sinkRateInputStatus != null || terrainInputStatus != null) {
                 val deltaTimeMultiplier: Double = max(1.0, inverseMin(groundImpactTime, obstacleImpactTime) ?: return)
                 query.respond(ControlInput(
@@ -231,7 +236,7 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         }
 
         if (query is PitchComputer.MinimumPitchQuery) {
-            if (groundImpactStatus <= Status.WARNING && FAConfig.safety.sinkRateLimitPitch || obstacleImpactStatus <= Status.WARNING && FAConfig.safety.obstacleLimitPitch) {
+            if (groundImpactStatus <= Status.DANGER && FAConfig.protections.sinkRateLimitPitch) {
                 query.respond(ControlInput(
                     computers.data.pitch.coerceAtMost(15.0f),
                     Component.translatable("mode.flightassistant.vertical.terrain_protection"),
@@ -243,8 +248,8 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
 
     private fun getControlInputStatus(status: Status, config: Boolean, forThrust: Boolean): ControlInput.Status? {
         if (!config) return ControlInput.Status.DISABLED
-        val armThreshold = if (forThrust) Status.CAUTION else Status.WARNING
-        val activeThreshold = if (forThrust) Status.WARNING else Status.RECOVER
+        val armThreshold = if (forThrust) Status.WARNING else Status.DANGER
+        val activeThreshold = if (forThrust) Status.DANGER else Status.RECOVER
         return if (status <= activeThreshold) ControlInput.Status.ACTIVE
         else if (status <= armThreshold) ControlInput.Status.ARMED
         else null
@@ -260,8 +265,8 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
 
     enum class Status {
         RECOVER,
+        DANGER,
         WARNING,
-        CAUTION,
         SAFE;
     }
 

@@ -20,7 +20,7 @@ class AlertDisplay(computers: ComputerBus) : Display(computers) {
     private val withUnderline: Style = Style.EMPTY.withUnderlined(true)
 
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showAlerts
+        return FAConfig.global.alerts.hud() && FAConfig.hud.showAlerts.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {
@@ -31,16 +31,17 @@ class AlertDisplay(computers: ComputerBus) : Display(computers) {
             var renderedCentered = false
             for (category: AlertCategory in computers.alert.categories) {
                 val copy: MutableComponent = category.categoryText.copy()
-                drawString(copy.setStyle(withUnderline), x, y, (category.getFirstData { it.getAlertMethod().screen() } ?: continue).colorSupplier.invoke())
+                drawString(
+                    copy.setStyle(withUnderline),
+                    x,
+                    y,
+                    (category.getFirstData() ?: continue).colorSupplier.invoke()
+                )
                 copy.append(" ")
 
                 var categoryRendered = false
                 var lastRenderedLines = 0
                 for (alert: Alert in category.activeAlerts) {
-                    if (!alert.getAlertMethod().screen()) {
-                        continue
-                    }
-
                     if (!renderedCentered && alert is CenteredAlert) {
                         renderedCentered = alert.render(this, centerY + 8)
                         categoryRendered = categoryRendered || renderedCentered

@@ -1,6 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.display
 
-import kotlin.math.roundToInt
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -10,10 +9,11 @@ import ru.octol1ttle.flightassistant.api.display.Display
 import ru.octol1ttle.flightassistant.api.display.HudFrame
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
+import kotlin.math.roundToInt
 
 class CourseDeviationDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showCourseDeviation
+        return FAConfig.hud.showCourseDeviation.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {

@@ -11,18 +11,13 @@ import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
 import ru.octol1ttle.flightassistant.api.util.extensions.centerX
 import ru.octol1ttle.flightassistant.api.util.extensions.drawHighlightedCenteredText
 import ru.octol1ttle.flightassistant.config.FAConfig
-import ru.octol1ttle.flightassistant.config.options.SafetyOptions
 import ru.octol1ttle.flightassistant.impl.computer.safety.GroundProximityComputer
 
 class SinkRateAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
     override val data: AlertData = AlertData.SINK_RATE
 
     override fun shouldActivate(): Boolean {
-        return FAConfig.safety.sinkRateAlertMode.caution() && computers.gpws.groundImpactStatus == GroundProximityComputer.Status.CAUTION
-    }
-
-    override fun getAlertMethod(): SafetyOptions.AlertMethod {
-        return FAConfig.safety.sinkRateAlertMethod
+        return FAConfig.alerts.sinkRateAlertSeverity.warning() && computers.gpws.groundImpactStatus == GroundProximityComputer.Status.WARNING
     }
 
     override fun render(guiGraphics: GuiGraphics, y: Int): Boolean {

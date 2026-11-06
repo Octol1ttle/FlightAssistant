@@ -13,7 +13,7 @@ import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
 
 class CoordinatesDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showCoordinates
+        return FAConfig.hud.showCoordinates.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {
@@ -28,7 +28,7 @@ class CoordinatesDisplay(computers: ComputerBus) : Display(computers) {
 
             val color: Int
             val active: AutoFlightComputer.LateralMode? = computers.autoflight.activeLateralMode
-            if (FAConfig.display.showAutomationModes && (computers.autoflight.flightDirectors || computers.autoflight.autopilot) && active is AutoFlightComputer.FollowsCoordinatesMode) {
+            if (FAConfig.hud.showAutomationModes.allowed() && (computers.autoflight.flightDirectors || computers.autoflight.autopilot) && active is AutoFlightComputer.FollowsCoordinatesMode) {
                 color = if (active == computers.autoflight.selectedLateralMode) primaryAdvisoryColor else secondaryAdvisoryColor
                 drawString(active.targetX.toString(), x + textWidth(xText) + 3, y, color)
                 drawString(active.targetZ.toString(), x + textWidth(zText) + 3, y + lineHeight, color)

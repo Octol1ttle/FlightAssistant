@@ -16,7 +16,7 @@ class FireworkExplosiveAlert(computers: ComputerBus, private val hand: Interacti
     override val data: AlertData = AlertData.MASTER_CAUTION
 
     override fun shouldActivate(): Boolean {
-        return FAConfig.safety.fireworkExplosiveAlert && !computers.firework.isEmptyOrSafe(computers.data.player, hand)
+        return FAConfig.alerts.fireworkExplosive && !computers.firework.isEmptyOrSafe(computers.data.player, hand)
     }
 
     override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {

@@ -16,21 +16,21 @@ import kotlin.math.roundToInt
 
 class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showAltitudeReading || FAConfig.display.showAltitudeScale
+        return FAConfig.hud.showAltitudeReading.allowed() || FAConfig.hud.showAltitudeScale.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {
         with(guiGraphics) {
-            if (FAConfig.display.showAltitudeReading) {
+            if (FAConfig.hud.showAltitudeReading.allowed()) {
                 renderAltitudeReading(HudFrame.rightF, centerYF)
             }
-            if (FAConfig.display.showAltitudeScale) {
+            if (FAConfig.hud.showAltitudeScale.allowed()) {
                 renderAltitudeScale(HudFrame.right, centerY)
             }
-            if (FAConfig.display.showAutomationModes) {
+            if (FAConfig.hud.showAutomationModes.allowed()) {
                 renderAltitudeTarget(HudFrame.right + 2, HudFrame.top - 9)
             }
-            if (FAConfig.display.showVerticalSpeed) {
+            if (FAConfig.hud.showVerticalSpeed.allowed()) {
                 renderVerticalSpeed(HudFrame.right, centerY)
             }
         }
@@ -64,7 +64,8 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
 
         enableScissor(0, minY, guiWidth(), maxY + 1)
 
-        val scissorMaxY: Int = (if (FAConfig.display.showAltitudeReading) y - 6 * READING_MATRIX_SCALE else maxY).toInt()
+        val scissorMaxY: Int =
+            (if (FAConfig.hud.showAltitudeReading.allowed()) y - 6 * READING_MATRIX_SCALE else maxY).toInt()
         enableScissor(0, minY, guiWidth(), scissorMaxY + 1)
         hLine(x, x + 30, y, primaryColor)
         hLine(x, x + 35, minY, primaryColor)
@@ -79,7 +80,12 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
         }
         disableScissor()
 
-        enableScissor(0, (if (FAConfig.display.showAltitudeReading) y + 5 * READING_MATRIX_SCALE else minY).toInt(), guiWidth(), maxY + 1)
+        enableScissor(
+            0,
+            (if (FAConfig.hud.showAltitudeReading.allowed()) y + 5 * READING_MATRIX_SCALE else minY).toInt(),
+            guiWidth(),
+            maxY + 1
+        )
         hLine(x, x + 35, maxY, primaryColor)
         val altitudeRoundedDown: Int = Mth.quantize(altitude, 5)
         for (i: Int in altitudeRoundedDown downTo (altitudeRoundedDown - 1000).coerceAtLeast(computers.data.level.bottomY) step 5) {

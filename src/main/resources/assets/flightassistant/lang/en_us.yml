@@ -100,131 +100,268 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
       set_forward: ' -THR: SET FORWARD'
 
 config.flightassistant:
-  category:
-    global: Global options
-    no_elytra: Not flying (no elytra)
-    has_elytra: Not flying (with elytra)
-    flying: Flying
-    safety: Alerts & flight protections
-  option:
-    global:
-      mod_enabled: Enable FlightAssistant
-      hud_enabled: Enable HUD
-      safety_enabled: Enable safety features (alerts and protections)
-      automations_allowed_in_overlays: Allow automations (AP & flight prots) to run in GUIs (inventory & pause screen)
-      autopilot_resistance_threshold: Autopilot resistance threshold
+  general:
+    .: General
+    mod_enabled:
+      .: Enable FlightAssistant
+      description: Enables or disables the mod entirely
+    show_hud:
+      .: Show HUD
+      description: Controls whether the HUD is visible
+    alerts:
+      .: Flight safety alerts
+      description: Controls whether alerts are enabled and how they are relayed to you. Alerts will not show on the HUD if §lShow HUD§r is disabled
+      enabled_hud_sound: 'Enabled: HUD & Sound'
+      enabled_hud_only: 'Enabled: HUD only'
+      enabled_sound_only: 'Enabled: Sound only'
+      disabled: Disabled
+    allow_automations:
+      .: Allow automatic player control
+      description: Controls whether the mod can take control of the player. Required to enable flight protections and to use certain features such as the autopilot. §lServers may consider this an unfair advantage.
+    allow_automations_in_gui:
+      .: Allow automations in GUIs
+      description: Controls whether the mod can control your player while a GUI (e.g. inventory or pause screen) is open
+    flight_protections:
+      .: Enable flight protections
+      description: Controls whether flight protections can activate. You can configure individual protections in the §lFlight Protections§r tab
+    autopilot_resistance_threshold:
+      .: Autopilot resistance threshold
+      description: Controls how much mouse movement is required to forcefully disconnect the autopilot
+  hud:
+    .: HUD
+    frame:
+      .: Frame
+      width:
+        .: Frame width
+        description: Controls how wide the HUD frame is, as a percentage of the game window's width
+      height:
+        .: Frame height
+        description: Controls how tall the HUD frame is, as a percentage of the game window's height
+      allow_drawing_outside_frame:
+        .: Allow drawing outside frame
+        description: Controls whether certain elements, such as the attitude pitch ladder, can be drawn outside the frame
+    colors:
+      .: Colors
+      main:
+        .: Main frame color
+        description: Controls the color of most HUD elements, such as readings, scales and the horizon
+      secondary:
+        .: Secondary frame color
+        description: Controls the color of less important HUD elements, such as status messages and scale markings
+      advisory:
+        primary:
+          .: Primary advisory color
+          description: Controls the color used for automation guidance, such as flight directors, automation targets and armed automation modes
+        secondary:
+          .: Secondary advisory color
+          description: Controls the color used for secondary automation guidance, such as the course deviation indicator
+      warning:
+        .: Warning color
+        description: Controls the color used for potential hazards that require your attention, such as low elytra durability
+      danger:
+        .: Danger color
+        description: Controls the color used for critical hazards that require immediate action, such as a stall or an impending crash
     display:
-      frame:
-        .: Frame
-        width: Frame width
-        height: Frame height
-      colors:
-        .: Colors
-        primary: Primary color
-        secondary: Secondary color
-        advisory:
-          primary: Primary advisory color
-          secondary: Secondary advisory color
-        caution: Caution color
-        warning: Warning color
-      attitude:
-        .: Attitude display
-        show:
-          .: Show attitude
-          horizon_and_ladder: Horizon and pitch ladder
-          horizon_only: Horizon only
-          disabled: Disabled
-        degree_step: Line degree step
-        pitch_outside_frame: Draw pitch lines outside frame
-      heading:
-        .: Heading display
-        show_reading: Show heading reading
-        show_scale: Show heading scale
-      speed:
-        .: Speed display
-        show_reading: Show speed reading
-        show_scale: Show speed scale
-        show_ground: Show ground speed
-        show_vertical: Show vertical speed
-      altitude:
-        .: Altitude display
-        show_reading: Show altitude reading
-        show_scale: Show altitude scale
-        show_radar: Show radar altitude
-      flight_path_vector:
-        .: Flight path vector display
-        show: Show flight path vector
-        size: Flight path vector size
-      elytra_durability:
-        .: Elytra durability display
-        show: Show elytra durability
-        units:
-          .: Elytra durability units
-          raw: Minecraft
-          percentage: Percentage
-          time: Time (approximate)
-      misc:
-        .: Miscellaneous
-        coordinates: Show coordinates
-        alerts: Show alerts
-        status_messages: Show status messages
-        automation_modes: Show automation modes
-        flight_directors: Show flight directors
-        course_deviation: Show course deviation
-    safety:
-      alert_volume: Alert sound volume
-      consider_invulnerability: Disable alerts and protections when invulnerable
-      alert_mode:
-        warning_and_caution: Warning & caution
-        warning: Warning only
-        caution: Caution only
-        disabled: Disabled
-      alert_method:
-        screen_and_audio: Screen & audio
-        screen_only: Screen only
-        audio_only: Audio only
-      elytra:
-        .: Elytra
-        durability_alert_mode: Elytra durability alert mode
-        auto_open: Automatically open Elytra
-        close_underwater: Automatically close Elytra when underwater
-      stall:
-        .: Stall
-        alert_mode: Stall alert mode
-        alert_method: Stall alert method
-        limit_pitch: Limit pitch to prevent stalls
-        auto_thrust: Automatically increase thrust to recover from stalls
-      void:
-        .: Void damage altitude
-        alert_mode: Void damage altitude alert mode
-        limit_pitch: Limit pitch above the void
-        auto_thrust: Automatically increase thrust to escape the void
-        auto_pitch: Automatically raise pitch to escape the void
-      gpws:
-        .: Ground Proximity Warning System
-        sink_rate:
-          alert_mode: Sink rate alert mode
-          alert_method: Sink rate alert method
-          limit_pitch: Limit pitch when sink rate is excessive
-          auto_thrust: Automatically reduce thrust when sink rate is excessive
-          auto_pitch: Automatically raise pitch to recover from excessive sink rate
-        obstacle:
-          alert_mode: Terrain alert mode
-          alert_method: Terrain alert method
-          limit_pitch: Limit pitch when terrain is detected
-          auto_thrust: Automatically reduce thrust when terrain is detected
-          auto_pitch: Automatically raise pitch to escape from terrain
-        altitude_loss_with_toga:
-          enabled: Alert about altitude loss during takeoff/go around
-          alert_method: Altitude loss during takeoff/go around alert method
-        below_glide_slope:
-          alert_mode: Below glide slope alert mode
-          alert_method: Below glide slope alert method
-      firework:
-        .: Fireworks
-        explosive_alert: Alert when holding explosive fireworks
-        lock_explosive: Lock explosive fireworks
-        lock_obstacles: Lock fireworks near obstacles
+      always: Always
+      when_elytra_equipped: When elytra is equipped
+      when_flying: When flying
+      never: Never
+    attitude:
+      .: Attitude (artificial horizon)
+      show:
+        .: Show attitude
+        description: Controls when the attitude indicator is shown. Like most elements in this tab, it can be shown always, when an elytra is equipped, while gliding, or never. It displays a horizon line that tilts and moves with your pitch and roll, helping you stay oriented
+      elements:
+        .: Elements
+        description: Controls which elements the attitude indicator consists of. The pitch ladder is a set of dashed lines that show how steeply you are climbing or descending, in degrees
+        horizon_and_ladder: Horizon and pitch ladder
+        horizon_only: Horizon only
+      ladder_degree_interval:
+        .: Pitch ladder degree interval
+        description: Controls how far apart the pitch ladder lines are, in degrees. Lower values are more detailed, but also more cluttered
+    speed:
+      .: Speed
+      show_reading:
+        .: Show reading
+        description: Controls when the speed reading is shown. It displays how fast you are moving in the direction you are facing, in blocks per second
+      show_scale:
+        .: Show scale
+        description: Controls when the speed scale is shown. It is a moving vertical tape next to the speed reading that helps you notice speed changes
+      show_ground_speed:
+        .: Show ground speed
+        description: Controls when the ground speed reading is shown. It displays your total horizontal speed, including drift in directions other than the one you are facing
+      show_vertical_speed:
+        .: Show vertical speed
+        description: Controls when the vertical speed reading is shown. It displays how fast you are climbing or descending, in blocks per second
+    altitude:
+      .: Altitude
+      show_reading:
+        .: Show reading
+        description: Controls when the altitude reading is shown. It displays your current height (Y level) in the world
+      show_scale:
+        .: Show scale
+        description: Controls when the altitude scale is shown. It is a moving vertical tape next to the altitude reading that helps you notice altitude changes
+      show_height_above_ground:
+        .: Show height above ground
+        description: Controls when the height above ground reading is shown. It displays the distance to the terrain below you, which is useful for landing. If there is no terrain below you, it shows your distance to the void damage altitude instead
+    heading:
+      .: Heading
+      show_reading:
+        .: Show reading
+        description: Controls when the heading reading is shown. It displays the direction you are facing as a compass bearing from 0° to 360°
+      show_scale:
+        .: Show scale
+        description: Controls when the heading scale is shown. It is a horizontal tape of compass markings around the heading reading
+    elytra_durability:
+      .: Elytra durability
+      show:
+        .: Show elytra durability
+        description: Controls when the elytra durability indicator is shown. It displays how much flight time your elytra has left and changes color as it wears out
+      units:
+        .: Durability units
+        description: Controls how elytra durability is displayed. Time (approximate) estimates how much flight time is left based on your current usage
+        raw: Minecraft
+        percentage: Percentage
+        time: Time (approximate)
+    automation:
+      .: Automation
+      show_automation_modes:
+        .: Show automation modes
+        description: Controls when the automation modes indicator is shown. It is a row of boxes along the top of the HUD that shows what each part of the automation is doing, such as the active autopilot modes
+      show_flight_directors:
+        .: Show flight directors
+        description: Controls when the flight directors are shown. They are two guidance bars indicating the pitch and heading the automation is aiming for, letting you follow them by hand without engaging the autopilot
+      show_course_deviation:
+        .: Show course deviation
+        description: Controls when the course deviation indicators are shown. They display how far you have drifted from your flight plan course, horizontally at the bottom of the HUD and vertically on its right side
+    misc:
+      .: Miscellaneous
+      show_flight_path_vector:
+        .: Show flight path vector
+        description: Controls whether the flight path vector is shown. It is a small symbol marking the direction you are actually moving through the air, which can differ from the direction you are facing
+      show_coordinates:
+        .: Show coordinates
+        description: Controls when your current coordinates are shown on the HUD
+      show_alerts:
+        .: Show alerts
+        description: 'Controls when flight safety alerts are shown on the HUD. They are also hidden when §lFlight safety alerts§r is set to §lEnabled: Sound only§r or §lDisabled§r in the §lGeneral§r tab'
+      show_status_messages:
+        .: Show status messages
+        description: Controls when status messages are shown. They are informational texts in the top right corner of the HUD, such as the current thrust, the distance and time to your target, or the current flight plan phase
+  alerts:
+    .: Alerts
+    sound:
+      .: Sound
+      volume:
+        .: Alert sound volume
+        description: Controls how loud alert sounds are, as a percentage of your master volume. This is a multiplier applied on top of the game's volume sliders, so the actual volume can never exceed the master volume
+      allow_looping:
+        .: Allow sounds to loop
+        description: Controls whether alert sounds that repeat until the hazard is resolved are allowed to loop. Disabling this plays each alert sound only once
+    severity:
+      warning_and_danger: Warning & danger
+      warning_only: Warning only
+      danger_only: Danger only
+      disabled: Disabled
+    elytra_durability:
+      .: Elytra durability
+      option:
+        .: Alert severity
+        description: Controls which levels of the elytra durability alert are shown. Warnings (yellow) signal a developing hazard, while dangers (red) signal an immediate threat. For this alert, a warning means your elytra is wearing out, and a danger means its durability is critical and it could break mid-flight
+    stall:
+      .: Stall (loss of lift)
+      option:
+        .: Alert severity
+        description: Controls which levels of the stall alert are shown. A stall happens when you pitch up too steeply and lose speed, causing your elytra to lose lift and drop. A warning means a stall is developing and you should lower your nose, and a danger means you are fully stalled and falling
+    void_damage:
+      .: Void damage
+      option:
+        .: Alert severity
+        description: Controls which levels of the void damage alert are shown. If you descend too far below the world, you will start taking void damage. A warning means you are approaching the altitude where void damage begins, and a danger means you have reached it and must climb immediately
+    ground_proximity:
+      .: Ground proximity warning system (GPWS)
+      sink_rate:
+        .: Sink rate
+        description: Controls which levels of the sink rate alert are shown. Your sink rate is how fast you are descending. A warning (SINK RATE) means you are descending too quickly, and a danger (PULL UP) means you will hit the ground soon unless you pull up immediately
+      obstacle:
+        .: Terrain ahead
+        description: Controls which levels of the terrain alert are shown. A warning (TERRAIN AHEAD) means there is rising terrain or an obstacle in your flight path, and a danger (PULL UP) means a collision is imminent unless you pull up immediately
+      below_glide_slope:
+        .: Below glide slope
+        description: Controls which levels of the below glide slope alert are shown. When landing with a flight plan, the glide slope is the planned descent path to your landing point. A warning means you are slightly below it, and a danger means you have descended far below it and might land short
+      altitude_loss:
+        .: Altitude loss on takeoff/go-around
+        description: Controls whether the altitude loss alert is shown. During takeoff or a go-around you are expected to climb, and you will be alerted (DON'T SINK) if you start descending instead
+    fireworks:
+      .: Fireworks
+      explosive:
+        .: Explosive fireworks
+        description: Controls whether you are alerted when holding an explosive firework rocket in either hand. Explosive rockets detonate at the end of their boost, which can damage you mid-flight
+      response:
+        .: Boost response
+        description: Controls which levels of the firework response alert are shown. A warning means a firework boost is responding slower than expected, and a danger means it is not responding at all
+    chunk_loading:
+      .: Chunk loading
+      option:
+        .: Alert severity
+        description: Controls which levels of the chunk loading alert are shown. When the world around you loads too slowly, the HUD and flight protections cannot see the terrain ahead. A warning means chunks are loading slowly, and a danger means there are no chunks loaded around you at all
+  protections:
+    .: Flight protections
+    general:
+      .: General
+      consider_invulnerability:
+        .: Disable protections while invulnerable
+        description: Controls whether flight protections are disabled while you are invulnerable, such as in creative mode.
+    elytra:
+      .: Elytra
+      auto_open:
+        .: Automatically open Elytra when falling
+        description: Controls whether the elytra opens automatically when you fall from a dangerous height. It will not open while you are looking straight down, so you can still attempt a precise landing
+    stall:
+      .: Stall (loss of lift)
+      limit_pitch:
+        .: Limit pitch to prevent stalls
+        description: Controls whether your upward pitch is limited to prevent a stall. A stall happens when you climb too steeply and lose speed, causing the elytra to lose lift and drop. You can configure the stall alert in the §lAlerts§r tab
+      auto_thrust:
+        .: Automatically increase thrust to recover from stalls
+        description: Controls whether thrust is automatically increased during a stall to help you regain speed and recover
+    void_damage:
+      .: Void damage
+      limit_pitch:
+        .: Prevent descending into the void
+        description: Controls whether your downward pitch is limited while flying over the void, so you cannot descend to the altitude where void damage begins. You can configure the void damage alert in the §lAlerts§r tab
+      auto_recover:
+        .: Automatically climb away from the void
+        description: Controls whether thrust is automatically increased and your pitch raised to carry you away from the void when you get too close to the void damage altitude
+    ground_proximity:
+      .: Ground proximity warning system (GPWS)
+      sink_rate:
+        .: Sink rate
+        limit_pitch:
+          .: Limit pitch when descending too fast
+          description: Controls whether your downward pitch is limited when you are descending too quickly, before the dive becomes unrecoverable. You can configure the sink rate alert in the §lAlerts§r tab
+        limit_thrust:
+          .: Limit thrust when descending too fast
+          description: Controls whether thrust is limited when you are descending too quickly
+        auto_pitch:
+          .: Automatically raise pitch when descending too fast
+          description: Controls whether your pitch is automatically raised to level off when you are descending too quickly
+      obstacle:
+        .: Terrain and obstacles
+        limit_thrust:
+          .: Limit thrust when obstacles are detected
+          description: Controls whether thrust is limited when rising terrain or obstacles are detected ahead, giving you more time to react
+        auto_pitch:
+          .: Automatically raise pitch to avoid obstacles
+          description: Controls whether your pitch is automatically raised to climb over terrain or obstacles detected ahead. You can configure the terrain alert in the §lAlerts§r tab
+    fireworks:
+      .: Fireworks
+      lock_explosive:
+        .: Prevent the use of explosive fireworks
+        description: Controls whether explosive firework rockets are blocked from boosting you. Explosive rockets detonate when the boost ends, which can damage or kill you mid-flight. You can enable a warning when holding explosive fireworks in the §lAlerts§r tab
+      lock_obstacle:
+        .: Prevent firework use when looking at obstacles
+        description: Controls whether firework boosts are blocked while you are looking directly at a nearby obstacle, so you cannot accidentally boost into it
 
 menu.flightassistant:
   .: FlightAssistant setup screen

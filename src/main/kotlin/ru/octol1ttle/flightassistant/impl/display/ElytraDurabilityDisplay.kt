@@ -12,7 +12,7 @@ import ru.octol1ttle.flightassistant.config.FAConfig
 
 class ElytraDurabilityDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showElytraDurability
+        return FAConfig.hud.showElytraDurability.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {
@@ -21,7 +21,7 @@ class ElytraDurabilityDisplay(computers: ComputerBus) : Display(computers) {
             val y: Int = HudFrame.bottom + 1
 
             val text: Component =
-                computers.elytra.formatDurability(FAConfig.display.elytraDurabilityUnits, computers.data.player)
+                computers.elytra.formatDurability(FAConfig.hud.elytraDurabilityUnits, computers.data.player)
                     ?: return
 
             val remainingFlightTime: Int = computers.elytra.getRemainingFlightTime(computers.data.player)!!

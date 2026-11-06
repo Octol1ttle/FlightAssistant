@@ -15,86 +15,86 @@ class AlertData(@Deprecated("Waiting for an enhanced priority system (.defineOrd
                 0,
                 soundEvent("full_stall"),
                 LoopType.CONSTANT_VOLUME
-            ) { FAConfig.display.warningColor.rgb }
+            ) { FAConfig.hud.dangerColor.rgb }
         val APPROACHING_STALL =
             AlertData(
                 100,
                 soundEvent("approaching_stall"),
                 LoopType.FADE_IN_OUT,
-            ) { FAConfig.display.cautionColor.rgb }
+            ) { FAConfig.hud.warningColor.rgb }
         val PULL_UP =
             AlertData(
                 200,
                 soundEvent("pull_up"),
                 LoopType.CONSTANT_VOLUME
-            ) { FAConfig.display.warningColor.rgb }
+            ) { FAConfig.hud.dangerColor.rgb }
         val SINK_RATE =
             AlertData(
                 300,
                 soundEvent("sink_rate"),
                 LoopType.CONSTANT_VOLUME
-            ) { FAConfig.display.cautionColor.rgb }
+            ) { FAConfig.hud.warningColor.rgb }
         val TERRAIN_AHEAD =
             AlertData(
                 400,
                 soundEvent("terrain_ahead"),
                 LoopType.CONSTANT_VOLUME
-            ) { FAConfig.display.cautionColor.rgb }
+            ) { FAConfig.hud.warningColor.rgb }
         // TODO: fix hack
         val BELOW_GLIDE_SLOPE_WARNING =
             AlertData(
                 500,
                 soundEvent("below_glide_slope_warning"),
                 LoopType.CONSTANT_VOLUME
-            ) { FAConfig.display.warningColor.rgb }
+            ) { FAConfig.hud.dangerColor.rgb }
         val BELOW_GLIDE_SLOPE =
             AlertData(
                 600,
                 soundEvent("below_glide_slope"),
                 LoopType.CONSTANT_VOLUME
-            ) { FAConfig.display.cautionColor.rgb }
+            ) { FAConfig.hud.warningColor.rgb }
         val DONT_SINK =
             AlertData(
                 700,
                 soundEvent("dont_sink"),
                 LoopType.CONSTANT_VOLUME
-            ) { FAConfig.display.cautionColor.rgb }
+            ) { FAConfig.hud.warningColor.rgb }
         val FORCE_AUTOPILOT_OFF =
             AlertData(
                 800,
                 soundEvent("autopilot_off"),
                 LoopType.CONSTANT_VOLUME
-            ) { FAConfig.display.warningColor.rgb }
+            ) { FAConfig.hud.dangerColor.rgb }
         val PLAYER_AUTOPILOT_OFF =
             AlertData(
                 900,
                 soundEvent("autopilot_off"),
                 LoopType.NONE
-            ) { FAConfig.display.warningColor.rgb }
+            ) { FAConfig.hud.dangerColor.rgb }
         val MASTER_WARNING =
             AlertData(
                 1000,
                 soundEvent("master_warning"),
                 LoopType.FADE_OUT
-            ) { FAConfig.display.warningColor.rgb }
+            ) { FAConfig.hud.dangerColor.rgb }
         val CAUTION_TERRAIN =
             AlertData(
                 1100,
                 soundEvent("caution_terrain"),
                 LoopType.NONE
-            ) { FAConfig.display.cautionColor.rgb }
+            ) { FAConfig.hud.warningColor.rgb }
         val THRUST_LOCKED =
             AlertData(
                 1300,
                 soundEvent("thrust_locked"),
                 LoopType.CONSTANT_VOLUME
-            ) { FAConfig.display.cautionColor.rgb }
+            ) { FAConfig.hud.warningColor.rgb }
         val MASTER_CAUTION =
             AlertData(
                 1400,
                 soundEvent("master_caution"),
                 LoopType.NONE
-            ) { FAConfig.display.cautionColor.rgb }
+            ) { FAConfig.hud.warningColor.rgb }
     }
 
     enum class LoopType {

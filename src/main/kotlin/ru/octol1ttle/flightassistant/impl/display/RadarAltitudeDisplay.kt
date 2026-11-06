@@ -15,7 +15,7 @@ import kotlin.math.roundToInt
 
 class RadarAltitudeDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
-        return FAConfig.display.showRadarAltitude
+        return FAConfig.hud.showHeightAboveGround.allowed()
     }
 
     override fun render(guiGraphics: GuiGraphics) {

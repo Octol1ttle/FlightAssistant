@@ -14,7 +14,7 @@ class ElytraDurabilityCriticalAlert(computers: ComputerBus) : Alert(computers), 
     override val data: AlertData = AlertData.MASTER_WARNING
 
     override fun shouldActivate(): Boolean {
-        if (!FAConfig.safety.elytraDurabilityAlertMode.warning()) {
+        if (!FAConfig.alerts.elytraDurabilityAlertSeverity.danger()) {
             return false
         }
         val remainingFlightTime: Int = computers.elytra.getRemainingFlightTime(computers.data.player) ?: return false

@@ -4,14 +4,12 @@ import com.google.gson.GsonBuilder
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder
 import dev.isxander.yacl3.platform.YACLPlatform
-import net.minecraft.client.player.LocalPlayer
 import ru.octol1ttle.flightassistant.FlightAssistant.MOD_ID
 import ru.octol1ttle.flightassistant.FlightAssistant.id
-import ru.octol1ttle.flightassistant.FlightAssistant.mc
-import ru.octol1ttle.flightassistant.config.options.DisplayOptions
-import ru.octol1ttle.flightassistant.config.options.DisplayOptionsStorage
+import ru.octol1ttle.flightassistant.config.options.AlertOptions
 import ru.octol1ttle.flightassistant.config.options.GlobalOptions
-import ru.octol1ttle.flightassistant.config.options.SafetyOptions
+import ru.octol1ttle.flightassistant.config.options.HudOptions
+import ru.octol1ttle.flightassistant.config.options.ProtectionOptions
 
 object FAConfig {
     private val GLOBAL_HANDLER: ConfigClassHandler<GlobalOptions> =
@@ -25,25 +23,34 @@ object FAConfig {
                     .build()
             }
             .build()
-
-    private val DISPLAY_HANDLER: ConfigClassHandler<DisplayOptionsStorage> =
-        ConfigClassHandler.createBuilder(DisplayOptionsStorage::class.java)
-            .id(id("displays"))
+    private val HUD_HANDLER: ConfigClassHandler<HudOptions> =
+        ConfigClassHandler.createBuilder(HudOptions::class.java)
+            .id(id("hud"))
             .serializer {
                 GsonConfigSerializerBuilder.create(it)
-                    .setPath(YACLPlatform.getConfigDir().resolve("$MOD_ID/displays.json5"))
+                    .setPath(YACLPlatform.getConfigDir().resolve("$MOD_ID/hud.json5"))
                     .appendGsonBuilder(GsonBuilder::setPrettyPrinting) // not needed, pretty print by default
                     .setJson5(true)
                     .build()
             }
             .build()
-
-    private val SAFETY_HANDLER: ConfigClassHandler<SafetyOptions> =
-        ConfigClassHandler.createBuilder(SafetyOptions::class.java)
-            .id(id("safety"))
+    private val ALERTS_HANDLER: ConfigClassHandler<AlertOptions> =
+        ConfigClassHandler.createBuilder(AlertOptions::class.java)
+            .id(id("alerts"))
             .serializer {
                 GsonConfigSerializerBuilder.create(it)
-                    .setPath(YACLPlatform.getConfigDir().resolve("$MOD_ID/safety.json5"))
+                    .setPath(YACLPlatform.getConfigDir().resolve("$MOD_ID/alerts.json5"))
+                    .appendGsonBuilder(GsonBuilder::setPrettyPrinting) // not needed, pretty print by default
+                    .setJson5(true)
+                    .build()
+            }
+            .build()
+    private val PROTECTIONS_HANDLER: ConfigClassHandler<ProtectionOptions> =
+        ConfigClassHandler.createBuilder(ProtectionOptions::class.java)
+            .id(id("protections"))
+            .serializer {
+                GsonConfigSerializerBuilder.create(it)
+                    .setPath(YACLPlatform.getConfigDir().resolve("$MOD_ID/protections.json5"))
                     .appendGsonBuilder(GsonBuilder::setPrettyPrinting) // not needed, pretty print by default
                     .setJson5(true)
                     .build()
@@ -52,53 +59,27 @@ object FAConfig {
 
     internal val global: GlobalOptions
         get() = GLOBAL_HANDLER.instance()
-    internal val hudEnabled: Boolean
-        get() = global.modEnabled && global.hudEnabled
-    private val safetyEnabled: Boolean
-        get() = global.modEnabled && global.safetyEnabled
-    internal val displaysStorage: DisplayOptionsStorage
-        get() = DISPLAY_HANDLER.instance()
+    internal val hud: HudOptions
+        get() = HUD_HANDLER.instance()
+    internal val alerts: AlertOptions
+        get() = ALERTS_HANDLER.instance()
 
-    val display: DisplayOptions
-        get() {
-            val player: LocalPlayer = checkNotNull(mc.player)
-
-            if (player.isFallFlying) {
-                return displaysStorage.flying
-            }
-
-            if (!player.abilities.mayfly) {
-//? if >=1.21.2 {
-                /*for (slot: net.minecraft.world.entity.EquipmentSlot in net.minecraft.world.entity.EquipmentSlot.VALUES) {
-                    if (player.getItemBySlot(slot).has(net.minecraft.core.component.DataComponents.GLIDER)) {
-                        return displaysStorage.notFlyingHasElytra
-                    }
-                }
-*///?} else {
-                if (player.allSlots.any { stack -> stack.item is net.minecraft.world.item.ElytraItem }) {
-                    return displaysStorage.notFlyingHasElytra
-                }
-//?}
-            }
-
-            return displaysStorage.notFlyingNoElytra
-        }
-
-    val safety: SafetyOptions
-        get() = if (safetyEnabled) SAFETY_HANDLER.instance() else SafetyOptions.DISABLED
-
-    internal val safetyConfig
-        get() = SAFETY_HANDLER.instance()
+    internal val protectionsConfig: ProtectionOptions
+        get() = PROTECTIONS_HANDLER.instance()
+    internal val protections: ProtectionOptions
+        get() = if (global.flightProtections) PROTECTIONS_HANDLER.instance() else ProtectionOptions.DISABLED
 
     fun load() {
         GLOBAL_HANDLER.load()
-        DISPLAY_HANDLER.load()
-        SAFETY_HANDLER.load()
+        HUD_HANDLER.load()
+        ALERTS_HANDLER.load()
+        PROTECTIONS_HANDLER.load()
     }
 
     fun save() {
         GLOBAL_HANDLER.save()
-        DISPLAY_HANDLER.save()
-        SAFETY_HANDLER.save()
+        HUD_HANDLER.save()
+        ALERTS_HANDLER.save()
+        PROTECTIONS_HANDLER.save()
     }
 }

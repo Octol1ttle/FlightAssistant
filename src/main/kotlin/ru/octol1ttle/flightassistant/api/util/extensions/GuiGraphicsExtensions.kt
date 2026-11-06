@@ -37,22 +37,22 @@ val whiteColor: Int = ChatFormatting.WHITE.color!! or (255 shl 24)
 val grayColor: Int = ChatFormatting.GRAY.color!! or (255 shl 24)
 
 val primaryColor: Int
-    get() = FAConfig.display.primaryColor.rgb
+    get() = FAConfig.hud.mainColor.rgb
 
 val secondaryColor: Int
-    get() = FAConfig.display.secondaryColor.rgb
+    get() = FAConfig.hud.secondaryColor.rgb
 
 val primaryAdvisoryColor: Int
-    get() = FAConfig.display.primaryAdvisoryColor.rgb
+    get() = FAConfig.hud.primaryAdvisoryColor.rgb
 
 val secondaryAdvisoryColor: Int
-    get() = FAConfig.display.secondaryAdvisoryColor.rgb
+    get() = FAConfig.hud.secondaryAdvisoryColor.rgb
 
 val cautionColor: Int
-    get() = FAConfig.display.cautionColor.rgb
+    get() = FAConfig.hud.warningColor.rgb
 
 val warningColor: Int
-    get() = FAConfig.display.warningColor.rgb
+    get() = FAConfig.hud.dangerColor.rgb
 
 /**
  * Translates this graphics' pose and then scales it.

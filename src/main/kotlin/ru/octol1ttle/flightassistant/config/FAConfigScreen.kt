@@ -1,472 +1,551 @@
 package ru.octol1ttle.flightassistant.config
 
-import dev.isxander.yacl3.api.ConfigCategory
+import dev.isxander.yacl3.api.OptionDescription
 import dev.isxander.yacl3.dsl.*
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.FlightAssistant
-import ru.octol1ttle.flightassistant.config.options.DisplayOptions
+import ru.octol1ttle.flightassistant.config.options.AlertOptions
 import ru.octol1ttle.flightassistant.config.options.GlobalOptions
-import ru.octol1ttle.flightassistant.config.options.SafetyOptions
+import ru.octol1ttle.flightassistant.config.options.HudOptions
+import ru.octol1ttle.flightassistant.config.options.ProtectionOptions
 
 object FAConfigScreen {
-    @Suppress("unused", "UnusedVariable")
     fun generate(parent: Screen?): Screen {
         return YetAnotherConfigLib(FlightAssistant.MOD_ID) {
-            val global: ConfigCategory by registerGlobalOptions(
-                Component.translatable("config.flightassistant.category.global"),
+            registerGeneralOptions(
+                Component.translatable("config.flightassistant.general"),
                 FAConfig.global,
                 GlobalOptions()
             )
 
-            with(FAConfig.displaysStorage) {
-                val notFlyingNoElytra: ConfigCategory by registerDisplayOptions(
-                    Component.translatable("config.flightassistant.category.no_elytra"),
-                    notFlyingNoElytra,
-                    DisplayOptions().setDisabled()
-                )
-                val notFlyingHasElytra: ConfigCategory by registerDisplayOptions(
-                    Component.translatable("config.flightassistant.category.has_elytra"),
-                    notFlyingHasElytra,
-                    DisplayOptions().setMinimal()
-                )
-                val flying: ConfigCategory by registerDisplayOptions(
-                    Component.translatable("config.flightassistant.category.flying"),
-                    flying,
-                    DisplayOptions()
-                )
-            }
+            registerHudOptions(
+                Component.translatable("config.flightassistant.hud"),
+                FAConfig.hud,
+                HudOptions()
+            )
 
-            val safety: ConfigCategory by registerSafetyOptions(
-                Component.translatable("config.flightassistant.category.safety"),
-                FAConfig.safetyConfig,
-                SafetyOptions()
+            registerAlertOptions(
+                Component.translatable("config.flightassistant.alerts"),
+                FAConfig.alerts,
+                AlertOptions()
+            )
+
+            registerProtectionOptions(
+                Component.translatable("config.flightassistant.protections"),
+                FAConfig.protectionsConfig,
+                ProtectionOptions()
             )
 
             save { FAConfig.save() }
         }.generateScreen(parent)
     }
 
-    private fun RootDsl.registerGlobalOptions(title: Component, current: GlobalOptions, defaults: GlobalOptions) =
-        categories.registering {
+    private fun RootDsl.registerGeneralOptions(title: Component, current: GlobalOptions, defaults: GlobalOptions) =
+        categories.register("general") {
             name(title)
 
             rootOptions.register("mod_enabled") {
-                setGlobalName()
+                makeGeneralOption()
                 binding(current::modEnabled, defaults.modEnabled)
                 controller(tickBox())
             }
 
-            rootOptions.register("hud_enabled") {
-                setGlobalName()
-                binding(current::hudEnabled, defaults.hudEnabled)
+            rootOptions.register("show_hud") {
+                makeGeneralOption()
+                binding(current::showHud, defaults.showHud)
                 controller(tickBox())
             }
 
-            rootOptions.register("safety_enabled") {
-                setGlobalName()
-                binding(current::safetyEnabled, defaults.safetyEnabled)
+            rootOptions.register("alerts") {
+                makeGeneralOption()
+                binding(current::alerts, defaults.alerts)
+                controller(enumSwitch())
+            }
+
+            rootOptions.register("allow_automations") {
+                makeGeneralOption()
+                binding(current::allowAutomations, defaults.allowAutomations)
                 controller(tickBox())
             }
 
-            rootOptions.register("automations_allowed_in_overlays") {
-                setGlobalName()
-                binding(current::automationsAllowedInOverlays, defaults.automationsAllowedInOverlays)
+            rootOptions.register("allow_automations_in_gui") {
+                makeGeneralOption()
+                binding(current::allowAutomationsInGUI, defaults.allowAutomationsInGUI)
                 controller(tickBox())
+                available(current::allowAutomations)
+            }
+
+            rootOptions.register("flight_protections") {
+                makeGeneralOption()
+                binding(current::flightProtections, defaults.flightProtections)
+                controller(tickBox())
+                available(current::allowAutomations)
             }
 
             rootOptions.register("autopilot_resistance_threshold") {
-                setGlobalName()
+                makeGeneralOption()
                 binding(current::autopilotResistanceThreshold, defaults.autopilotResistanceThreshold)
                 controller(slider(0.1f..2.0f, 0.05f))
+                available(current::allowAutomations)
             }
         }
 
-    private fun RootDsl.registerDisplayOptions(
-        title: Component,
-        current: DisplayOptions,
-        defaults: DisplayOptions
-    ): RegisterableActionDelegateProvider<CategoryDsl, ConfigCategory> {
-        return categories.registering {
+    private fun RootDsl.registerHudOptions(title: Component, current: HudOptions, defaults: HudOptions) =
+        categories.register("hud") {
             name(title)
 
-            val percentageFormatter: (Float) -> Component = { value: Float -> Component.literal("${(value * 100).toInt()}%") }
-            val degreeFormatter: (Int) -> Component = { value: Int -> Component.literal("$value°") }
+            groups.register("frame") {
+                makeHudGroup()
 
-            rootOptions.registerLabel("frame", Component.translatable("config.flightassistant.option.display.frame"))
-            rootOptions.register("frame.width") {
-                setDisplayName()
-                binding(current::frameWidth, defaults.frameWidth)
-                controller(slider(0.2f..0.8f, 0.05f, percentageFormatter))
-            }
-            rootOptions.register("frame.height") {
-                setDisplayName()
-                binding(current::frameHeight, defaults.frameHeight)
-                controller(slider(0.2f..0.8f, 0.05f, percentageFormatter))
-            }
+                val percentageFormatter: (Float) -> Component =
+                    { value: Float -> Component.literal("${(value * 100).toInt()}%") }
 
-            rootOptions.registerLabel("colors", Component.translatable("config.flightassistant.option.display.colors"))
-            rootOptions.register("colors.primary") {
-                setDisplayName()
-                binding(current::primaryColor, defaults.primaryColor)
-                controller(colorPicker())
-            }
-            rootOptions.register("colors.secondary") {
-                setDisplayName()
-                binding(current::secondaryColor, defaults.secondaryColor)
-                controller(colorPicker())
-            }
-            rootOptions.register("colors.advisory.primary") {
-                setDisplayName()
-                binding(current::primaryAdvisoryColor, defaults.primaryAdvisoryColor)
-                controller(colorPicker())
-            }
-            rootOptions.register("colors.advisory.secondary") {
-                setDisplayName()
-                binding(current::secondaryAdvisoryColor, defaults.secondaryAdvisoryColor)
-                controller(colorPicker())
-            }
-            rootOptions.register("colors.caution") {
-                setDisplayName()
-                binding(current::cautionColor, defaults.cautionColor)
-                controller(colorPicker())
-            }
-            rootOptions.register("colors.warning") {
-                setDisplayName()
-                binding(current::warningColor, defaults.warningColor)
-                controller(colorPicker())
+                options.register("frame.width") {
+                    makeHudOption()
+                    binding(current::frameWidth, defaults.frameWidth)
+                    controller(slider(0.2f..0.8f, 0.05f, percentageFormatter))
+                }
+                options.register("frame.height") {
+                    makeHudOption()
+                    binding(current::frameHeight, defaults.frameHeight)
+                    controller(slider(0.2f..0.8f, 0.05f, percentageFormatter))
+                }
+                options.register("frame.allow_drawing_outside_frame") {
+                    makeHudOption()
+                    binding(current::allowDrawingOutsideFrame, defaults.allowDrawingOutsideFrame)
+                    controller(tickBox())
+                }
             }
 
-            rootOptions.registerLabel("attitude", Component.translatable("config.flightassistant.option.display.attitude"))
-            rootOptions.register("attitude.show") {
-                setDisplayName()
-                binding(current::showAttitude, defaults.showAttitude)
-                controller(enumSwitch(DisplayOptions.AttitudeDisplayMode::class.java))
-            }
-            rootOptions.register("attitude.degree_step") {
-                setDisplayName()
-                binding(current::attitudeDegreeStep, defaults.attitudeDegreeStep)
-                controller(slider(5..45, 5, degreeFormatter))
-            }
-            rootOptions.register("attitude.pitch_outside_frame") {
-                setDisplayName()
-                binding(current::drawPitchOutsideFrame, defaults.drawPitchOutsideFrame)
-                controller(tickBox())
+            groups.register("colors") {
+                makeHudGroup()
+
+                options.register("colors.main") {
+                    makeHudOption()
+                    binding(current::mainColor, defaults.mainColor)
+                    controller(colorPicker())
+                }
+                options.register("colors.secondary") {
+                    makeHudOption()
+                    binding(current::secondaryColor, defaults.secondaryColor)
+                    controller(colorPicker())
+                }
+                options.register("colors.advisory.primary") {
+                    makeHudOption()
+                    binding(current::primaryAdvisoryColor, defaults.primaryAdvisoryColor)
+                    controller(colorPicker())
+                }
+                options.register("colors.advisory.secondary") {
+                    makeHudOption()
+                    binding(current::secondaryAdvisoryColor, defaults.secondaryAdvisoryColor)
+                    controller(colorPicker())
+                }
+                options.register("colors.warning") {
+                    makeHudOption()
+                    binding(current::warningColor, defaults.warningColor)
+                    controller(colorPicker())
+                }
+                options.register("colors.danger") {
+                    makeHudOption()
+                    binding(current::dangerColor, defaults.dangerColor)
+                    controller(colorPicker())
+                }
             }
 
-            rootOptions.registerLabel("heading", Component.translatable("config.flightassistant.option.display.heading"))
-            rootOptions.register("heading.show_reading") {
-                setDisplayName()
-                binding(current::showHeadingReading, defaults.showHeadingReading)
-                controller(tickBox())
-            }
-            rootOptions.register("heading.show_scale") {
-                setDisplayName()
-                binding(current::showHeadingScale, defaults.showHeadingScale)
-                controller(tickBox())
+            groups.register("attitude") {
+                makeHudGroup()
+
+                options.register("attitude.show") {
+                    makeHudOption()
+                    binding(current::showAttitude, defaults.showAttitude)
+                    controller(enumSwitch())
+                }
+                options.register("attitude.elements") {
+                    makeHudOption()
+                    binding(current::attitudeElements, defaults.attitudeElements)
+                    controller(enumSwitch())
+                }
+                options.register("attitude.ladder_degree_interval") {
+                    makeHudOption()
+                    val degreeFormatter: (Int) -> Component = { value: Int -> Component.literal("$value°") }
+                    binding(current::attitudeLadderDegreeInterval, defaults.attitudeLadderDegreeInterval)
+                    controller(slider(5..45, 5, degreeFormatter))
+                    available(FAConfig.global.showHud && current.attitudeElements == HudOptions.AttitudeElements.HORIZON_AND_LADDER)
+                }
             }
 
-            rootOptions.registerLabel("speed", Component.translatable("config.flightassistant.option.display.speed"))
-            rootOptions.register("speed.show_reading") {
-                setDisplayName()
-                binding(current::showSpeedReading, defaults.showSpeedReading)
-                controller(tickBox())
-            }
-            rootOptions.register("speed.show_scale") {
-                setDisplayName()
-                binding(current::showSpeedScale, defaults.showSpeedScale)
-                controller(tickBox())
-            }
-            rootOptions.register("speed.show_ground") {
-                setDisplayName()
-                binding(current::showGroundSpeed, defaults.showGroundSpeed)
-                controller(tickBox())
-            }
-            rootOptions.register("speed.show_vertical") {
-                setDisplayName()
-                binding(current::showVerticalSpeed, defaults.showVerticalSpeed)
-                controller(tickBox())
+            groups.register("speed") {
+                makeHudGroup()
+
+                options.register("speed.show_reading") {
+                    makeHudOption()
+                    binding(current::showSpeedReading, defaults.showSpeedReading)
+                    controller(enumSwitch())
+                }
+                options.register("speed.show_scale") {
+                    makeHudOption()
+                    binding(current::showSpeedScale, defaults.showSpeedScale)
+                    controller(enumSwitch())
+                }
+                options.register("speed.show_ground_speed") {
+                    makeHudOption()
+                    binding(current::showGroundSpeed, defaults.showGroundSpeed)
+                    controller(enumSwitch())
+                }
+                options.register("speed.show_vertical_speed") {
+                    makeHudOption()
+                    binding(current::showVerticalSpeed, defaults.showVerticalSpeed)
+                    controller(enumSwitch())
+                }
             }
 
-            rootOptions.registerLabel("altitude", Component.translatable("config.flightassistant.option.display.altitude"))
-            rootOptions.register("altitude.show_reading") {
-                setDisplayName()
-                binding(current::showAltitudeReading, defaults.showAltitudeReading)
-                controller(tickBox())
-            }
-            rootOptions.register("altitude.show_scale") {
-                setDisplayName()
-                binding(current::showAltitudeScale, defaults.showAltitudeScale)
-                controller(tickBox())
-            }
-            rootOptions.register("altitude.show_radar") {
-                setDisplayName()
-                binding(current::showRadarAltitude, defaults.showRadarAltitude)
-                controller(tickBox())
+            groups.register("altitude") {
+                makeHudGroup()
+
+                options.register("altitude.show_reading") {
+                    makeHudOption()
+                    binding(current::showAltitudeReading, defaults.showAltitudeReading)
+                    controller(enumSwitch())
+                }
+                options.register("altitude.show_scale") {
+                    makeHudOption()
+                    binding(current::showAltitudeScale, defaults.showAltitudeScale)
+                    controller(enumSwitch())
+                }
+                options.register("altitude.show_height_above_ground") {
+                    makeHudOption()
+                    binding(current::showHeightAboveGround, defaults.showHeightAboveGround)
+                    controller(enumSwitch())
+                }
             }
 
-            rootOptions.registerLabel(
-                "flight_path_vector",
-                Component.translatable("config.flightassistant.option.display.flight_path_vector")
-            )
-            rootOptions.register("flight_path_vector.show") {
-                setDisplayName()
-                binding(current::showFlightPathVector, defaults.showFlightPathVector)
-                controller(tickBox())
-            }
-            rootOptions.register("flight_path_vector.size") {
-                setDisplayName()
-                binding(current::flightPathVectorSize, defaults.flightPathVectorSize)
-                controller(slider(0.5f..2.0f, 0.05f, percentageFormatter))
+            groups.register("heading") {
+                makeHudGroup()
+
+                options.register("heading.show_reading") {
+                    makeHudOption()
+                    binding(current::showHeadingReading, defaults.showHeadingReading)
+                    controller(enumSwitch())
+                }
+                options.register("heading.show_scale") {
+                    makeHudOption()
+                    binding(current::showHeadingScale, defaults.showHeadingScale)
+                    controller(enumSwitch())
+                }
             }
 
-            rootOptions.registerLabel(
-                "elytra_durability",
-                Component.translatable("config.flightassistant.option.display.elytra_durability")
-            )
-            rootOptions.register("elytra_durability.show") {
-                setDisplayName()
-                binding(current::showElytraDurability, defaults.showElytraDurability)
-                controller(tickBox())
-            }
-            rootOptions.register("elytra_durability.units") {
-                setDisplayName()
-                binding(current::elytraDurabilityUnits, defaults.elytraDurabilityUnits)
-                controller(enumSwitch(DisplayOptions.DurabilityUnits::class.java))
+            groups.register("elytra_durability") {
+                makeHudGroup()
+
+                options.register("elytra_durability.show") {
+                    makeHudOption()
+                    binding(current::showElytraDurability, defaults.showElytraDurability)
+                    controller(enumSwitch())
+                }
+                options.register("elytra_durability.units") {
+                    makeHudOption()
+                    binding(current::elytraDurabilityUnits, defaults.elytraDurabilityUnits)
+                    controller(enumSwitch())
+                }
             }
 
-            rootOptions.registerLabel("misc", Component.translatable("config.flightassistant.option.display.misc"))
-            rootOptions.register("misc.coordinates") {
-                setDisplayName()
-                binding(current::showCoordinates, defaults.showCoordinates)
-                controller(tickBox())
+            groups.register("automation") {
+                makeHudGroup()
+
+                options.register("automation.show_automation_modes") {
+                    makeHudOption()
+                    binding(current::showAutomationModes, defaults.showAutomationModes)
+                    controller(enumSwitch())
+                }
+                options.register("automation.show_flight_directors") {
+                    makeHudOption()
+                    binding(current::showFlightDirectors, defaults.showFlightDirectors)
+                    controller(enumSwitch())
+                }
+                options.register("automation.show_course_deviation") {
+                    makeHudOption()
+                    binding(current::showCourseDeviation, defaults.showCourseDeviation)
+                    controller(enumSwitch())
+                }
             }
-            rootOptions.register("misc.alerts") {
-                setDisplayName()
-                binding(current::showAlerts, defaults.showAlerts)
-                controller(tickBox())
-            }
-            rootOptions.register("misc.status_messages") {
-                setDisplayName()
-                binding(current::showStatusMessages, defaults.showStatusMessages)
-                controller(tickBox())
-            }
-            rootOptions.register("misc.automation_modes") {
-                setDisplayName()
-                binding(current::showAutomationModes, defaults.showAutomationModes)
-                controller(tickBox())
-            }
-            rootOptions.register("misc.flight_directors") {
-                setDisplayName()
-                binding(current::showFlightDirectors, defaults.showFlightDirectors)
-                controller(tickBox())
-            }
-            rootOptions.register("misc.course_deviation") {
-                setDisplayName()
-                binding(current::showCourseDeviation, defaults.showCourseDeviation)
-                controller(tickBox())
+
+            groups.register("misc") {
+                makeHudGroup()
+
+                options.register("misc.show_flight_path_vector") {
+                    makeHudOption()
+                    binding(current::showFlightPathVector, defaults.showFlightPathVector)
+                    controller(tickBox())
+                }
+                options.register("misc.show_coordinates") {
+                    makeHudOption()
+                    binding(current::showCoordinates, defaults.showCoordinates)
+                    controller(enumSwitch())
+                }
+                options.register("misc.show_alerts") {
+                    makeHudOption()
+                    binding(current::showAlerts, defaults.showAlerts)
+                    controller(enumSwitch())
+                    available(FAConfig.global.showHud && FAConfig.global.alerts.hud())
+                }
+                options.register("misc.show_status_messages") {
+                    makeHudOption()
+                    binding(current::showStatusMessages, defaults.showStatusMessages)
+                    controller(enumSwitch())
+                }
             }
         }
-    }
 
-    private fun RootDsl.registerSafetyOptions(
-        title: Component,
-        current: SafetyOptions,
-        defaults: SafetyOptions
-    ): RegisterableActionDelegateProvider<CategoryDsl, ConfigCategory> {
-        return categories.registering {
+    private fun RootDsl.registerAlertOptions(title: Component, current: AlertOptions, defaults: AlertOptions) =
+        categories.register("alerts") {
             name(title)
 
-            val percentageFormatter: (Float) -> Component = { value: Float -> Component.literal("${(value * 100).toInt()}%") }
+            groups.register("sound") {
+                makeAlertGroup()
 
-            rootOptions.register("alert_volume") {
-                setSafetyName()
-                binding(current::alertVolume, defaults.alertVolume)
-                controller(slider(0.0f..1.0f, 0.01f, percentageFormatter))
-            }
-
-            rootOptions.register("consider_invulnerability") {
-                setSafetyName()
-                binding(current::considerInvulnerability, defaults.considerInvulnerability)
-                controller(tickBox())
-            }
-
-            rootOptions.registerLabel(
-                "elytra",
-                Component.translatable("config.flightassistant.option.safety.elytra")
-            )
-            rootOptions.register("elytra.durability_alert_mode") {
-                setSafetyName()
-                binding(current::elytraDurabilityAlertMode, defaults.elytraDurabilityAlertMode)
-                controller(enumSwitch(SafetyOptions.AlertMode::class.java))
-            }
-            rootOptions.register("elytra.auto_open") {
-                setSafetyName()
-                binding(current::elytraAutoOpen, defaults.elytraAutoOpen)
-                controller(tickBox())
-            }
-            rootOptions.register("elytra.close_underwater") {
-                setSafetyName()
-                binding(current::elytraCloseUnderwater, defaults.elytraCloseUnderwater)
-                controller(tickBox())
+                options.register("sound.volume") {
+                    makeAlertOption()
+                    binding(current::soundVolume, defaults.soundVolume)
+                    val percentageFormatter: (Float) -> Component =
+                        { value: Float -> Component.literal("${(value * 100).toInt()}%") }
+                    controller(slider(0.0f..1.0f, 0.01f, percentageFormatter))
+                    available(FAConfig.global.alerts.sound())
+                }
+                options.register("sound.allow_looping") {
+                    makeAlertOption()
+                    binding(current::allowSoundLooping, defaults.allowSoundLooping)
+                    controller(tickBox())
+                    available(FAConfig.global.alerts.sound())
+                }
             }
 
-            rootOptions.registerLabel(
-                "stall",
-                Component.translatable("config.flightassistant.option.safety.stall")
-            )
-            rootOptions.register("stall.alert_mode") {
-                setSafetyName()
-                binding(current::stallAlertMode, defaults.stallAlertMode)
-                controller(enumSwitch(SafetyOptions.AlertMode::class.java))
-            }
-            rootOptions.register("stall.alert_method") {
-                setSafetyName()
-                binding(current::stallAlertMethod, defaults.stallAlertMethod)
-                controller(enumSwitch(SafetyOptions.AlertMethod::class.java))
-            }
-            rootOptions.register("stall.limit_pitch") {
-                setSafetyName()
-                binding(current::stallLimitPitch, defaults.stallLimitPitch)
-                controller(tickBox())
-            }
-            rootOptions.register("stall.auto_thrust") {
-                setSafetyName()
-                binding(current::stallAutoThrust, defaults.stallAutoThrust)
-                controller(tickBox())
+            groups.register("elytra_durability") {
+                makeAlertGroup()
+
+                options.register("elytra_durability.option") {
+                    makeAlertOption()
+                    binding(current::elytraDurabilityAlertSeverity, defaults.elytraDurabilityAlertSeverity)
+                    controller(enumSwitch())
+                }
             }
 
-            rootOptions.registerLabel(
-                "void",
-                Component.translatable("config.flightassistant.option.safety.void")
-            )
-            rootOptions.register("void.alert_mode") {
-                setSafetyName()
-                binding(current::voidAlertMode, defaults.voidAlertMode)
-                controller(enumSwitch(SafetyOptions.AlertMode::class.java))
-            }
-            rootOptions.register("void.limit_pitch") {
-                setSafetyName()
-                binding(current::voidLimitPitch, defaults.voidLimitPitch)
-                controller(tickBox())
-            }
-            rootOptions.register("void.auto_thrust") {
-                setSafetyName()
-                binding(current::voidAutoThrust, defaults.voidAutoThrust)
-                controller(tickBox())
-            }
-            rootOptions.register("void.auto_pitch") {
-                setSafetyName()
-                binding(current::voidAutoPitch, defaults.voidAutoPitch)
-                controller(tickBox())
+            groups.register("stall") {
+                makeAlertGroup()
+
+                options.register("stall.option") {
+                    makeAlertOption()
+                    binding(current::stallAlertSeverity, defaults.stallAlertSeverity)
+                    controller(enumSwitch())
+                }
             }
 
-            rootOptions.registerLabel(
-                "gpws",
-                Component.translatable("config.flightassistant.option.safety.gpws")
-            )
-            rootOptions.register("gpws.sink_rate.alert_mode") {
-                setSafetyName()
-                binding(current::sinkRateAlertMode, defaults.sinkRateAlertMode)
-                controller(enumSwitch(SafetyOptions.AlertMode::class.java))
-            }
-            rootOptions.register("gpws.sink_rate.alert_method") {
-                setSafetyName()
-                binding(current::sinkRateAlertMethod, defaults.sinkRateAlertMethod)
-                controller(enumSwitch(SafetyOptions.AlertMethod::class.java))
-            }
-            rootOptions.register("gpws.sink_rate.limit_pitch") {
-                setSafetyName()
-                binding(current::sinkRateLimitPitch, defaults.sinkRateLimitPitch)
-                controller(tickBox())
-            }
-            rootOptions.register("gpws.sink_rate.auto_thrust") {
-                setSafetyName()
-                binding(current::sinkRateAutoThrust, defaults.sinkRateAutoThrust)
-                controller(tickBox())
-            }
-            rootOptions.register("gpws.sink_rate.auto_pitch") {
-                setSafetyName()
-                binding(current::sinkRateAutoPitch, defaults.sinkRateAutoPitch)
-                controller(tickBox())
-            }
-            rootOptions.register("gpws.obstacle.alert_mode") {
-                setSafetyName()
-                binding(current::obstacleAlertMode, defaults.obstacleAlertMode)
-                controller(enumSwitch(SafetyOptions.AlertMode::class.java))
-            }
-            rootOptions.register("gpws.obstacle.alert_method") {
-                setSafetyName()
-                binding(current::obstacleAlertMethod, defaults.obstacleAlertMethod)
-                controller(enumSwitch(SafetyOptions.AlertMethod::class.java))
-            }
-            rootOptions.register("gpws.obstacle.limit_pitch") {
-                setSafetyName()
-                binding(current::obstacleLimitPitch, defaults.obstacleLimitPitch)
-                controller(tickBox())
-            }
-            rootOptions.register("gpws.obstacle.auto_thrust") {
-                setSafetyName()
-                binding(current::obstacleAutoThrust, defaults.obstacleAutoThrust)
-                controller(tickBox())
-            }
-            rootOptions.register("gpws.obstacle.auto_pitch") {
-                setSafetyName()
-                binding(current::obstacleAutoPitch, defaults.obstacleAutoPitch)
-                controller(tickBox())
-            }
-            rootOptions.register("gpws.altitude_loss_with_toga.enabled") {
-                setSafetyName()
-                binding(current::altitudeLossAlert, defaults.altitudeLossAlert)
-                controller(tickBox())
-            }
-            rootOptions.register("gpws.altitude_loss_with_toga.alert_method") {
-                setSafetyName()
-                binding(current::altitudeLossAlertMethod, defaults.altitudeLossAlertMethod)
-                controller(enumSwitch(SafetyOptions.AlertMethod::class.java))
-            }
-            rootOptions.register("gpws.below_glide_slope.alert_mode") {
-                setSafetyName()
-                binding(current::belowGlideSlopeAlertMode, defaults.belowGlideSlopeAlertMode)
-                controller(enumSwitch(SafetyOptions.AlertMode::class.java))
-            }
-            rootOptions.register("gpws.below_glide_slope.alert_method") {
-                setSafetyName()
-                binding(current::belowGlideSlopeAlertMethod, defaults.belowGlideSlopeAlertMethod)
-                controller(enumSwitch(SafetyOptions.AlertMethod::class.java))
+            groups.register("void_damage") {
+                makeAlertGroup()
+
+                options.register("void_damage.option") {
+                    makeAlertOption()
+                    binding(current::voidDamageAlertSeverity, defaults.voidDamageAlertSeverity)
+                    controller(enumSwitch())
+                }
             }
 
-            rootOptions.registerLabel(
-                "firework",
-                Component.translatable("config.flightassistant.option.safety.firework")
-            )
-            rootOptions.register("firework.explosive_alert") {
-                setSafetyName()
-                binding(current::fireworkExplosiveAlert, defaults.fireworkExplosiveAlert)
-                controller(tickBox())
+            groups.register("ground_proximity") {
+                makeAlertGroup()
+
+                options.register("ground_proximity.sink_rate") {
+                    makeAlertOption()
+                    binding(current::sinkRateAlertSeverity, defaults.sinkRateAlertSeverity)
+                    controller(enumSwitch())
+                }
+                options.register("ground_proximity.obstacle") {
+                    makeAlertOption()
+                    binding(current::obstacleAlertSeverity, defaults.obstacleAlertSeverity)
+                    controller(enumSwitch())
+                }
+                options.register("ground_proximity.below_glide_slope") {
+                    makeAlertOption()
+                    binding(current::belowGlideSlopeAlertSeverity, defaults.belowGlideSlopeAlertSeverity)
+                    controller(enumSwitch())
+                }
+                options.register("ground_proximity.altitude_loss") {
+                    makeAlertOption()
+                    binding(current::altitudeLoss, defaults.altitudeLoss)
+                    controller(tickBox())
+                }
             }
-            rootOptions.register("firework.lock_explosive") {
-                setSafetyName()
-                binding(current::fireworkLockExplosive, defaults.fireworkLockExplosive)
-                controller(tickBox())
+
+            groups.register("fireworks") {
+                makeAlertGroup()
+
+                options.register("fireworks.explosive") {
+                    makeAlertOption()
+                    binding(current::fireworkExplosive, defaults.fireworkExplosive)
+                    controller(tickBox())
+                }
+                options.register("fireworks.response") {
+                    makeAlertOption()
+                    binding(current::fireworkResponseAlertSeverity, defaults.fireworkResponseAlertSeverity)
+                    controller(enumSwitch())
+                }
             }
-            rootOptions.register("firework.lock_obstacles") {
-                setSafetyName()
-                binding(current::fireworkLockObstacles, defaults.fireworkLockObstacles)
-                controller(tickBox())
+
+            groups.register("chunk_loading") {
+                makeAlertGroup()
+
+                options.register("chunk_loading.option") {
+                    makeAlertOption()
+                    binding(current::chunkLoadingAlertSeverity, defaults.chunkLoadingAlertSeverity)
+                    controller(enumSwitch())
+                }
             }
         }
+
+    private fun RootDsl.registerProtectionOptions(
+        title: Component,
+        current: ProtectionOptions,
+        defaults: ProtectionOptions
+    ) =
+        categories.register("protections") {
+            name(title)
+
+            groups.register("general") {
+                makeProtectionGroup()
+
+                options.register("general.consider_invulnerability") {
+                    makeProtectionOption()
+                    binding(current::considerInvulnerability, defaults.considerInvulnerability)
+                    controller(tickBox())
+                }
+            }
+
+            groups.register("elytra") {
+                makeProtectionGroup()
+
+                options.register("elytra.auto_open") {
+                    makeProtectionOption()
+                    binding(current::elytraAutoOpen, defaults.elytraAutoOpen)
+                    controller(tickBox())
+                }
+            }
+
+            groups.register("stall") {
+                makeProtectionGroup()
+
+                options.register("stall.limit_pitch") {
+                    makeProtectionOption()
+                    binding(current::stallLimitPitch, defaults.stallLimitPitch)
+                    controller(tickBox())
+                }
+                options.register("stall.auto_thrust") {
+                    makeProtectionOption()
+                    binding(current::stallAutoThrust, defaults.stallAutoThrust)
+                    controller(tickBox())
+                }
+            }
+
+            groups.register("void_damage") {
+                makeProtectionGroup()
+
+                options.register("void_damage.limit_pitch") {
+                    makeProtectionOption()
+                    binding(current::voidLimitPitch, defaults.voidLimitPitch)
+                    controller(tickBox())
+                }
+                options.register("void_damage.auto_recover") {
+                    makeProtectionOption()
+                    binding(current::voidAutoRecover, defaults.voidAutoRecover)
+                    controller(tickBox())
+                }
+            }
+
+            groups.register("ground_proximity") {
+                makeProtectionGroup()
+
+                options.registerLabel(
+                    "ground_proximity.sink_rate",
+                    Component.translatable("config.flightassistant.protections.ground_proximity.sink_rate")
+                )
+                options.register("ground_proximity.sink_rate.limit_pitch") {
+                    makeProtectionOption()
+                    binding(current::sinkRateLimitPitch, defaults.sinkRateLimitPitch)
+                    controller(tickBox())
+                }
+                options.register("ground_proximity.sink_rate.limit_thrust") {
+                    makeProtectionOption()
+                    binding(current::sinkRateLimitThrust, defaults.sinkRateLimitThrust)
+                    controller(tickBox())
+                }
+                options.register("ground_proximity.sink_rate.auto_pitch") {
+                    makeProtectionOption()
+                    binding(current::sinkRateAutoPitch, defaults.sinkRateAutoPitch)
+                    controller(tickBox())
+                }
+
+                options.registerLabel(
+                    "ground_proximity.obstacle",
+                    Component.translatable("config.flightassistant.protections.ground_proximity.obstacle")
+                )
+                options.register("ground_proximity.obstacle.limit_thrust") {
+                    makeProtectionOption()
+                    binding(current::obstacleLimitThrust, defaults.obstacleLimitThrust)
+                    controller(tickBox())
+                }
+                options.register("ground_proximity.obstacle.auto_pitch") {
+                    makeProtectionOption()
+                    binding(current::obstacleAutoPitch, defaults.obstacleAutoPitch)
+                    controller(tickBox())
+                }
+            }
+
+            groups.register("fireworks") {
+                makeProtectionGroup()
+
+                options.register("fireworks.lock_explosive") {
+                    makeProtectionOption()
+                    binding(current::fireworkLockExplosive, defaults.fireworkLockExplosive)
+                    controller(tickBox())
+                }
+                options.register("fireworks.lock_obstacle") {
+                    makeProtectionOption()
+                    binding(current::fireworkLockObstacle, defaults.fireworkLockObstacle)
+                    controller(tickBox())
+                }
+            }
+        }
+
+    private fun OptionDsl<*>.makeGeneralOption() {
+        name(Component.translatable("config.flightassistant.general.${this.optionId}"))
+        description(OptionDescription.of(Component.translatable("config.flightassistant.general.${this.optionId}.description")))
     }
 
-    private fun OptionDsl<*>.setGlobalName() {
-        name(Component.translatable("config.flightassistant.option.global.${this.optionId}"))
+    private fun GroupDsl.makeHudGroup() {
+        name(Component.translatable("config.flightassistant.hud.${this.groupId}"))
     }
 
-    private fun OptionDsl<*>.setDisplayName() {
-        name(Component.translatable("config.flightassistant.option.display.${this.optionId}"))
+    private fun OptionDsl<*>.makeHudOption() {
+        name(Component.translatable("config.flightassistant.hud.${this.optionId}"))
+        description(OptionDescription.of(Component.translatable("config.flightassistant.hud.${this.optionId}.description")))
+        available(FAConfig.global.showHud)
     }
 
-    private fun OptionDsl<*>.setSafetyName() {
-        name(Component.translatable("config.flightassistant.option.safety.${this.optionId}"))
+    private fun GroupDsl.makeAlertGroup() {
+        name(Component.translatable("config.flightassistant.alerts.${this.groupId}"))
+    }
+
+    private fun OptionDsl<*>.makeAlertOption() {
+        name(Component.translatable("config.flightassistant.alerts.${this.optionId}"))
+        description(OptionDescription.of(Component.translatable("config.flightassistant.alerts.${this.optionId}.description")))
+        available(FAConfig.global.alerts != GlobalOptions.AlertMode.DISABLED)
+    }
+
+    private fun GroupDsl.makeProtectionGroup() {
+        name(Component.translatable("config.flightassistant.protections.${this.groupId}"))
+    }
+
+    private fun OptionDsl<*>.makeProtectionOption() {
+        name(Component.translatable("config.flightassistant.protections.${this.optionId}"))
+        description(OptionDescription.of(Component.translatable("config.flightassistant.protections.${this.optionId}.description")))
+        available(FAConfig.global.flightProtections)
     }
 }

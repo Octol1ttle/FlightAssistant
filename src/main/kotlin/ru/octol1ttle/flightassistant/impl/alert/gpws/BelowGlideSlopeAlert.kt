@@ -11,7 +11,6 @@ import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
 import ru.octol1ttle.flightassistant.api.util.extensions.centerX
 import ru.octol1ttle.flightassistant.api.util.extensions.drawHighlightedCenteredText
 import ru.octol1ttle.flightassistant.config.FAConfig
-import ru.octol1ttle.flightassistant.config.options.SafetyOptions
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
 
 class BelowGlideSlopeAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
@@ -19,7 +18,7 @@ class BelowGlideSlopeAlert(computers: ComputerBus) : Alert(computers), CenteredA
         get() = AlertData.BELOW_GLIDE_SLOPE
 
     override fun shouldActivate(): Boolean {
-        if (!FAConfig.safety.belowGlideSlopeAlertMode.caution()) {
+        if (!FAConfig.alerts.belowGlideSlopeAlertSeverity.warning()) {
             return false
         }
         if (computers.plan.currentPhase != FlightPlanComputer.FlightPhase.LANDING) {
@@ -33,9 +32,5 @@ class BelowGlideSlopeAlert(computers: ComputerBus) : Alert(computers), CenteredA
     override fun render(guiGraphics: GuiGraphics, y: Int): Boolean {
         guiGraphics.drawHighlightedCenteredText(Component.translatable("alert.flightassistant.gpws.below_glide_slope"), guiGraphics.centerX, y, cautionColor, totalTicks % 40 >= 20)
         return true
-    }
-
-    override fun getAlertMethod(): SafetyOptions.AlertMethod {
-        return FAConfig.safety.belowGlideSlopeAlertMethod
     }
 }

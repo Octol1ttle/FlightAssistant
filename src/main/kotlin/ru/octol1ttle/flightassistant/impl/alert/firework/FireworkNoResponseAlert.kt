@@ -9,12 +9,13 @@ import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.extensions.drawString
 import ru.octol1ttle.flightassistant.api.util.extensions.warningColor
+import ru.octol1ttle.flightassistant.config.FAConfig
 
 class FireworkNoResponseAlert(computers: ComputerBus) : Alert(computers), ECAMAlert {
     override val data: AlertData = AlertData.MASTER_WARNING
 
     override fun shouldActivate(): Boolean {
-        return computers.firework.waitingForResponse && FATickCounter.totalTicks - computers.firework.lastActivationTime >= 30
+        return FAConfig.alerts.fireworkResponseAlertSeverity.danger() && computers.firework.waitingForResponse && FATickCounter.totalTicks - computers.firework.lastActivationTime >= 30
     }
 
     override fun render(guiGraphics: GuiGraphics, firstLineX: Int, otherLinesX: Int, firstLineY: Int): Int {

@@ -12,7 +12,6 @@ import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
 import ru.octol1ttle.flightassistant.api.util.extensions.centerX
 import ru.octol1ttle.flightassistant.api.util.extensions.drawHighlightedCenteredText
 import ru.octol1ttle.flightassistant.config.FAConfig
-import ru.octol1ttle.flightassistant.config.options.SafetyOptions
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
 
 class DontSinkAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
@@ -21,7 +20,7 @@ class DontSinkAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
     private var age: Int = 0
 
     override fun shouldActivate(): Boolean {
-        if (!FAConfig.safety.altitudeLossAlert) {
+        if (!FAConfig.alerts.altitudeLoss) {
             return false
         }
         if ((computers.plan.currentPhase == FlightPlanComputer.FlightPhase.TAKEOFF || computers.plan.currentPhase == FlightPlanComputer.FlightPhase.GO_AROUND)
@@ -39,7 +38,4 @@ class DontSinkAlert(computers: ComputerBus) : Alert(computers), CenteredAlert {
         return true
     }
 
-    override fun getAlertMethod(): SafetyOptions.AlertMethod {
-        return FAConfig.safety.altitudeLossAlertMethod
-    }
 }

@@ -1,7 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.alert
 
-import kotlin.math.max
-import kotlin.math.min
 import net.minecraft.client.resources.sounds.AbstractSoundInstance
 import net.minecraft.client.resources.sounds.SoundInstance
 import net.minecraft.client.sounds.SoundManager
@@ -10,6 +8,8 @@ import net.minecraft.world.entity.player.Player
 import ru.octol1ttle.flightassistant.api.alert.AlertData
 import ru.octol1ttle.flightassistant.api.util.extensions.setLooping
 import ru.octol1ttle.flightassistant.config.FAConfig
+import kotlin.math.max
+import kotlin.math.min
 
 class AlertSoundInstance(val player: Player, val data: AlertData) :
     AbstractSoundInstance(data.soundEvent, SoundSource.MASTER, SoundInstance.createUnseededRandom()) {
@@ -20,11 +20,11 @@ class AlertSoundInstance(val player: Player, val data: AlertData) :
     init {
         this.relative = true
         this.attenuation = SoundInstance.Attenuation.NONE
-        this.looping = data.looping != AlertData.LoopType.NONE
+        this.looping = data.looping != AlertData.LoopType.NONE && FAConfig.alerts.allowSoundLooping
         if (data.looping == AlertData.LoopType.FADE_IN_OUT) {
             this.actualVolume = 0.05f
         }
-        this.volume = this.actualVolume * FAConfig.safety.alertVolume
+        this.volume = this.actualVolume * FAConfig.alerts.soundVolume
     }
 
     override fun canStartSilent(): Boolean {
@@ -45,7 +45,7 @@ class AlertSoundInstance(val player: Player, val data: AlertData) :
             this.actualVolume = min(1.0f, this.actualVolume + 0.05f)
         }
 
-        this.volume = this.actualVolume * FAConfig.safety.alertVolume
+        this.volume = this.actualVolume * FAConfig.alerts.soundVolume
     }
 
     fun setLooping(looping: Boolean, soundManager: SoundManager) {
