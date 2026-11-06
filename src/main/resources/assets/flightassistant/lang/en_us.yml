@@ -219,7 +219,7 @@ config.flightassistant:
         description: Controls when the elytra durability indicator is shown. It displays how much flight time your elytra has left and changes color as it wears out
       units:
         .: Durability units
-        description: Controls how elytra durability is displayed. Time (approximate) estimates how much flight time is left based on your current usage
+        description: Controls how elytra durability is displayed. Time (approximate) estimates how much flight time is left based on current durability and enchantments
         raw: Minecraft
         percentage: Percentage
         time: Time (approximate)
@@ -265,17 +265,17 @@ config.flightassistant:
       disabled: Disabled
     elytra_durability:
       .: Elytra durability
-      option:
+      severity:
         .: Alert severity
-        description: Controls which levels of the elytra durability alert are shown. Warnings (yellow) signal a developing hazard, while dangers (red) signal an immediate threat. For this alert, a warning means your elytra is wearing out, and a danger means its durability is critical and it could break mid-flight
+        description: Controls which levels of the elytra durability alert are shown. A warning appears when there is less than 90 seconds of flight time remaining, and a danger appears when there is less than 30 seconds of flight time remaining
     stall:
       .: Stall (loss of lift)
-      option:
+      severity:
         .: Alert severity
         description: Controls which levels of the stall alert are shown. A stall happens when you pitch up too steeply and lose speed, causing your elytra to lose lift and drop. A warning means a stall is developing and you should lower your nose, and a danger means you are fully stalled and falling
     void_damage:
       .: Void damage
-      option:
+      severity:
         .: Alert severity
         description: Controls which levels of the void damage alert are shown. If you descend too far below the world, you will start taking void damage. A warning means you are approaching the altitude where void damage begins, and a danger means you have reached it and must climb immediately
     ground_proximity:
@@ -302,7 +302,7 @@ config.flightassistant:
         description: Controls which levels of the firework response alert are shown. A warning means a firework boost is responding slower than expected, and a danger means it is not responding at all
     chunk_loading:
       .: Chunk loading
-      option:
+      severity:
         .: Alert severity
         description: Controls which levels of the chunk loading alert are shown. When the world around you loads too slowly, the HUD and flight protections cannot see the terrain ahead. A warning means chunks are loading slowly, and a danger means there are no chunks loaded around you at all
   protections:

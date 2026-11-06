@@ -323,7 +323,7 @@ object FAConfigScreen {
             groups.register("elytra_durability") {
                 makeAlertGroup()
 
-                options.register("elytra_durability.option") {
+                options.register("elytra_durability.severity") {
                     makeAlertOption()
                     binding(current::elytraDurabilityAlertSeverity, defaults.elytraDurabilityAlertSeverity)
                     controller(enumSwitch())
@@ -333,7 +333,7 @@ object FAConfigScreen {
             groups.register("stall") {
                 makeAlertGroup()
 
-                options.register("stall.option") {
+                options.register("stall.severity") {
                     makeAlertOption()
                     binding(current::stallAlertSeverity, defaults.stallAlertSeverity)
                     controller(enumSwitch())
@@ -343,7 +343,7 @@ object FAConfigScreen {
             groups.register("void_damage") {
                 makeAlertGroup()
 
-                options.register("void_damage.option") {
+                options.register("void_damage.severity") {
                     makeAlertOption()
                     binding(current::voidDamageAlertSeverity, defaults.voidDamageAlertSeverity)
                     controller(enumSwitch())
@@ -393,7 +393,7 @@ object FAConfigScreen {
             groups.register("chunk_loading") {
                 makeAlertGroup()
 
-                options.register("chunk_loading.option") {
+                options.register("chunk_loading.severity") {
                     makeAlertOption()
                     binding(current::chunkLoadingAlertSeverity, defaults.chunkLoadingAlertSeverity)
                     controller(enumSwitch())
