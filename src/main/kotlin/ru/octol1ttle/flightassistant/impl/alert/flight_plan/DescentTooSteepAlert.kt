@@ -6,17 +6,16 @@ import ru.octol1ttle.flightassistant.api.alert.Alert
 import ru.octol1ttle.flightassistant.api.alert.AlertData
 import ru.octol1ttle.flightassistant.api.alert.ECAMAlert
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
-import ru.octol1ttle.flightassistant.api.util.degrees
 import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
 import ru.octol1ttle.flightassistant.api.util.extensions.drawString
-import kotlin.math.asin
+import ru.octol1ttle.flightassistant.api.util.verticalAngle
 
 class DescentTooSteepAlert(computers: ComputerBus) : Alert(computers), ECAMAlert {
     override val data: AlertData = AlertData.MASTER_CAUTION
 
     override fun shouldActivate(): Boolean {
         computers.plan.waypoints.zipWithNext().forEach { (a, b) ->
-            if (degrees(asin(b.vec3().subtract(a.vec3()).normalize().y)) < -35.0f) {
+            if (b.vec3().subtract(a.vec3()).verticalAngle() < -35.0f) {
                 return true
             }
         }

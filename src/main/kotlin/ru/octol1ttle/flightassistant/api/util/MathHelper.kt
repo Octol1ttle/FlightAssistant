@@ -1,13 +1,8 @@
 package ru.octol1ttle.flightassistant.api.util
 
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.ceil
-import kotlin.math.min
-import kotlin.math.pow
-import kotlin.math.sign
+import net.minecraft.world.phys.Vec3
 import ru.octol1ttle.flightassistant.api.util.extensions.formatRoot
+import kotlin.math.*
 
 fun degrees(value: Float): Float {
     return (value * (180.0f / PI)).toFloat()
@@ -99,4 +94,8 @@ fun Float.asPercentage(decimals: Int = 1): String {
     val furtherFromZero = sign(percentage) * ceil(abs(percentage) * factor) / factor
 
     return "%.${decimals}f%%".formatRoot(furtherFromZero)
+}
+
+fun Vec3.verticalAngle(): Float {
+    return degrees(asin(this.normalize().y).toFloat())
 }

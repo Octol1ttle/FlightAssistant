@@ -118,8 +118,8 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
         val velocity = computers.data.player.forward.scale(FIREWORK_SPEED.toDouble())
         return computers.gpws.computeObstacleImpactTime(
             velocity,
-            computers.gpws.warningThreshold
-        ) <= computers.gpws.dangerThreshold
+            computers.gpws.dangerThreshold
+        ) <= computers.gpws.recoverThreshold
     }
 
     private fun tryActivateFirework(player: Player) {

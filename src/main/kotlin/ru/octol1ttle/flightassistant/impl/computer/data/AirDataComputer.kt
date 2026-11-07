@@ -17,8 +17,8 @@ import ru.octol1ttle.flightassistant.api.util.extensions.bottomY
 import ru.octol1ttle.flightassistant.api.util.extensions.getLerpedDeltaMovement
 import ru.octol1ttle.flightassistant.api.util.extensions.perSecond
 import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
+import ru.octol1ttle.flightassistant.api.util.verticalAngle
 import ru.octol1ttle.flightassistant.config.FAConfig
-import kotlin.math.asin
 import kotlin.math.atan2
 import kotlin.math.max
 
@@ -73,7 +73,7 @@ class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Compu
         get() = (yaw + 180.0f).throwIfNotInRange(0.0f..360.0f)
 
     val flightPitch: Float
-        get() = degrees(asin(velocity.normalize().y).toFloat())
+        get() = velocity.verticalAngle()
     val flightYaw: Float
         get() = degrees(atan2(-velocity.x, velocity.z).toFloat())
 
