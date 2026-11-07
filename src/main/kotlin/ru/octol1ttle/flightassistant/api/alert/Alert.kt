@@ -29,5 +29,5 @@ abstract class Alert(val computers: ComputerBus) {
     /**
      * Called when this alert is hidden via keybind. 
      */
-    open fun onHide() {}
+    open fun onDismiss() {}
 }

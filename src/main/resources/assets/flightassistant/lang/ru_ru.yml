@@ -371,10 +371,16 @@ menu.flightassistant:
   .: Настройки FlightAssistant
   config: Конфигурация мода
   wiki: Открыть вики
+  alerts:
+    .: Предупреждения
+    dismiss_one: Скрыть первое
+    dismiss_all: Скрыть все
+    recall_one: Вернуть последнее
+    recall_all: Вернуть все
   system:
     .: Управление системами
-    manage_computers: 'Управление компьютерами'
-    manage_displays: 'Управление индикаторами'
+    computers: 'Компьютеры'
+    displays: 'Индикаторы'
     fault: ОТКАЗ
     'off': 'ВЫКЛ'
     'off_reset': 'ВЫКЛ/СБРОС'

@@ -35,7 +35,7 @@ class AutopilotOffAlert(computers: ComputerBus) : Alert(computers), ECAMAlert {
         return autopilotOff
     }
 
-    override fun onHide() {
+    override fun onDismiss() {
         computers.autoflight.autopilotAlert = false
     }
 

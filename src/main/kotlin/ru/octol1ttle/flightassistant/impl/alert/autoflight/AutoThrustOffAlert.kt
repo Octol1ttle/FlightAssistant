@@ -17,7 +17,7 @@ class AutoThrustOffAlert(computers: ComputerBus) : Alert(computers), ECAMAlert {
         return computers.autoflight.autoThrustAlert
     }
 
-    override fun onHide() {
+    override fun onDismiss() {
         computers.autoflight.autoThrustAlert = false
     }
 

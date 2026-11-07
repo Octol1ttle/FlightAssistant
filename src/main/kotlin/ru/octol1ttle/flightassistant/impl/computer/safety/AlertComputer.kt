@@ -43,7 +43,6 @@ import ru.octol1ttle.flightassistant.impl.alert.stall.ApproachingStallAlert
 import ru.octol1ttle.flightassistant.impl.alert.stall.FullStallAlert
 import ru.octol1ttle.flightassistant.impl.alert.thrust.NoThrustSourceAlert
 import ru.octol1ttle.flightassistant.impl.alert.thrust.ReverseThrustNotSupportedAlert
-import ru.octol1ttle.flightassistant.impl.alert.thrust.ThrustLockedAlert
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FireworkComputer
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
@@ -145,7 +144,6 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
         register(
             AlertCategory(Component.translatable("alert.flightassistant.thrust"))
                 .add(ComputerFaultAlert(computers, ThrustComputer.ID, Component.translatable("alert.flightassistant.thrust.fault")))
-                .add(ThrustLockedAlert(computers))
                 .add(NoThrustSourceAlert(computers))
                 .add(ReverseThrustNotSupportedAlert(computers))
         )
@@ -159,25 +157,29 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
         categories.add(category)
     }
 
-    fun hideCurrentAlert() {
+    fun dismiss(all: Boolean) {
         for (category: AlertCategory in categories) {
             if (category.activeAlerts.isEmpty()) {
                 continue
             }
             val alert: Alert = category.activeAlerts.removeAt(0)
             category.ignoredAlerts.add(alert)
-            alert.onHide()
-            break
+            alert.onDismiss()
+            if (!all) {
+                break
+            }
         }
     }
 
-    fun showHiddenAlert() {
+    fun recall(all: Boolean) {
         for (category: AlertCategory in categories) {
             if (category.ignoredAlerts.isEmpty()) {
                 continue
             }
             category.ignoredAlerts.removeAt(0)
-            break
+            if (!all) {
+                break
+            }
         }
     }
 

@@ -80,10 +80,10 @@ object FAKeyMappings {
         }
 
         while (hideCurrentAlert.consumeClick()) {
-            computers.alert.hideCurrentAlert()
+            computers.alert.dismiss(false)
         }
         while (showHiddenAlert.consumeClick()) {
-            computers.alert.showHiddenAlert()
+            computers.alert.recall(false)
         }
 
         while (setIdle.consumeClick()) {

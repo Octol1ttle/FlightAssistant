@@ -367,10 +367,16 @@ menu.flightassistant:
   .: FlightAssistant setup screen
   config: Mod configuration
   wiki: Open wiki
+  alerts:
+    .: Alerts
+    dismiss_one: Dismiss first
+    dismiss_all: Dismiss all
+    recall_one: Recall last
+    recall_all: Recall all
   system:
     .: System management
-    manage_computers: Manage computers
-    manage_displays: Manage displays
+    computers: Computers
+    displays: Displays
     fault: FAULT
     'off': 'OFF'
     'off_reset': 'OFF/RESET'

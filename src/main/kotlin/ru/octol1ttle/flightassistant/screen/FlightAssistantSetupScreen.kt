@@ -26,35 +26,50 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("menu.flightassistant")) {
+    private lateinit var dismissAlertButton: Button
+    private lateinit var recallAlertButton: Button
+
     private var saveLoadError = false
 
     override fun init() {
         super.init()
 
-        this.addRenderableWidget(SmartStringWidget(this.centerX, this.centerY - 80, Component.translatable("menu.flightassistant.system")).middleAligned())
-        this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.system.manage_displays")) {
-            this.minecraft!!.setScreen(
-                SystemManagementScreen(
-                    this,
-                Component.translatable("menu.flightassistant.system.manage_displays"), "menu.flightassistant.system.name.hud", HudDisplayHost)
-            )
-        }.pos(this.centerX - 105, this.centerY - 65).width(100).build())
-        this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.system.manage_computers")) {
-            this.minecraft!!.setScreen(
-                SystemManagementScreen(
-                    this,
-                Component.translatable("menu.flightassistant.system.manage_computers"), "menu.flightassistant.system.name.computer", ComputerHost)
-            )
-        }.pos(this.centerX + 5, this.centerY - 65).width(100).build())
+        val alertsY = this.centerY - 90
+        this.addRenderableWidget(SmartStringWidget(this.centerX, alertsY, Component.translatable("menu.flightassistant.alerts")).middleAligned())
+        dismissAlertButton = this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.alerts.dismiss_one")) {
+            computers.alert.dismiss(hasShiftDown())
+        }.pos(this.centerX - 105, alertsY + 15).width(100).build())
+        recallAlertButton = this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.alerts.recall_one")) {
+            computers.alert.recall(hasShiftDown())
+        }.pos(this.centerX + 5, alertsY + 15).width(100).build())
 
+        val systemY = this.centerY - 40
+        this.addRenderableWidget(SmartStringWidget(this.centerX, systemY, Component.translatable("menu.flightassistant.system")).middleAligned())
+        this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.system.displays")) {
+            this.minecraft!!.setScreen(
+                SystemManagementScreen(
+                    this,
+                Component.translatable("menu.flightassistant.system.displays"), "menu.flightassistant.system.name.hud", HudDisplayHost)
+            )
+        }.pos(this.centerX - 105, systemY + 15).width(100).build())
+        this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.system.computers")) {
+            this.minecraft!!.setScreen(
+                SystemManagementScreen(
+                    this,
+                Component.translatable("menu.flightassistant.system.computers"), "menu.flightassistant.system.name.computer", ComputerHost)
+            )
+        }.pos(this.centerX + 5, systemY + 15).width(100).build())
+
+        val autoflightY = this.centerY + 10
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.autoflight")) {
             this.minecraft!!.setScreen(AutoFlightScreen(this))
-        }.pos(this.centerX - 80, this.centerY - 30).width(160).build())
+        }.pos(this.centerX - 80, autoflightY).width(160).build())
 
-        this.addRenderableWidget(SmartStringWidget(this.centerX, this.centerY + 5, Component.translatable("menu.flightassistant.fms")).middleAligned())
+        val fmsY = this.centerY + 40
+        this.addRenderableWidget(SmartStringWidget(this.centerX, fmsY, Component.translatable("menu.flightassistant.fms")).middleAligned())
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.waypoints")) {
             this.minecraft!!.setScreen(WaypointsScreen(this))
-        }.pos(this.centerX - 40, this.centerY + 20).width(80).build())
+        }.pos(this.centerX - 40, fmsY + 15).width(80).build())
 
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.save")) {
             val patterns = PointerBuffer.create(MemoryUtil.memUTF8(".json"))
@@ -77,7 +92,7 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
             } finally {
                 patterns.free()
             }
-        }.pos(this.centerX - 90, this.centerY + 50).width(80).build())
+        }.pos(this.centerX - 130, fmsY + 15).width(80).build())
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.fms.load")) {
             val patterns = PointerBuffer.create(MemoryUtil.memUTF8(".json"))
             try {
@@ -100,7 +115,7 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
             } finally {
                 patterns.free()
             }
-        }.pos(this.centerX + 10, this.centerY + 50).width(80).build())
+        }.pos(this.centerX + 50, fmsY + 15).width(80).build())
 
         this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.config")) {
             this.minecraft!!.setScreen(FAConfigScreen.generate(this))
@@ -116,6 +131,14 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
     }
 
     override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
+        if (hasShiftDown()) {
+            dismissAlertButton.message = Component.translatable("menu.flightassistant.alerts.dismiss_all")
+            recallAlertButton.message = Component.translatable("menu.flightassistant.alerts.recall_all")
+        } else {
+            dismissAlertButton.message = Component.translatable("menu.flightassistant.alerts.dismiss_one")
+            recallAlertButton.message = Component.translatable("menu.flightassistant.alerts.recall_one")
+        }
+
         super.render(guiGraphics, mouseX, mouseY, delta)
 
         if (saveLoadError) {
