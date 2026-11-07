@@ -17,6 +17,7 @@ import ru.octol1ttle.flightassistant.api.util.extensions.distance2d
 import ru.octol1ttle.flightassistant.api.util.extensions.formatRoot
 import ru.octol1ttle.flightassistant.api.util.extensions.getProgressOnTrack
 import ru.octol1ttle.flightassistant.api.util.extensions.toVector2d
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.ThrustComputer
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.modes.*
 import ru.octol1ttle.flightassistant.impl.display.StatusDisplay
 import java.time.Duration
@@ -61,15 +62,6 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
 
         if (approach != -1 && landing != -1) {
             if (targetIndex > landing) {
-                return FlightPhase.GO_AROUND
-            }
-            if ((currentPhase == FlightPhase.APPROACH || currentPhase == FlightPhase.LANDING)
-                && computers.thrust.activeInput == null && computers.thrust.current == 1.0f) {
-                tracking =
-                    if (landing + 1 < waypoints.size) ActiveSegment.Direct(landing + 1)
-                    else ActiveSegment.Direct(approach)
-                // FIXME: HACK
-                computers.thrust.setTarget(0.99f, null)
                 return FlightPhase.GO_AROUND
             }
             if (targetIndex == landing) {
@@ -208,6 +200,21 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
         // TODO: config
         if (query is StatusDisplay.StatusMessageQuery && currentPhase != FlightPhase.UNKNOWN) {
             query.respond(Component.translatable("status.flightassistant.flight_plan.phase.${currentPhase.name.lowercase()}"))
+        }
+
+        if (query is ThrustComputer.AllowManualThrustChangeQuery) {
+            if (computers.data.flying && (currentPhase == FlightPhase.APPROACH || currentPhase == FlightPhase.LANDING) && query.newThrust == 1.0f) {
+                val approach = waypoints.indexOfFirst { it.phaseMarker == Waypoint.PhaseMarker.APPROACH }
+                val landing = waypoints.indexOfFirst { it.phaseMarker == Waypoint.PhaseMarker.LANDING }
+
+                if (approach != -1 && landing != -1) {
+                    tracking =
+                        if (landing + 1 < waypoints.size) ActiveSegment.Direct(landing + 1)
+                        else ActiveSegment.Direct(approach)
+                    currentPhase = FlightPhase.GO_AROUND
+                    query.respond(Unit)
+                }
+            }
         }
     }
 

@@ -48,7 +48,7 @@ class VoidProximityComputer(computers: ComputerBus) : Computer(computers) {
             query.respond(ControlInput(
                 90.0f, Component.translatable("mode.flightassistant.vertical.void_escape"), ControlInput.Priority.HIGH,
                 status = ControlInput.Status.fromBooleans(
-                    status == Status.REACHED_DAMAGE_ALTITUDE && computers.thrust.current == 1.0f && !computers.thrust.noThrustSource,
+                    status == Status.REACHED_DAMAGE_ALTITUDE && computers.thrust.targetThrust == 1.0f && !computers.thrust.noThrustSource,
                     enabled = FAConfig.protections.voidAutoRecover
                 )
             ))

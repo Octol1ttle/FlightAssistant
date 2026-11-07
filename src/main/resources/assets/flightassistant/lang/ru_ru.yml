@@ -96,9 +96,6 @@ alert.flightassistant:
     .: ТЯГА
     fault: ОТКАЗ СИСТ
     no_source: ОТСУТ ИСТОЧ
-    locked:
-      .: БЛОК
-      use_keys: ' -КЛАВИШИ УПР ТЯГИ: ИСПОЛЬЗ'
     reverse_not_supported:
       .: ОБРАТН НЕ ПОДДЕРЖ
       set_forward: ' -ТЯГА: УСТАН ВПЕРЕД'
@@ -497,8 +494,6 @@ mode.flightassistant:
       .: РУЧН ТЯГА
       reverse: РУЧН РЕВ
       toga: РУЧН ВЗЛЕТН
-    locked: БЛОК ТЯГА
-    locked_toga: БЛОК ВЗЛЕТН
     idle: ТЯГА МАЛ
     toga: ТЯГА ВЗЛЕТН
     speed: СКОР

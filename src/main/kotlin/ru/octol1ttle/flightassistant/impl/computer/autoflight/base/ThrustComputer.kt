@@ -5,11 +5,11 @@ import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FAKeyMappings
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
-import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustChangeCallback
 import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustSource
 import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustSourceRegistrationCallback
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.computer.ComputerEvent
 import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
 import ru.octol1ttle.flightassistant.api.util.DeltaTimeMultiplierValidator
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
@@ -23,9 +23,9 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
     @Deprecated("Fetch every time with AvailableThrustSourceQuery")
     private val sources: MutableList<ThrustSource> = ArrayList()
 
-    private var lastChangeAutomatic: Boolean = false
-
-    var current: Float = 0.0f
+    var targetThrust: Float = 0.0f
+        private set
+    var manualThrust: Float = 0.0f
         private set
 
     var activeInput: ControlInput? = null
@@ -33,8 +33,6 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
     var noThrustSource: Boolean = false
         private set
     var reverseUnsupported: Boolean = false
-        private set
-    var thrustLocked: Boolean = false // TODO: what an annoying mechanic
         private set
 
     override fun invokeEvents() {
@@ -45,34 +43,22 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
         val thrustSource: ThrustSource? = getThrustSource()
 
         val inputs: List<ControlInput> = computers.dispatchQuery(TargetThrustQuery()).sortedBy { it.priority.value }
-        val finalInput: ControlInput? = inputs.getActiveHighestPriority().maxByOrNull { it.target }
+        val finalInput =
+            if (!FAKeyMappings.isHoldingThrust()) inputs.getActiveHighestPriority().maxByOrNull { it.target }
+            else null
+        val newTarget =
+            if (finalInput?.status == ControlInput.Status.ACTIVE) finalInput.target
+            else manualThrust
 
-        noThrustSource = false
-        reverseUnsupported = false
-
-        if (finalInput?.status == ControlInput.Status.ACTIVE && !FAKeyMappings.isHoldingThrust()) {
-            setTarget(finalInput.target, finalInput)
-            activeInput = finalInput
-            thrustLocked = false
-        } else if (current == 0.0f) {
-            noThrustSource = thrustSource == null && finalInput != null && finalInput.target != 0.0f
-            activeInput = finalInput
-            thrustLocked = false
-
-            return
-        } else {
-            activeInput = null
-            thrustLocked = lastChangeAutomatic
-            reverseUnsupported = current < 0.0f && thrustSource?.supportsReverse == false
-        }
-
-        noThrustSource = thrustSource == null && activeInput?.target != 0.0f
+        targetThrust = newTarget
+        noThrustSource = thrustSource == null && (newTarget != 0.0f || (finalInput != null && finalInput.target != 0.0f))
+        reverseUnsupported = newTarget < 0.0f && thrustSource?.supportsReverse == false
 
         val active: Boolean = !noThrustSource && !reverseUnsupported
-        activeInput = activeInput?.copy(status = if (active) activeInput!!.status else ControlInput.Status.UNAVAILABLE)
+        activeInput = finalInput?.copy(status = if (active) finalInput.status else ControlInput.Status.UNAVAILABLE)
 
-        if (computers.data.automationsAllowed()) {
-            thrustSource?.tickThrust(current.coerceIn((if (thrustSource.supportsReverse) -1.0f else 0.0f)..1.0f))
+        if (computers.data.automationsAllowed() && targetThrust != 0.0f) {
+            thrustSource?.tickThrust(targetThrust.coerceIn((if (thrustSource.supportsReverse) -1.0f else 0.0f)..1.0f))
         }
     }
 
@@ -80,26 +66,29 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
         return sources.filterWorking().filter { computers.guardedCall(it, ThrustSource::isAvailable) == true }.minByOrNull { it.priority.value }
     }
 
-    fun setTarget(target: Float, input: ControlInput? = null) {
-        val oldThrust: Float = current
-        if (oldThrust != target || input == null) {
-            current = target.throwIfNotInRange(-1.0f..1.0f)
-            ThrustChangeCallback.EVENT.invoker().onThrustChange(oldThrust, current, input)
-            lastChangeAutomatic = input != null
+    fun setManualThrust(newThrust: Float) {
+        newThrust.throwIfNotInRange(-1.0f..1.0f)
+
+        val oldThrust = manualThrust
+        val canChange = computers.dispatchQuery(AllowManualThrustChangeQuery(oldThrust, newThrust)).isEmpty()
+        if (canChange) {
+            manualThrust = newThrust
+            computers.dispatchEvent(ManualThrustChangeEvent(oldThrust, newThrust))
         }
     }
 
-    fun tickTarget(sign: Float) {
+    fun tickManualThrust(sign: Float) {
         if (sign != 0.0f) {
-            setTarget((current + FATickCounter.timePassed / 3 * sign).coerceIn(-1.0f..1.0f), null)
+            val newThrust = manualThrust + FATickCounter.timePassed / 3 * sign
+            setManualThrust(newThrust.coerceIn(-1.0f..1.0f))
         }
     }
 
     override fun <Response> handleQuery(query: ComputerQuery<Response>) {
         if (query is StatusDisplay.StatusMessageQuery) {
             // TODO: show actual thrust output and requested thrust (both by user and autoflight)
-            if (getThrustSource() != null || current != 0.0f) {
-                query.respond(Component.translatable("status.flightassistant.thrust", current.asPercentage()))
+            if (getThrustSource() != null || targetThrust != 0.0f) {
+                query.respond(Component.translatable("status.flightassistant.thrust", targetThrust.asPercentage()))
             }
         }
     }
@@ -111,14 +100,14 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
     }
 
     class TargetThrustQuery : ComputerQuery<ControlInput>(ThrustValidator(), DeltaTimeMultiplierValidator())
+    data class AllowManualThrustChangeQuery(val oldThrust: Float, val newThrust: Float) : ComputerQuery<Unit>()
+    data class ManualThrustChangeEvent(val oldThrust: Float, val newThrust: Float) : ComputerEvent
 
     override fun reset() {
-        lastChangeAutomatic = false
-        current = 0.0f
+        targetThrust = 0.0f
         activeInput = null
         noThrustSource = false
         reverseUnsupported = false
-        thrustLocked = false
     }
 
     companion object {

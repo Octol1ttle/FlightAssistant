@@ -92,9 +92,6 @@ alert.flightassistant: # TODO: get rid of alert categories, more flexible alert 
     .: THRUST
     fault: SYS FAULT
     no_source: NO SRC AVAIL
-    locked:
-      .: LOCKED
-      use_keys: ' -THR CTRL KEYS: USE'
     reverse_not_supported:
       .: REVERSE NOT SUPPORTED
       set_forward: ' -THR: SET FORWARD'
@@ -493,8 +490,6 @@ mode.flightassistant:
       .: MAN THR
       reverse: MAN REV
       toga: MAN TOGA
-    locked: THR LK
-    locked_toga: TOGA LK
     idle: THR IDLE
     toga: THR TOGA
     speed: SPEED

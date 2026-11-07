@@ -5,9 +5,9 @@ import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FAKeyMappings
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
-import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustChangeCallback
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.computer.ComputerEvent
 import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.event.EntityTurnEvents
@@ -50,11 +50,6 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers) {
         get() = selectedLateralMode ?: computers.plan.getLateralMode()
 
     override fun subscribeToEvents() {
-        ThrustChangeCallback.EVENT.register(ThrustChangeCallback { _, _, input ->
-            if (input == null) {
-                setAutoThrust(false, alert = false)
-            }
-        })
         EntityTurnEvents.X_ROT.register(EntityTurnEvents.EntityTurn { pitchDelta, output ->
             if (computers.data.flying && autopilot) {
                 pitchResistance += abs(pitchDelta) / 90.0f
@@ -157,6 +152,12 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers) {
                 "status.flightassistant.target_distance_time",
                 distance.roundToLong().toString(), computers.plan.getFormattedTime(distance)
             ))
+        }
+    }
+
+    override fun <Event : ComputerEvent> handleEvent(event: Event) {
+        if (event is ThrustComputer.ManualThrustChangeEvent) {
+            setAutoThrust(false, alert = false)
         }
     }
 

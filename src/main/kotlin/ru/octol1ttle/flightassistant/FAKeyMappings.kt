@@ -87,10 +87,10 @@ object FAKeyMappings {
         }
 
         while (setIdle.consumeClick()) {
-            computers.thrust.setTarget(0.0f)
+            computers.thrust.setManualThrust(0.0f)
         }
         while (setToga.consumeClick()) {
-            computers.thrust.setTarget(1.0f)
+            computers.thrust.setManualThrust(1.0f)
         }
         while (decreaseThrust.consumeClick()) {
             computers.thrust.tickTarget(-1.0f)

@@ -11,7 +11,7 @@ import kotlin.math.pow
 
 data class SpeedThrustMode(override val targetSpeed: Int, override val textOverride: Component? = null) : AutoFlightComputer.ThrustMode, AutoFlightComputer.FollowsSpeedMode {
     override fun getControlInput(computers: ComputerBus): ControlInput {
-        val currentThrust: Float = computers.thrust.current
+        val currentThrust: Float = computers.thrust.targetThrust
         val currentSpeed: Double = computers.data.forwardVelocityPerSecond.length()
         val acceleration: Double = computers.data.forwardAcceleration * SharedConstants.TICKS_PER_SECOND
 

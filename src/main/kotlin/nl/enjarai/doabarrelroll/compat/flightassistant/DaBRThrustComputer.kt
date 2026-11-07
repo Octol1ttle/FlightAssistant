@@ -1,7 +1,6 @@
 package nl.enjarai.doabarrelroll.compat.flightassistant
 
 //? if do-a-barrel-roll {
-import kotlin.math.sign
 import net.minecraft.resources.ResourceLocation
 import nl.enjarai.doabarrelroll.DoABarrelRoll
 import nl.enjarai.doabarrelroll.api.event.ThrustEvents
@@ -9,6 +8,7 @@ import nl.enjarai.doabarrelroll.config.ModConfig
 import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustSource
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import kotlin.math.sign
 
 class DaBRThrustComputer(computers: ComputerBus) : Computer(computers), ThrustSource {
     override val priority: ThrustSource.Priority = ThrustSource.Priority.HIGH
@@ -18,8 +18,8 @@ class DaBRThrustComputer(computers: ComputerBus) : Computer(computers), ThrustSo
         ThrustEvents.MODIFY_THRUST_INPUT.register({
             if (computers.data.automationsAllowed() && !computers.thrust.isDisabledOrFaulted()) {
                 // TODO: config option *sigh*
-                computers.thrust.tickTarget(sign(it).toFloat())
-                return@register computers.thrust.current.toDouble()
+                computers.thrust.tickManualThrust(sign(it).toFloat())
+                return@register computers.thrust.targetThrust.toDouble()
             }
 
             return@register it

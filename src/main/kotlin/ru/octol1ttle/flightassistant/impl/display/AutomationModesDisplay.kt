@@ -48,23 +48,11 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
             return
         }
 
-        if (computers.thrust.thrustLocked) {
+        if (computers.thrust.manualThrust != 0.0f) {
             thrustDisplay.render(
                 guiGraphics,
-                if (computers.thrust.current == 1.0f) Component.translatable("mode.flightassistant.thrust.locked_toga").setColor(primaryColor)
-                else Component.translatable("mode.flightassistant.thrust.locked").setColor(primaryColor),
-                ControlInput.Status.ACTIVE,
-                if (FATickCounter.totalTicks % 20 >= 10) cautionColor else emptyColor
-            )
-
-            return
-        }
-
-        if (computers.thrust.current != 0.0f) {
-            thrustDisplay.render(
-                guiGraphics,
-                if (computers.thrust.current == 1.0f) Component.translatable("mode.flightassistant.thrust.manual.toga").setColor(secondaryColor)
-                else if (computers.thrust.current < 0.0f) Component.translatable("mode.flightassistant.thrust.manual.reverse")
+                if (computers.thrust.manualThrust == 1.0f) Component.translatable("mode.flightassistant.thrust.manual.toga").setColor(secondaryColor)
+                else if (computers.thrust.manualThrust < 0.0f) Component.translatable("mode.flightassistant.thrust.manual.reverse")
                 else Component.translatable("mode.flightassistant.thrust.manual"),
                 ControlInput.Status.ACTIVE, if (thrustUnusable) cautionColor else null
             )
