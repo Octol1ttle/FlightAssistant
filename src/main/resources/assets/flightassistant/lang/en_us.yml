@@ -489,9 +489,9 @@ mode.flightassistant:
     manual:
       .: MAN THR
       reverse: MAN REV
-      toga: MAN TOGA
+      max: MAN MAX
     idle: THR IDLE
-    toga: THR TOGA
+    max: THR MAX
     speed: SPEED
     climb: THR CLB
     descend: THR DES
@@ -583,7 +583,7 @@ key.category.flightassistant:
     decrease_thrust: Decrease thrust
     increase_thrust: Increase thrust
     set_idle: Set thrust to idle (0%)
-    set_toga: Set thrust to TOGA (100%)
+    set_max: Set thrust to max (100%)
 
 # Other mods
 menu.flightassistant.system.name.computer.do_a_barrel_roll:roll: DaBR Roll Computer

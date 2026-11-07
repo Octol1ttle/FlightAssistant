@@ -35,7 +35,7 @@ class VoidProximityComputer(computers: ComputerBus) : Computer(computers) {
         if (query is ThrustComputer.TargetThrustQuery && status <= Status.APPROACHING_DAMAGE_ALTITUDE) {
             query.respond(ControlInput(
                 1.0f,
-                Component.translatable("mode.flightassistant.thrust.toga"),
+                Component.translatable("mode.flightassistant.thrust.max"),
                 ControlInput.Priority.HIGH,
                 status = ControlInput.Status.fromBooleans(
                     status == Status.REACHED_DAMAGE_ALTITUDE,

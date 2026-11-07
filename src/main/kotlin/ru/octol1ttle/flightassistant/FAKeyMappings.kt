@@ -32,10 +32,10 @@ object FAKeyMappings {
     lateinit var hideCurrentAlert: KeyMapping
     lateinit var showHiddenAlert: KeyMapping
 
-    lateinit var setIdle: KeyMapping
+    lateinit var setIdleThrust: KeyMapping
     lateinit var decreaseThrust: KeyMapping
     lateinit var increaseThrust: KeyMapping
-    lateinit var setToga: KeyMapping
+    lateinit var setMaxThrust: KeyMapping
 
     fun setup() {
         toggleEnabled = addKeyMapping("toggle_enabled", -1)
@@ -50,10 +50,10 @@ object FAKeyMappings {
         hideCurrentAlert = addKeyMapping("hide_current_alert", GLFW.GLFW_KEY_KP_0)
         showHiddenAlert = addKeyMapping("show_hidden_alert", GLFW.GLFW_KEY_KP_DECIMAL)
 
-        setIdle = addKeyMapping("set_idle", GLFW.GLFW_KEY_LEFT, THRUST_CATEGORY)
+        setIdleThrust = addKeyMapping("set_idle", GLFW.GLFW_KEY_LEFT, THRUST_CATEGORY)
         decreaseThrust = addKeyMapping("decrease_thrust", GLFW.GLFW_KEY_DOWN, THRUST_CATEGORY)
         increaseThrust = addKeyMapping("increase_thrust", GLFW.GLFW_KEY_UP, THRUST_CATEGORY)
-        setToga = addKeyMapping("set_toga", GLFW.GLFW_KEY_RIGHT, THRUST_CATEGORY)
+        setMaxThrust = addKeyMapping("set_max", GLFW.GLFW_KEY_RIGHT, THRUST_CATEGORY)
     }
 
 //? if >=1.21.9 {
@@ -102,14 +102,14 @@ object FAKeyMappings {
             computers.thrust.setManualThrust(1.0f)
         }
         while (decreaseThrust.consumeClick()) {
-            computers.thrust.tickTarget(-1.0f)
+            computers.thrust.tickManualThrust(-1.0f)
         }
         while (increaseThrust.consumeClick()) {
-            computers.thrust.tickTarget(1.0f)
+            computers.thrust.tickManualThrust(1.0f)
         }
     }
 
     fun isHoldingThrust(): Boolean {
-        return setIdle.isDown || setToga.isDown
+        return setIdleThrust.isDown || setMaxThrust.isDown
     }
 }

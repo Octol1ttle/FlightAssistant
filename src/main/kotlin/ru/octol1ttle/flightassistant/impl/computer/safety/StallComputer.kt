@@ -30,7 +30,7 @@ class StallComputer(computers: ComputerBus) : Computer(computers) {
         if (query is ThrustComputer.TargetThrustQuery && status != Status.SAFE) {
             query.respond(ControlInput(
                 1.0f,
-                Component.translatable("mode.flightassistant.thrust.toga"),
+                Component.translatable("mode.flightassistant.thrust.max"),
                 ControlInput.Priority.HIGHEST,
                 status = ControlInput.Status.fromBooleans(
                     status == Status.FULL_STALL,

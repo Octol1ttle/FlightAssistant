@@ -495,7 +495,7 @@ mode.flightassistant:
       reverse: РУЧН РЕВ
       max: РУЧН МАКС
     idle: ТЯГА МАЛ
-    toga: ТЯГА ВЗЛЕТН
+    max: ТЯГА МАКС
     speed: СКОР
     climb: ТЯГА НАБОР
     descend: ТЯГА СНИЖ
@@ -585,8 +585,8 @@ key.category.flightassistant:
     .: 'FlightAssistant: Тяга'
     decrease_thrust: Снизить тягу
     increase_thrust: Увеличить тягу
-    set_idle: Установить малую тягу (0%)
-    set_toga: Установить взлётную тягу (100%)
+    set_idle: Установить нулевую тягу (0%)
+    set_max: Установить максимальную тягу (100%)
 
 # Other mods
 menu.flightassistant.system.name.computer.do_a_barrel_roll:roll: Компьютер крена DaBR
