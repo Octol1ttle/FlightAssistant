@@ -28,7 +28,7 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
     var manualThrust: Float = 0.0f
         private set
 
-    var activeInput: ControlInput? = null
+    var lastInput: ControlInput? = null
         private set
     var noThrustSource: Boolean = false
         private set
@@ -43,19 +43,19 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
         val thrustSource: ThrustSource? = getThrustSource()
 
         val inputs: List<ControlInput> = computers.dispatchQuery(TargetThrustQuery()).sortedBy { it.priority.value }
-        val finalInput =
-            if (!FAKeyMappings.isHoldingThrust()) inputs.getActiveHighestPriority().maxByOrNull { it.target }
-            else null
+        val maxInput = inputs.getActiveHighestPriority().maxByOrNull { it.target }
+
+        val activeInput = if (!FAKeyMappings.isHoldingThrust()) maxInput else null
         val newTarget =
-            if (finalInput?.status == ControlInput.Status.ACTIVE) finalInput.target
+            if (activeInput?.status == ControlInput.Status.ACTIVE) activeInput.target
             else manualThrust
 
         targetThrust = newTarget
-        noThrustSource = thrustSource == null && (newTarget != 0.0f || (finalInput != null && finalInput.target != 0.0f))
+        noThrustSource = thrustSource == null && (newTarget != 0.0f || (activeInput != null && activeInput.target != 0.0f))
         reverseUnsupported = newTarget < 0.0f && thrustSource?.supportsReverse == false
 
         val active: Boolean = !noThrustSource && !reverseUnsupported
-        activeInput = finalInput?.copy(status = if (active) finalInput.status else ControlInput.Status.UNAVAILABLE)
+        lastInput = maxInput?.copy(status = if (active) maxInput.status else ControlInput.Status.UNAVAILABLE)
 
         if (computers.data.automationsAllowed() && targetThrust != 0.0f) {
             thrustSource?.tickThrust(targetThrust.coerceIn((if (thrustSource.supportsReverse) -1.0f else 0.0f)..1.0f))
@@ -105,7 +105,7 @@ class ThrustComputer(computers: ComputerBus) : Computer(computers) {
 
     override fun reset() {
         targetThrust = 0.0f
-        activeInput = null
+        lastInput = null
         noThrustSource = false
         reverseUnsupported = false
     }

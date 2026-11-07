@@ -162,10 +162,14 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
             if (category.activeAlerts.isEmpty()) {
                 continue
             }
-            val alert: Alert = category.activeAlerts.removeAt(0)
-            category.ignoredAlerts.add(alert)
-            alert.onDismiss()
-            if (!all) {
+            if (all) {
+                category.ignoredAlerts.addAll(category.activeAlerts)
+                category.activeAlerts.forEach(Alert::onDismiss)
+                category.activeAlerts.clear()
+            } else {
+                val alert: Alert = category.activeAlerts.removeAt(0)
+                category.ignoredAlerts.add(alert)
+                alert.onDismiss()
                 break
             }
         }
@@ -176,8 +180,10 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
             if (category.ignoredAlerts.isEmpty()) {
                 continue
             }
-            category.ignoredAlerts.removeAt(0)
-            if (!all) {
+            if (all) {
+                category.ignoredAlerts.clear()
+            } else {
+                category.ignoredAlerts.removeAt(0)
                 break
             }
         }

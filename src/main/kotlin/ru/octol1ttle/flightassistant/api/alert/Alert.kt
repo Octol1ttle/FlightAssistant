@@ -27,7 +27,7 @@ abstract class Alert(val computers: ComputerBus) {
     abstract fun shouldActivate(): Boolean
 
     /**
-     * Called when this alert is hidden via keybind. 
+     * Called when this alert is dismissed by the player.
      */
     open fun onDismiss() {}
 }

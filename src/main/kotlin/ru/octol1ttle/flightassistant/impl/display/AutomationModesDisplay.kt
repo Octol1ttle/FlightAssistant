@@ -36,7 +36,7 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
     private fun renderThrustMode(guiGraphics: GuiGraphics) {
         val thrustUnusable: Boolean = computers.thrust.noThrustSource || computers.thrust.reverseUnsupported
 
-        val input: ControlInput? = computers.thrust.activeInput
+        val input: ControlInput? = computers.thrust.lastInput
         if ((input != null && FAKeyMappings.isHoldingThrust()) || FAKeyMappings.globalAutomationOverride.isDown) {
             thrustDisplay.render(guiGraphics, Component.translatable("mode.flightassistant.thrust.override").setColor(cautionColor), ControlInput.Status.ACTIVE, cautionColor)
             return
@@ -51,7 +51,7 @@ class AutomationModesDisplay(computers: ComputerBus) : Display(computers) {
         if (computers.thrust.manualThrust != 0.0f) {
             thrustDisplay.render(
                 guiGraphics,
-                if (computers.thrust.manualThrust == 1.0f) Component.translatable("mode.flightassistant.thrust.manual.toga").setColor(secondaryColor)
+                if (computers.thrust.manualThrust == 1.0f) Component.translatable("mode.flightassistant.thrust.manual.max").setColor(secondaryColor)
                 else if (computers.thrust.manualThrust < 0.0f) Component.translatable("mode.flightassistant.thrust.manual.reverse")
                 else Component.translatable("mode.flightassistant.thrust.manual"),
                 ControlInput.Status.ACTIVE, if (thrustUnusable) cautionColor else null
