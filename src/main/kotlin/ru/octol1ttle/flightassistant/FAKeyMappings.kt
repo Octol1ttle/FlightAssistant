@@ -23,7 +23,10 @@ object FAKeyMappings {
 
     lateinit var openFlightAssistantSetup: KeyMapping
 
-    lateinit var autopilotDisconnect: KeyMapping
+    lateinit var toggleFlightDirectors: KeyMapping
+    lateinit var toggleAutoThrust: KeyMapping
+    lateinit var toggleAutopilot: KeyMapping
+
     lateinit var globalAutomationOverride: KeyMapping
 
     lateinit var hideCurrentAlert: KeyMapping
@@ -38,7 +41,10 @@ object FAKeyMappings {
         toggleEnabled = addKeyMapping("toggle_enabled", -1)
         openFlightAssistantSetup = addKeyMapping("open_flightassistant_setup", GLFW.GLFW_KEY_KP_ENTER)
 
-        autopilotDisconnect = addKeyMapping("autopilot_disconnect", GLFW.GLFW_KEY_CAPS_LOCK) // TODO: replace with "Toggle FD", "Toggle A/T", "Toggle AP"
+        toggleFlightDirectors = addKeyMapping("toggle_flight_directors", GLFW.GLFW_KEY_KP_1)
+        toggleAutoThrust = addKeyMapping("toggle_auto_thrust", GLFW.GLFW_KEY_KP_2)
+        toggleAutopilot = addKeyMapping("toggle_autopilot", GLFW.GLFW_KEY_KP_3)
+
         globalAutomationOverride = addKeyMapping("global_automation_override", GLFW.GLFW_KEY_LEFT_ALT)
 
         hideCurrentAlert = addKeyMapping("hide_current_alert", GLFW.GLFW_KEY_KP_0)
@@ -72,11 +78,14 @@ object FAKeyMappings {
             }
         }
 
-        while (autopilotDisconnect.consumeClick()) {
-            if (!computers.autoflight.autopilot && !computers.autoflight.autopilotAlert) {
-                computers.autoflight.setFlightDirectors(false)
-            }
-            computers.autoflight.setAutoPilot(false, alert = false)
+        while (toggleFlightDirectors.consumeClick()) {
+            computers.autoflight.setFlightDirectors(!computers.autoflight.flightDirectors)
+        }
+        while (toggleAutoThrust.consumeClick()) {
+            computers.autoflight.setAutoThrust(!computers.autoflight.autoThrust, false)
+        }
+        while (toggleAutopilot.consumeClick()) {
+            computers.autoflight.setAutopilot(!computers.autoflight.autopilot, false)
         }
 
         while (hideCurrentAlert.consumeClick()) {
@@ -86,10 +95,10 @@ object FAKeyMappings {
             computers.alert.recall(false)
         }
 
-        while (setIdle.consumeClick()) {
+        while (setIdleThrust.consumeClick()) {
             computers.thrust.setManualThrust(0.0f)
         }
-        while (setToga.consumeClick()) {
+        while (setMaxThrust.consumeClick()) {
             computers.thrust.setManualThrust(1.0f)
         }
         while (decreaseThrust.consumeClick()) {

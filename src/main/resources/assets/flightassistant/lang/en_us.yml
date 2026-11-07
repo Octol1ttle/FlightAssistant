@@ -572,7 +572,9 @@ key.category.flightassistant:
     .: FlightAssistant
     toggle_enabled: Toggle mod enabled
     open_flightassistant_setup: Open FlightAssistant setup screen
-    autopilot_disconnect: Disconnect autopilot
+    toggle_flight_directors: Toggle flight directors
+    toggle_auto_thrust: Toggle auto thrust
+    toggle_autopilot: Toggle autopilot
     global_automation_override: Global automation override (hold)
     hide_current_alert: Hide currently active alert
     show_hidden_alert: Show last hidden alert

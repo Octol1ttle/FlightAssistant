@@ -43,7 +43,7 @@ class AutoFlightScreen(parent: Screen) : FABaseScreen(parent, Component.translat
             TextOnlyButton(
                 this.centerX + 80, baseY - 20, Component.translatable("menu.flightassistant.autoflight.disabled")
             ) {
-                computers.autoflight.setAutoPilot(!computers.autoflight.autopilot, false)
+                computers.autoflight.setAutopilot(!computers.autoflight.autopilot, false)
             })
 
         val thrustMode: SmartStringWidget = this.addRenderableWidget(SmartStringWidget(flightDirectors.baseX - 50, baseY, Component.translatable("menu.flightassistant.autoflight.thrust.mode")))

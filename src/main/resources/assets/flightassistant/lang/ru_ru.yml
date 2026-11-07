@@ -493,7 +493,7 @@ mode.flightassistant:
     manual:
       .: РУЧН ТЯГА
       reverse: РУЧН РЕВ
-      toga: РУЧН ВЗЛЕТН
+      max: РУЧН МАКС
     idle: ТЯГА МАЛ
     toga: ТЯГА ВЗЛЕТН
     speed: СКОР
@@ -575,7 +575,9 @@ key.category.flightassistant:
     .: FlightAssistant
     toggle_enabled: Включить/выключить мод
     open_flightassistant_setup: Открыть экран настройки FlightAssistant
-    autopilot_disconnect: Отключить автопилот
+    toggle_flight_directors: Переключить указатели полёта
+    toggle_auto_thrust: Переключить автомат тяги
+    toggle_autopilot: Переключить автопилот
     global_automation_override: Принудительное отключение автоматики (зажать)
     hide_current_alert: Скрыть активное предупреждение
     show_hidden_alert: Показать скрытое предупреждение

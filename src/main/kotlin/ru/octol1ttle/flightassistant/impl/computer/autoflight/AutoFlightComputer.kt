@@ -57,7 +57,7 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers) {
                     output.add(ControlInput(0.0f, priority = ControlInput.Priority.NORMAL))
                     return@EntityTurn
                 }
-                setAutoPilot(false, alert = true)
+                setAutopilot(false, alert = true)
             }
 
             pitchResistance = 0.0f
@@ -69,7 +69,7 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers) {
                     output.add(ControlInput(0.0f, priority = ControlInput.Priority.NORMAL))
                     return@EntityTurn
                 }
-                setAutoPilot(false, alert = true)
+                setAutopilot(false, alert = true)
             }
 
             headingResistance = 0.0f
@@ -82,14 +82,14 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers) {
                 setAutoThrust(false, alert = true)
             }
             if (this.autopilot) {
-                setAutoPilot(false, alert = true)
+                setAutopilot(false, alert = true)
             }
             return
         }
 
         if (FAKeyMappings.globalAutomationOverride.isDown) {
             setAutoThrust(false, alert = false)
-            setAutoPilot(false, alert = false)
+            setAutopilot(false, alert = false)
         }
 
         pitchResistance = (pitchResistance - FATickCounter.TICK_TIME * FAConfig.global.autopilotResistanceThreshold).coerceAtLeast(0.0f)
@@ -107,7 +107,7 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers) {
         this.autoThrust = autoThrust
     }
 
-    fun setAutoPilot(autopilot: Boolean, alert: Boolean? = null) {
+    fun setAutopilot(autopilot: Boolean, alert: Boolean? = null) {
         if (alert != null) {
             this.autopilotAlert = this.autopilot && !autopilot && alert
         }
