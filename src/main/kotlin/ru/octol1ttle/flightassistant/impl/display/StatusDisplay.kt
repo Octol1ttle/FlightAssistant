@@ -23,7 +23,7 @@ class StatusDisplay(computers: ComputerBus) : Display(computers) {
             val x: Int = HudFrame.right - 5
             var y: Int = HudFrame.top + 5
 
-            val texts: Collection<Component> = computers.dispatchQuery(StatusMessageQuery())
+            val texts: Collection<Component> = computers.dispatchQuery(StatusMessageQuery)
             for (text: Component in texts) {
                 drawRightAlignedString(text, x, y, secondaryColor)
                 y += 10
@@ -37,7 +37,7 @@ class StatusDisplay(computers: ComputerBus) : Display(computers) {
         }
     }
 
-    class StatusMessageQuery : ComputerQuery<Component>()
+    object StatusMessageQuery : ComputerQuery<Component>()
 
     companion object {
         val ID: ResourceLocation = FlightAssistant.id("status")

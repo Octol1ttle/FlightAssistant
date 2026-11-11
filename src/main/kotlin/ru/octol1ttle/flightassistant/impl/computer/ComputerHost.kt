@@ -146,17 +146,12 @@ internal object ComputerHost : ModuleController<Computer>, ComputerBus {
         profiler.pop()
     }
 
-    @Deprecated("Will be private")
-    override fun <C, T> guardedCall(computer: C, call: (C) -> T): T? {
+    private fun <C : Computer, T> guardedCall(computer: C, call: (C) -> T) {
         try {
-            return call(computer)
+            call(computer)
         } catch (t: Throwable) {
-            if (computer !is Computer) return null
             onComputerFault(computer)
-
             FlightAssistant.logger.error("Exception invoking guarded call", t)
-
-            return null
         }
     }
 
@@ -169,6 +164,7 @@ internal object ComputerHost : ModuleController<Computer>, ComputerBus {
     }
 
     override fun <Response> dispatchQuery(query: ComputerQuery<Response>): Collection<Response> {
+        query.responses.clear()
         for (computer: Computer in computers.values) {
             if (!computer.isDisabledOrFaulted()) {
                 guardedCall(computer) { it.handleQuery(query) }

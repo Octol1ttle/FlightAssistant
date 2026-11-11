@@ -5,18 +5,13 @@ import net.minecraft.resources.ResourceLocation
 import ru.octol1ttle.flightassistant.FAKeyMappings
 import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
-import ru.octol1ttle.flightassistant.api.computer.Computer
-import ru.octol1ttle.flightassistant.api.computer.ComputerBus
-import ru.octol1ttle.flightassistant.api.computer.ComputerEvent
-import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
+import ru.octol1ttle.flightassistant.api.computer.*
+import ru.octol1ttle.flightassistant.api.game.AllowedManualPitchChangeQuery
+import ru.octol1ttle.flightassistant.api.game.AllowedManualYawChangeQuery
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
-import ru.octol1ttle.flightassistant.api.util.event.EntityTurnEvents
 import ru.octol1ttle.flightassistant.api.util.extensions.distance2d
 import ru.octol1ttle.flightassistant.config.FAConfig
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.HeadingComputer
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.PitchComputer
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.RollComputer
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.ThrustComputer
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.*
 import ru.octol1ttle.flightassistant.impl.display.StatusDisplay
 import kotlin.math.abs
 import kotlin.math.roundToLong
@@ -48,33 +43,6 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers) {
 
     val activeLateralMode: LateralMode?
         get() = selectedLateralMode ?: computers.plan.getLateralMode()
-
-    override fun subscribeToEvents() {
-        EntityTurnEvents.X_ROT.register(EntityTurnEvents.EntityTurn { pitchDelta, output ->
-            if (computers.data.flying && autopilot) {
-                pitchResistance += abs(pitchDelta) / 90.0f
-                if (pitchResistance < FAConfig.global.autopilotResistanceThreshold) {
-                    output.add(ControlInput(0.0f, priority = ControlInput.Priority.NORMAL))
-                    return@EntityTurn
-                }
-                setAutopilot(false, alert = true)
-            }
-
-            pitchResistance = 0.0f
-        })
-        EntityTurnEvents.Y_ROT.register(EntityTurnEvents.EntityTurn { headingDelta, output ->
-            if (computers.data.flying && autopilot) {
-                headingResistance += abs(headingDelta) / 180.0f
-                if (headingResistance < FAConfig.global.autopilotResistanceThreshold) {
-                    output.add(ControlInput(0.0f, priority = ControlInput.Priority.NORMAL))
-                    return@EntityTurn
-                }
-                setAutopilot(false, alert = true)
-            }
-
-            headingResistance = 0.0f
-        })
-    }
 
     override fun tick() {
         if (computers.protections.protectionsLost || !computers.chunk.isCurrentLoaded) {
@@ -152,6 +120,31 @@ class AutoFlightComputer(computers: ComputerBus) : Computer(computers) {
                 "status.flightassistant.target_distance_time",
                 distance.roundToLong().toString(), computers.plan.getFormattedTime(distance)
             ))
+        }
+
+        if (query is AllowedManualPitchChangeQuery) {
+            if (computers.data.flying && autopilot) {
+                pitchResistance += abs(query.pitchChange) / 90.0f
+                if (pitchResistance < FAConfig.global.autopilotResistanceThreshold) {
+                    query.respond(ControlInput(0.0f, priority = ControlInput.Priority.NORMAL))
+                    return
+                }
+                setAutopilot(false, alert = true)
+            }
+
+            pitchResistance = 0.0f
+        }
+        if (query is AllowedManualYawChangeQuery) {
+            if (computers.data.flying && autopilot) {
+                headingResistance += abs(query.yawChange) / 180.0f
+                if (headingResistance < FAConfig.global.autopilotResistanceThreshold) {
+                    query.respond(ControlInput(0.0f, priority = ControlInput.Priority.NORMAL))
+                    return
+                }
+                setAutopilot(false, alert = true)
+            }
+
+            headingResistance = 0.0f
         }
     }
 

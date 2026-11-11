@@ -10,8 +10,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.FireworkRocketItem
 import net.minecraft.world.item.ItemStack
 import ru.octol1ttle.flightassistant.FlightAssistant
-import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustSource
-import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustSourceRegistrationCallback
+import ru.octol1ttle.flightassistant.api.autoflight.ThrustSource
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
@@ -19,6 +18,7 @@ import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.LimitedFIFOQueue
 import ru.octol1ttle.flightassistant.api.util.event.FireworkBoostCallback
 import ru.octol1ttle.flightassistant.config.FAConfig
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.ThrustComputer
 import ru.octol1ttle.flightassistant.impl.display.StatusDisplay
 
 class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Computer(computers), ThrustSource {
@@ -34,7 +34,6 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
     val responseTimes: LimitedFIFOQueue<Int> = LimitedFIFOQueue(5)
 
     override fun subscribeToEvents() {
-        ThrustSourceRegistrationCallback.EVENT.register { it.accept(this) }
         InteractionEvent.RIGHT_CLICK_ITEM.register(InteractionEvent.RightClickItem { player, hand ->
             val stack: ItemStack = player.getItemInHand(hand)
             if (player.level().isClientSide() && computers.data.flying && stack.item is FireworkRocketItem) {
@@ -144,10 +143,6 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
         waitingForResponse = true
     }
 
-    override fun isAvailable(): Boolean {
-        return safeFireworkSlot != null
-    }
-
     override fun tickThrust(currentThrust: Float) {
         if (currentThrust > computers.data.forwardVelocityPerSecond.length() / FIREWORK_SPEED && !anyTerrainAhead()) {
             tryActivateFirework(computers.data.player)
@@ -157,6 +152,11 @@ class FireworkComputer(computers: ComputerBus, private val mc: Minecraft) : Comp
     override fun <Response> handleQuery(query: ComputerQuery<Response>) {
         if (query is StatusDisplay.StatusMessageQuery && computers.thrust.getThrustSource() == this) {
             query.respond(Component.translatable("status.flightassistant.firework_count", safeFireworkCount))
+        }
+        if (query is ThrustComputer.ActiveThrustSourceQuery) {
+            if (safeFireworkSlot != null) {
+                query.respond(this)
+            }
         }
     }
 

@@ -149,7 +149,6 @@ class AltitudeDisplay(computers: ComputerBus) : Display(computers) {
     }
 
     companion object {
-        @Deprecated("Increase GUI scale by 1 instead")
         private const val READING_MATRIX_SCALE: Float = 1.5f
         val ID: ResourceLocation = FlightAssistant.id("altitude")
     }

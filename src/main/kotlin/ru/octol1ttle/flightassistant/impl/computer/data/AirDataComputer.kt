@@ -50,7 +50,6 @@ class AirDataComputer(computers: ComputerBus, private val mc: Minecraft) : Compu
 *///?} else
             else max(player.fallDistance.toDouble(), altitude - computers.gpws.groundY!!)
 
-    // TODO: consider removing
     val fallDistanceSafe: Boolean
         get() = player.isInWater || fallDistance == null || fallDistance!! <= player.maxFallDistance || isInvulnerableTo(player.damageSources().fall())
 

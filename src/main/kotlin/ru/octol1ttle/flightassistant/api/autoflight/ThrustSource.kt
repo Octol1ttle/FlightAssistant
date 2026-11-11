@@ -1,4 +1,4 @@
-package ru.octol1ttle.flightassistant.api.autoflight.thrust
+package ru.octol1ttle.flightassistant.api.autoflight
 
 /**
  * Defines a source of thrust to be used by the [ru.octol1ttle.flightassistant.impl.computer.autoflight.base.ThrustComputer]
@@ -15,11 +15,6 @@ interface ThrustSource {
      * Defines whether this thrust source supports reverse thrust.
      */
     val supportsReverse: Boolean
-
-    /**
-     * @return whether this thrust source can be used right now. For example, there are fireworks in the player's hand that can be used.
-     */
-    fun isAvailable(): Boolean
 
     /**
      * Called every computer tick for a single thrust source with the highest priority.

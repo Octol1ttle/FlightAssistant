@@ -31,16 +31,22 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
 
     private var saveLoadError = false
 
+    private val hasShiftDown
+//? if >=1.21.9 {
+        /*get() = dev.isxander.yacl3.gui.utils.KeyUtils.hasShiftDown()
+*///?} else
+        get() = net.minecraft.client.gui.screens.Screen.hasShiftDown()
+
     override fun init() {
         super.init()
 
         val alertsY = this.centerY - 90
         this.addRenderableWidget(SmartStringWidget(this.centerX, alertsY, Component.translatable("menu.flightassistant.alerts")).middleAligned())
         dismissAlertButton = this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.alerts.dismiss_one")) {
-            computers.alert.dismiss(hasShiftDown())
+            computers.alert.dismiss(hasShiftDown)
         }.pos(this.centerX - 105, alertsY + 15).width(100).build())
         recallAlertButton = this.addRenderableWidget(Button.builder(Component.translatable("menu.flightassistant.alerts.recall_one")) {
-            computers.alert.recall(hasShiftDown())
+            computers.alert.recall(hasShiftDown)
         }.pos(this.centerX + 5, alertsY + 15).width(100).build())
 
         val systemY = this.centerY - 40
@@ -131,7 +137,7 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
     }
 
     override fun render(guiGraphics: GuiGraphics, mouseX: Int, mouseY: Int, delta: Float) {
-        if (hasShiftDown()) {
+        if (hasShiftDown) {
             dismissAlertButton.message = Component.translatable("menu.flightassistant.alerts.dismiss_all")
             recallAlertButton.message = Component.translatable("menu.flightassistant.alerts.recall_all")
         } else {

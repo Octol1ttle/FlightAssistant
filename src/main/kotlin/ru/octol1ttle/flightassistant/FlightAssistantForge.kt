@@ -11,7 +11,6 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers
 import nl.enjarai.doabarrelroll.compat.flightassistant.DaBRCompatFA
-import ru.octol1ttle.flightassistant.api.util.event.FixedGuiRenderCallback
 import ru.octol1ttle.flightassistant.config.FAConfigScreen
 import thedarkcolour.kotlinforforge.neoforge.KotlinModLoadingContext
 
@@ -53,7 +52,7 @@ object FlightAssistantForge {
     /^fun onRegisterGuiOverlay(event: RegisterGuiLayersEvent) {
         event.registerBelow(VanillaGuiLayers.HOTBAR, FlightAssistant.id("neoforge_gui")) { guiGraphics, deltaTracker ->
             if (!Minecraft.getInstance().options.hideGui) {
-                FixedGuiRenderCallback.EVENT.invoker().onRenderGui(guiGraphics, deltaTracker.getGameTimeDeltaPartialTick(true))
+                FlightAssistant.onGuiRender(guiGraphics)
             }
         }
     }
@@ -62,7 +61,7 @@ object FlightAssistantForge {
         event.registerBelow(VanillaGuiOverlay.HOTBAR.id(), "flightassistant") { gui, graphics, partialTick, _, _ ->
             if (!gui.minecraft.options.hideGui) {
                 gui.setupOverlayRenderState(true, false)
-                FixedGuiRenderCallback.EVENT.invoker().onRenderGui(graphics, partialTick)
+                FlightAssistant.onGuiRender(graphics)
             }
         }
     }

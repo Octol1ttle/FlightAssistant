@@ -2,15 +2,10 @@ package nl.enjarai.doabarrelroll.compat.flightassistant
 
 import dev.architectury.platform.Platform
 import ru.octol1ttle.flightassistant.FlightAssistant
-import ru.octol1ttle.flightassistant.api.autoflight.roll.RollSourceRegistrationCallback
-import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustSourceRegistrationCallback
 import ru.octol1ttle.flightassistant.api.computer.ComputerRegistrationCallback
 
 object DaBRCompatFA {
 //? if do-a-barrel-roll {
-    private lateinit var rollComputer: DaBRRollComputer
-    private lateinit var thrustComputer: DaBRThrustComputer
-
     fun init() {
         if (!Platform.isModLoaded("do_a_barrel_roll")) {
             return
@@ -18,13 +13,9 @@ object DaBRCompatFA {
         FlightAssistant.logger.info("Initializing support for Do a Barrel Roll")
 
         ComputerRegistrationCallback.EVENT.register(ComputerRegistrationCallback { computers, registerFunction ->
-            rollComputer = DaBRRollComputer(computers)
-            registerFunction.accept(DaBRRollComputer.ID, rollComputer)
-            thrustComputer = DaBRThrustComputer(computers)
-            registerFunction.accept(DaBRThrustComputer.ID, thrustComputer)
+            registerFunction.accept(DaBRRollComputer.ID, DaBRRollComputer(computers))
+            registerFunction.accept(DaBRThrustComputer.ID, DaBRThrustComputer(computers))
         })
-        RollSourceRegistrationCallback.EVENT.register { it.accept(rollComputer) }
-        ThrustSourceRegistrationCallback.EVENT.register { it.accept(thrustComputer) }
     }
 //?} else {
     /*fun init() {

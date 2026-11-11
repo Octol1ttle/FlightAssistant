@@ -8,9 +8,9 @@ import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
+import ru.octol1ttle.flightassistant.api.game.AllowedManualPitchChangeQuery
 import ru.octol1ttle.flightassistant.api.util.DeltaTimeMultiplierValidator
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
-import ru.octol1ttle.flightassistant.api.util.event.EntityTurnEvents
 import ru.octol1ttle.flightassistant.api.util.extensions.getActiveHighestPriority
 import ru.octol1ttle.flightassistant.api.util.throwIfNotInRange
 
@@ -22,33 +22,10 @@ class PitchComputer(computers: ComputerBus) : Computer(computers) {
     var activeInput: ControlInput? = null
         private set
 
-    override fun subscribeToEvents() {
-        EntityTurnEvents.X_ROT.register { mcPitchDelta, output ->
-            if (canMoveOrBlockPitch()) {
-                val pitchDelta: Float = -mcPitchDelta
-
-                val oldPitch: Float? = computers.guardedCall(computers.data) { it.pitch }
-                if (oldPitch == null) {
-                    computers.protections.protectionsLost = true
-                    return@register
-                }
-                val newPitch: Float = oldPitch + pitchDelta
-
-                val min: ControlInput? = this.minimumPitch
-                val max: ControlInput? = this.maximumPitch
-                if (max != null && max.status == ControlInput.Status.ACTIVE && pitchDelta > 0.0f && newPitch > max.target) {
-                    output.add(ControlInput(-(max.target - oldPitch).coerceAtLeast(0.0f), priority = max.priority))
-                } else if (min != null && min.status == ControlInput.Status.ACTIVE && pitchDelta < 0.0f && newPitch < min.target) {
-                    output.add(ControlInput(-(min.target - oldPitch).coerceAtMost(0.0f), priority = min.priority))
-                }
-            }
-        }
-    }
-
     override fun tick() {
         updateSafePitches()
 
-        val inputs: List<ControlInput> = computers.dispatchQuery(TargetPitchQuery()).sortedBy { it.priority.value }
+        val inputs: List<ControlInput> = computers.dispatchQuery(TargetPitchQuery).sortedBy { it.priority.value }
         activeInput = inputs.getActiveHighestPriority().maxByOrNull { it.target }
     }
 
@@ -72,11 +49,11 @@ class PitchComputer(computers: ComputerBus) : Computer(computers) {
     }
 
     private fun updateSafePitches() {
-        val maximums: List<ControlInput> = computers.dispatchQuery(MaximumPitchQuery()).sortedBy { it.priority.value }
+        val maximums: List<ControlInput> = computers.dispatchQuery(MaximumPitchQuery).sortedBy { it.priority.value }
         maximumPitch = maximums.getActiveHighestPriority().minByOrNull { it.target }
         val max: ControlInput? = maximumPitch
 
-        val minimums: List<ControlInput> = computers.dispatchQuery(MinimumPitchQuery()).sortedBy { it.priority.value }
+        val minimums: List<ControlInput> = computers.dispatchQuery(MinimumPitchQuery).sortedBy { it.priority.value }
         minimumPitch = minimums.getActiveHighestPriority().maxByOrNull { it.target }
         val min: ControlInput? = minimumPitch
 
@@ -113,6 +90,19 @@ class PitchComputer(computers: ComputerBus) : Computer(computers) {
                 query.respond(min)
             }
         }
+
+        if (query is AllowedManualPitchChangeQuery) {
+            val oldPitch = computers.data.pitch
+            val newPitch: Float = oldPitch + query.pitchChange
+
+            val min: ControlInput? = this.minimumPitch
+            val max: ControlInput? = this.maximumPitch
+            if (max != null && max.status == ControlInput.Status.ACTIVE && query.pitchChange > 0.0f && newPitch > max.target) {
+                query.respond(ControlInput(-(max.target - oldPitch).coerceAtLeast(0.0f), priority = max.priority))
+            } else if (min != null && min.status == ControlInput.Status.ACTIVE && query.pitchChange < 0.0f && newPitch < min.target) {
+                query.respond(ControlInput(-(min.target - oldPitch).coerceAtMost(0.0f), priority = min.priority))
+            }
+        }
     }
 
     override fun reset() {
@@ -129,9 +119,9 @@ class PitchComputer(computers: ComputerBus) : Computer(computers) {
 
     abstract class AbstractPitchQuery : ComputerQuery<ControlInput>(PitchValidator(), DeltaTimeMultiplierValidator())
 
-    class TargetPitchQuery : AbstractPitchQuery()
-    class MinimumPitchQuery : AbstractPitchQuery()
-    class MaximumPitchQuery : AbstractPitchQuery()
+    object TargetPitchQuery : AbstractPitchQuery()
+    object MinimumPitchQuery : AbstractPitchQuery()
+    object MaximumPitchQuery : AbstractPitchQuery()
 
     companion object {
         val ID: ResourceLocation = FlightAssistant.id("pitch")

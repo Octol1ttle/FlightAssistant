@@ -14,7 +14,6 @@ import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.util.ChangeTrackingArrayList
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.extensions.applyVolume
-import ru.octol1ttle.flightassistant.api.util.extensions.getHighestPriority
 import ru.octol1ttle.flightassistant.api.util.extensions.pause
 import ru.octol1ttle.flightassistant.api.util.extensions.unpause
 import ru.octol1ttle.flightassistant.config.FAConfig
@@ -239,7 +238,7 @@ class AlertComputer(computers: ComputerBus, private val soundManager: SoundManag
     private fun startNewSounds() {
         val newDatas: List<AlertData> =
             alertLists.filterValues { list -> list.hasNewElements() || list.any { !sounds.containsKey(it.data) } }.keys.sortedBy { it.priority }
-        val newHighestPriorityDatas: List<AlertData> = newDatas.getHighestPriority()
+        val newHighestPriorityDatas: List<AlertData> = newDatas.filter { it.priority == newDatas[0].priority }
         val activeHighestPriority: Int = sounds.keys.minByOrNull { it.priority }?.priority ?: Int.MAX_VALUE
 
         var anyStartedThisTick = false

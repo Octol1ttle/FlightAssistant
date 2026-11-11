@@ -5,9 +5,11 @@ import net.minecraft.resources.ResourceLocation
 import nl.enjarai.doabarrelroll.DoABarrelRoll
 import nl.enjarai.doabarrelroll.api.event.ThrustEvents
 import nl.enjarai.doabarrelroll.config.ModConfig
-import ru.octol1ttle.flightassistant.api.autoflight.thrust.ThrustSource
+import ru.octol1ttle.flightassistant.api.autoflight.ThrustSource
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
+import ru.octol1ttle.flightassistant.impl.computer.autoflight.base.ThrustComputer
 import kotlin.math.sign
 
 class DaBRThrustComputer(computers: ComputerBus) : Computer(computers), ThrustSource {
@@ -26,14 +28,18 @@ class DaBRThrustComputer(computers: ComputerBus) : Computer(computers), ThrustSo
         }, 10)
     }
 
-    override fun isAvailable(): Boolean {
-        return ModConfig.INSTANCE.enableThrust
-    }
-
     override fun tick() {
     }
 
     override fun reset() {
+    }
+
+    override fun <Response> handleQuery(query: ComputerQuery<Response>) {
+        if (query is ThrustComputer.ActiveThrustSourceQuery) {
+            if (ModConfig.INSTANCE.enableThrust) {
+                query.respond(this)
+            }
+        }
     }
 
     companion object {

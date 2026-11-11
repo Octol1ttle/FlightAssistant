@@ -3,15 +3,16 @@ package ru.octol1ttle.flightassistant
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.math.Axis
 import dev.architectury.event.events.client.ClientLifecycleEvent
+import net.minecraft.client.Camera
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.profiling.ProfilerFiller
+import org.joml.Matrix3f
 import org.joml.Matrix4f
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import ru.octol1ttle.flightassistant.api.util.RenderMatrices
-import ru.octol1ttle.flightassistant.api.util.event.FixedGuiRenderCallback
-import ru.octol1ttle.flightassistant.api.util.event.LevelRenderCallback
 import ru.octol1ttle.flightassistant.config.FAConfig
 import ru.octol1ttle.flightassistant.impl.computer.ComputerHost
 import ru.octol1ttle.flightassistant.impl.display.HudDisplayHost
@@ -45,25 +46,27 @@ object FlightAssistant {
             ComputerHost.sendRegistrationEvent()
             initComplete = true
         }
-        LevelRenderCallback.EVENT.register { partialTick, camera, projectionMatrix, frustumMatrix ->
-            FAKeyMappings.checkPressed(ComputerHost)
+    }
 
-            ComputerHost.tick(partialTick)
+    internal fun onLevelRender(partialTick: Float, camera: Camera, projectionMatrix: Matrix4f, frustumMatrix: Matrix3f) {
+        FAKeyMappings.checkPressed(ComputerHost)
 
-            RenderMatrices.projectionMatrix.set(projectionMatrix)
-            RenderMatrices.worldSpaceMatrix.set(frustumMatrix)
-            RenderMatrices.modelViewMatrix.set(RenderSystem.getModelViewMatrix())
+        ComputerHost.tick(partialTick)
 
-            RenderMatrices.worldSpaceNoRollMatrix.set(Matrix4f().apply {
-                rotate(Axis.XP.rotationDegrees(camera.xRot))
-                rotate(Axis.YP.rotationDegrees(camera.yRot + 180.0f))
-            })
+        RenderMatrices.projectionMatrix.set(projectionMatrix)
+        RenderMatrices.worldSpaceMatrix.set(frustumMatrix)
+        RenderMatrices.modelViewMatrix.set(RenderSystem.getModelViewMatrix())
 
-            RenderMatrices.ready = true
-        }
-        FixedGuiRenderCallback.EVENT.register { context, _ ->
-            HudDisplayHost.render(context)
-        }
+        RenderMatrices.worldSpaceNoRollMatrix.set(Matrix4f().apply {
+            rotate(Axis.XP.rotationDegrees(camera.xRot))
+            rotate(Axis.YP.rotationDegrees(camera.yRot + 180.0f))
+        })
+
+        RenderMatrices.ready = true
+    }
+
+    internal fun onGuiRender(guiGraphics: GuiGraphics) {
+        HudDisplayHost.render(guiGraphics)
     }
 
     internal fun id(path: String): ResourceLocation {

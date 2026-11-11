@@ -8,7 +8,7 @@ abstract class GuiMixinLegacy {
 //? if fabric && <1.21 {
     @org.spongepowered.asm.mixin.injection.Inject(method = "render", at = @org.spongepowered.asm.mixin.injection.At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;getPlayerMode()Lnet/minecraft/world/level/GameType;", ordinal = 0))
     private void render(net.minecraft.client.gui.GuiGraphics guiGraphics, float partialTick, org.spongepowered.asm.mixin.injection.callback.CallbackInfo callbackInfo) {
-        ru.octol1ttle.flightassistant.api.util.event.FixedGuiRenderCallback.EVENT.invoker().onRenderGui(guiGraphics, partialTick);
+        ru.octol1ttle.flightassistant.FlightAssistant.INSTANCE.onGuiRender$flightassistant_fabric(guiGraphics);
     }
 //?}
 }

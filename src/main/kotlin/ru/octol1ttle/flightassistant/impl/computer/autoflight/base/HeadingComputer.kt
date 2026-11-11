@@ -19,7 +19,7 @@ class HeadingComputer(computers: ComputerBus) : Computer(computers) {
         private set
 
     override fun tick() {
-        val inputs: List<ControlInput> = computers.dispatchQuery(TargetHeadingQuery()).sortedBy { it.priority.value }
+        val inputs: List<ControlInput> = computers.dispatchQuery(TargetHeadingQuery).sortedBy { it.priority.value }
         activeInput = inputs.getActiveHighestPriority().firstOrNull()
     }
 
@@ -53,7 +53,7 @@ class HeadingComputer(computers: ComputerBus) : Computer(computers) {
         }
     }
 
-    class TargetHeadingQuery : ComputerQuery<ControlInput>(HeadingValidator(), DeltaTimeMultiplierValidator())
+    object TargetHeadingQuery : ComputerQuery<ControlInput>(HeadingValidator(), DeltaTimeMultiplierValidator())
 
     companion object {
         val ID: ResourceLocation = FlightAssistant.id("heading")

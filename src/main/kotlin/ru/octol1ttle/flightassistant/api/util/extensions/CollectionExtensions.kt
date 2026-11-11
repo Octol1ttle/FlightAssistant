@@ -1,15 +1,13 @@
 package ru.octol1ttle.flightassistant.api.util.extensions
 
-import ru.octol1ttle.flightassistant.api.alert.AlertData
 import ru.octol1ttle.flightassistant.api.autoflight.ControlInput
-import ru.octol1ttle.flightassistant.api.computer.Computer
 
 /**
  * Filters the current list to try and get an active input with the highest priority in the list.
  * If there are no such inputs, the returned list contains all inputs with the highest priority in the list.
  * If there are no inputs whatsoever, the original list is returned
  */
-fun List<ControlInput>.getActiveHighestPriority(): List<ControlInput> {
+fun Collection<ControlInput>.getActiveHighestPriority(): Collection<ControlInput> {
     if (this.isEmpty()) {
         return this
     }
@@ -22,18 +20,4 @@ fun List<ControlInput>.getActiveHighestPriority(): List<ControlInput> {
     }
 
     return noDisabled.filter { it.priority.value == noDisabled[0].priority.value }
-}
-
-/**
- * Filters the current list to get alert datas that have the highest priority in the list.
- */
-fun List<AlertData>.getHighestPriority(): List<AlertData> {
-    return this.filter { it.priority == this[0].priority }
-}
-
-/**
- * Filters the current list to only include working computers (enabled and not faulted). If a list contains an object that is not a computer, that object remains in the returned list.
- */
-fun <T> List<T>.filterWorking(): List<T> {
-    return this.filter { it !is Computer || !it.isDisabledOrFaulted() }
 }
