@@ -482,6 +482,8 @@ menu.flightassistant:
     save: Save
     load: Load
     error: An error occurred! Please check the log for details
+    loaded_with_problems: The flight plan was loaded with problems. Resolve them and save the flight plan before using it
+    loaded_legacy: A legacy flight plan was loaded. Save it to convert it to the new format
 
 mode.flightassistant:
   thrust:

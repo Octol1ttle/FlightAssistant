@@ -9,10 +9,11 @@ import net.minecraft.client.gui.narration.NarratableEntry
 import net.minecraft.network.chat.Component
 import ru.octol1ttle.flightassistant.FlightAssistant.mc
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.flightplan.ActiveSegment
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
-import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer.Waypoint.PhaseMarker
+import ru.octol1ttle.flightassistant.api.flightplan.Waypoint.PhaseMarker
 import ru.octol1ttle.flightassistant.screen.components.FABaseList
 import ru.octol1ttle.flightassistant.screen.components.TypeStrictEditBox
 import kotlin.math.roundToInt
@@ -77,7 +78,7 @@ class WaypointsList(y0: Int, y1: Int, width: Int, val computers: ComputerBus, va
         }.tooltip(Tooltip.create(Component.translatable("menu.flightassistant.fms.phase_marker.land.tooltip"))).size(28, 14).build()
 
         private val directToButton = Button.builder(Component.literal("D→")) {
-            list.state.tracking = FlightPlanComputer.ActiveSegment.Direct(this.index)
+            list.state.tracking = ActiveSegment.Direct(this.index)
             list.state.syncedWithComputer = false
         }.tooltip(Tooltip.create(Component.translatable("menu.flightassistant.fms.direct_to"))).size(20, 14).build()
         private val deleteButton = Button.builder(Component.literal("-")) {
@@ -95,7 +96,7 @@ class WaypointsList(y0: Int, y1: Int, width: Int, val computers: ComputerBus, va
 
         private fun isOrigin(): Boolean {
             val tracking = list.state.tracking
-            return tracking is FlightPlanComputer.ActiveSegment.Leg && tracking.origin == state.toFlightPlanWaypoint()
+            return tracking is ActiveSegment.Leg && tracking.origin == state.toFlightPlanWaypoint()
         }
 
         override fun isDragging(): Boolean {
@@ -156,8 +157,8 @@ class WaypointsList(y0: Int, y1: Int, width: Int, val computers: ComputerBus, va
 
             val tracking = list.state.tracking
             val targetIndex = when (tracking) {
-                is FlightPlanComputer.ActiveSegment.Direct -> tracking.index
-                is FlightPlanComputer.ActiveSegment.Leg -> tracking.targetIndex
+                is ActiveSegment.Direct -> tracking.index
+                is ActiveSegment.Leg -> tracking.targetIndex
                 null -> -1
             }
             val mode = distanceTimeMode.resolve(computers.data.flying)
@@ -199,7 +200,7 @@ class WaypointsList(y0: Int, y1: Int, width: Int, val computers: ComputerBus, va
             }
             setLandButton.active = state.phaseMarker != PhaseMarker.LANDING
             setApproachButton.active = state.phaseMarker != PhaseMarker.APPROACH
-            directToButton.active = tracking != FlightPlanComputer.ActiveSegment.Direct(this.index)
+            directToButton.active = tracking != ActiveSegment.Direct(this.index)
             deleteButton.active = !isOrigin()
             children().filterIsInstance<Renderable>().forEach { it.render(guiGraphics, mouseX, mouseY, partialTick) }
         }
@@ -314,12 +315,12 @@ class WaypointsList(y0: Int, y1: Int, width: Int, val computers: ComputerBus, va
         super.renderList(guiGraphics, mouseX, mouseY, partialTick)
 //?}
         when (val tracking = state.tracking) {
-            is FlightPlanComputer.ActiveSegment.Direct -> {
+            is ActiveSegment.Direct -> {
                 val y = getRowTop(toListIndex(tracking.index)) + ITEM_HEIGHT / 2 - 2
                 guiGraphics.hLine(rowLeft + 10, rowLeft + 22, y, primaryAdvisoryColor)
                 guiGraphics.drawString(">", rowLeft + 22, y - 3, primaryAdvisoryColor)
             }
-            is FlightPlanComputer.ActiveSegment.Leg -> {
+            is ActiveSegment.Leg -> {
                 val targetY = getRowTop(toListIndex(tracking.targetIndex)) + ITEM_HEIGHT / 2 - 2
                 guiGraphics.hLine(rowLeft + 10, rowLeft + 22, targetY, primaryAdvisoryColor)
                 guiGraphics.drawString(">", rowLeft + 22, targetY - 3, primaryAdvisoryColor)

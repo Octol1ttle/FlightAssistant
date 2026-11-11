@@ -1,7 +1,5 @@
 package ru.octol1ttle.flightassistant.impl.computer.autoflight
 
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import net.minecraft.SharedConstants
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
@@ -12,6 +10,8 @@ import ru.octol1ttle.flightassistant.FlightAssistant
 import ru.octol1ttle.flightassistant.api.computer.Computer
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.computer.ComputerQuery
+import ru.octol1ttle.flightassistant.api.flightplan.ActiveSegment
+import ru.octol1ttle.flightassistant.api.flightplan.Waypoint
 import ru.octol1ttle.flightassistant.api.util.LimitedFIFOQueue
 import ru.octol1ttle.flightassistant.api.util.extensions.distance2d
 import ru.octol1ttle.flightassistant.api.util.extensions.formatRoot
@@ -241,24 +241,5 @@ class FlightPlanComputer(computers: ComputerBus) : Computer(computers) {
         APPROACH,
         LANDING,
         GO_AROUND
-    }
-
-    sealed class ActiveSegment {
-        data class Direct(val index: Int) : ActiveSegment()
-        data class Leg(val origin: Waypoint, val targetIndex: Int) : ActiveSegment()
-    }
-
-    @Serializable
-    data class Waypoint(val posX: Int = 0, val posZ: Int = 0, val altitude: Int = 0, val speed: Int = 0, val phaseMarker: PhaseMarker = PhaseMarker.NONE, @Transient val uuid: UUID = UUID.randomUUID()) {
-        fun vec3(): Vec3 {
-            return Vec3(posX + 0.5, altitude.toDouble(), posZ + 0.5)
-        }
-
-        enum class PhaseMarker {
-            NONE,
-            TAKEOFF,
-            APPROACH,
-            LANDING
-        }
     }
 }

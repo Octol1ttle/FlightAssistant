@@ -1,6 +1,7 @@
 package ru.octol1ttle.flightassistant.screen
 
 import dev.isxander.yacl3.platform.YACLPlatform
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import net.minecraft.ChatFormatting
 import net.minecraft.Util
@@ -12,6 +13,8 @@ import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.tinyfd.TinyFileDialogs
 import ru.octol1ttle.flightassistant.FlightAssistant
+import ru.octol1ttle.flightassistant.api.flightplan.Waypoint
+import ru.octol1ttle.flightassistant.api.flightplan.legacy.FlightPlan
 import ru.octol1ttle.flightassistant.api.util.extensions.drawMiddleAlignedString
 import ru.octol1ttle.flightassistant.config.FAConfigScreen
 import ru.octol1ttle.flightassistant.impl.computer.ComputerHost
@@ -30,6 +33,8 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
     private lateinit var recallAlertButton: Button
 
     private var saveLoadError = false
+    private var loadedLegacy = false
+    private var loadedWithProblems = false
 
     private val hasShiftDown
 //? if >=1.21.9 {
@@ -92,6 +97,8 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
                     FlightAssistant.logger.info("Saved flight plan to $path")
                 }
                 saveLoadError = false
+                loadedLegacy = false
+                loadedWithProblems = false
             } catch (e: Throwable) {
                 FlightAssistant.logger.error("Unable to save flight plan", e)
                 saveLoadError = true
@@ -109,8 +116,60 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
 
                 val path = TinyFileDialogs.tinyfd_openFileDialog(title, PLANS_PATH.resolve("flight_plan.json").toAbsolutePath().toString(), patterns, description, false)
                 if (path != null) {
-                    FileReader(path).use { computers.plan.load(Json.decodeFromString(it.readText())) }
+                    loadedLegacy = false
+                    loadedWithProblems = false
+
+                    try {
+                        FileReader(path).use { computers.plan.load(Json.decodeFromString(it.readText())) }
+                    } catch (e: SerializationException) {
+                        FlightAssistant.logger.debug("Unable to deserialize flight plan, attempting legacy conversion", e)
+
+                        // try loading legacy flight plan
+                        val legacy: FlightPlan = FileReader(path).use { Json.decodeFromString(it.readText()) }
+                        // convert it to new format
+                        val waypoints = mutableListOf<Waypoint>()
+                        var indexOffset = 0
+                        if (!legacy.departure.isDefault()) {
+                            waypoints.add(
+                                Waypoint(
+                                    legacy.departure.coordinatesX,
+                                    legacy.departure.coordinatesZ,
+                                    legacy.departure.elevation,
+                                    // legacy code uses "thrust %", new code uses speed. roughly convert thrust% into (firework) speed
+                                    (legacy.departure.takeoffThrust * 30.0f).toInt(),
+                                    Waypoint.PhaseMarker.TAKEOFF
+                                )
+                            )
+                            indexOffset = 1
+                        }
+                        for ((coordinatesX, coordinatesZ, altitude, speed) in legacy.enroute) {
+                            waypoints.add(Waypoint(coordinatesX, coordinatesZ, altitude, speed))
+                        }
+                        if (!legacy.arrival.isDefault()) {
+                            waypoints.add(
+                                Waypoint(
+                                    legacy.arrival.coordinatesX,
+                                    legacy.arrival.coordinatesZ,
+                                    legacy.arrival.elevation,
+                                    // legacy code uses "thrust %", new code uses speed. roughly convert thrust% into (firework) speed
+                                    (legacy.arrival.landingThrust * 30.0f).toInt(),
+                                    Waypoint.PhaseMarker.LANDING
+                                )
+                            )
+                            val sizeWithOffset =
+                                waypoints.size - indexOffset - 1 // takeoff & landing waypoints were not in the main waypoints list in the legacy format
+                            if (legacy.arrival.approachReEntryWaypointIndex in 0..<sizeWithOffset) {
+                                val index = legacy.arrival.approachReEntryWaypointIndex + indexOffset
+                                waypoints[index] = waypoints[index].copy(phaseMarker = Waypoint.PhaseMarker.APPROACH)
+                            }
+                        }
+                        computers.plan.load(waypoints)
+                        loadedLegacy = true
+                    }
                     WaypointsScreen.reload(computers.plan)
+                    if (WaypointsScreen.problems.isNotEmpty()) {
+                        loadedWithProblems = true
+                    }
 
                     FlightAssistant.logger.info("Loaded flight plan from $path")
                 }
@@ -148,7 +207,11 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
         super.render(guiGraphics, mouseX, mouseY, delta)
 
         if (saveLoadError) {
-            guiGraphics.drawMiddleAlignedString(Component.translatable("menu.flightassistant.fms.error"), this.centerX, this.centerY + 75, ChatFormatting.RED.color!!, true)
+            guiGraphics.drawMiddleAlignedString(Component.translatable("menu.flightassistant.fms.error"), this.centerX, this.centerY + 78, ChatFormatting.RED.color!!, true)
+        } else if (loadedWithProblems) {
+            guiGraphics.drawMiddleAlignedString(Component.translatable("menu.flightassistant.fms.loaded_with_problems"), this.centerX, this.centerY + 78, ChatFormatting.YELLOW.color!!, true)
+        } else if (loadedLegacy) {
+            guiGraphics.drawMiddleAlignedString(Component.translatable("menu.flightassistant.fms.loaded_legacy"), this.centerX, this.centerY + 78, ChatFormatting.YELLOW.color!!, true)
         }
     }
 

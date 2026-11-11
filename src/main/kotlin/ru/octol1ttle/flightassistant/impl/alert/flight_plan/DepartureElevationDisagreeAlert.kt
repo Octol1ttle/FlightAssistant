@@ -7,6 +7,7 @@ import ru.octol1ttle.flightassistant.api.alert.Alert
 import ru.octol1ttle.flightassistant.api.alert.AlertData
 import ru.octol1ttle.flightassistant.api.alert.ECAMAlert
 import ru.octol1ttle.flightassistant.api.computer.ComputerBus
+import ru.octol1ttle.flightassistant.api.flightplan.Waypoint
 import ru.octol1ttle.flightassistant.api.util.extensions.cautionColor
 import ru.octol1ttle.flightassistant.api.util.extensions.drawString
 import ru.octol1ttle.flightassistant.impl.computer.autoflight.FlightPlanComputer
@@ -20,7 +21,7 @@ class DepartureElevationDisagreeAlert(computers: ComputerBus) : Alert(computers)
             return false
         }
 
-        val departure = computers.plan.waypoints.singleOrNull { it.phaseMarker == FlightPlanComputer.Waypoint.PhaseMarker.TAKEOFF } ?: return false
+        val departure = computers.plan.waypoints.singleOrNull { it.phaseMarker == Waypoint.PhaseMarker.TAKEOFF } ?: return false
         val x = departure.posX
         val z = departure.posZ
         if (!computers.chunk.isLoaded(x, z)) {
