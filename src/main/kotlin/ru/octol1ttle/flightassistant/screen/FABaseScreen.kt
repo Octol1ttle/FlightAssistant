@@ -35,8 +35,6 @@ abstract class FABaseScreen(val parent: Screen?, title: Component) : Screen(titl
         this.minecraft!!.setScreen(parent)
     }
 
-    override fun isPauseScreen(): Boolean = false
-
 //? if >=1.21.9 {
     /*override fun keyPressed(event: net.minecraft.client.input.KeyEvent): Boolean {
         if (super.keyPressed(event)) {
