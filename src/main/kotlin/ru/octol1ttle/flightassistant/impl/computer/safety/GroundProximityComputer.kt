@@ -161,7 +161,7 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         return distances.average() / maxRaycastDistance
     }
 
-    private fun computeStatus(current: Status, safe: () -> Boolean, caution: () -> Boolean, warning: () -> Boolean, recover: () -> Boolean): Status {
+    private fun computeStatus(current: Status, safe: () -> Boolean, warning: () -> Boolean, danger: () -> Boolean, recover: () -> Boolean): Status {
         if (safe()) {
             return Status.SAFE
         }
@@ -169,9 +169,9 @@ class GroundProximityComputer(computers: ComputerBus) : Computer(computers) {
         var status: Status = current
         while (true) {
             val next = when (status) {
-                Status.SAFE -> if (caution()) Status.WARNING else null
-                Status.WARNING -> if (caution() && warning()) Status.DANGER else null
-                Status.DANGER -> if (caution() && warning() && recover()) Status.RECOVER else null
+                Status.SAFE -> if (warning()) Status.WARNING else null
+                Status.WARNING -> if (warning() && danger()) Status.DANGER else null
+                Status.DANGER -> if (warning() && danger() && recover()) Status.RECOVER else null
                 Status.RECOVER -> null
             }
             if (next == null) {
