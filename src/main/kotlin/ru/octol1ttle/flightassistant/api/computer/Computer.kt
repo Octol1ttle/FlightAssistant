@@ -60,7 +60,6 @@ abstract class Computer(protected val computers: ComputerBus) {
     /**
      * Called once after all computers have been registered. Subscribe to any events provided by other computers here.
      * Be careful calling other computers' code here! Depending on where events are invoked, a fault may cause a game crash.
-     * Use [ComputerBus.guardedCall] to invoke computers safely or manually guard your call with [Computer.isDisabledOrFaulted]
      */
     @Deprecated("Use ComputerBus.dispatchEvent and Computer.handleEvent instead")
     open fun subscribeToEvents() {}

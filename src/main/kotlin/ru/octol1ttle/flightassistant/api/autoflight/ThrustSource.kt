@@ -24,7 +24,7 @@ interface ThrustSource {
     fun tickThrust(currentThrust: Float) {}
 
     /**
-     * Defines the priority, which determines which thrust source to choose in the case there are multiple sources available ([isAvailable]).
+     * Defines the priority, which determines which thrust source to choose in the case there are multiple sources active.
      * In the case there are multiple thrust sources with the same priority, a single thrust source will be ticked. Which one exactly is determined by mod loading order
      */
     enum class Priority(val value: Int) {
