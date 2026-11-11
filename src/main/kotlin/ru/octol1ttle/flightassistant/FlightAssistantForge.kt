@@ -23,7 +23,6 @@ import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.fml.ModLoadingContext
 import net.minecraftforge.fml.common.Mod
 import nl.enjarai.doabarrelroll.compat.flightassistant.DaBRCompatFA
-import ru.octol1ttle.flightassistant.api.util.event.FixedGuiRenderCallback
 import ru.octol1ttle.flightassistant.config.FAConfigScreen
 import thedarkcolour.kotlinforforge.KotlinModLoadingContext
 

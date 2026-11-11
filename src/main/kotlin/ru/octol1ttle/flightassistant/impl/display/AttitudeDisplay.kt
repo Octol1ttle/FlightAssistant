@@ -11,7 +11,6 @@ import ru.octol1ttle.flightassistant.api.computer.ComputerBus
 import ru.octol1ttle.flightassistant.api.display.Display
 import ru.octol1ttle.flightassistant.api.display.HudFrame
 import ru.octol1ttle.flightassistant.api.util.FATickCounter
-import ru.octol1ttle.flightassistant.api.util.FloatLerper
 import ru.octol1ttle.flightassistant.api.util.ScreenSpace
 import ru.octol1ttle.flightassistant.api.util.extensions.*
 import ru.octol1ttle.flightassistant.config.FAConfig
@@ -20,8 +19,8 @@ import ru.octol1ttle.flightassistant.impl.computer.autoflight.AutoFlightComputer
 import kotlin.math.sign
 
 class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
-    private val minimumLerper: FloatLerper = FloatLerper()
-    private val maximumLerper: FloatLerper = FloatLerper()
+    private var lastMin: Float? = null
+    private var lastMax: Float? = null
 
     override fun allowedByConfig(): Boolean {
         return FAConfig.hud.showAttitude.allowed()
@@ -101,8 +100,22 @@ class AttitudeDisplay(computers: ComputerBus) : Display(computers) {
 
         val maxInput: ControlInput? = computers.pitch.maximumPitch
         val minInput: ControlInput? = computers.pitch.minimumPitch
-        var max: Float = maximumLerper.get(maxInput?.target, FATickCounter.timePassed * 2.0f) ?: 90.0f
-        var min: Float = (minimumLerper.get(minInput?.target, FATickCounter.timePassed * 2.0f) ?: -90.0f).coerceAtMost(max)
+        var max = 90.0f
+        if (maxInput != null) {
+            val last = lastMax
+            max = if (last != null) Mth.lerp(FATickCounter.partialTick, last, maxInput.target) else maxInput.target
+        }
+        var min = -90.0f
+        if (minInput != null) {
+            val last = lastMin
+            min = if (last != null) Mth.lerp(FATickCounter.partialTick, last, minInput.target) else minInput.target
+        }
+        min = min.coerceAtMost(max)
+
+        if (FATickCounter.ticksPassed >= 1) {
+            lastMax = maxInput?.target ?: 90.0f
+            lastMin = minInput?.target ?: -90.0f
+        }
 
         while (max <= 180) {
             val y: Int = ScreenSpace.getY(max) ?: break
