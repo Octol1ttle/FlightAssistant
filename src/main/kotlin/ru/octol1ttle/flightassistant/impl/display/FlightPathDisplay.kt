@@ -14,14 +14,10 @@ import ru.octol1ttle.flightassistant.config.FAConfig
 
 class FlightPathDisplay(computers: ComputerBus) : Display(computers) {
     override fun allowedByConfig(): Boolean {
-        return FAConfig.hud.showFlightPathVector
+        return computers.data.flying && FAConfig.hud.showFlightPathVector
     }
 
     override fun render(guiGraphics: GuiGraphics) {
-        if (!computers.data.flying) {
-            return
-        }
-
         with(guiGraphics) {
             val screenSpaceVec: Vector3f = ScreenSpace.getVector3f(computers.hudData.lerpedVelocity, false) ?: return
             val trueX: Float = screenSpaceVec.x

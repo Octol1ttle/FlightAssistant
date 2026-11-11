@@ -122,7 +122,7 @@ class FlightAssistantSetupScreen : FABaseScreen(null, Component.translatable("me
                     try {
                         FileReader(path).use { computers.plan.load(Json.decodeFromString(it.readText())) }
                     } catch (e: SerializationException) {
-                        FlightAssistant.logger.debug("Unable to deserialize flight plan, attempting legacy conversion", e)
+                        FlightAssistant.logger.info("Unable to deserialize flight plan, attempting legacy conversion", e)
 
                         // try loading legacy flight plan
                         val legacy: FlightPlan = FileReader(path).use { Json.decodeFromString(it.readText()) }
