@@ -16,6 +16,9 @@ import ru.octol1ttle.flightassistant.impl.computer.ComputerHost;
 abstract class EntityTurnMixin {
     @ModifyVariable(method = "turn", at = @At("STORE"), ordinal = 0)
     private float overridePitchChange(float pitchDelta) {
+        if (!ComputerHost.INSTANCE.getData().automationsAllowed(true)) {
+            return pitchDelta;
+        }
         var rightDelta = -pitchDelta;
         var results = ComputerHost.INSTANCE.dispatchQuery(new AllowedManualPitchChangeQuery(rightDelta));
         return -Objects.requireNonNullElse(MixinHandlerKt.onEntityChangePitch(results), rightDelta);
@@ -23,6 +26,9 @@ abstract class EntityTurnMixin {
 
     @ModifyVariable(method = "turn", at = @At("STORE"), ordinal = 1)
     private float overrideYawChange(float yawDelta) {
+        if (!ComputerHost.INSTANCE.getData().automationsAllowed(true)) {
+            return yawDelta;
+        }
         if (Platform.isModLoaded("do_a_barrel_roll") && Math.abs(yawDelta) >= 360.0f) {
             yawDelta %= 360.0f;
         }
