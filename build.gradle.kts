@@ -211,6 +211,8 @@ publishMods {
     curseforge {
         projectId = property("publish.curseforge").toString()
         accessToken = curseforgeToken.toString()
+        clientRequired.set(true)
+        serverRequired.set(false)
         targets.forEach(minecraftVersions::add)
         if (loader == "fabric") {
             requires("fabric-language-kotlin")
